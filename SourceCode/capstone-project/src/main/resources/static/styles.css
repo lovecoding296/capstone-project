@@ -1,0 +1,148 @@
+
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+	
+}
+
+/* Navigation Bar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #002147;
+    color: white;
+}
+
+.navbar .logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar ul li {
+    display: inline;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.login-btn {
+    background: rgb(19, 157, 122);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+    /*background: url('hero.jpg') no-repeat center center/cover;*/
+    color: white;
+	
+	background-image: url('images/ha-giang.jpg'); 
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 100vh;
+	position: relative;
+}
+
+.hero h1 {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+.hero input {
+    padding: 10px;
+    width: 50%;
+    border: none;
+    border-radius: 5px;
+}
+
+.hero button {
+    padding: 10px 20px;
+    background: #ffa500;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.features {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 50px;
+    padding: 40px;
+	height: 800px;
+}
+
+.feature {
+    text-align: center;
+    color: white;
+	font-weight: bold;
+	font-size: 30px;
+	font-family: 'Trebuchet MS';
+}
+
+.icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Spotlight Destinations */
+.spotlight {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.destinations {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    position: relative;
+    width: 250px;
+    height: 180px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.overlay {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
