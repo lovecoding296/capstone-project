@@ -365,3 +365,39 @@ input {
 .message-btn:hover {
     background: #e0e0e0;
 }
+
+/* status  */
+.explore-with-us h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.explore-with-us img {
+    width: 100%;
+	height: 600px;
+	object-fit: cover;
+}
+
+.explore-with-us p {
+    font-size: 1.5rem;
+    font-style: italic;
+}
+
+.explore-with-us .stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+.explore-with-us .stat-item {
+    font-size: 1rem;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 15px;
+    color: black;
+    font-weight: bold;
+}
