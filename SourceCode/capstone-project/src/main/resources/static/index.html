@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Tourism Guide Connection Platform</title>
 	<link rel="stylesheet" href="styles.css">
+	<script src="script.js"></script>
 </head>
 
 <body>
@@ -28,9 +29,42 @@
 	<section class="hero">
 		<h1>Take a friendlier route</h1>
 		<p>Truly get to know a place from people who know it best</p>
-		<input type="text" placeholder="Search destination...">
-		<button>Search</button>
 		
+		<div class="search-container">
+		    <div class="tabs">
+		        <div class="tab active">Tour</div>
+		        <div class="tab">Guide</div>
+		        <div class="tab">Shore Excursions</div>
+		        <div class="tab">Safari</div>
+		        <div class="tab">Live Virtual Tour</div>
+		    </div>
+		    <div class="input-container">
+				<svg data-icon="location-dot" aria-hidden="true" focusable="false" data-prefix="fas" class="location-dot" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"></path></svg>
+				<input type="text" placeholder="What city can we show you?">
+				<input id="date-input" type="text" placeholder="Add dates" readonly>
+				<button class="search-button">Search</button>
+				</div>
+				
+				<div class="calendar" id="calendar">
+					<div class="calendar-header">
+						<button id="prevMonth">&lt;</button>
+						<h2 id="monthYear"></h2>
+						<button id="nextMonth">&gt;</button>
+					</div>
+					<div class="calendar-body">
+						<div class="calendar-days">
+							<div>Sun</div>
+							<div>Mon</div>
+							<div>Tue</div>
+							<div>Wed</div>
+							<div>Thu</div>
+							<div>Fri</div>
+							<div>Sat</div>
+						</div>
+						<div class="calendar-dates" id="calendarDates"></div>
+					</div>
+				</div>
+				</div>
 		<div class="features">
 		        <div class="feature">
 		            <img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent" src="images/person.jpg" >
@@ -174,7 +208,7 @@
 	</section>
 
 
-	<script src="script.js"></script>
+	
 </body>
 
 </html>
