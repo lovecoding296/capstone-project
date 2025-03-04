@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thymeleaf Example</title>
+</head>
+<body>
+    <h1>Welcome to Spring Boot</h1>
+    
+    <!-- Display Dynamic Data -->
+    <p>Hello, <span th:text="${name}"></span>!</p>
+    
+    <!-- If-Else Condition -->
+    <p th:if="${name == 'Phi'}">You are the owner!</p>
+    <p th:unless="${name == 'Phi'}">Welcome, guest!</p>
+
+    <!-- Loop Through List -->
+    <ul>
+        <li th:each="item : ${items}" th:text="${item}"></li>
+    </ul>
+</body>
+</html>
