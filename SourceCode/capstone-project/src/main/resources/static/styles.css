@@ -12,9 +12,16 @@ body {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 15px 20px;
+	padding: 10px 20px;
 	background: #002147;
 	color: white;
+	position: fixed;
+	z-index: 100;
+	width: 100%;
+}
+
+.navbar nav {
+	padding-right: 80px;
 }
 
 .navbar .logo {
