@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="header">
+		<!-- Navigation Bar -->
+		<header class="navbar">
+			<div class="logo">Nền tảng kết nối du lịch</div>
+			<nav>
+				<ul>
+					<li><a href="#">Tìm Tour</a></li>
+					<li><a href="#">Điểm đến</a></li>
+					<li><a href="#">Trở thành hướng dẫn viên</a></li>
+					<li><a href="#">Danh sách mong muốn</a></li>
+					<li><a href="#" class="login-btn">Đăng nhập</a></li>
+				</ul>
+			</nav>
+		</header>
+	</div>
+
+	<div th:fragment="footer">
+		<footer class="footer">
+			<div class="footer-info">
+				<div class="footer-support">
+					<h2>Support</h2>
+					<br><a href="#">Câu hỏi thường gặp</a>
+					<br><a href="#">Liên hệ với chúng tôi</a>
+					<br><a href="#">Hỗ trợ chúng tôi</a>
+				</div>
+				<div class="footer-support">
+					<h2>Về chúng tôi</h2>
+					<br><a href="#">Blog</a>
+				</div>
+
+			</div>
+			<br><br><br>
+			<hr style="height: 1px; background-color: white; width: 50%; border: none;">
+			<br>
+
+
+			<p>&copy; 2025 Tourism Guide Connection Platform Company. All rights reserved.</p>
+			<div>
+				<a href="#">Privacy Policy</a> |
+				<a href="#">Terms of Service</a> |
+				<a href="#">Contact</a>
+			</div>
+			<div class="social-icons">
+				<a href="#">🔵 Facebook</a>
+				<a href="#">🔷 Twitter</a>
+				<a href="#">📸 Instagram</a>
+			</div>
+		</footer>
+	</div>
+</body>
+
+</html>
