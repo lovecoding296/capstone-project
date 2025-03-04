@@ -5,14 +5,15 @@
 	<div th:fragment="header">
 		<!-- Navigation Bar -->
 		<header class="navbar">
-			<div class="logo">Nền tảng kết nối du lịch</div>
+			<div class="logo"><a href="/">Nền tảng kết nối du lịch</a></div>
 			<nav>
 				<ul>
 					<li><a href="#">Tìm Tour</a></li>
 					<li><a href="#">Điểm đến</a></li>
 					<li><a href="#">Trở thành hướng dẫn viên</a></li>
-					<li><a href="#">Danh sách mong muốn</a></li>
-					<li><a href="#" class="login-btn">Đăng nhập</a></li>
+					<!--<li><a href="#">Danh sách mong muốn</a></li>-->
+					<li><button class="nav-button"><div th:replace="~{icons :: user}"></div></button></li>
+					<!--<li><a href="/login" class="login-btn">Đăng nhập</a></li>-->
 				</ul>
 			</nav>
 		</header>

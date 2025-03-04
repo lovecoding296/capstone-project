@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Đăng ký</title>
+	<link rel="stylesheet" href="styles.css">
+	<script src="script.js"></script>
+</head>
+
+<body>
+
+	<!-- Navigation Bar -->
+	<div th:replace="~{components :: header}"></div>
+
+	<div class="login-container">
+		<h1>Đăng ký</h1>
+
+		<div class="login-form">
+			<p>Đã có tài khoản? <a href="/signup">Đăng nhập</a></p>
+			<form>
+				<label for="email">Email:</label>
+				<input type="email" id="email" placeholder="Email" required>
+
+				<label for="password">Mật khẩu:</label>
+				<input type="password" id="password" placeholder="Mật khẩu" required>
+
+				<label for="password">Nhập lại mật khẩu:</label>
+				<input type="password" id="repassword" placeholder="Nhập lại mật khẩu:" required>
+				<div class="policy">
+					<p>*Ít nhất 8 ký tự</p>
+					<p>*Ít nhất 1 chữ cái viết hoa</p>
+					<p>*Ít nhất 1 ký tự đặc biệt (!@!#$%^&*)</p>
+					<p>*Phải trùng với mật khẩu đã cung cấp</p>
+
+					<label>
+						<input id="myCheckBox" type="checkbox" name="partnerType"> Chấp nhận Điều khoản & Điều kiện,
+						Chính
+						sách Bảo mật và
+						Chính sách Hủy bỏ.
+					</label>
+				</div>
+
+				<button id="signup" type="submit" class="login-btn" disabled>Đăng ký</button>
+			</form>
+		</div>
+	</div>
+	<div th:replace="~{components :: footer}"></div>
+
+
+	<script>
+		function checkInputs() {
+		    var email = document.getElementById('email').value;
+		    var password = document.getElementById('password').value;
+			var repassword = document.getElementById('password').value;
+			var acceptPolicy = document.getElementById('myCheckBox').checked;
+			
+		    var button = document.getElementById('signup');
+			
+
+		    if (email && password && repassword && acceptPolicy) {
+		      button.disabled = false; // Enable the button
+		    } else {
+		      button.disabled = true; // Disable the button
+		    }
+		  }
+
+		  // Add event listeners to both inputs
+		  document.getElementById('email').addEventListener('input', checkInputs);
+		  document.getElementById('password').addEventListener('input', checkInputs);
+		  document.getElementById('repassword').addEventListener('input', checkInputs);
+		  document.getElementById('myCheckBox').addEventListener('change', checkInputs);
+		
+	</script>
+
+</body>
+
+
+</html>

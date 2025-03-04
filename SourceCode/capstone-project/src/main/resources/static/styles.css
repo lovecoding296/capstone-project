@@ -16,17 +16,36 @@ body {
 	background: #002147;
 	color: white;
 	position: fixed;
+	top: 0px;
 	z-index: 100;
 	width: 100%;
+	height: 70px;
 }
 
 .navbar nav {
-	padding-right: 80px;
+	margin-right: 80px;
 }
 
-.navbar .logo {
+.navbar .user {
+	width: 28px;	
+	background: none;
+	border: none;
+	color: white;
+	cursor: pointer;
+	text-align: center;
+}
+
+.navbar .user:hover {
+	border: 1px solid white; /* Add a border */
+	background-color: #e0e0e0;
+	border-radius: 40px;
+}
+
+.navbar .logo a {
 	font-size: 22px;
 	font-weight: bold;
+	color: white;
+	text-decoration: none;
 }
 
 .navbar ul {
@@ -36,6 +55,7 @@ body {
 }
 
 .navbar ul li {
+	height: 25px;
 	display: inline;
 }
 
@@ -523,4 +543,123 @@ input {
 .social-icons a {
 	margin: 0 10px;
 	font-size: 20px;
+}
+
+/* Login container */
+
+
+.login-container {
+	align-items: center;
+	text-align: center;
+	width: 100%;
+	margin-top: 100px;
+}
+
+.login-container .login-form {
+	width: 300px;
+	margin: auto;
+
+}
+
+.login-form input {
+	padding: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 25px;
+	width: 300px;
+
+
+}
+
+.login-container h2 {
+	font-size: 18px;
+	margin-bottom: 15px;
+}
+
+.login-container .radio-group {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-bottom: 15px;
+}
+
+.login-container .radio-group label {
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.login-container label {
+	display: block;
+	text-align: left;
+	font-size: 14px;
+	margin: 5px 0;
+}
+
+.login-container .password-container {
+	position: relative;
+}
+
+
+.login-container .forgot-password {
+	display: block;
+	color: #007bff;
+	font-size: 14px;
+	margin-bottom: 15px;
+	text-decoration: none;
+}
+
+.login-container .forgot-password:hover {
+	text-decoration: underline;
+}
+
+.login-container .login-btn {
+	padding: 10px;
+	border: none;
+	color: white;
+	font-size: 16px;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.login-container .login-btn:disabled {
+	cursor:not-allowed;
+	background-color: #e0e0e0;
+	
+}
+
+.login-container .login-btn:disabled:hover {
+	cursor:not-allowed;
+	background-color: #e0e0e0;
+	
+}
+
+.login-container .login-btn:hover {
+	background-color: #bbb;
+}
+
+.login-container .traveller-text {
+	font-size: 14px;
+	margin-top: 15px;
+}
+
+.login-container a {
+	color: #007bff;
+	text-decoration: none;
+}
+
+.login-container a:hover {
+	text-decoration: underline;
+}
+
+.login-container .policy {
+	text-align: left;
+}
+
+.login-container .policy label{
+	display: flex;
+}
+
+.login-container .policy input{
+	padding: 0;
+	width: 30px;
 }

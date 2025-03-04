@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Đăng nhập</title>
+	<link rel="stylesheet" href="styles.css">
+	<script src="script.js"></script>
+</head>
+
+<body>
+
+	<!-- Navigation Bar -->
+	<div th:replace="~{components :: header}"></div>
+
+	<div class="login-container">
+		<h1>Đăng nhập</h1>
+		<!--		<div class="radio-group">
+			<label>
+				<input type="radio" name="partnerType" checked> Khách du lịch
+			</label>
+			<label>
+				<input type="radio" name="partnerType"> Hướng dẫn viên
+			</label>
+		</div>-->
+		<div class="login-form">
+			<form>
+				<label for="email">Email:</label>
+				<input type="email" id="email" placeholder="Email" required>
+
+				<label for="password">Mật khẩu:</label>
+				<div class="password-container">
+					<input type="password" id="password" placeholder="Mật khẩu" required>
+				</div>
+
+				<a href="#" class="forgot-password">Quên mật khẩu?</a>
+
+				<button id="login" type="submit" class="login-btn" disabled>Đăng nhập</button>
+				<br><br>
+				<p>Chưa có tài khoản? <a href="/signup">Đăng ký ngay</a></p>
+			</form>
+		</div>
+	</div>
+	<div th:replace="~{components :: footer}"></div>
+	<script>
+		function checkInputs() {
+		    var email = document.getElementById('email').value;
+		    var password = document.getElementById('password').value;
+		    var button = document.getElementById('login');
+
+		    if (email && password) {
+		      button.disabled = false; // Enable the button
+		    } else {
+		      button.disabled = true; // Disable the button
+		    }
+		  }
+
+		  // Add event listeners to both inputs
+		  document.getElementById('email').addEventListener('input', checkInputs);
+		  document.getElementById('password').addEventListener('input', checkInputs);
+	</script>
+
+</body>
+
+
+</html>

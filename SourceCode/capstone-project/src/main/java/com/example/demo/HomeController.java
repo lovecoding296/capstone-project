@@ -13,4 +13,15 @@ public class HomeController {
         return "home";
     }
    
+    @GetMapping("/login")
+    public String login(Model model) {
+        //model.addAttribute("name", "Phi"); // Passing data to Thymeleaf
+        return "login";
+    }
+    
+    @GetMapping("/signup")
+    public String signup(Model model) {
+        //model.addAttribute("name", "Phi"); // Passing data to Thymeleaf
+        return "signup";
+    }
 }
