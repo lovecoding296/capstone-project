@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tìm hướng dẫn viên</title>
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="tour-guides.css">
+	<script src="script.js"></script>
+</head>
+
+<body>
+
+	<!-- Navigation Bar -->
+	<div th:replace="~{components :: header}"></div>
+	
+	<div class="subheader">
+		<nav>
+			<ul>
+				<li><a href="/"><span th:replace="~{icons :: home}"> </span></a></li>
+				<li>></li>
+				<li><a href="/tour-guides">Hướng dẫn viên</a></li>
+				<li>></li>
+				<li><a href="/tour-guides?city=hanoi">Hà Nội</a></li>
+			</ul>
+		</nav>
+		
+	</div>
+
+	<div class="filter-section">
+		<button class="filter-button">Filters</button>
+	</div>
+
+
+	<section class="local-guides">
+		<div class="guides">
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide4.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Mr. Tuấn</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Hạ Long + Cát Bà + Cô Tô
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn">💬 Gửi tin nhắn</button>
+				</div>
+			</div>
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide3.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Nguyễn Khánh Nam</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Hà Giang + Cao Bằng
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn">💬 Gửi tin nhắn</button>
+				</div>
+			</div>
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide1.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Nguyen Linh</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Quảng Bình
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Name, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn">💬 Gửi tin nhắn</button>
+				</div>
+			</div>
+
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide2.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Hà Nguyễn</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Nha Trang
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn">💬 Gửi tin nhắn</button>
+				</div>
+			</div>
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide4.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Mr. Tuấn</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Hạ Long + Cát Bà + Cô Tô
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn">💬 Gửi tin nhắn</button>
+				</div>
+			</div>
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide3.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Nguyễn Khánh Nam</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Hà Giang + Cao Bằng
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn">💬 Gửi tin nhắn</button>
+				</div>
+			</div>
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide1.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Nguyen Linh</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Quảng Bình
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Name, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn">💬 Gửi tin nhắn</button>
+				</div>
+			</div>
+
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide2.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Hà Nguyễn</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Nha Trang
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn">💬 Gửi tin nhắn</button>
+				</div>
+			</div>
+		</div>
+
+	</section>
+
+
+
+	<div th:replace="~{components :: footer}"></div>
+
+
+</body>
+
+
+</html>
