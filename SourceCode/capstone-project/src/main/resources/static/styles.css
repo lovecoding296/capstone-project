@@ -94,9 +94,10 @@ body {
 	justify-content: center;
 	background: #f0f0f0;
 	border-radius: 20px;
-	padding: 5px 15px;
+	padding: 0 15px;
 	flex-grow: 1;
 	position: relative;
+	margin-top: 3px;
 }
 
 input {
@@ -117,6 +118,8 @@ input {
 	cursor: pointer;
 	font-weight: bold;
 	margin-left: 10px;
+	width: 120px;
+	height: 40px;
 }
 
 .location-dot {
@@ -260,6 +263,7 @@ input {
 .spotlight {
 	padding: 40px 20px;
 	text-align: center;
+	margin-top: 20px;
 }
 
 .destinations {
@@ -302,6 +306,7 @@ input {
 /* profile card */
 .local-guides {
 	text-align: center;
+	margin-top: 20px;
 }
 
 .guides {
@@ -354,6 +359,7 @@ input {
 	font-size: 14px;
 	color: #555;
 	margin-bottom: 6px;
+	display: flex;
 }
 
 .profile-card-footer {
@@ -382,6 +388,8 @@ input {
 .explore-with-us {
 	position: relative;
 	margin-top: 80px;
+	text-align: center;
+	margin-top: 60px;
 }
 
 .explore-with-us h1 {
@@ -436,4 +444,83 @@ input {
 	border-radius: 15px;
 	color: black;
 	font-weight: bold;
+}
+
+
+/*What travellers say*/
+.what-travellers-say {
+	text-align: center;
+	margin-top: 60px;
+}
+
+.what-travellers-say h1 {
+	text-align: center;
+}
+
+.comments {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	flex-wrap: wrap;
+}
+
+.comments img {
+	padding-top: 20px;
+}
+
+.comments .content {
+	padding: 20px;
+}
+
+.comment-card {
+	position: relative;
+	width: 350px;
+	height: 250px;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s;
+
+	text-align: center;
+}
+
+
+
+/*Footer*/
+
+.footer {
+	background-color: #002147;
+	color: white;
+	text-align: center;
+	padding: 20px;
+	margin-top: 80px;
+	height: 400px;
+}
+
+.footer-info {
+	display: flex;
+	text-align: left;
+	padding: 10px 50px;
+}
+
+.footer-support {
+	width: 500px;
+}
+
+.footer a {
+	color: #f8b400;
+	text-decoration: none;
+}
+
+.footer a:hover {
+	text-decoration: underline;
+}
+
+.social-icons {
+	margin-top: 10px;
+}
+
+.social-icons a {
+	margin: 0 10px;
+	font-size: 20px;
 }
