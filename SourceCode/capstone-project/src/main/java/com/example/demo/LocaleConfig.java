@@ -30,7 +30,7 @@ public class LocaleConfig implements WebMvcConfigurer{
 	public LocaleChangeInterceptor localeChangeInterceptor() {
 		System.out.println("localeChangeInterceptor");
 		LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();		
-		interceptor.setParamName("localeData"); // Change language via URL param
+		interceptor.setParamName("localeData"); // Change language via URL param		
 		return interceptor;
 	}
 	
