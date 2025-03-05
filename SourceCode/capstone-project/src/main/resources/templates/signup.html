@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Đăng ký</title>
+	<title th:text="#{signup}">Đăng ký</title>
 	<link rel="stylesheet" href="styles.css">
 	<script src="script.js"></script>
 </head>
@@ -15,34 +15,34 @@
 	<div th:replace="~{components :: header}"></div>
 
 	<div class="login-container">
-		<h1>Đăng ký</h1>
+		<h1 th:text="#{signup}">Đăng ký</h1>
 
 		<div class="login-form">
-			<p>Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
+			<p th:text="#{haveAnAccount}">Đã có tài khoản? <a href="/login" th:text="#{login}">Đăng nhập</a></p>
 			<form>
 				<label for="email">Email:</label>
 				<input type="email" id="email" placeholder="Email" required>
 
-				<label for="password">Mật khẩu:</label>
-				<input type="password" id="password" placeholder="Mật khẩu" required>
+				<label for="password" th:text="#{password}">Mật khẩu:</label>
+				<input type="password" id="password" th:attr="placeholder=#{password}" required>
 
-				<label for="password">Nhập lại mật khẩu:</label>
-				<input type="password" id="repassword" placeholder="Nhập lại mật khẩu:" required>
+				<label for="password" th:text="#{repassword}">Nhập lại mật khẩu:</label>
+				<input type="password" id="repassword" th:attr="placeholder=#{repassword}" required>
 				<div class="policy">
-					<p>*Ít nhất 8 ký tự</p>
-					<p>*Ít nhất 1 chữ cái viết hoa</p>
-					<p>*Ít nhất 1 ký tự đặc biệt (!@!#$%^&*)</p>
-					<p>*Phải trùng với mật khẩu đã cung cấp</p>
+					<p th:text="#{8characterCondition}">*Ít nhất 8 ký tự</p">
+					<p th:text="#{uppercaseCondition}">*Ít nhất 1 chữ cái viết hoa</p">
+					<p th:text="#{specialCondition}">*Ít nhất 1 ký tự đặc biệt (!@!#$%^&*)</p">
+					<p th:text="#{passwordCondition}">*Phải trùng với mật khẩu đã cung cấp</p">
 
 					<label>
-						<input id="myCheckBox" type="checkbox" name="partnerType"> Chấp nhận Điều khoản & Điều kiện,
+						<input id="myCheckBox" type="checkbox" name="partnerType" th:text="#{policyCondition}"> Chấp nhận Điều khoản & Điều kiện,
 						Chính
 						sách Bảo mật và
 						Chính sách Hủy bỏ.
 					</label>
 				</div>
 
-				<button id="signup" type="submit" class="login-btn" disabled>Đăng ký</button>
+				<button id="signup" type="submit" class="login-btn" disabled th:text="#{signup}">Đăng ký</button>
 			</form>
 		</div>
 	</div>

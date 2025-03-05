@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
 	<meta charset="UTF-8">
 </head>
@@ -8,12 +9,32 @@
 	<header th:fragment="header" class="navbar">
 		<div class="logo"><a href="/" th:text="#{logo}"></a></div>
 		<nav>
+
 			<ul>
+				<li>
+					<div class="language-selector">
+						<div class=" selected">
+							<img id="selected-flag" th:src="@{'/images/icons/flags/' + ${#locale.language} + '.svg'}">
+							<span id="selected-language" th:text="${#locale.language.toUpperCase()}"></span>
+
+						</div>
+						<th:block th:with="languages=${'en,vn'.split(',')}">
+							<div class="language-selector-dropdown" id="language-selector-dropdown">
+								<div th:each="lang : ${languages}" th:if="${#locale.language != lang}"
+									th:attr="onclick='changeLanguage(\'' + ${lang} + '\')'">
+									<img th:src="@{'/images/icons/flags/' + ${lang} + '.svg'}"
+										th:alt="${lang.toUpperCase()}">
+									<span th:text="${lang.toUpperCase()}"></span>
+								</div>
+							</div>
+						</th:block>
+					</div>
+				</li>
 				<li><a href="#" th:text="#{findtour}"></a></li>
 				<li><a href="#" th:text="#{destination}"></a></li>
 				<li><a href="/become-a-guide" th:text="#{becomeAGuide}"></a></li>
 				<li>
-					<a id="userBtn" onclick="togglePopup()">
+					<a id="userBtn" onclick="toggleUserPopup()">
 						<svg th:replace="~{icons :: user}"></svg>
 					</a>
 				</li>
@@ -28,7 +49,7 @@
 			</div>
 		</div>
 		<script>
-			function togglePopup() {
+			function toggleUserPopup() {
 				console.log("click togglePopup")
 				const popup = document.getElementById("userPopup");
 				popup.style.display = popup.style.display === "block" ? "none" : "block";
@@ -36,13 +57,23 @@
 
 			// Close popup when clicking outside
 			document.addEventListener("click", function (event) {
-				console.log("click")
 				const popup = document.getElementById("userPopup");
 				const userBtn = document.getElementById("userBtn");
 				if (!popup.contains(event.target) && !userBtn.contains(event.target)) {
 					popup.style.display = "none";
 				}
 			});
+
+
+			<!--Change languages-->
+
+
+			function changeLanguage(lang) {
+				let url = new URL(window.location.href); // Get current URL
+				url.searchParams.set('lang', lang); // Set or update 'lang' parameter
+				window.location.href = url.toString(); // Redirect to new URL
+			}
+
 		</script>
 	</header>
 

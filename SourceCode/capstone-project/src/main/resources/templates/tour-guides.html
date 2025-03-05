@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Tìm hướng dẫn viên</title>
+	<title th:text="#{meetYourGuides}">Tìm hướng dẫn viên</title>
 	<link rel="stylesheet" href="styles.css">
 	<link rel="stylesheet" href="tour-guides.css">
 	<script src="script.js"></script>
@@ -40,8 +40,8 @@
 			width: 16px;
 			transition: border 0.5s ease, color 0.5s ease;
 		}
-		
-		.tabindex a:hover  {
+
+		.tabindex a:hover {
 			border: solid 1px rgb(19, 157, 122);
 			color: rgb(19, 157, 122)
 		}
@@ -62,10 +62,10 @@
 				</li>
 
 				<li th:if="${city.equals('all')}">
-					<a href="/tour-guides" style="text-decoration: none;">Hướng dẫn viên</a>
+					<a href="/tour-guides" style="text-decoration: none;" th:text="#{guides}">Hướng dẫn viên</a>
 				</li>
 				<li th:unless="${city.equals('all')}">
-					<a href="/tour-guides">Hướng dẫn viên</a>
+					<a href="/tour-guides" th:text="#{guides}">Hướng dẫn viên</a>
 					<span th:replace="~{icons :: breadcrumb}"></span>
 				</li>
 				<li th:unless="${city.equals('all')}">
@@ -87,7 +87,7 @@
 		</label>
 	</div>
 
-	<div class="result-number">Khám phá 90 hướng dẫn viên</div>
+	<div class="result-number" th:text="#{guideCount(90)}">Khám phá 90 hướng dẫn viên</div>
 
 
 	<section class="local-guides">
@@ -120,7 +120,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}">💬 Gửi tin nhắn</button>
 				</div>
 			</div>
 
@@ -153,7 +153,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}">💬 Gửi tin nhắn</button>
 				</div>
 			</div>
 
@@ -185,7 +185,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}">💬 Gửi tin nhắn</button>
 				</div>
 			</div>
 
@@ -218,7 +218,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}">💬 Gửi tin nhắn</button>
 				</div>
 			</div>
 
@@ -250,7 +250,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}">💬 Gửi tin nhắn</button>
 				</div>
 			</div>
 
@@ -283,7 +283,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}">💬 Gửi tin nhắn</button>
 				</div>
 			</div>
 
@@ -315,7 +315,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}">💬 Gửi tin nhắn</button>
 				</div>
 			</div>
 
@@ -348,7 +348,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}">💬 Gửi tin nhắn</button>
 				</div>
 			</div>
 		</div>
