@@ -23,7 +23,7 @@
 		<div class="search-container">
 			<div class="tabs">
 				<div class="tab active">Tour</div>
-				<div class="tab">Hướng dẫn viên</div>
+				<div class="tab" th:text="#{guides}"></div>
 				<!--<div class="tab">Shore Excursions</div>
 				<div class="tab">Safari</div>
 				<div class="tab">Live Virtual Tour</div>-->
@@ -35,9 +35,9 @@
 						d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z">
 					</path>
 				</svg>
-				<input type="text" placeholder="Thành phố nào?">
-				<input id="date-input" type="text" placeholder="Thêm ngày" readonly>
-				<button class="search-button">Tìm kiếm</button>
+				<input type="text" th:attr="placeholder=#{whatCity}">
+				<input id="date-input" type="text" th:attr="placeholder=#{addDates}" readonly>
+				<button class="search-button" th:text="#{search}"></button>
 			</div>
 			<div class="calendar-container" id="calendar-container" style="display: none;">
 				<button id="prevMonth">&lt;</button>
@@ -50,22 +50,22 @@
 			<div class="feature">
 				<img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent"
 					src="images/person.jpg">
-				<p>Tour riêng tư 100%</p>
+				<p th:text="#{privateTour}"></p>
 			</div>
 			<div class="feature">
 				<img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent"
 					src="images/location.jpg">
-				<p>Hành trình có thể tùy chỉnh</p>
+				<p th:text="#{customizableItineraries}"></p>
 			</div>
 			<div class="feature">
 				<img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent"
 					src="images/phone.jpg">
-				<p>Hủy bỏ linh hoạt</p>
+				<p th:text="#{flexibleCancellation}"></p>
 			</div>
 			<div class="feature">
 				<img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent"
 					src="images/headset.jpg">
-				<p>Hỗ trợ khách hàng 24/7</p>
+				<p th:text="#{247support}"></p>
 			</div>
 		</div>
 	</section>
@@ -73,7 +73,7 @@
 	<!-- Spotlight Destinations -->
 	<section class="spotlight">
 		<div th:replace="~{icons :: destination}"></div>
-		<h1>Điểm đến</h1>
+		<h1 th:text="#{destination}"></h1>
 		<div class="destinations">
 			<div class="card">
 				<img src="images/ho-chi-minh.jpg" alt="Ho Chi Minh City">
@@ -106,7 +106,7 @@
 	<!--Guides -->
 	<section class="local-guides">
 		<div th:replace="~{icons :: person}"></div>
-		<h1>Khám phá cùng hướng dẫn viên địa phương của bạn</h1>
+		<h1 th:text="#{meetYourGuides}"></h1>
 		<div class="guides">
 			<div class="profile-card">
 				<!-- Profile Image -->
@@ -136,7 +136,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}"></button>
 				</div>
 			</div>
 
@@ -169,7 +169,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}"></button>
 				</div>
 			</div>
 
@@ -201,7 +201,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}"></button>
 				</div>
 			</div>
 
@@ -234,7 +234,7 @@
 
 				<!-- Action Buttons -->
 				<div class="profile-card-footer">
-					<button class="message-btn">💬 Gửi tin nhắn</button>
+					<button class="message-btn" th:text="#{sendMessage}"></button>
 				</div>
 			</div>
 		</div>
@@ -244,16 +244,16 @@
 	<!-- Explore with us -->
 	<section class="explore-with-us">
 		<div th:replace="~{icons :: explore}"></div>
-		<h1>Khám phá cùng chúng tôi</h1>
+		<h1 th:text="#{exploreWithUs}"></h1>
 		<img src="images/status/tour-guide.webp">
 		<div class="guide-status">
 			<div class="sologan">
-				<h1>Chúng tôi ở đây</h1>
-				<p><em>để đưa bạn đến những nơi bạn sẽ yêu thích</em></p>
+				<h1 th:text="#{sologan3a}"></h1>
+				<p><em th:text="#{sologan3b}"></em></p>
 			</div>
 			<div class="stats">
-				<div class="stat-item">Khách du lịch được phục vụ <span>100</span></div>
-				<div class="stat-item">Hướng dẫn viên <span>20</span></div>
+				<div class="stat-item"><span th:text="#{travellersServed}"></span><span>100</span></div>
+				<div class="stat-item"><span th:text="#{guides}"></span><span>20</span></div>
 			</div>
 		</div>
 
@@ -263,7 +263,7 @@
 	<!--What travellers say -->
 	<section class="what-travellers-say">
 		<div th:replace="~{icons :: comment}"></div>
-		<h1>Du khách nói gì</h1>
+		<h1 th:text="#{whatTravellersSay}"></h1>
 		<div class="comments">
 			<div class="comment-card">
 				<img src="images/icons/qoutes-icon.png" style="width: 45px; height: 45px;">

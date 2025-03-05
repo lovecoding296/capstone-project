@@ -6,12 +6,12 @@
 
 <body>
 	<header th:fragment="header" class="navbar">
-		<div class="logo"><a href="/" th:text="#{logo}">Nền tảng kết nối du lịch</a></div>
+		<div class="logo"><a href="/" th:text="#{logo}"></a></div>
 		<nav>
 			<ul>
-				<li><a href="#">Tìm Tour</a></li>
-				<li><a href="#">Điểm đến</a></li>
-				<li><a href="/become-a-guide">Trở thành hướng dẫn viên</a></li>
+				<li><a href="#" th:text="#{findtour}"></a></li>
+				<li><a href="#" th:text="#{destination}"></a></li>
+				<li><a href="/become-a-guide" th:text="#{becomeAGuide}"></a></li>
 				<li>
 					<a id="userBtn" onclick="togglePopup()">
 						<svg th:replace="~{icons :: user}"></svg>
@@ -21,10 +21,10 @@
 		</nav>
 		<div id="userPopup" class="popup">
 			<div>
-				<a href="/signup">Đăng ký</a>
+				<a href="/signup" th:text="#{signup}"></a>
 			</div>
 			<div>
-				<a href="/login">Đăng nhập</a>
+				<a href="/login" th:text="#{login}"></a>
 			</div>
 		</div>
 		<script>
@@ -49,13 +49,13 @@
 	<footer th:fragment="footer" class="footer">
 		<div class="footer-info">
 			<div class="footer-support">
-				<h2>Support</h2>
-				<br><a href="#">Câu hỏi thường gặp</a>
-				<br><a href="#">Liên hệ với chúng tôi</a>
-				<br><a href="#">Hỗ trợ chúng tôi</a>
+				<h2 th:text="#{support}"></h2>
+				<br><a href="#" th:text="#{FAQs}"></a>
+				<br><a href="#" th:text="#{contactUs}"></a>
+				<br><a href="#" th:text="#{supportUs}"></a>
 			</div>
 			<div class="footer-support">
-				<h2>Về chúng tôi</h2>
+				<h2 th:text="#{aboutUs}"></h2>
 				<br><a href="#">Blog</a>
 			</div>
 
