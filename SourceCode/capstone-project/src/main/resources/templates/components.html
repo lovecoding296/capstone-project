@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+</head>
 
 <body>
 	<header th:fragment="header" class="navbar">
-		<div class="logo"><a href="/">Nền tảng kết nối du lịch</a></div>
+		<div class="logo"><a href="/" th:text="#{logo}">Nền tảng kết nối du lịch</a></div>
 		<nav>
 			<ul>
 				<li><a href="#">Tìm Tour</a></li>
