@@ -19,7 +19,7 @@ body {
 	top: 0px;
 	z-index: 100;
 	width: 100%;
-	height: 70px;
+	height: 50px;
 }
 
 .navbar nav {
@@ -27,7 +27,7 @@ body {
 }
 
 .navbar .user {
-	width: 28px;	
+	width: 28px;
 	background: none;
 	border: none;
 	color: white;
@@ -35,10 +35,16 @@ body {
 	text-align: center;
 }
 
-.navbar .user:hover {
-	border: 1px solid white; /* Add a border */
-	background-color: #e0e0e0;
-	border-radius: 40px;
+.navbar .popup {
+	display: none;
+	position: fixed;
+	top: 115px;
+    right: 0px;
+	transform: translate(-50%, -50%);
+	background-color: white;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
 .navbar .logo a {
@@ -54,15 +60,47 @@ body {
 	gap: 20px;
 }
 
-.navbar ul li {
-	height: 25px;
-	display: inline;
-}
-
 .navbar ul li a {
+	text-align: center;
+	height: 25px;
+	padding: 10px 15px;
+	display: flex;
+	justify-content: center;
+	/* Center text horizontally */
+	align-items: center;
+	/* Center text vertically */
+	transition: background-color 0.5s ease;
+	border-radius: 25px;
 	color: white;
 	text-decoration: none;
 	font-size: 16px;
+}
+
+.navbar ul li a:hover {
+	background-color: rgba(255, 255, 255, 0.3);
+	cursor: pointer;
+}
+
+#userPopup {
+	height: 70px;
+}
+
+#userPopup div {
+	margin-bottom: 20px;
+	
+}
+
+#userPopup a {
+	color: black;	
+	padding: 10px;
+	cursor: pointer;
+	border-left: 4px solid transparent;
+	transition: border-left 0.5s ease;
+	text-decoration: none;
+}
+
+#userPopup a:hover {
+	border-left: 4px solid #1abc9c;
 }
 
 .login-btn {
@@ -622,15 +660,15 @@ input {
 }
 
 .login-container .login-btn:disabled {
-	cursor:not-allowed;
+	cursor: not-allowed;
 	background-color: #e0e0e0;
-	
+
 }
 
 .login-container .login-btn:disabled:hover {
-	cursor:not-allowed;
+	cursor: not-allowed;
 	background-color: #e0e0e0;
-	
+
 }
 
 .login-container .login-btn:hover {
@@ -655,11 +693,11 @@ input {
 	text-align: left;
 }
 
-.login-container .policy label{
+.login-container .policy label {
 	display: flex;
 }
 
-.login-container .policy input{
+.login-container .policy input {
 	padding: 0;
 	width: 30px;
 }

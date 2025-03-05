@@ -8,7 +8,10 @@
 	justify-content: center;
 	margin: 0 auto;
 	padding: 20px;
-	/* Add padding for better spacing */
+}
+
+.profile-card {
+	width: 326px;
 }
 
 @media (max-width: 1024px) {
@@ -55,12 +58,21 @@
 .subheader ul {
 	list-style: none;
 	display: flex;
+	align-items: center;
+	height: 100px;
 	gap: 10px;
+	padding: 0px;
 }
 
 .subheader a {
-	text-decoration: underline;
 	cursor: pointer;
+	color: black;
+	font-size: 20px;
+}
+
+.subheader a:hover {
+	cursor: pointer;
+	color: blue;
 }
 
 

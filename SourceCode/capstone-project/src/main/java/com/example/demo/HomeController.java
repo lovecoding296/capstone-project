@@ -25,7 +25,7 @@ public class HomeController {
     
     @GetMapping("/tour-guides")
     public String tourGuides(Model model, @RequestParam(defaultValue = "all") String city) {
-    	System.out.println("City = " + city);
+    	model.addAttribute("city", city);
         return "tour-guides";
     }
     

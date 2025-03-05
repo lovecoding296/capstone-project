@@ -14,18 +14,30 @@
 
 	<!-- Navigation Bar -->
 	<div th:replace="~{components :: header}"></div>
-	
+
 	<div class="subheader">
 		<nav>
 			<ul>
-				<li><a href="/"><span th:replace="~{icons :: home}"> </span></a></li>
-				<li>></li>
-				<li><a href="/tour-guides">Hướng dẫn viên</a></li>
-				<li>></li>
-				<li><a href="/tour-guides?city=hanoi">Hà Nội</a></li>
+				<li>
+					<a href="/" style="text-decoration: none;"><span th:replace="~{icons :: home}"></span></a>
+					<span th:replace="~{icons :: breadcrumb}"></span>
+				</li>
+			
+				<li th:if="${city.equals('all')}">
+					<a href="/tour-guides" style="text-decoration: none;">Hướng dẫn viên</a>
+				</li>			
+				<li th:unless="${city.equals('all')}">
+					<a href="/tour-guides">Hướng dẫn viên</a>
+					<span th:replace="~{icons :: breadcrumb}"></span>
+				</li>
+				<li th:unless="${city.equals('all')}">
+					<a th:href="@{'/tour-guides?city=' + ${city}}" style="text-decoration: none;">
+						<span th:text="${city}">Hà Nội</span>
+					</a>
+				</li>
 			</ul>
 		</nav>
-		
+
 	</div>
 
 	<div class="filter-section">
