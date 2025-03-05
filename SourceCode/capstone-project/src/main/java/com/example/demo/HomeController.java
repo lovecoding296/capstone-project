@@ -29,4 +29,9 @@ public class HomeController {
         return "tour-guides";
     }
     
+    
+    @GetMapping("/become-a-guide")
+    public String becomeAGuide(Model model) {
+        return "become-a-guide";
+    }
 }

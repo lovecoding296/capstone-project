@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Đăng ký làm Hướng dẫn viên</title>
+	<link rel="stylesheet" href="styles.css">
+	<script src="script.js"></script>
+
+
+	<style>
+		.login-container .login-form-container {
+			display: flex;
+			gap: 10px;
+			padding: 80px;
+		}
+
+		.login-form input {
+			width: 500px;
+		}
+
+		.login-form label {
+			width: 500px;
+		}
+
+		/* Container styling */
+		.dropdown {
+			position: relative;
+			display: inline-block;
+			width: 522px;
+		}
+
+		/* Input field */
+
+
+		/* Dropdown menu */
+		.dropdown-menu {
+			position: absolute;
+			width: 100%;
+			background: white;
+			border: 1px solid #ccc;
+			max-height: 200px;
+			overflow-y: auto;
+			display: none;
+			z-index: 10;
+			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+		}
+
+		/* Show dropdown */
+		.dropdown.active .dropdown-menu {
+			display: block;
+		}
+
+		/* Searchable checkboxes */
+		.dropdown-menu label {
+			display: block;
+			padding: 5px;
+			cursor: pointer;
+		}
+
+		.dropdown-menu label:hover {
+			background: #f1f1f1;
+		}
+
+		#experience {
+			background: none;
+			border-radius: 25px;
+			width: 500px;
+			padding: 10px;
+			border: 1px solid #ccc;
+		}
+		.dropdown-menu input {
+			width: 15px;
+		}
+	</style>
+
+
+
+</head>
+
+<body>
+
+	<!-- Navigation Bar -->
+	<div th:replace="~{components :: header}"></div>
+
+	<div class="login-container">
+		<h3>Trở thành hướng dẫn viên</h3>
+		<form>
+			<div class="login-form-container">
+				<div class="login-form">
+					<label for="email">Email:</label>
+					<input type="email" id="email" placeholder="Email" required>
+
+					<label for="password">Mật khẩu:</label>
+					<input type="password" id="password" placeholder="Mật khẩu" required>
+
+					<label for="password">Nhập lại mật khẩu:</label>
+					<input type="password" id="repassword" placeholder="Nhập lại mật khẩu:" required>
+					<div class="policy">
+						<p>*Ít nhất 8 ký tự</p>
+						<p>*Ít nhất 1 chữ cái viết hoa</p>
+						<p>*Ít nhất 1 ký tự đặc biệt (!@!#$%^&*)</p>
+						<p>*Phải trùng với mật khẩu đã cung cấp</p>
+
+						<label>
+							<input id="myCheckBox" type="checkbox" name="partnerType"> Chấp nhận Điều khoản & Điều kiện,
+							Chính
+							sách Bảo mật và
+							Chính sách Hủy bỏ.
+						</label>
+					</div>
+				</div>
+				<div class="login-form">
+					<label for="name">Họ tên:</label>
+					<input id="name" placeholder="Họ tên:" required>
+
+					<label for="city">Thành phố:</label>
+					<input id="city" placeholder="Thành phố:" required>
+
+					<!-------------TODO------------------------->
+
+
+					<label for="city">Chọn tỉnh/thành phố:</label>
+					<div class="dropdown">
+						<input type="text" id="cityInput" placeholder="Tìm kiếm...">
+						<div class="dropdown-menu" id="cityMenu">
+							<label><input type="checkbox" value="An Giang"> An Giang</label>
+							<label><input type="checkbox" value="Bà Rịa - Vũng Tàu"> Bà Rịa - Vũng Tàu</label>
+							<label><input type="checkbox" value="Bắc Giang"> Bắc Giang</label>
+							<label><input type="checkbox" value="Bắc Kạn"> Bắc Kạn</label>
+							<label><input type="checkbox" value="Bạc Liêu"> Bạc Liêu</label>
+							<label><input type="checkbox" value="Bắc Ninh"> Bắc Ninh</label>
+							<label><input type="checkbox" value="Bến Tre"> Bến Tre</label>
+							<label><input type="checkbox" value="Bình Định"> Bình Định</label>
+							<label><input type="checkbox" value="Bình Dương"> Bình Dương</label>
+							<label><input type="checkbox" value="Bình Phước"> Bình Phước</label>
+							<label><input type="checkbox" value="Bình Thuận"> Bình Thuận</label>
+							<label><input type="checkbox" value="Cà Mau"> Cà Mau</label>
+							<label><input type="checkbox" value="Cần Thơ"> Cần Thơ</label>
+							<label><input type="checkbox" value="Cao Bằng"> Cao Bằng</label>
+							<label><input type="checkbox" value="Đà Nẵng"> Đà Nẵng</label>
+							<label><input type="checkbox" value="Đắk Lắk"> Đắk Lắk</label>
+							<label><input type="checkbox" value="Đắk Nông"> Đắk Nông</label>
+							<label><input type="checkbox" value="Điện Biên"> Điện Biên</label>
+							<label><input type="checkbox" value="Đồng Nai"> Đồng Nai</label>
+							<label><input type="checkbox" value="Đồng Tháp"> Đồng Tháp</label>
+							<label><input type="checkbox" value="Gia Lai"> Gia Lai</label>
+							<label><input type="checkbox" value="Hà Giang"> Hà Giang</label>
+							<label><input type="checkbox" value="Hà Nam"> Hà Nam</label>
+							<label><input type="checkbox" value="Hà Nội"> Hà Nội</label>
+							<label><input type="checkbox" value="Hà Tĩnh"> Hà Tĩnh</label>
+							<label><input type="checkbox" value="Hải Dương"> Hải Dương</label>
+							<label><input type="checkbox" value="Hải Phòng"> Hải Phòng</label>
+							<label><input type="checkbox" value="Hậu Giang"> Hậu Giang</label>
+							<label><input type="checkbox" value="Hòa Bình"> Hòa Bình</label>
+							<label><input type="checkbox" value="Hưng Yên"> Hưng Yên</label>
+							<label><input type="checkbox" value="Khánh Hòa"> Khánh Hòa</label>
+							<label><input type="checkbox" value="Kiên Giang"> Kiên Giang</label>
+							<label><input type="checkbox" value="Kon Tum"> Kon Tum</label>
+							<label><input type="checkbox" value="Lai Châu"> Lai Châu</label>
+							<label><input type="checkbox" value="Lâm Đồng"> Lâm Đồng</label>
+							<label><input type="checkbox" value="Lạng Sơn"> Lạng Sơn</label>
+							<label><input type="checkbox" value="Lào Cai"> Lào Cai</label>
+							<label><input type="checkbox" value="Long An"> Long An</label>
+							<label><input type="checkbox" value="Nam Định"> Nam Định</label>
+							<label><input type="checkbox" value="Nghệ An"> Nghệ An</label>
+							<label><input type="checkbox" value="Ninh Bình"> Ninh Bình</label>
+							<label><input type="checkbox" value="Ninh Thuận"> Ninh Thuận</label>
+							<label><input type="checkbox" value="Phú Thọ"> Phú Thọ</label>
+							<label><input type="checkbox" value="Phú Yên"> Phú Yên</label>
+							<label><input type="checkbox" value="Quảng Bình"> Quảng Bình</label>
+							<label><input type="checkbox" value="Quảng Nam"> Quảng Nam</label>
+							<label><input type="checkbox" value="Quảng Ngãi"> Quảng Ngãi</label>
+							<label><input type="checkbox" value="Quảng Ninh"> Quảng Ninh</label>
+							<label><input type="checkbox" value="Quảng Trị"> Quảng Trị</label>
+							<label><input type="checkbox" value="Sóc Trăng"> Sóc Trăng</label>
+							<label><input type="checkbox" value="Sơn La"> Sơn La</label>
+							<label><input type="checkbox" value="Tây Ninh"> Tây Ninh</label>
+							<label><input type="checkbox" value="Thái Bình"> Thái Bình</label>
+							<label><input type="checkbox" value="Thái Nguyên"> Thái Nguyên</label>
+							<label><input type="checkbox" value="Thanh Hóa"> Thanh Hóa</label>
+							<label><input type="checkbox" value="Thừa Thiên Huế"> Thừa Thiên Huế</label>
+							<label><input type="checkbox" value="Tiền Giang"> Tiền Giang</label>
+							<label><input type="checkbox" value="TP. Hồ Chí Minh"> TP. Hồ Chí Minh</label>
+							<label><input type="checkbox" value="Trà Vinh"> Trà Vinh</label>
+							<label><input type="checkbox" value="Tuyên Quang"> Tuyên Quang</label>
+							<label><input type="checkbox" value="Vĩnh Long"> Vĩnh Long</label>
+							<label><input type="checkbox" value="Vĩnh Phúc"> Vĩnh Phúc</label>
+							<label><input type="checkbox" value="Yên Bái"> Yên Bái</label>
+						</div>
+
+					</div>
+
+					<script>
+						const input = document.getElementById("cityInput");
+						const dropdown = document.querySelector(".dropdown");
+						const menu = document.getElementById("cityMenu");
+
+						// Show dropdown when clicking input
+						input.addEventListener("focus", () => {
+							dropdown.classList.add("active");
+						});
+
+						// Hide dropdown when clicking outside
+						document.addEventListener("click", (e) => {
+							if (!dropdown.contains(e.target)) {
+								dropdown.classList.remove("active");
+							}
+						});
+
+						// Search functionality
+						input.addEventListener("input", () => {
+							let filter = input.value.toLowerCase();
+							let items = menu.getElementsByTagName("label");
+							for (let item of items) {
+								let text = item.textContent.toLowerCase();
+								item.style.display = text.includes(filter) ? "block" : "none";
+							}
+						});
+
+						// Update input with selected values
+						menu.addEventListener("change", () => {
+							let selectedValues = Array.from(menu.querySelectorAll("input:checked")).map(el => el.value);
+							input.value = selectedValues.join(", ");
+						});
+					</script>
+
+
+
+					<label for="years-of-experience">Số năm kinh nghiệm:</label>
+					<input required>
+					<label for="experience">Thông tin chi tiết về kinh nghiệp hướng dẫn của bạn:</label>
+					<textarea id="experience" name="experience" rows="4" cols="50" required></textarea>
+				</div>
+			</div>
+
+			<button id="signup" type="submit" class="login-btn" disabled>Đăng ký</button>
+		</form>
+	</div>
+	<div th:replace="~{components :: footer}"></div>
+
+
+	<script>
+		function checkInputs() {
+			var email = document.getElementById('email').value;
+			var password = document.getElementById('password').value;
+			var repassword = document.getElementById('password').value;
+			var acceptPolicy = document.getElementById('myCheckBox').checked;
+
+			var button = document.getElementById('signup');
+
+
+			if (email && password && repassword && acceptPolicy) {
+				button.disabled = false; // Enable the button
+			} else {
+				button.disabled = true; // Disable the button
+			}
+		}
+
+		// Add event listeners to both inputs
+		document.getElementById('email').addEventListener('input', checkInputs);
+		document.getElementById('password').addEventListener('input', checkInputs);
+		document.getElementById('repassword').addEventListener('input', checkInputs);
+		document.getElementById('myCheckBox').addEventListener('change', checkInputs);
+
+	</script>
+
+</body>
+
+
+</html>
