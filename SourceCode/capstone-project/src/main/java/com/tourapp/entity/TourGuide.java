@@ -3,27 +3,26 @@ package com.tourapp.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Validated
 public class TourGuide {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+	
+	@Id
+	private Long id;
+	
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "id")
+	private Account account;
+   
     private String bio;
 
     @ElementCollection
@@ -37,26 +36,7 @@ public class TourGuide {
     private List<String> cities;
 
     private double rating;
-
-    @NotBlank(message = "Name cannot be empty")
-    private String name;
-
-    @Email(message = "Invalid email format")
-    @NotBlank(message = "Email is required")
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
-	private String password;
-	
-    @Pattern(regexp ="0\\d{9}", message = "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số")
-    private String phone;
-    
-    private String facebook;
-    private String tiktok;
-    private String instagram;
-    
-    private String avatar;
+    private String guideLicense;
+    private String experience;
 }
 

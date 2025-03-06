@@ -17,24 +17,29 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 
+import com.tourapp.entity.Account;
 import com.tourapp.entity.Tourist;
-import com.tourapp.service.TouristService;
+import com.tourapp.service.AccountService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/signup")
-public class TouristController {
+public class AuthController {
 
     @Autowired
-    private TouristService touristService;
+    private AccountService accountService;
 
-    @PostMapping
+    @PostMapping("/tourist")
     @ResponseStatus(HttpStatus.CREATED)
-    public Tourist registerTourist(@Valid @RequestBody Tourist tourist)  {
-    	System.out.println(tourist.getPassword());
-        return touristService.registerTourist(tourist);
+    public Account registerTourist(@Valid @RequestBody Account account)  {
+        return accountService.registerTourist(account);
     }
 
 
+    @PostMapping("/tour-guide")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account registerTourGuide(@Valid @RequestBody Account account)  {
+        return accountService.registerTourGuide(account);
+    }
 }

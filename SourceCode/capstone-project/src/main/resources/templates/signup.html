@@ -127,15 +127,6 @@
 			$('#password, #repassword').on('input', validatePassword);
 		});
 
-		function successIcon() {
-			return `<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>`;
-		}
-
-		function errorIcon() {
-			return ``;
-		}
-
-
 		// Add event listeners to inputs using jQuery
 		$('#email, #password, #repassword').on('input', checkInputs);
 		$('#myCheckBox').on('change', checkInputs);
@@ -155,7 +146,7 @@
 
 			// Sending data to API using jQuery AJAX
 			$.ajax({
-				url: '/signup',
+				url: '/signup/tourist',
 				type: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(touristData),
