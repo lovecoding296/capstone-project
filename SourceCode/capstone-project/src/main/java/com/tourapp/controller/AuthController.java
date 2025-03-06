@@ -21,6 +21,7 @@ import com.tourapp.entity.Account;
 import com.tourapp.entity.Tourist;
 import com.tourapp.service.AccountService;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @RestController
@@ -41,5 +42,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public Account registerTourGuide(@Valid @RequestBody Account account)  {
         return accountService.registerTourGuide(account);
+    }
+    
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate(); // Hủy session
+        return ResponseEntity.ok("Đăng xuất thành công!");
     }
 }
