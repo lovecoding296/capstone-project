@@ -22,6 +22,7 @@ public class Tour {
     private String description;
     private double price;
     private String location;
+    private String thumbnail;
 
     @ManyToOne
     @JoinColumn(name = "guide_id")

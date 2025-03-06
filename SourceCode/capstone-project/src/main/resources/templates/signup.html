@@ -7,6 +7,7 @@
 	<title th:text="#{signup}">Đăng ký</title>
 	<link rel="stylesheet" href="styles.css">
 	<script src="script.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -18,27 +19,55 @@
 		<h1 th:text="#{signup}">Đăng ký</h1>
 
 		<div class="login-form">
-			<p th:text="#{haveAnAccount}">Đã có tài khoản? <a href="/login" th:text="#{login}">Đăng nhập</a></p>
-			<form>
+			<p th:inline="text">
+				[[#{haveAnAccount}]] <a href="/login">[[#{login}]]</a>
+			</p>
+
+			<form id="signupForm">
 				<label for="email">Email:</label>
 				<input type="email" id="email" placeholder="Email" required>
 
 				<label for="password" th:text="#{password}">Mật khẩu:</label>
 				<input type="password" id="password" th:attr="placeholder=#{password}" required>
 
-				<label for="password" th:text="#{repassword}">Nhập lại mật khẩu:</label>
+				<label for="repassword" th:text="#{repassword}">Nhập lại mật khẩu:</label>
 				<input type="password" id="repassword" th:attr="placeholder=#{repassword}" required>
-				<div class="policy">
-					<p th:text="#{8characterCondition}">*Ít nhất 8 ký tự</p">
-					<p th:text="#{uppercaseCondition}">*Ít nhất 1 chữ cái viết hoa</p">
-					<p th:text="#{specialCondition}">*Ít nhất 1 ký tự đặc biệt (!@!#$%^&*)</p">
-					<p th:text="#{passwordCondition}">*Phải trùng với mật khẩu đã cung cấp</p">
 
+				<div class="policy">
+					<p id="8characterCondition">
+						<span class="error-icon"> • </span>
+						<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
+							style="display: none;">
+							<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>
+						</svg>
+						<span th:text="#{8characterCondition}"></span>
+					</p>
+					<p id="uppercaseCondition">
+						<span class="error-icon"> • </span>
+						<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
+							style="display: none;">
+							<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>
+						</svg>
+						<span th:text="#{uppercaseCondition}"></span>
+					</p>
+					<p id="specialCondition">
+						<span class="error-icon"> • </span>
+						<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
+							style="display: none;">
+							<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>
+						</svg>
+						<span th:text="#{specialCondition}"></span>
+					</p>
+					<p id="passwordCondition">
+						<span class="error-icon"> • </span>
+						<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
+							style="display: none;">
+							<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>
+						</svg>
+						<span th:text="#{passwordCondition}"></span>
+					</p>
 					<label>
-						<input id="myCheckBox" type="checkbox" name="partnerType" th:text="#{policyCondition}"> Chấp nhận Điều khoản & Điều kiện,
-						Chính
-						sách Bảo mật và
-						Chính sách Hủy bỏ.
+						<input id="myCheckBox" type="checkbox" name="partnerType" th:text="#{policyCondition}">
 					</label>
 				</div>
 
@@ -46,35 +75,102 @@
 			</form>
 		</div>
 	</div>
+
 	<div th:replace="~{components :: footer}"></div>
 
-
 	<script>
+		// Enable or disable the submit button based on input validity
 		function checkInputs() {
-		    var email = document.getElementById('email').value;
-		    var password = document.getElementById('password').value;
-			var repassword = document.getElementById('password').value;
-			var acceptPolicy = document.getElementById('myCheckBox').checked;
-			
-		    var button = document.getElementById('signup');
-			
+			var email = $('#email').val();
+			var password = $('#password').val();
+			var repassword = $('#repassword').val();
+			var acceptPolicy = $('#myCheckBox').prop('checked');
+			var button = $('#signup');
 
-		    if (email && password && repassword && acceptPolicy) {
-		      button.disabled = false; // Enable the button
-		    } else {
-		      button.disabled = true; // Disable the button
-		    }
-		  }
+			if (email && password && repassword && acceptPolicy && password === repassword) {
+				button.prop('disabled', false); // Enable the button
+			} else {
+				button.prop('disabled', true); // Disable the button
+			}
+		}
 
-		  // Add event listeners to both inputs
-		  document.getElementById('email').addEventListener('input', checkInputs);
-		  document.getElementById('password').addEventListener('input', checkInputs);
-		  document.getElementById('repassword').addEventListener('input', checkInputs);
-		  document.getElementById('myCheckBox').addEventListener('change', checkInputs);
-		
+		$(document).ready(function () {
+			function validatePassword() {
+				var password = $('#password').val();
+				var repassword = $('#repassword').val();
+
+				// Kiểm tra điều kiện
+				var isLongEnough = password.length >= 8;
+				var hasUpperCase = /[A-Z]/.test(password);
+				var hasSpecialChar = /[!@#$%^&*]/.test(password);
+				var isMatching = password === repassword && password.length > 0;
+
+				function toggleValidation(condition, selector) {
+				    if (condition) {
+				        $(selector).find('.error-icon').hide();
+				        $(selector).find('.success-icon').show();
+						$(selector).css('color', 'green');
+				    } else {
+				        $(selector).find('.error-icon').show();
+				        $(selector).find('.success-icon').hide();
+						$(selector).css('color', 'red');
+				    }
+				}
+
+				toggleValidation(isLongEnough, '#8characterCondition');
+				toggleValidation(hasUpperCase, '#uppercaseCondition');
+				toggleValidation(hasSpecialChar, '#specialCondition');
+				toggleValidation(isMatching, '#passwordCondition');
+			}
+
+			// Gọi validatePassword khi người dùng nhập vào ô password hoặc repassword
+			$('#password, #repassword').on('input', validatePassword);
+		});
+
+		function successIcon() {
+			return `<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>`;
+		}
+
+		function errorIcon() {
+			return ``;
+		}
+
+
+		// Add event listeners to inputs using jQuery
+		$('#email, #password, #repassword').on('input', checkInputs);
+		$('#myCheckBox').on('change', checkInputs);
+
+
+		// Handle form submission with AJAX using jQuery
+		$('#signupForm').on('submit', function (e) {
+			e.preventDefault(); // Prevent default form submission
+
+			var email = $('#email').val();
+			var password = $('#password').val();
+
+			var touristData = {
+				email: email,
+				password: password
+			};
+
+			// Sending data to API using jQuery AJAX
+			$.ajax({
+				url: '/signup',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(touristData),
+				success: function (response) {
+					alert('Registration successful!');
+					window.location.href = '/';
+				},
+				error: function (xhr, status, error) {
+					alert('Error: ' + xhr.responseJSON.message);
+					console.error(error);
+				}
+			});
+		});
 	</script>
 
 </body>
-
 
 </html>

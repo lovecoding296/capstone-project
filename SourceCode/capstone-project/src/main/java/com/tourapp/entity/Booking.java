@@ -22,7 +22,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "tourist_id")
-    private User tourist;
+    private Tourist tourist;
 
     @ManyToOne
     @JoinColumn(name = "tour_id")

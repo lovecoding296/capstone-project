@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CapstoneProjectApplication {
 
 	public static void main(String[] args) {
-		
 		System.out.println("Running main...");
 		SpringApplication.run(CapstoneProjectApplication.class, args);
 	}
