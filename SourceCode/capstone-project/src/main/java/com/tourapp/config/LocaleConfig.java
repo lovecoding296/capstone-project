@@ -1,5 +1,5 @@
 
-package com.example.demo;
+package com.tourapp.config;
 
 import java.util.Locale;
 import java.util.TimeZone;
