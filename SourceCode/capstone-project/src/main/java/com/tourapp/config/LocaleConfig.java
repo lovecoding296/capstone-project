@@ -16,7 +16,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 public class LocaleConfig implements WebMvcConfigurer{
 
 	@Bean
-	public LocaleResolver localeResolver() {
+	LocaleResolver localeResolver() {
 		System.out.println("localeResolver");
 		SessionLocaleResolver resolver = new SessionLocaleResolver();
 		resolver.setDefaultLocale(new Locale("vn"));
@@ -25,7 +25,7 @@ public class LocaleConfig implements WebMvcConfigurer{
 	}
 
 	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() {
+	LocaleChangeInterceptor localeChangeInterceptor() {
 		System.out.println("localeChangeInterceptor");
 		LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();		
 		interceptor.setParamName("lang"); // Change language via URL param		

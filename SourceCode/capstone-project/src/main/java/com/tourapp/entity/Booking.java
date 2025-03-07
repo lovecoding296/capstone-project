@@ -7,11 +7,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Booking {
@@ -22,7 +24,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "tourist_id")
-    private Tourist tourist;
+    private AppUser tourist;
 
     @ManyToOne
     @JoinColumn(name = "tour_id")

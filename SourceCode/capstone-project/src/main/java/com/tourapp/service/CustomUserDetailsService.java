@@ -3,48 +3,32 @@ package com.tourapp.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import com.tourapp.entity.Account;
-import com.tourapp.entity.TourGuide;
-import com.tourapp.entity.Tourist;
-import com.tourapp.repository.AccountRepository;
-import com.tourapp.repository.TourGuideRepository;
-import com.tourapp.repository.TouristRepository;
-
-import jakarta.servlet.http.HttpSession;
+import com.tourapp.entity.AppUser;
+import com.tourapp.repository.UserRepository;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-	private final TouristRepository touristRepository;
-	private final TourGuideRepository tourGuideRepository;
-	private final AccountRepository accountRepository;
-	private final HttpSession session;
-
-	public CustomUserDetailsService(TouristRepository touristRepository, TourGuideRepository tourGuideRepository,
-			AccountRepository accountRepository, HttpSession session) {
-		this.touristRepository = touristRepository;
-		this.tourGuideRepository = tourGuideRepository;
-		this.session = session;
-		this.accountRepository = accountRepository;
-	}
+	@Autowired
+	private UserRepository accountRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		
-		Account account = accountRepository.findByEmail(email);
-		if(account != null) {
+		AppUser user = accountRepository.findByEmail(email);
+		if(user != null) {
 			System.out.println("Login successful");
-			session.setAttribute("USER_SESSION", email);
+
 			return new User(
-					account.getEmail(),
-					account.getPassword(),
-	                Collections.singletonList(() -> account.getRole().toString())
+					user.getEmail(),
+					user.getPassword(),
+	                Collections.singletonList(() -> user.getRole().toString())
 	            ); 
 		}
 

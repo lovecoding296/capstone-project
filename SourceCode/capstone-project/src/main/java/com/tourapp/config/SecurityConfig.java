@@ -19,15 +19,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 public class SecurityConfig {
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
     
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     	System.out.println("Phi check login");
         http
             .authorizeHttpRequests(auth -> auth
+        		.requestMatchers("/profile").authenticated()
                 .anyRequest().permitAll() // Allow all requests
             )
             .formLogin(form -> form
@@ -72,7 +73,7 @@ public class SecurityConfig {
 //    }
     
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
     
