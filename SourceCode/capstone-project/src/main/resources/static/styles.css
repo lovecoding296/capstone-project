@@ -214,7 +214,6 @@ body {
 
 input {
 	border: none;
-	background: transparent;
 	outline: none;
 	padding: 8px;
 	flex-grow: 1;
@@ -683,7 +682,7 @@ input {
 .login-container label {
 	display: block;
 	text-align: left;
-	font-size: 14px;
+	font-size: 16px;
 	margin: 5px 0;
 }
 

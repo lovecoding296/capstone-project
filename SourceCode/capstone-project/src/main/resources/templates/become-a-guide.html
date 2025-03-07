@@ -7,13 +7,17 @@
 	<title>Đăng ký làm Hướng dẫn viên</title>
 	<link rel="stylesheet" href="styles.css">
 	<script src="script.js"></script>
-
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 	<style>
 		.login-container .login-form-container {
 			display: flex;
 			gap: 10px;
 			padding: 80px;
+		}
+		
+		.login-form {
+			height: 360px;
 		}
 
 		.login-form input {
@@ -64,12 +68,12 @@
 		}
 
 		#experience {
-			background: none;
 			border-radius: 25px;
 			width: 500px;
 			padding: 10px;
 			border: 1px solid #ccc;
 		}
+
 		.dropdown-menu input {
 			width: 15px;
 		}
@@ -89,25 +93,54 @@
 		<form>
 			<div class="login-form-container">
 				<div class="login-form">
-					<label for="email">Email:</label>
+					<label for="email">Email</label>
 					<input type="email" id="email" placeholder="Email" required>
 
-					<label for="password">Mật khẩu:</label>
-					<input type="password" id="password" placeholder="Mật khẩu" required>
+					<label for="password" th:text="#{password}"></label>
+					<input type="password" id="password" th:attr="placeholder=#{password}" required>
 
-					<label for="password">Nhập lại mật khẩu:</label>
-					<input type="password" id="repassword" placeholder="Nhập lại mật khẩu:" required>
+					<label for="repassword" th:text="#{repassword}"></label>
+					<input type="password" id="repassword" th:attr="placeholder=#{repassword}" required>
+
 					<div class="policy">
-						<p>*Ít nhất 8 ký tự</p>
-						<p>*Ít nhất 1 chữ cái viết hoa</p>
-						<p>*Ít nhất 1 ký tự đặc biệt (!@!#$%^&*)</p>
-						<p>*Phải trùng với mật khẩu đã cung cấp</p>
-
+						<p id="8characterCondition">
+							<span class="error-icon"> • </span>
+							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
+								style="display: none;">
+								<path fill="green"
+									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
+							</svg>
+							<span th:text="#{8characterCondition}"></span>
+						</p>
+						<p id="uppercaseCondition">
+							<span class="error-icon"> • </span>
+							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
+								style="display: none;">
+								<path fill="green"
+									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
+							</svg>
+							<span th:text="#{uppercaseCondition}"></span>
+						</p>
+						<p id="specialCondition">
+							<span class="error-icon"> • </span>
+							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
+								style="display: none;">
+								<path fill="green"
+									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
+							</svg>
+							<span th:text="#{specialCondition}"></span>
+						</p>
+						<p id="passwordCondition">
+							<span class="error-icon"> • </span>
+							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
+								style="display: none;">
+								<path fill="green"
+									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
+							</svg>
+							<span th:text="#{passwordCondition}"></span>
+						</p>
 						<label>
-							<input id="myCheckBox" type="checkbox" name="partnerType"> Chấp nhận Điều khoản & Điều kiện,
-							Chính
-							sách Bảo mật và
-							Chính sách Hủy bỏ.
+							<input id="myCheckBox" type="checkbox" name="partnerType" th:text="#{policyCondition}">
 						</label>
 					</div>
 				</div>
@@ -115,15 +148,10 @@
 					<label for="name">Họ tên:</label>
 					<input id="name" placeholder="Họ tên:" required>
 
-					<label for="city">Thành phố:</label>
-					<input id="city" placeholder="Thành phố:" required>
-
-					<!-------------TODO------------------------->
-
 
 					<label for="city">Chọn tỉnh/thành phố:</label>
 					<div class="dropdown">
-						<input type="text" id="cityInput" placeholder="Tìm kiếm...">
+						<input type="text" id="cities" placeholder="Tìm kiếm...">
 						<div class="dropdown-menu" id="cityMenu">
 							<label><input type="checkbox" value="An Giang"> An Giang</label>
 							<label><input type="checkbox" value="Bà Rịa - Vũng Tàu"> Bà Rịa - Vũng Tàu</label>
@@ -193,7 +221,7 @@
 					</div>
 
 					<script>
-						const input = document.getElementById("cityInput");
+						const input = document.getElementById("cities");
 						const dropdown = document.querySelector(".dropdown");
 						const menu = document.getElementById("cityMenu");
 
@@ -243,26 +271,86 @@
 
 	<script>
 		function checkInputs() {
-			var email = document.getElementById('email').value;
-			var password = document.getElementById('password').value;
-			var repassword = document.getElementById('password').value;
-			var acceptPolicy = document.getElementById('myCheckBox').checked;
+			var email = $('#email').val();
+			var password = $('#password').val();
+			var repassword = $('#repassword').val();
+			var acceptPolicy = $('#myCheckBox').prop('checked');
+			var button = $('#signup');
 
-			var button = document.getElementById('signup');
-
-
-			if (email && password && repassword && acceptPolicy) {
-				button.disabled = false; // Enable the button
+			if (email && password && repassword && acceptPolicy && password === repassword) {
+				button.prop('disabled', false); // Enable the button
 			} else {
-				button.disabled = true; // Disable the button
+				button.prop('disabled', true); // Disable the button
 			}
 		}
 
-		// Add event listeners to both inputs
-		document.getElementById('email').addEventListener('input', checkInputs);
-		document.getElementById('password').addEventListener('input', checkInputs);
-		document.getElementById('repassword').addEventListener('input', checkInputs);
-		document.getElementById('myCheckBox').addEventListener('change', checkInputs);
+		$(document).ready(function () {
+			function validatePassword() {
+				var password = $('#password').val();
+				var repassword = $('#repassword').val();
+
+				// Kiểm tra điều kiện
+				var isLongEnough = password.length >= 8;
+				var hasUpperCase = /[A-Z]/.test(password);
+				var hasSpecialChar = /[!@#$%^&*]/.test(password);
+				var isMatching = password === repassword && password.length > 0;
+
+				function toggleValidation(condition, selector) {
+					if (condition) {
+						$(selector).find('.error-icon').hide();
+						$(selector).find('.success-icon').show();
+						$(selector).css('color', 'green');
+					} else {
+						$(selector).find('.error-icon').show();
+						$(selector).find('.success-icon').hide();
+						$(selector).css('color', 'red');
+					}
+				}
+
+				toggleValidation(isLongEnough, '#8characterCondition');
+				toggleValidation(hasUpperCase, '#uppercaseCondition');
+				toggleValidation(hasSpecialChar, '#specialCondition');
+				toggleValidation(isMatching, '#passwordCondition');
+			}
+
+			// Gọi validatePassword khi người dùng nhập vào ô password hoặc repassword
+			$('#password, #repassword').on('input', validatePassword);
+		});
+
+		// Add event listeners to inputs using jQuery
+		$('#email, #password, #repassword').on('input', checkInputs);
+		$('#myCheckBox').on('change', checkInputs);
+
+
+		// Handle form submission with AJAX using jQuery
+		$('#signupForm').on('submit', function (e) {
+			e.preventDefault(); // Prevent default form submission
+
+			var email = $('#email').val();
+			var password = $('#password').val();
+
+			var touristData = {
+				email: email,
+				password: password
+			};
+
+			// Sending data to API using jQuery AJAX
+			$.ajax({
+				url: '/api/auth/signup/tourist',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(touristData),
+				success: function (response) {
+					alert('Registration successful!');
+					window.location.href = '/';
+				},
+				error: function (xhr, status, error) {
+					alert('Error: ' + xhr.responseJSON.message);
+					console.error(error);
+				}
+			});
+		});
+	</script>
 
 	</script>
 
