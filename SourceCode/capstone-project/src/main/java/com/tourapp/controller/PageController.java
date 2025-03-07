@@ -22,6 +22,11 @@ public class PageController {
     public String home() {
         return ViewPaths.HOME;
     }
+	
+	@GetMapping("/2")
+    public String home2() {
+        return "home2";
+    }
 
     @GetMapping("/login")
     public String login() {
