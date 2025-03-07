@@ -91,7 +91,7 @@
 
 	<div class="login-container">
 		<h3>Trở thành hướng dẫn viên</h3>
-		<form>
+		<form id="signupForm">
 			<div class="login-form-container">
 				<div class="login-form">
 					<label for="email">Email</label>
@@ -257,8 +257,8 @@
 
 
 
-					<label for="years-of-experience">Số năm kinh nghiệm:</label>
-					<input required>
+					<label for="guideLicense">Giấp phép hướng dẫn:</label>
+					<input id="guideLicense" name="guideLicense" required>
 					<label for="experience">Thông tin chi tiết về kinh nghiệp hướng dẫn của bạn:</label>
 					<textarea id="experience" name="experience" rows="4" cols="50" required></textarea>
 				</div>
@@ -325,32 +325,34 @@
 
 		// Handle form submission with AJAX using jQuery
 		$('#signupForm').on('submit', function (e) {
-			e.preventDefault(); // Prevent default form submission
+		        e.preventDefault(); // Ngăn chặn load lại trang
+				console.log('signupForm');
+				
+		        // Thu thập dữ liệu từ form
+		        var formData = {
+		            email: $('#email').val(),
+		            password: $('#password').val(),
+		            name: $('#name').val(),
+		            cities: $('#cities').val().split(',').map(city => city.trim()),
+		            guideLicense: $('#guideLicense').val(),
+		            experience: $('#experience').val()
+		        };
 
-			var email = $('#email').val();
-			var password = $('#password').val();
-
-			var touristData = {
-				email: email,
-				password: password
-			};
-
-			// Sending data to API using jQuery AJAX
-			$.ajax({
-				url: '/api/auth/signup/tourist',
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(touristData),
-				success: function (response) {
-					alert('Registration successful!');
-					window.location.href = '/';
-				},
-				error: function (xhr, status, error) {
-					alert('Error: ' + xhr.responseJSON.message);
-					console.error(error);
-				}
-			});
-		});
+		        // Gửi dữ liệu qua AJAX
+		        $.ajax({
+		            type: 'POST',
+		            url: '/api/auth/signup/tour-guide',  // API từ backend Spring Boot
+		            contentType: 'application/json',
+		            data: JSON.stringify(formData),
+		            success: function (response) {
+		                alert("Đăng ký thành công!");
+		                window.location.href = "/";  // Chuyển hướng sau khi thành công
+		            },
+		            error: function (xhr, status, error) {
+		                alert("Đăng ký thất bại: " + xhr.responseText);
+		            }
+		        });
+		    });
 	</script>
 
 	</script>

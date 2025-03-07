@@ -32,8 +32,12 @@
 						</th:block>
 					</div>
 				</li>
-				<li><a href="#" th:text="#{findtour}"></a></li>
-				<li><a href="#" th:text="#{destination}"></a></li>
+				
+				<li><a href="/tours" th:text="#{findtour}"></a></li>
+				<li><a href="/tours/create" sec:authorize="hasRole('ROLE_TOUR_GUIDE')">Tạo Tour</a></li>
+				
+				
+				<!--<li><a href="#" th:text="#{destination}"></a></li>-->
 				<li><a href="/become-a-guide" th:text="#{becomeAGuide}"></a></li>
 				<li>
 					<a id="userBtn" onclick="toggleUserPopup()">

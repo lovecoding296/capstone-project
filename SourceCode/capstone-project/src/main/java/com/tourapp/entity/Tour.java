@@ -1,6 +1,11 @@
 package com.tourapp.entity;
 
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,9 +25,16 @@ public class Tour {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String title;
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String description;
+    
     private double price;
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String location;
     
     private String thumbnail_0;
@@ -31,6 +43,12 @@ public class Tour {
     private String thumbnail_3;
     private String thumbnail_4;
     private String thumbnail_5;
+    
+    private LocalDate startDate;
+    private LocalDate endDate;
+    
+    @Enumerated(EnumType.STRING)
+    private TourType type;
 
     @ManyToOne
     @JoinColumn(name = "guide_id")

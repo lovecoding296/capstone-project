@@ -12,7 +12,7 @@ public class TestSecurityController {
     public String checkAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            return "Đã đăng nhập với username: " + authentication.getName();
+            return "Đã đăng nhập với username: " + authentication.getName() + " " + authentication.getAuthorities().toString();
         }
         return "Chưa đăng nhập";
     }

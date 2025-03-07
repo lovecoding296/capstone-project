@@ -20,6 +20,7 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String name;
 
     @Email(message = "Invalid email format")
@@ -38,28 +39,36 @@ public class AppUser {
     private String tiktok;
     private String instagram;
     private String profilePicture;
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String city;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
     // Thuộc tính dành riêng cho hướng dẫn viên du lịch
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String bio;
     
     @ElementCollection
     @CollectionTable(name = "tour_guide_languages", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "language")
+    @Column(name = "language", columnDefinition = "NVARCHAR(255)")
     private List<String> languages;
 
     @ElementCollection
     @CollectionTable(name = "tour_guide_cities", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "city")
+    @Column(name = "city", columnDefinition = "NVARCHAR(255)")
     private List<String> cities;
 
     private double rating;
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String guideLicense;
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String experience;
 
     // Thuộc tính dành riêng cho khách du lịch
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String preferences;
 }

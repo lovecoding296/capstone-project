@@ -53,4 +53,16 @@ public class PageController {
 		}
 		return ViewPaths.PROFILE;
 	}
+	
+	@GetMapping("/tours")
+    public String showTourPage() {
+        return "tour-list";
+    }
+
+    @GetMapping("/tours/create")
+    public String showCreateTourPage() {
+        return "create-tour";
+    }
+
+ 
 }

@@ -23,8 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 		
 		AppUser user = accountRepository.findByEmail(email);
 		if(user != null) {
-			System.out.println("Login successful");
-
 			return new User(
 					user.getEmail(),
 					user.getPassword(),
