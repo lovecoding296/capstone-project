@@ -16,7 +16,12 @@ public class TourDTO {
     private String description;
     private double price;
     private String location;
-    private String thumbnail;
+    private String thumbnail_0;
+    private String thumbnail_1;
+    private String thumbnail_2;
+    private String thumbnail_3;
+    private String thumbnail_4;
+    private String thumbnail_5;
     private Long guideId;
     private String guideName;
 
@@ -27,7 +32,12 @@ public class TourDTO {
         this.description = tour.getDescription();
         this.price = tour.getPrice();
         this.location = tour.getLocation();
-        this.thumbnail = tour.getThumbnail();
+        this.thumbnail_0 = tour.getThumbnail_0();
+        this.thumbnail_1 = tour.getThumbnail_1();
+        this.thumbnail_2 = tour.getThumbnail_2();
+        this.thumbnail_3 = tour.getThumbnail_3();
+        this.thumbnail_4 = tour.getThumbnail_4();
+        this.thumbnail_5 = tour.getThumbnail_5();
         if (tour.getGuide() != null) {
             this.guideId = tour.getGuide().getId();
             this.guideName = tour.getGuide().getName();
@@ -42,7 +52,12 @@ public class TourDTO {
         tour.setDescription(this.description);
         tour.setPrice(this.price);
         tour.setLocation(this.location);
-        tour.setThumbnail(this.thumbnail);
+        tour.setThumbnail_0(this.thumbnail_0);
+        tour.setThumbnail_1(this.thumbnail_1);
+        tour.setThumbnail_2(this.thumbnail_2);
+        tour.setThumbnail_3(this.thumbnail_3);
+        tour.setThumbnail_4(this.thumbnail_4);
+        tour.setThumbnail_5(this.thumbnail_5);
         tour.setGuide(guide);
         return tour;
     }

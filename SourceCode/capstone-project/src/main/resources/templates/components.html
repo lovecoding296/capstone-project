@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 
 <head>
 	<meta charset="UTF-8">
@@ -41,13 +43,24 @@
 			</ul>
 		</nav>
 		<div id="userPopup" class="popup">
-			<div>
-				<a href="/signup" th:text="#{signup}"></a>
+			<div sec:authorize="isAnonymous()">
+				<div>
+					<a href="/signup" th:text="#{signup}"></a>
+				</div>
+				<div>
+					<a href="/login" th:text="#{login}"></a>
+				</div>
 			</div>
-			<div>
-				<a href="/login" th:text="#{login}"></a>
+			
+			<div sec:authorize="!isAnonymous()">
+				<div>
+					<a href="/profile">Account</a>
+				</div>
+				<div>
+					<a href="/logout">Log out</a>
+				</div>
 			</div>
-		</div>
+			</div>
 		<script>
 			function toggleUserPopup() {
 				console.log("click togglePopup")

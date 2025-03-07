@@ -1,5 +1,10 @@
 package com.tourapp.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +15,7 @@ import com.tourapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
@@ -58,5 +64,34 @@ public class UserService {
 		}
 		return null;
 	}
+	
+	public void updateUserProfile(String email, String name, String city, String phone, MultipartFile file) throws IOException {
+        AppUser user = userRepository.findByEmail(email);
+        if (user == null) return;
+        else logger.info("null");
+
+        user.setName(name);
+        user.setCity(city);
+        user.setPhone(phone);
+
+        if (file != null && !file.isEmpty()) {
+        	String emailName = email.replaceAll("@.+$", "");
+            String fileName = emailName + "_" + file.getOriginalFilename();
+            String uploadDir = "uploads/";
+
+            File uploadPath = new File(uploadDir);
+            if (!uploadPath.exists()) {
+                uploadPath.mkdirs();
+            }
+
+            File destination = new File(uploadDir + fileName);
+            Files.copy(file.getInputStream(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            user.setProfilePicture("/uploads/" + fileName);
+        } else {
+        	logger.info("null");
+        }
+
+        userRepository.save(user);
+    }
 
 }

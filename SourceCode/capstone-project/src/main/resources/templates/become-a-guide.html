@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<meta charset="UTF-8">
@@ -145,8 +146,8 @@
 					</div>
 				</div>
 				<div class="login-form">
-					<label for="name">Họ tên:</label>
-					<input id="name" placeholder="Họ tên:" required>
+					<label for="name" th:text="name">Họ tên:</label>
+					<input id="name" th:attr="placeholder=#{name}" required >
 
 
 					<label for="city">Chọn tỉnh/thành phố:</label>

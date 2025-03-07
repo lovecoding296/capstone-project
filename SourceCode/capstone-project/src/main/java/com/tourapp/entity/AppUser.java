@@ -37,7 +37,8 @@ public class AppUser {
     private String facebook;
     private String tiktok;
     private String instagram;
-    private String avatar;
+    private String profilePicture;
+    private String city;
 
     @Enumerated(EnumType.STRING)
     private Role role;

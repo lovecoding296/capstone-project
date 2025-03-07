@@ -19,7 +19,8 @@ public class UserDTO {
     private String facebook;
     private String tiktok;
     private String instagram;
-    private String avatar;
+    private String profilePicture;
+    private String city;
     private Role role;
 
     // Thuộc tính dành riêng cho hướng dẫn viên du lịch
@@ -42,7 +43,8 @@ public class UserDTO {
         this.facebook = user.getFacebook();
         this.tiktok = user.getTiktok();
         this.instagram = user.getInstagram();
-        this.avatar = user.getAvatar();
+        this.profilePicture = user.getProfilePicture();
+        this.city = user.getCity();
         this.role = user.getRole();
         this.bio = user.getBio();
         this.languages = user.getLanguages();
@@ -63,7 +65,8 @@ public class UserDTO {
         user.setFacebook(this.facebook);
         user.setTiktok(this.tiktok);
         user.setInstagram(this.instagram);
-        user.setAvatar(this.avatar);
+        user.setProfilePicture(this.profilePicture);
+        user.setCity(this.city);
         user.setRole(this.role);
         user.setBio(this.bio);
         user.setLanguages(this.languages);
@@ -82,7 +85,8 @@ public class UserDTO {
         user.setFacebook(this.facebook);
         user.setTiktok(this.tiktok);
         user.setInstagram(this.instagram);
-        user.setAvatar(this.avatar);
+        user.setProfilePicture(this.profilePicture);
+        user.setCity(this.city);
         user.setBio(this.bio);
         user.setLanguages(this.languages);
         user.setCities(this.cities);
