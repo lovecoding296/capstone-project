@@ -12,6 +12,9 @@ import com.tourapp.dto.UserDTO;
 import com.tourapp.entity.AppUser;
 import com.tourapp.entity.Role;
 import com.tourapp.repository.UserRepository;
+
+import jakarta.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,34 +67,47 @@ public class UserService {
 		}
 		return null;
 	}
-	
-	public void updateUserProfile(String email, String name, String city, String phone, MultipartFile file) throws IOException {
-        AppUser user = userRepository.findByEmail(email);
-        if (user == null) return;
-        else logger.info("null");
 
-        user.setName(name);
-        user.setCity(city);
-        user.setPhone(phone);
+	public void updateUserProfile(String email, String name, String city, String phone, MultipartFile file)
+			throws IOException {
+		AppUser user = userRepository.findByEmail(email);
+		if (user == null)
+			throw new IllegalArgumentException("User not found.");
 
-        if (file != null && !file.isEmpty()) {
-        	String emailName = email.replaceAll("@.+$", "");
-            String fileName = emailName + "_" + file.getOriginalFilename();
-            String uploadDir = "uploads/";
+		// Update only the fields that are not null
+		if (name != null && !name.trim().isEmpty()) {
+			user.setName(name);
+		}
 
-            File uploadPath = new File(uploadDir);
-            if (!uploadPath.exists()) {
-                uploadPath.mkdirs();
-            }
+		if (city != null && !city.trim().isEmpty()) {
+			user.setCity(city);
+		}
 
-            File destination = new File(uploadDir + fileName);
-            Files.copy(file.getInputStream(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            user.setProfilePicture("/uploads/" + fileName);
-        } else {
-        	logger.info("null");
-        }
+		if (phone != null) {
+			if (!phone.matches("0\\d{9}")) {
+				throw new IllegalArgumentException("Phone number must start with 0 and have exactly 10 digits.");
+			}
+			user.setPhone(phone);
+		}
+		if (file != null && !file.isEmpty()) {
+			String emailName = email.replaceAll("@.+$", "");
+			String fileName = emailName + "_" + file.getOriginalFilename();
+			String uploadDir = "uploads/";
 
-        userRepository.save(user);
-    }
+			File uploadPath = new File(uploadDir);
+			if (!uploadPath.exists()) {
+				uploadPath.mkdirs();
+			}
+
+			File destination = new File(uploadDir + fileName);
+			Files.copy(file.getInputStream(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			user.setProfilePicture("/uploads/" + fileName);
+		} else {
+			logger.info("No file chosen");
+		}
+
+		userRepository.save(user);
+
+	}
 
 }
