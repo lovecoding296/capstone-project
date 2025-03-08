@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -53,12 +54,7 @@ public class AppUser {
     @ElementCollection
     @CollectionTable(name = "tour_guide_languages", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "language", columnDefinition = "NVARCHAR(255)")
-    private List<String> languages;
-
-    @ElementCollection
-    @CollectionTable(name = "tour_guide_cities", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "city", columnDefinition = "NVARCHAR(255)")
-    private List<String> cities;
+    private Set<String> languages;
 
     private double rating;
     

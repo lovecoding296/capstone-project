@@ -1,36 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Đăng ký làm Hướng dẫn viên</title>
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 	<link rel="stylesheet" href="styles.css">
 	<script src="script.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 	<style>
-		.login-container .login-form-container {
-			display: flex;
-			gap: 10px;
-			padding: 80px;
-		}
-		
-		.login-form {
-			height: 360px;
+		#become-a-guide-container {
+			margin-top: 100px;
 		}
 
-		.login-form input {
+		#become-a-guide-container input {
 			width: 500px;
-		}
-
-		.login-form label {
-			width: 500px;
+			border-radius: 20px;
+			border: 1px solid #ccc;
+			padding: 10px;
 		}
 
 		/* Container styling */
-		.dropdown {
+		#become-a-guide-container .language-dropdown {
 			position: relative;
 			display: inline-block;
 			width: 522px;
@@ -40,7 +37,7 @@
 
 
 		/* Dropdown menu */
-		.dropdown-menu {
+		#become-a-guide-container .language-dropdown-menu {
 			position: absolute;
 			width: 100%;
 			background: white;
@@ -53,31 +50,32 @@
 		}
 
 		/* Show dropdown */
-		.dropdown.active .dropdown-menu {
+		#become-a-guide-container .language-dropdown.active .language-dropdown-menu {
 			display: block;
 		}
 
 		/* Searchable checkboxes */
-		.dropdown-menu label {
+		#become-a-guide-container .language-dropdown-menu label {
 			display: block;
 			padding: 5px;
 			cursor: pointer;
 		}
 
-		.dropdown-menu label:hover {
+		#become-a-guide-container .language-dropdown-menu label:hover {
 			background: #f1f1f1;
 		}
 
-		#experience {
+		#become-a-guide-container #experience {
 			border-radius: 25px;
 			width: 500px;
 			padding: 10px;
 			border: 1px solid #ccc;
 		}
 
-		.dropdown-menu input {
+		#become-a-guide-container .language-dropdown-menu input {
 			width: 15px;
 		}
+
 	</style>
 
 
@@ -87,21 +85,22 @@
 <body>
 
 	<!-- Navigation Bar -->
-	<div th:replace="~{components :: header}"></div>
+	<nav th:replace="page-component :: header"></nav>
 
-	<div class="login-container">
-		<h3>Trở thành hướng dẫn viên</h3>
-		<form id="signupForm">
-			<div class="login-form-container">
-				<div class="login-form">
-					<label for="email">Email</label>
-					<input type="email" id="email" placeholder="Email" required>
+	<div id="become-a-guide-container" class="container">
+		<h3 class="text-center">Trở thành hướng dẫn viên</h3>
+		<form id="signupForm" class="container">
 
-					<label for="password" th:text="#{password}"></label>
-					<input type="password" id="password" th:attr="placeholder=#{password}" required>
+			<div class="row">
+				<div class="col-md-6">
+					<label for="email">Email</label><br>
+					<input type="email" id="email" placeholder="Email" required><br><br>
 
-					<label for="repassword" th:text="#{repassword}"></label>
-					<input type="password" id="repassword" th:attr="placeholder=#{repassword}" required>
+					<label for="password" th:text="#{password}"></label><br>
+					<input type="password" id="password" th:attr="placeholder=#{password}" required><br><br>
+
+					<label for="repassword" th:text="#{repassword}"></label><br>
+					<input type="password" id="repassword" th:attr="placeholder=#{repassword}" required><br><br>
 
 					<div class="policy">
 						<p id="8characterCondition">
@@ -140,91 +139,28 @@
 							</svg>
 							<span th:text="#{passwordCondition}"></span>
 						</p>
-						<label>
-							<input id="myCheckBox" type="checkbox" name="partnerType" th:text="#{policyCondition}">
-						</label>
+
 					</div>
 				</div>
-				<div class="login-form">
-					<label for="name" th:text="name">Họ tên:</label>
-					<input id="name" th:attr="placeholder=#{name}" required >
+				<div class="col-md-6">
+					<label for="name" th:text="#{name}">Họ tên:</label><br>
+					<input id="name" th:attr="placeholder=#{name}" required><br><br>
 
 
-					<label for="city">Chọn tỉnh/thành phố:</label>
-					<div class="dropdown">
-						<input type="text" id="cities" placeholder="Tìm kiếm...">
-						<div class="dropdown-menu" id="cityMenu">
-							<label><input type="checkbox" value="An Giang"> An Giang</label>
-							<label><input type="checkbox" value="Bà Rịa - Vũng Tàu"> Bà Rịa - Vũng Tàu</label>
-							<label><input type="checkbox" value="Bắc Giang"> Bắc Giang</label>
-							<label><input type="checkbox" value="Bắc Kạn"> Bắc Kạn</label>
-							<label><input type="checkbox" value="Bạc Liêu"> Bạc Liêu</label>
-							<label><input type="checkbox" value="Bắc Ninh"> Bắc Ninh</label>
-							<label><input type="checkbox" value="Bến Tre"> Bến Tre</label>
-							<label><input type="checkbox" value="Bình Định"> Bình Định</label>
-							<label><input type="checkbox" value="Bình Dương"> Bình Dương</label>
-							<label><input type="checkbox" value="Bình Phước"> Bình Phước</label>
-							<label><input type="checkbox" value="Bình Thuận"> Bình Thuận</label>
-							<label><input type="checkbox" value="Cà Mau"> Cà Mau</label>
-							<label><input type="checkbox" value="Cần Thơ"> Cần Thơ</label>
-							<label><input type="checkbox" value="Cao Bằng"> Cao Bằng</label>
-							<label><input type="checkbox" value="Đà Nẵng"> Đà Nẵng</label>
-							<label><input type="checkbox" value="Đắk Lắk"> Đắk Lắk</label>
-							<label><input type="checkbox" value="Đắk Nông"> Đắk Nông</label>
-							<label><input type="checkbox" value="Điện Biên"> Điện Biên</label>
-							<label><input type="checkbox" value="Đồng Nai"> Đồng Nai</label>
-							<label><input type="checkbox" value="Đồng Tháp"> Đồng Tháp</label>
-							<label><input type="checkbox" value="Gia Lai"> Gia Lai</label>
-							<label><input type="checkbox" value="Hà Giang"> Hà Giang</label>
-							<label><input type="checkbox" value="Hà Nam"> Hà Nam</label>
-							<label><input type="checkbox" value="Hà Nội"> Hà Nội</label>
-							<label><input type="checkbox" value="Hà Tĩnh"> Hà Tĩnh</label>
-							<label><input type="checkbox" value="Hải Dương"> Hải Dương</label>
-							<label><input type="checkbox" value="Hải Phòng"> Hải Phòng</label>
-							<label><input type="checkbox" value="Hậu Giang"> Hậu Giang</label>
-							<label><input type="checkbox" value="Hòa Bình"> Hòa Bình</label>
-							<label><input type="checkbox" value="Hưng Yên"> Hưng Yên</label>
-							<label><input type="checkbox" value="Khánh Hòa"> Khánh Hòa</label>
-							<label><input type="checkbox" value="Kiên Giang"> Kiên Giang</label>
-							<label><input type="checkbox" value="Kon Tum"> Kon Tum</label>
-							<label><input type="checkbox" value="Lai Châu"> Lai Châu</label>
-							<label><input type="checkbox" value="Lâm Đồng"> Lâm Đồng</label>
-							<label><input type="checkbox" value="Lạng Sơn"> Lạng Sơn</label>
-							<label><input type="checkbox" value="Lào Cai"> Lào Cai</label>
-							<label><input type="checkbox" value="Long An"> Long An</label>
-							<label><input type="checkbox" value="Nam Định"> Nam Định</label>
-							<label><input type="checkbox" value="Nghệ An"> Nghệ An</label>
-							<label><input type="checkbox" value="Ninh Bình"> Ninh Bình</label>
-							<label><input type="checkbox" value="Ninh Thuận"> Ninh Thuận</label>
-							<label><input type="checkbox" value="Phú Thọ"> Phú Thọ</label>
-							<label><input type="checkbox" value="Phú Yên"> Phú Yên</label>
-							<label><input type="checkbox" value="Quảng Bình"> Quảng Bình</label>
-							<label><input type="checkbox" value="Quảng Nam"> Quảng Nam</label>
-							<label><input type="checkbox" value="Quảng Ngãi"> Quảng Ngãi</label>
-							<label><input type="checkbox" value="Quảng Ninh"> Quảng Ninh</label>
-							<label><input type="checkbox" value="Quảng Trị"> Quảng Trị</label>
-							<label><input type="checkbox" value="Sóc Trăng"> Sóc Trăng</label>
-							<label><input type="checkbox" value="Sơn La"> Sơn La</label>
-							<label><input type="checkbox" value="Tây Ninh"> Tây Ninh</label>
-							<label><input type="checkbox" value="Thái Bình"> Thái Bình</label>
-							<label><input type="checkbox" value="Thái Nguyên"> Thái Nguyên</label>
-							<label><input type="checkbox" value="Thanh Hóa"> Thanh Hóa</label>
-							<label><input type="checkbox" value="Thừa Thiên Huế"> Thừa Thiên Huế</label>
-							<label><input type="checkbox" value="Tiền Giang"> Tiền Giang</label>
-							<label><input type="checkbox" value="TP. Hồ Chí Minh"> TP. Hồ Chí Minh</label>
-							<label><input type="checkbox" value="Trà Vinh"> Trà Vinh</label>
-							<label><input type="checkbox" value="Tuyên Quang"> Tuyên Quang</label>
-							<label><input type="checkbox" value="Vĩnh Long"> Vĩnh Long</label>
-							<label><input type="checkbox" value="Vĩnh Phúc"> Vĩnh Phúc</label>
-							<label><input type="checkbox" value="Yên Bái"> Yên Bái</label>
+					<label for="language">Chọn ngôn ngữ:</label><br>
+					<div class="language-dropdown">
+						<input type="text" id="languages" placeholder="Tìm kiếm...">
+						<div class="language-dropdown-menu" id="languageMenu">
+							<label><input type="checkbox" value="English"> English</label>
+							<label><input type="checkbox" value="Vietnamese"> Vietnamese</label>
+							<label><input type="checkbox" value="Chinese"> Chinese</label>
 						</div>
 
 					</div>
-
 					<script>
-						const input = document.getElementById("cities");
-						const dropdown = document.querySelector(".dropdown");
-						const menu = document.getElementById("cityMenu");
+						const input = document.getElementById("languages");
+						const dropdown = document.querySelector(".language-dropdown");
+						const menu = document.getElementById("languageMenu");
 
 						// Show dropdown when clicking input
 						input.addEventListener("focus", () => {
@@ -255,22 +191,37 @@
 						});
 					</script>
 
+					<br><br>
 
 
-					<label for="guideLicense">Giấp phép hướng dẫn:</label>
-					<input id="guideLicense" name="guideLicense" required>
-					<label for="experience">Thông tin chi tiết về kinh nghiệp hướng dẫn của bạn:</label>
+					<label for="guideLicense">Giấp phép hướng dẫn:</label><br>
+					<input id="guideLicense" name="guideLicense" required><br><br>
+					<label for="experience">Thông tin chi tiết về kinh nghiệp hướng dẫn của bạn:</label><br>
 					<textarea id="experience" name="experience" rows="4" cols="50" required></textarea>
 				</div>
 			</div>
 
-			<button id="signup" type="submit" class="login-btn" disabled>Đăng ký</button>
+
+			<div class="text-center">
+				<label>
+					<input id="myCheckBox" type="checkbox" name="partnerType" th:text="#{policyCondition}"
+						style="width: 25px; ">
+				</label>
+				<br><br>
+				<button id="signup" type="submit" class="login-btn" disabled>Đăng ký</button>
+			</div>
+
 		</form>
 	</div>
-	<div th:replace="~{components :: footer}"></div>
+
+
+
+	<footer th:replace="~{page-component :: footer}"></footer>
 
 
 	<script>
+
+		<!------------------------------------->
 		function checkInputs() {
 			var email = $('#email').val();
 			var password = $('#password').val();
@@ -325,35 +276,37 @@
 
 		// Handle form submission with AJAX using jQuery
 		$('#signupForm').on('submit', function (e) {
-		        e.preventDefault(); // Ngăn chặn load lại trang
-				console.log('signupForm');
-				
-		        // Thu thập dữ liệu từ form
-		        var formData = {
-		            email: $('#email').val(),
-		            password: $('#password').val(),
-		            name: $('#name').val(),
-		            cities: $('#cities').val().split(',').map(city => city.trim()),
-		            guideLicense: $('#guideLicense').val(),
-		            experience: $('#experience').val()
-		        };
+			e.preventDefault(); // Ngăn chặn load lại trang
+			console.log('signupForm');
 
-		        // Gửi dữ liệu qua AJAX
-		        $.ajax({
-		            type: 'POST',
-		            url: '/api/auth/signup/tour-guide',  // API từ backend Spring Boot
-		            contentType: 'application/json',
-		            data: JSON.stringify(formData),
-		            success: function (response) {
-		                alert("Đăng ký thành công!");
-		                window.location.href = "/";  // Chuyển hướng sau khi thành công
-		            },
-		            error: function (xhr, status, error) {
-		                alert("Đăng ký thất bại: " + xhr.responseText);
-		            }
-		        });
-		    });
-	</script>
+			// Thu thập dữ liệu từ form
+			var formData = {
+				email: $('#email').val(),
+				password: $('#password').val(),
+				name: $('#name').val(),
+				languages: $('#languages').val().split(',').map(language => language.trim()),
+				guideLicense: $('#guideLicense').val(),
+				experience: $('#experience').val()
+			};
+
+			// Gửi dữ liệu qua AJAX
+			$.ajax({
+				type: 'POST',
+				url: '/api/auth/signup/tour-guide',  // API từ backend Spring Boot
+				contentType: 'application/json',
+				data: JSON.stringify(formData),
+				success: function (response) {
+					alert("Đăng ký thành công!");
+					window.location.href = "/";  // Chuyển hướng sau khi thành công
+				},
+				error: function (xhr, status, error) {
+					alert("Đăng ký thất bại: " + xhr.responseText);
+				}
+			});
+		});
+
+
+
 
 	</script>
 

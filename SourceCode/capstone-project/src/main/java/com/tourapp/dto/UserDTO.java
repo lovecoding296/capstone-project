@@ -2,6 +2,7 @@ package com.tourapp.dto;
 
 import lombok.*;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.tourapp.entity.AppUser;
@@ -25,8 +26,7 @@ public class UserDTO {
 
     // Thuộc tính dành riêng cho hướng dẫn viên du lịch
     private String bio;
-    private List<String> languages;
-    private List<String> cities;
+    private Set<String> languages;
     private double rating;
     private String guideLicense;
     private String experience;
@@ -48,7 +48,6 @@ public class UserDTO {
         this.role = user.getRole();
         this.bio = user.getBio();
         this.languages = user.getLanguages();
-        this.cities = user.getCities();
         this.rating = user.getRating();
         this.guideLicense = user.getGuideLicense();
         this.experience = user.getExperience();
@@ -70,7 +69,6 @@ public class UserDTO {
         user.setRole(this.role);
         user.setBio(this.bio);
         user.setLanguages(this.languages);
-        user.setCities(this.cities);
         user.setRating(this.rating);
         user.setGuideLicense(this.guideLicense);
         user.setExperience(this.experience);
@@ -89,7 +87,6 @@ public class UserDTO {
         user.setCity(this.city);
         user.setBio(this.bio);
         user.setLanguages(this.languages);
-        user.setCities(this.cities);
         user.setRating(this.rating);
         user.setGuideLicense(this.guideLicense);
         user.setExperience(this.experience);

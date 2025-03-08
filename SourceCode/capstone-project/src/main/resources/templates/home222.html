@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:text="#{logo}"></title>
+	<link rel="stylesheet" href="styles.css">
+	<script src="script.js"></script>
+</head>
+
+<body>
+
+	<!-- Navigation Bar -->
+	<div th:replace="~{components :: header}"></div>
+
+
+	<!-- Hero Section -->
+	<section class="hero">
+		<h1 th:text="#{sologan1}"></h1>
+		<p th:text="#{sologan2}"></p>
+
+		<div class="search-container">
+			<div class="tabs">
+				<div class="tab active">Tour</div>
+				<div class="tab" th:text="#{guides}"></div>
+				<!--<div class="tab">Shore Excursions</div>
+				<div class="tab">Safari</div>
+				<div class="tab">Live Virtual Tour</div>-->
+			</div>
+			<div class="input-container">
+				<svg data-icon="location-dot" aria-hidden="true" focusable="false" data-prefix="fas"
+					class="location-dot" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+					<path fill="currentColor"
+						d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z">
+					</path>
+				</svg>
+				<input type="text" th:attr="placeholder=#{whatCity}">
+				<input id="date-input" type="text" th:attr="placeholder=#{addDates}" readonly>
+				<button class="search-button" th:text="#{search}"></button>
+			</div>
+			<div class="calendar-container" id="calendar-container" style="display: none;">
+				<button id="prevMonth">&lt;</button>
+				<div class="calendar" id="calendar1"></div>
+				<div class="calendar" id="calendar2"></div>
+				<button id="nextMonth">&gt;</button>
+			</div>
+		</div>
+		<div class="features">
+			<div class="feature">
+				<img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent"
+					src="images/person.jpg">
+				<p th:text="#{privateTour}"></p>
+			</div>
+			<div class="feature">
+				<img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent"
+					src="images/location.jpg">
+				<p th:text="#{customizableItineraries}"></p>
+			</div>
+			<div class="feature">
+				<img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent"
+					src="images/phone.jpg">
+				<p th:text="#{flexibleCancellation}"></p>
+			</div>
+			<div class="feature">
+				<img loading="lazy" width="48" height="48" decoding="async" data-nimg="1" style="color:transparent"
+					src="images/headset.jpg">
+				<p th:text="#{247support}"></p>
+			</div>
+		</div>
+	</section>
+
+	<!-- Spotlight Destinations -->
+	<section class="spotlight">
+		<div th:replace="~{icons :: destination}"></div>
+		<h1 th:text="#{destination}"></h1>
+		<div class="destinations">
+			<div class="card">
+				<img src="images/ho-chi-minh.jpg" alt="Ho Chi Minh City">
+				<div class="overlay">
+					<span>📍 Ho Chi Minh City, Vietnam</span>
+				</div>
+			</div>
+			<div class="card">
+				<img src="images/cape-town.jpg" alt="Cape Town">
+				<div class="overlay">
+					<span>📍 Cape Town, South Africa</span>
+				</div>
+			</div>
+			<div class="card">
+				<img src="images/porto.jpg" alt="Porto">
+				<div class="overlay">
+					<span>📍 Porto, Portugal</span>
+				</div>
+			</div>
+			<div class="card">
+				<img src="images/kusadasi.jpg" alt="Kusadasi">
+				<div class="overlay">
+					<span>📍 Kusadasi, Türkiye</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<!--Guides -->
+	<section class="local-guides">
+		<div th:replace="~{icons :: person}"></div>
+		<h1 th:text="#{meetYourGuides}"></h1>
+		<div class="guides">
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide4.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Mr. Tuấn</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Hạ Long + Cát Bà + Cô Tô
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn" th:text="#{sendMessage}"></button>
+				</div>
+			</div>
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide3.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Nguyễn Khánh Nam</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Hà Giang + Cao Bằng
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn" th:text="#{sendMessage}"></button>
+				</div>
+			</div>
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide1.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Nguyen Linh</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Quảng Bình
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Name, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn" th:text="#{sendMessage}"></button>
+				</div>
+			</div>
+
+
+			<div class="profile-card">
+				<!-- Profile Image -->
+				<img src="images/avatar/guide2.jpg" alt="Diana B." class="profile-img">
+
+				<!-- Card Content -->
+				<div class="profile-card-content">
+					<h2 class="name">Hà Nguyễn</h2>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+					</div>
+
+					<!-- Location -->
+					<div class="location">
+						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+						Nha Trang
+					</div>
+
+					<!-- Languages -->
+					<div class="languages">
+						<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
+						Việt Nam, English
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="profile-card-footer">
+					<button class="message-btn" th:text="#{sendMessage}"></button>
+				</div>
+			</div>
+		</div>
+
+	</section>
+
+	<!-- Explore with us -->
+	<section class="explore-with-us">
+		<div th:replace="~{icons :: explore}"></div>
+		<h1 th:text="#{exploreWithUs}"></h1>
+		<img src="images/status/tour-guide.webp">
+		<div class="guide-status">
+			<div class="sologan">
+				<h1 th:text="#{sologan3a}"></h1>
+				<p><em th:text="#{sologan3b}"></em></p>
+			</div>
+			<div class="stats">
+				<div class="stat-item"><span th:text="#{travellersServed}"></span><span>100</span></div>
+				<div class="stat-item"><span th:text="#{guides}"></span><span>20</span></div>
+			</div>
+		</div>
+
+	</section>
+
+
+	<!--What travellers say -->
+	<section class="what-travellers-say">
+		<div th:replace="~{icons :: comment}"></div>
+		<h1 th:text="#{whatTravellersSay}"></h1>
+		<div class="comments">
+			<div class="comment-card">
+				<img src="images/icons/qoutes-icon.png" style="width: 45px; height: 45px;">
+				<!-- Card Content -->
+				<div class="content">
+					<p class="message">"Chuyến du lịch của tôi là một trong những trải nghiệm tuyệt vời nhất mà tôi từng
+						có!"</p>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐
+					</div>
+
+					<br>
+					<b>YenNguyen</b>
+				</div>
+			</div>
+
+			<div class="comment-card">
+				<img src="images/icons/qoutes-icon.png" style="width: 45px; height: 45px;">
+				<!-- Card Content -->
+				<div class="content">
+					<p class="message">"Chuyến du lịch của tôi là một trong những trải nghiệm tuyệt vời nhất mà tôi từng
+						có!"</p>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐
+					</div>
+
+					<br>
+					<b>YenNguyen</b>
+				</div>
+			</div>
+
+			<div class="comment-card">
+				<img src="images/icons/qoutes-icon.png" style="width: 45px; height: 45px;">
+				<!-- Card Content -->
+				<div class="content">
+					<p class="message">"Chuyến du lịch của tôi là một trong những trải nghiệm tuyệt vời nhất mà tôi từng
+						có!"</p>
+
+					<!-- Rating -->
+					<div class="rating">
+						⭐⭐⭐⭐⭐
+					</div>
+
+					<br>
+					<b>YenNguyen</b>
+				</div>
+			</div>
+		</div>
+
+	</section>
+
+	<div th:replace="~{components :: footer}"></div>
+
+</body>
+
+
+</html>
