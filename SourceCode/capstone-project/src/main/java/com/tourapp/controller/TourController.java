@@ -71,11 +71,6 @@ public class TourController {
 			model.addAttribute("errorMessage", "Không có dữ liệu nào được tìm thấy!");
 			return "error";
 		}
-		
-		
-
-		
-		
 	}
 
 }

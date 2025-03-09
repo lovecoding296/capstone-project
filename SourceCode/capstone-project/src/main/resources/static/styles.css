@@ -298,6 +298,13 @@ body {
 	background: #e0e0e0;
 }
 
+.guide-card-footer a {
+	display: block;
+	text-align: center;
+	color: black;
+	text-decoration: none;
+}
+
 .comment-card {
 	height: 250px;
 	border-radius: 12px;
