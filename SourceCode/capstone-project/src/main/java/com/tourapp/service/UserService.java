@@ -4,18 +4,21 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tourapp.dto.UserDTO;
 import com.tourapp.entity.AppUser;
 import com.tourapp.entity.Role;
 import com.tourapp.repository.UserRepository;
 
-import jakarta.validation.ConstraintViolationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +35,10 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	public void save(AppUser user) {
+		userRepository.save(user);
+	}
 
 	public AppUser registerTourist(AppUser user) {
 		return registerUser(user, Role.ROLE_TOURIST);
@@ -57,57 +64,104 @@ public class UserService {
 	}
 
 	public AppUser findByEmail(String email) {
-		return userRepository.findByEmail(email);
+	    return userRepository.findByEmail(email)
+	            .orElseThrow(() -> new AccessDeniedException("User not found with email: " + email));
 	}
 
-	public UserDTO getUserProfile(String email) {
-		AppUser user = userRepository.findByEmail(email);
-		if (user != null) {
-			return new UserDTO(user);
-		}
-		return null;
+
+	public AppUser getUserById(Long id) {
+	    return userRepository.findUserById(id)
+	            .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + id));
 	}
 
-	public void updateUserProfile(String email, String name, String city, String phone, MultipartFile file)
-			throws IOException {
-		AppUser user = userRepository.findByEmail(email);
-		if (user == null)
-			throw new IllegalArgumentException("User not found.");
 
-		// Update only the fields that are not null
-		if (name != null && !name.trim().isEmpty()) {
-			user.setName(name);
+
+	public AppUser updateCurrentUser(AppUser user, MultipartFile file) throws IOException {
+
+		AppUser currentUser = getCurrentAuthenticatedUser();
+
+        if (user == null) {
+            throw new IllegalArgumentException("Updated user information cannot be null.");
+        }
+		
+		
+		if (user.getName() != null && !user.getName().isEmpty()) {
+			currentUser.setName(user.getName());
+		}
+		if (user.getPhone() != null && !user.getPhone().isEmpty()) {
+			currentUser.setPhone(user.getPhone());
+		}
+		if (user.getFacebook() != null && !user.getFacebook().isEmpty()) {
+			currentUser.setFacebook(user.getFacebook());
+		}
+		if (user.getTiktok() != null && !user.getTiktok().isEmpty()) {
+			currentUser.setTiktok(user.getTiktok());
+		}
+		if (user.getInstagram() != null && !user.getInstagram().isEmpty()) {
+			currentUser.setInstagram(user.getInstagram());
+		}
+		if (user.getCity() != null && !user.getCity().isEmpty()) {
+			currentUser.setCity(user.getCity());
+		}
+		if (user.getBio() != null && !user.getBio().isEmpty()) {
+			currentUser.setBio(user.getBio());
+		}
+		if (user.getLanguages() != null && !user.getLanguages().isEmpty()) {
+			currentUser.setLanguages(user.getLanguages());
+		}
+		if (user.getGuideLicense() != null && !user.getGuideLicense().isEmpty()) {
+			currentUser.setGuideLicense(user.getGuideLicense());
+		}
+		if (user.getExperience() != null && !user.getExperience().isEmpty()) {
+			currentUser.setExperience(user.getExperience());
+		}
+		if (user.getPreferences() != null && !user.getPreferences().isEmpty()) {
+			currentUser.setPreferences(user.getPreferences());
 		}
 
-		if (city != null && !city.trim().isEmpty()) {
-			user.setCity(city);
-		}
+		// Xử lý ảnh đại diện
+        if (file != null && !file.isEmpty()) {
+            uploadProfilePicture(currentUser, file);
+        } else {
+            logger.info("No file chosen.");
+        }
 
-		if (phone != null) {
-			if (!phone.matches("0\\d{9}")) {
-				throw new IllegalArgumentException("Phone number must start with 0 and have exactly 10 digits.");
-			}
-			user.setPhone(phone);
-		}
-		if (file != null && !file.isEmpty()) {
-			String emailName = email.replaceAll("@.+$", "");
-			String fileName = emailName + "_" + file.getOriginalFilename();
-			String uploadDir = "uploads/";
-
-			File uploadPath = new File(uploadDir);
-			if (!uploadPath.exists()) {
-				uploadPath.mkdirs();
-			}
-
-			File destination = new File(uploadDir + fileName);
-			Files.copy(file.getInputStream(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			user.setProfilePicture("/uploads/" + fileName);
-		} else {
-			logger.info("No file chosen");
-		}
-
-		userRepository.save(user);
-
+		return userRepository.save(currentUser);
 	}
+	
+	
+    public AppUser getCurrentAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            throw new AccessDeniedException("Access Denied! Please log in.");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new AccessDeniedException("User not found."));
+    }
+
+    private void uploadProfilePicture(AppUser user, MultipartFile file) throws IOException {
+        // Kiểm tra định dạng file hợp lệ
+        Set<String> allowedMimeTypes = Set.of("image/jpeg", "image/png", "image/webp");
+        String contentType = file.getContentType();
+        if (contentType == null || !allowedMimeTypes.contains(contentType)) {
+            throw new IllegalArgumentException("Invalid file type. Only JPEG, PNG, and WEBP are allowed.");
+        }
+
+        String emailName = user.getEmail().replaceAll("@.+$", "");
+        String fileName = emailName + "_" + file.getOriginalFilename();
+        String uploadDir = "uploads/";
+
+        File uploadPath = new File(uploadDir);
+        if (!uploadPath.exists()) {
+            uploadPath.mkdirs();
+        }
+
+        File destination = new File(uploadDir + fileName);
+        Files.copy(file.getInputStream(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        user.setProfilePicture("/uploads/" + fileName);
+    }
 
 }

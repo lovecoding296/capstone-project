@@ -75,7 +75,6 @@
 		#become-a-guide-container .language-dropdown-menu input {
 			width: 15px;
 		}
-
 	</style>
 
 
@@ -85,22 +84,37 @@
 <body>
 
 	<!-- Navigation Bar -->
-	<nav th:replace="page-component :: header"></nav>
+	<nav th:replace="~{page-component :: header}"></nav>
+
+	<div th:if="${successMessage}" class="alert alert-success text-center">
+		<span th:text="${successMessage}"></span>
+	</div>
+
 
 	<div id="become-a-guide-container" class="container">
+		<div th:if="${successMessage}" class="alert alert-success text-center">
+			<span th:text="${successMessage}"></span>
+		</div>
+
 		<h3 class="text-center">Trở thành hướng dẫn viên</h3>
-		<form id="signupForm" class="container">
+		<form id="signupForm" class="container" th:action="@{/signup/tour-guide}" method="post"
+			th:object="${guideForm}">
 
 			<div class="row">
 				<div class="col-md-6">
 					<label for="email">Email</label><br>
-					<input type="email" id="email" placeholder="Email" required><br><br>
+					<input type="email" id="email" name="email" class="form-control" th:field="*{email}"
+						placeholder="Email" required>
+					<div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
 
-					<label for="password" th:text="#{password}"></label><br>
-					<input type="password" id="password" th:attr="placeholder=#{password}" required><br><br>
+					<label for="password">Mật khẩu</label>
+					<input type="password" id="password" name="password" class="form-control" placeholder="Mật khẩu"
+						th:field="*{password}" required>
+					<div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
 
-					<label for="repassword" th:text="#{repassword}"></label><br>
-					<input type="password" id="repassword" th:attr="placeholder=#{repassword}" required><br><br>
+					<label for="repassword">Nhập lại mật khẩu</label>
+					<input type="password" id="repassword" name="repassword" class="form-control"
+						placeholder="Nhập lại mật khẩu" required>
 
 					<div class="policy">
 						<p id="8characterCondition">
@@ -143,13 +157,16 @@
 					</div>
 				</div>
 				<div class="col-md-6">
-					<label for="name" th:text="#{name}">Họ tên:</label><br>
-					<input id="name" th:attr="placeholder=#{name}" required><br><br>
+					<label for="name">Họ tên</label>
+					<input type="text" id="name" name="name" class="form-control" th:field="*{name}"
+						placeholder="Họ tên" required>
+					<div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
 
 
 					<label for="language">Chọn ngôn ngữ:</label><br>
 					<div class="language-dropdown">
-						<input type="text" id="languages" placeholder="Tìm kiếm...">
+						<input type="text" id="languages" name="languages" class="form-control" th:field="*{languages}"
+							placeholder="Chọn ngôn ngữ:" required>
 						<div class="language-dropdown-menu" id="languageMenu">
 							<label><input type="checkbox" value="English"> English</label>
 							<label><input type="checkbox" value="Vietnamese"> Vietnamese</label>
@@ -195,20 +212,21 @@
 
 
 					<label for="guideLicense">Giấp phép hướng dẫn:</label><br>
-					<input id="guideLicense" name="guideLicense" required><br><br>
+					<input type="text" id="guideLicense" name="guideLicense" class="form-control"
+						th:field="*{guideLicense}" placeholder="Giấy phép hướng dẫn:" required>
 					<label for="experience">Thông tin chi tiết về kinh nghiệp hướng dẫn của bạn:</label><br>
-					<textarea id="experience" name="experience" rows="4" cols="50" required></textarea>
+					<textarea id="experience" name="experience" class="form-control" th:field="*{experience}"
+						placeholder="Thông tin chi tiết về kinh nghiệp hướng dẫn của bạn:" required></textarea>
 				</div>
 			</div>
 
 
 			<div class="text-center">
 				<label>
-					<input id="myCheckBox" type="checkbox" name="partnerType" th:text="#{policyCondition}"
-						style="width: 25px; ">
+					Bằng cách đăng ký, bạn đồng ý với Điều khoản và Chính sách quyền riêng tư của chúng tôi.
 				</label>
 				<br><br>
-				<button id="signup" type="submit" class="login-btn" disabled>Đăng ký</button>
+				<button id="signup" type="submit" class="login-btn btn btn-primary" disabled>Đăng ký</button>
 			</div>
 
 		</form>
@@ -226,10 +244,9 @@
 			var email = $('#email').val();
 			var password = $('#password').val();
 			var repassword = $('#repassword').val();
-			var acceptPolicy = $('#myCheckBox').prop('checked');
 			var button = $('#signup');
 
-			if (email && password && repassword && acceptPolicy && password === repassword) {
+			if (email && password && repassword && password === repassword) {
 				button.prop('disabled', false); // Enable the button
 			} else {
 				button.prop('disabled', true); // Disable the button
@@ -272,41 +289,6 @@
 		// Add event listeners to inputs using jQuery
 		$('#email, #password, #repassword').on('input', checkInputs);
 		$('#myCheckBox').on('change', checkInputs);
-
-
-		// Handle form submission with AJAX using jQuery
-		$('#signupForm').on('submit', function (e) {
-			e.preventDefault(); // Ngăn chặn load lại trang
-			console.log('signupForm');
-
-			// Thu thập dữ liệu từ form
-			var formData = {
-				email: $('#email').val(),
-				password: $('#password').val(),
-				name: $('#name').val(),
-				languages: $('#languages').val().split(',').map(language => language.trim()),
-				guideLicense: $('#guideLicense').val(),
-				experience: $('#experience').val()
-			};
-
-			// Gửi dữ liệu qua AJAX
-			$.ajax({
-				type: 'POST',
-				url: '/api/auth/signup/tour-guide',  // API từ backend Spring Boot
-				contentType: 'application/json',
-				data: JSON.stringify(formData),
-				success: function (response) {
-					alert("Đăng ký thành công!");
-					window.location.href = "/";  // Chuyển hướng sau khi thành công
-				},
-				error: function (xhr, status, error) {
-					alert("Đăng ký thất bại: " + xhr.responseText);
-				}
-			});
-		});
-
-
-
 
 	</script>
 

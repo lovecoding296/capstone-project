@@ -22,7 +22,7 @@ body {
 	background-size: cover;
 }
 
-.tour-card {
+/*.tour-card {
 	position: relative;
 	height: 280px;
 	background: #f8f9fa;
@@ -47,7 +47,7 @@ body {
 	padding: 5px 10px;
 	border-radius: 5px;
 	font-weight: bold;
-}
+}*/
 
 .guide-card {
 	position: relative;

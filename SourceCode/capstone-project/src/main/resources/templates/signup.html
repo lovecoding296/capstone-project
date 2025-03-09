@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<meta charset="UTF-8">
@@ -18,7 +17,7 @@
 <body>
 
 	<!-- Navigation Bar -->
-	<nav th:replace="page-component :: header"></nav>
+	<nav th:replace="~{page-component :: header}"></nav>
 
 	<div class="login-container">
 		<h1 th:text="#{signup}">Đăng ký</h1>
@@ -28,51 +27,27 @@
 				[[#{haveAnAccount}]] <a href="/login">[[#{login}]]</a>
 			</p>
 
-			<form id="signupForm">
+			<!-- Form đăng ký -->
+			<form th:action="@{/signup/tourist}" th:object="${user}" method="post">
 				<label for="email">Email:</label>
-				<input type="email" id="email" placeholder="Email" required>
+				<input type="email" id="email" th:field="*{email}" placeholder="Email" required>
+				<span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 
 				<label for="password" th:text="#{password}">Mật khẩu:</label>
-				<input type="password" id="password" th:attr="placeholder=#{password}" required>
+				<input type="password" id="password" th:field="*{password}" th:attr="placeholder=#{password}" required>
+				<span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
 
 				<label for="repassword" th:text="#{repassword}">Nhập lại mật khẩu:</label>
-				<input type="password" id="repassword" th:attr="placeholder=#{repassword}" required>
+				<input type="password" id="repassword" placeholder="Nhập lại mật khẩu" required>
+				<span class="error" id="repassword-error"></span>
 
 				<div class="policy">
-					<p id="8characterCondition">
-						<span class="error-icon"> • </span>
-						<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
-							style="display: none;">
-							<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>
-						</svg>
-						<span th:text="#{8characterCondition}"></span>
-					</p>
-					<p id="uppercaseCondition">
-						<span class="error-icon"> • </span>
-						<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
-							style="display: none;">
-							<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>
-						</svg>
-						<span th:text="#{uppercaseCondition}"></span>
-					</p>
-					<p id="specialCondition">
-						<span class="error-icon"> • </span>
-						<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
-							style="display: none;">
-							<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>
-						</svg>
-						<span th:text="#{specialCondition}"></span>
-					</p>
-					<p id="passwordCondition">
-						<span class="error-icon"> • </span>
-						<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
-							style="display: none;">
-							<path fill="green" d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z"/>
-						</svg>
-						<span th:text="#{passwordCondition}"></span>
-					</p>
+					<p id="8characterCondition">• <span th:text="#{8characterCondition}"></span></p>
+					<p id="uppercaseCondition">• <span th:text="#{uppercaseCondition}"></span></p>
+					<p id="specialCondition">• <span th:text="#{specialCondition}"></span></p>
+					<p id="passwordCondition">• <span th:text="#{passwordCondition}"></span></p>
 					<label>
-						<input id="myCheckBox" type="checkbox" name="partnerType" th:text="#{policyCondition}">
+						<span>Bằng cách đăng ký, bạn đồng ý với Điều khoản và Chính sách quyền riêng tư của chúng tôi.</span>
 					</label>
 				</div>
 
@@ -89,10 +64,9 @@
 			var email = $('#email').val();
 			var password = $('#password').val();
 			var repassword = $('#repassword').val();
-			var acceptPolicy = $('#myCheckBox').prop('checked');
 			var button = $('#signup');
 
-			if (email && password && repassword && acceptPolicy && password === repassword) {
+			if (email && password && repassword && password === repassword) {
 				button.prop('disabled', false); // Enable the button
 			} else {
 				button.prop('disabled', true); // Disable the button
@@ -111,15 +85,15 @@
 				var isMatching = password === repassword && password.length > 0;
 
 				function toggleValidation(condition, selector) {
-				    if (condition) {
-				        $(selector).find('.error-icon').hide();
-				        $(selector).find('.success-icon').show();
+					if (condition) {
+						$(selector).find('.error-icon').hide();
+						$(selector).find('.success-icon').show();
 						$(selector).css('color', 'green');
-				    } else {
-				        $(selector).find('.error-icon').show();
-				        $(selector).find('.success-icon').hide();
+					} else {
+						$(selector).find('.error-icon').show();
+						$(selector).find('.success-icon').hide();
 						$(selector).css('color', 'red');
-				    }
+					}
 				}
 
 				toggleValidation(isLongEnough, '#8characterCondition');
@@ -135,36 +109,6 @@
 		// Add event listeners to inputs using jQuery
 		$('#email, #password, #repassword').on('input', checkInputs);
 		$('#myCheckBox').on('change', checkInputs);
-
-
-		// Handle form submission with AJAX using jQuery
-		$('#signupForm').on('submit', function (e) {
-			e.preventDefault(); // Prevent default form submission
-
-			var email = $('#email').val();
-			var password = $('#password').val();
-
-			var touristData = {
-				email: email,
-				password: password
-			};
-
-			// Sending data to API using jQuery AJAX
-			$.ajax({
-				url: '/api/auth/signup/tourist',
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(touristData),
-				success: function (response) {
-					alert('Registration successful!');
-					window.location.href = '/';
-				},
-				error: function (xhr, status, error) {
-					alert('Error: ' + xhr.responseJSON.message);
-					console.error(error);
-				}
-			});
-		});
 	</script>
 
 </body>

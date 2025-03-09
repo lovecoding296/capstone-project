@@ -35,20 +35,15 @@ public class Tour {
     private double price;
     
     @Column(columnDefinition = "NVARCHAR(255)")
-    private String location;
+    private String destination;
     
-    private String thumbnail_0;
-    private String thumbnail_1;
-    private String thumbnail_2;
-    private String thumbnail_3;
-    private String thumbnail_4;
-    private String thumbnail_5;
+    private String thumbnail;
     
     private LocalDate startDate;
     private LocalDate endDate;
     
-    @Enumerated(EnumType.STRING)
-    private TourType type;
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String type;
 
     @ManyToOne
     @JoinColumn(name = "guide_id")

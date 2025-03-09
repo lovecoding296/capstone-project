@@ -5,14 +5,13 @@
 	<title>Profile</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:text="#{logo}"></title>
 
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Bootstrap Bundle with Popper -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet" href="styles.css">
-	<script src="script.js"></script>
+	<link rel="stylesheet" href="/styles.css">
+	<script src="/script.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 	<style>
@@ -57,119 +56,193 @@
 			font-size: 14px;
 			color: #333;
 		}
+
+
+		/* Dropdown menu */
+		#profileForm .language-dropdown-menu {
+			position: absolute;
+			width: 500px;
+			background: white;
+			border: 1px solid #ccc;
+			max-height: 200px;
+			overflow-y: auto;
+			display: none;
+			z-index: 10;
+			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+		}
+
+		/* Show dropdown */
+		#profileForm .language-dropdown.active .language-dropdown-menu {
+			display: block;
+		}
+
+		/* Searchable checkboxes */
+		#profileForm .language-dropdown-menu label {
+			display: block;
+			padding: 5px;
+			cursor: pointer;
+		}
+
+		#profileForm .language-dropdown-menu label:hover {
+			background: #f1f1f1;
+		}
+
+		#profileForm #experience {
+			border-radius: 25px;
+			width: 500px;
+			padding: 10px;
+			border: 1px solid #ccc;
+		}
+
+		#profileForm .language-dropdown-menu input {
+			width: 15px;
+		}
 	</style>
 </head>
 
 <body>
 	<!-- Navigation Bar -->
-	<nav th:replace="page-component :: header"></nav>
+	<nav th:replace="~{page-component :: header}"></nav>
 
-
-
-	
-
-	<div th:if="${param.success}">
-		<p style="color: green;">Profile updated successfully!</p>
-	</div>
 
 	<div class="container" style="margin-top: 80px;">
-		<h2 class="text-center">Profile Information</h2>
+		<h2 class="text-center">Thông tin hồ sơ</h2>
 
-		<form id="profileForm" class="login-form container" enctype="multipart/form-data">
+		<form id="profileForm" class="login-form container" enctype="multipart/form-data" th:action="@{/profile}"
+			method="post" th:object="${user}">
 			<div class="row">
 				<div class="col-md-6">
 					<div>
 						<label>Email:</label><br>
-						<input type="text" name="name" th:value="${user.email}" disabled>
+						<input type="text" name="email" th:field="*{email}" class="form-control" readonly>
 					</div>
 					<div>
-						<label>Name:</label><br>
-						<input type="text" name="name" th:value="${user.name}">
+						<label>Tên:</label><br>
+						<input type="text" name="name" th:field="*{name}" class="form-control">
+						<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red;"></p>
 					</div>
 					<div>
-						<label>City:</label>
+						<label>Thành phố:</label>
 						<br>
-						<input type="text" name="city" th:value="${user.city}">
+						<input type="text" id="city" th:field="*{city}" class="form-control" />
 					</div>
 					<div>
-						<label>Phone:</label>
+						<label>Số điện thoại / Zalo:</label>
 						<br>
-						<input type="text" name="phone" th:value="${user.phone}">
+						<input type="text" name="phone" th:field="*{phone}" class="form-control">
+						<p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" style="color:red;"></p>
 					</div>
+
+					<label for="facebook">Facebook</label>
+					<input type="text" id="facebook" name="facebook" class="form-control" th:field="*{facebook}">
+
+					<label for="tiktok">Tiktok:</label>
+					<input type="text" id="tiktok" name="tiktok" class="form-control" th:field="*{tiktok}">
+
+					<label for="instagram">Instagram:</label>
+					<input type="text" id="instagram" name="instagram" class="form-control" th:field="*{instagram}">
 				</div>
 				<div class="col-md-6">
 					<div>
-						<label>Your profile picture:</label>
-						<br>
-						<img th:if="${user.profilePicture}" th:src="@{${user.profilePicture}}" width="190" height="190">
+						<img th:src="@{${user.profilePicture} ?: '/uploads/default.jpg'}" width="204" height="204" style="border-radius: 15px; border: solid 4px darkseagreen;">
 						<br>
 						<br>
 						<label>Add/change profile picture:</label>
 						<br>
-						
+
+						<input type="hidden" name="profilePicture" th:field="*{profilePicture}"></input>
+
 
 						<div class="file-upload">
-							<input type="file" id="fileInput" name="profilePicture" accept="image/*">
+							<input type="file" id="fileInput" name="profilePictureFile" accept="image/*">
 							<label for="fileInput">Choose file</label>
 							<span id="fileName">No file chosen</span>
 						</div>
 					</div>
+					<br>
+					<div sec:authorize="hasRole('TOUR_GUIDE')">
+
+						<label for="language">Chọn ngôn ngữ:</label><br>
+						<div class="language-dropdown">
+							<input type="text" id="languages" name="languages" class="form-control"
+								th:field="*{languages}" placeholder="Chọn ngôn ngữ:" required>
+							<div class="language-dropdown-menu" id="languageMenu">
+								<label><input type="checkbox" value="English"> English</label>
+								<label><input type="checkbox" value="Vietnamese"> Vietnamese</label>
+								<label><input type="checkbox" value="Chinese"> Chinese</label>
+							</div>
+
+						</div>
+						<script>
+							const input = document.getElementById("languages");
+							const dropdown = document.querySelector(".language-dropdown");
+							const menu = document.getElementById("languageMenu");
+
+							// Show dropdown when clicking input
+							input.addEventListener("focus", () => {
+								dropdown.classList.add("active");
+							});
+
+							// Hide dropdown when clicking outside
+							document.addEventListener("click", (e) => {
+								if (!dropdown.contains(e.target)) {
+									dropdown.classList.remove("active");
+								}
+							});
+
+							// Search functionality
+							input.addEventListener("input", () => {
+								let filter = input.value.toLowerCase();
+								let items = menu.getElementsByTagName("label");
+								for (let item of items) {
+									let text = item.textContent.toLowerCase();
+									item.style.display = text.includes(filter) ? "block" : "none";
+								}
+							});
+
+							// Update input with selected values
+							menu.addEventListener("change", () => {
+								let selectedValues = Array.from(menu.querySelectorAll("input:checked")).map(el => el.value);
+								input.value = selectedValues.join(", ");
+							});
+						</script>
+
+						<label for="guideLicense">Giấy phép hướng dẫn</label>
+						<input type="text" id="guideLicense" name="guideLicense" class="form-control"
+							th:field="*{guideLicense}" required>
+
+						<label for="experience">Kinh nghiệm</label>
+						<textarea id="experience" name="experience" class="form-control" th:field="*{experience}"
+							required></textarea>
+					</div>
 				</div>
-				<div class="col-md-6">
-					<div id="message" class="row"></div>
-					<button type="submit" class="login-btn">Save changes</button>
-				</div>
+
 			</div>
-			
-		</form>
+			<div class="col-md-12">
+				<div th:if="${successMessage}" class="alert alert-success" role="alert">
+					<p th:text="${successMessage}"></p>
+				</div>
+				<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+					<p th:text="${errorMessage}"></p>
+				</div>
+
+				<button type="submit" class="login-btn">Lưu các thay đổi</button>
+			</div>
+	</div>
+
+	</form>
 	</div>
 
 
-
-
-
-
-
 	<footer th:replace="~{page-component :: footer}"></footer>
-
 	<script>
 		$(document).ready(function () {
-			// Fetch user data when the page loads
-			$.get("/api/profile", function (user) {
-				$("#name").val(user.name);
-				$("#city").val(user.city);
-				$("#phone").val(user.phone);
-				if (user.profilePicture) {
-					$("#profileImage").attr("src", user.profilePicture);
-				}
-			});
-
-			$("#profileForm").submit(function (event) {
-				event.preventDefault();
-
-				var formData = new FormData(this);
-
-				$.ajax({
-					url: "/api/profile/update",
-					type: "POST",
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						alert('Update successful!');
-					},
-					error: function (xhr, status, error) {
-						$("#message").html("<p style='color: red;'>" + xhr.responseText + "</p>");
-					}
-				});
+			$("#fileInput").on("change", function () {
+				const fileName = this.files.length > 0 ? this.files[0].name : "No file chosen";
+				$("#fileName").text(fileName);
 			});
 		});
 
-
-		document.getElementById("fileInput").addEventListener("change", function () {
-			const fileName = this.files.length > 0 ? this.files[0].name : "No file chosen";
-			document.getElementById("fileName").textContent = fileName;
-		});
 	</script>
 
 </body>

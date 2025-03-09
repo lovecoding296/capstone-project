@@ -3,11 +3,9 @@ package com.tourapp.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,13 +22,12 @@ public class AppUser {
     @Column(columnDefinition = "NVARCHAR(255)")
     private String name;
 
-    @Email(message = "Invalid email format")
-    @NotBlank(message = "Email is required")
+    @Email(message = "Địa chỉ email không đúng định dạng")
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Password is required")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$", message = "Mật khẩu phải có ít nhất 8 ký tự, 1 ký tự viết hoa và 1 ký tự đặc biệt (!@#$%^&*)")
+    @Column(nullable = false)
     private String password;
 
     @Pattern(regexp = "0\\d{9}", message = "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số")
@@ -39,7 +36,9 @@ public class AppUser {
     private String facebook;
     private String tiktok;
     private String instagram;
+       
     private String profilePicture;
+    
     
     @Column(columnDefinition = "NVARCHAR(255)")
     private String city;
