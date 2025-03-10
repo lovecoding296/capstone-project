@@ -114,11 +114,17 @@
 
 
 				<div class="col-md-6">
-					<div>
+					<!--<div>
 						<img th:src="@{${guide.profilePicture} ?: '/uploads/default.jpg'}" width="204" height="204"
 							style="border-radius: 15px; border: solid 4px darkseagreen;">
 						<br><br>
+					</div>-->
+
+					<div>
+						<img th:src="@{${guide.profilePicture} ?: '/uploads/default.jpg'}" width="250" height="auto"
+							class="border border-4 border-danger me-3" style="border-radius: 20px;" />
 					</div>
+
 					<h3 th:text="${guide.name}"></h3><br>
 					<p>⭐⭐⭐⭐⭐ (22)</p>
 					<strong>Email:</strong>

@@ -3,9 +3,11 @@ package com.tourapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tourapp.entity.AppUser;
+import com.tourapp.entity.Review;
 import com.tourapp.entity.Tour;
 import com.tourapp.repository.TourRepository;
 
@@ -40,6 +42,10 @@ public class TourService {
         return tourRepository.findAll();
     }
     
+    public List<Tour> findTop4ByOrderByAverageRatingDesc() {
+        return tourRepository.findTop4ByOrderByAverageRatingDesc();
+    }
+    
     public Tour findById(Long id) {
         return tourRepository.findById(id)
                              .orElseThrow(() -> new EntityNotFoundException("Tour not found with ID: " + id));
@@ -66,6 +72,21 @@ public class TourService {
 
         tour.setThumbnail("/uploads/tours/" + fileName);
     }
+    
+    @Transactional
+    public void updateTourRating(Long tourId, int newRating) {
+        Tour tour = tourRepository.findById(tourId)
+                                  .orElseThrow(() -> new RuntimeException("Tour not found"));
+
+        // Cập nhật rating trung bình
+        double newAverage = (tour.getAverageRating() * tour.getTotalReviews() + newRating) / (tour.getTotalReviews() + 1);
+        tour.setTotalReviews(tour.getTotalReviews() + 1);
+        tour.setAverageRating(newAverage);
+
+        tourRepository.save(tour);
+    }
+
+
     
 }
 

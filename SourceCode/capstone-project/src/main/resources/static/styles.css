@@ -22,33 +22,62 @@ body {
 	background-size: cover;
 }
 
-/*.tour-card {
-	position: relative;
-	height: 280px;
-	background: #f8f9fa;
-	margin: 10px;
-	border-radius: 8px;
-	text-align: center;
-	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+a {
+	text-decoration: none;
+	cursor: pointer;
 }
 
-.tour-card img {
+.tour-card {
+	position: relative;
+	height: 500px;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s;
+}
+
+.tour-card a {
+	color: black;
+	text-decoration: none;
+}
+
+.tour-card:hover {
+	scale: 1.01;
+	cursor: pointer;
+	transition: scale 0.2s ease;
+}
+
+.tour-card .thumbnail {
 	width: 100%;
-	height: 100%;
-	border-radius: 8px;
+	height: 200px;
 	object-fit: cover;
 }
 
-.tour-card .overlay {
-	position: absolute;
-	bottom: 10px;
-	left: 10px;
-	background: rgba(255, 255, 255, 0.8);
-	padding: 5px 10px;
-	border-radius: 5px;
-	font-weight: bold;
-}*/
+.tour-card .card-body {
+	padding: 5px;
+}
 
+.tour-card .guide-info {
+	display: flex;
+}
+
+.tour-card .guide-profile-picture {
+	width: 80px;
+	height: 80px;
+	border-radius: 40px;
+	object-fit: cover;
+}
+
+.tour-card .text-truncate-multiline {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	/* Giới hạn số dòng tối đa */
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/********* GUIDE - CARD **********/
 .guide-card {
 	position: relative;
 	height: 400px;

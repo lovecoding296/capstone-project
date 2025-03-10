@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tourapp.entity.AppUser;
 import com.tourapp.service.UserService;
-import com.tourapp.util.ViewPaths;
 
 import jakarta.validation.Valid;
 
@@ -39,7 +38,7 @@ public class ProfileController {
 			AppUser user = userService.findByEmail(userDetails.getUsername());
 			model.addAttribute("user", user);
 		}
-		return ViewPaths.PROFILE;
+		return "profile";
 	}
 
 	@PostMapping()

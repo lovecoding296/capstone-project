@@ -12,14 +12,18 @@ import com.tourapp.entity.AppUser;
 import com.tourapp.entity.Tour;
 
 public interface TourRepository extends JpaRepository<Tour, Long> {
-	
+
 	@Query("SELECT t FROM Tour t JOIN t.guide g JOIN g.languages l WHERE l IN :languages")
-    List<Tour> findByGuideLanguages(@Param("languages") Set<String> languages);
-	
-	
+	List<Tour> findByGuideLanguages(@Param("languages") Set<String> languages);
+
+	// Tìm 4 tour có averageRating cao nhất
+    List<Tour> findTop4ByOrderByAverageRatingDesc();
+
 	List<Tour> findAll();
+
 	List<Tour> findByGuide(AppUser guide);
-	
+
 	Optional<Tour> findById(Long id);
+	
 	
 }

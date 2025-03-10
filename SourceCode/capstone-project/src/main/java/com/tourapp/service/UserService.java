@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -64,27 +66,23 @@ public class UserService {
 	}
 
 	public AppUser findByEmail(String email) {
-	    return userRepository.findByEmail(email)
-	            .orElseThrow(() -> new AccessDeniedException("User not found with email: " + email));
+		return userRepository.findByEmail(email)
+				.orElseThrow(() -> new AccessDeniedException("User not found with email: " + email));
 	}
-
 
 	public AppUser getUserById(Long id) {
-	    return userRepository.findUserById(id)
-	            .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + id));
+		return userRepository.findUserById(id)
+				.orElseThrow(() -> new NoSuchElementException("User not found with ID: " + id));
 	}
-
-
 
 	public AppUser updateCurrentUser(AppUser user, MultipartFile file) throws IOException {
 
 		AppUser currentUser = getCurrentAuthenticatedUser();
 
-        if (user == null) {
-            throw new IllegalArgumentException("Updated user information cannot be null.");
-        }
-		
-		
+		if (user == null) {
+			throw new IllegalArgumentException("Updated user information cannot be null.");
+		}
+
 		if (user.getName() != null && !user.getName().isEmpty()) {
 			currentUser.setName(user.getName());
 		}
@@ -120,48 +118,67 @@ public class UserService {
 		}
 
 		// Xử lý ảnh đại diện
-        if (file != null && !file.isEmpty()) {
-            uploadProfilePicture(currentUser, file);
-        } else {
-            logger.info("No file chosen.");
-        }
+		if (file != null && !file.isEmpty()) {
+			uploadProfilePicture(currentUser, file);
+		} else {
+			logger.info("No file chosen.");
+		}
 
 		return userRepository.save(currentUser);
 	}
-	
-	
-    public AppUser getCurrentAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
-            throw new AccessDeniedException("Access Denied! Please log in.");
-        }
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new AccessDeniedException("User not found."));
-    }
+	public AppUser getCurrentAuthenticatedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated()
+				|| "anonymousUser".equals(authentication.getPrincipal())) {
+			throw new AccessDeniedException("Access Denied! Please log in.");
+		}
 
-    private void uploadProfilePicture(AppUser user, MultipartFile file) throws IOException {
-        // Kiểm tra định dạng file hợp lệ
-        Set<String> allowedMimeTypes = Set.of("image/jpeg", "image/png", "image/webp");
-        String contentType = file.getContentType();
-        if (contentType == null || !allowedMimeTypes.contains(contentType)) {
-            throw new IllegalArgumentException("Invalid file type. Only JPEG, PNG, and WEBP are allowed.");
-        }
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		return userRepository.findByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new AccessDeniedException("User not found."));
+	}
 
-        String emailName = user.getEmail().replaceAll("@.+$", "");
-        String fileName = emailName + "_" + file.getOriginalFilename();
-        String uploadDir = "uploads/";
+	private void uploadProfilePicture(AppUser user, MultipartFile file) throws IOException {
+		// Kiểm tra định dạng file hợp lệ
+		Set<String> allowedMimeTypes = Set.of("image/jpeg", "image/png", "image/webp");
+		String contentType = file.getContentType();
+		if (contentType == null || !allowedMimeTypes.contains(contentType)) {
+			throw new IllegalArgumentException("Invalid file type. Only JPEG, PNG, and WEBP are allowed.");
+		}
 
-        File uploadPath = new File(uploadDir);
-        if (!uploadPath.exists()) {
-            uploadPath.mkdirs();
-        }
+		String emailName = user.getEmail().replaceAll("@.+$", "");
+		String fileName = emailName + "_" + file.getOriginalFilename();
+		String uploadDir = "uploads/";
 
-        File destination = new File(uploadDir + fileName);
-        Files.copy(file.getInputStream(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		File uploadPath = new File(uploadDir);
+		if (!uploadPath.exists()) {
+			uploadPath.mkdirs();
+		}
 
-        user.setProfilePicture("/uploads/" + fileName);
-    }
+		File destination = new File(uploadDir + fileName);
+		Files.copy(file.getInputStream(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+		user.setProfilePicture("/uploads/" + fileName);
+	}
+
+	@Transactional
+	public void updateGuideRating(Long id, int newRating) {
+
+		AppUser user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
+		// Cập nhật rating trung bình
+		double newAverage = (user.getAverageRating() * user.getTotalReviews() + newRating)
+				/ (user.getTotalReviews() + 1);
+		user.setTotalReviews(user.getTotalReviews() + 1);
+		user.setAverageRating(newAverage);
+
+		userRepository.save(user);
+
+	}
+
+	public List<AppUser> findTop4ByOrderByAverageRatingDesc() {		
+		return userRepository.findTop4ByOrderByAverageRatingDesc();
+	}
 
 }

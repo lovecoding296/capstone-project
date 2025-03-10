@@ -4,8 +4,7 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,14 +37,23 @@ public class Tour {
     private String destination;
     
     private String thumbnail;
+    private String thumbnail2;
+    private String thumbnail3;
+    private String thumbnail4;
     
     private LocalDate startDate;
     private LocalDate endDate;
     
+    @Column(columnDefinition = "FLOAT DEFAULT 0")
+    private double averageRating;
+
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private int totalReviews;    
+    
     @Column(columnDefinition = "NVARCHAR(255)")
     private String type;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "guide_id")
     private AppUser guide;
 }

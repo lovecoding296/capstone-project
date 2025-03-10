@@ -39,6 +39,11 @@ public class AppUser {
        
     private String profilePicture;
     
+    @Column(columnDefinition = "FLOAT DEFAULT 0")
+    private double averageRating;
+
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private int totalReviews;    
     
     @Column(columnDefinition = "NVARCHAR(255)")
     private String city;
@@ -54,13 +59,11 @@ public class AppUser {
     @CollectionTable(name = "tour_guide_languages", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "language", columnDefinition = "NVARCHAR(255)")
     private Set<String> languages;
-
-    private double rating;
     
     @Column(columnDefinition = "NVARCHAR(255)")
     private String guideLicense;
     
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(2000)")
     private String experience;
 
     // Thuộc tính dành riêng cho khách du lịch

@@ -76,24 +76,21 @@
 			object-fit: cover;
 		}
 
-		.thumbnail {
-			height: 100px;
-		}
-
-		.card-body {
+		.tour-card .card-body {
 			padding: 5px;
 		}
 
-		.guide-info {
+		.tour-card .guide-info {
 			display: flex;
 		}
 
-		.guide-profile-picture {
+		.tour-card .guide-profile-picture {
 			width: 80px;
 			height: 80px;
 			border-radius: 40px;
 			object-fit: cover;
 		}
+
 	</style>
 </head>
 
@@ -145,14 +142,16 @@
 								</div>
 							</div>
 							<h5 class="card-title" th:text="${tour.title}"></h5>
-							<p class="card-text" th:text="${tour.description}"></p>
-							<p> <img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+							<p class="card-text text-truncate-multiline" th:text="${tour.description}"></p>
+							<span> <img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
 								<span th:text="${tour.destination}"></span>
-							</p>
-							<p><img src="images/icons/calendar_icon.png" width="16px" height="16px"><span
-									th:text="${tour.startDate}"></span> - <span th:text="${tour.endDate}"></span></p>
-							<p><span th:text="${tour.type}"></span></p>
-							<p><span th:text="${tour.price}"></span> (VNĐ)</p>
+							</span>
+							<br>
+							<span><img src="images/icons/calendar_icon.png" width="16px" height="16px"><span
+									th:text="${tour.startDate}"></span> - <span th:text="${tour.endDate}"></span></span>
+							<span><span th:text="${tour.type}"></span></span>
+							<br>
+							<span><span th:text="${tour.price}"></span> (VNĐ)</span>
 						</div>
 					</a>
 				</div>

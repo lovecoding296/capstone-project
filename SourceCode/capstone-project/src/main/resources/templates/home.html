@@ -17,8 +17,8 @@
 	<script src="script.js"></script>
 	<style>
 
-		
-		
+
+
 	</style>
 
 
@@ -91,14 +91,42 @@
 	<section class="container" style="margin-top: 80px;">
 		<div class="row">
 			<div th:replace="~{icons :: destination}"></div>
-			<h1 class="text-center" th:text="#{destination}"></h1>
+			<h1 class="text-center">Khám phá những tour có rating cao nhất</h1>
 
-			<div class="col-md-3">
+			<div class="col-md-3 mb-4" th:each="tour : ${tours}">
 				<div class="tour-card position-relative">
-					<img src="images/ho-chi-minh.jpg">
-					<div class="overlay">
-						<span>📍 Ho Chi Minh City, Vietnam</span>
-					</div>
+					<a th:href="@{'/tours/' + ${tour.id}}">
+						<img class="thumbnail" th:if="${tour.thumbnail}" th:src="@{${tour.thumbnail}}" alt="Thumbnail">
+						<img class="thumbnail" th:if="${tour.thumbnail == null}" src="/images/default-thumbnail.jpg"
+							alt="Default Thumbnail">
+
+						<div class="card-body text-start">
+							<div class="guide-info">
+								<img class="guide-profile-picture"
+									th:src="${tour.guide != null ? tour.guide.profilePicture : '/uploads/default.jpg'}">
+								<div class="guide-name-rating">
+									<p><span
+											th:text="${tour.guide != null ? tour.guide.name : 'Hướng dẫn viên'}"></span>
+									</p>
+									<div class="rating">
+										⭐⭐⭐⭐⭐ <span class="review-count">(22)</span>
+									</div>
+								</div>
+							</div>
+							<h5 class="card-title" th:text="${tour.title}"></h5>
+							<p class="card-text text-truncate-multiline" th:text="${tour.description}"></p>
+							<span> <img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
+								<span th:text="${tour.destination}"></span>
+							</span>
+							<br>
+							<span><img src="images/icons/calendar_icon.png" width="16px" height="16px"><span
+									th:text="${tour.startDate}"></span> - <span th:text="${tour.endDate}"></span></span>
+							<br>
+							<span><span th:text="${tour.type}"></span></span>
+							<br>
+							<span><span th:text="${tour.price}"></span> (VNĐ)</span>
+						</div>
+					</a>
 				</div>
 			</div>
 
@@ -108,15 +136,16 @@
 	<section class="container" style="margin-top: 80px;">
 		<div class="row">
 			<div th:replace="~{icons :: person}"></div>
-			<h1 class="text-center" th:text="#{meetYourGuides}"></h1>
-			<div class="col-md-3">
+			<h1 class="text-center">Khám phá cùng hướng dẫn viên</h1>
+			<div class="col-md-3 mb-4" th:each="guide : ${guides}">
 				<div class="guide-card">
 					<!-- Profile Image -->
-					<img src="images/avatar/guide4.jpg" alt="Diana B." class="profile-img">
+					<img th:src="@{${guide.profilePicture} ?: '/uploads/default.jpg'}" class="profile-img">
+
 
 					<!-- Card Content -->
 					<div class="guide-card-content" style="padding: 5px;">
-						<h2 class="name">Mr. Tuấn</h2>
+						<h2 class="name" th:text="*{guide.name}">Mr. Tuấn</h2>
 
 						<!-- Rating -->
 						<div class="rating">
@@ -126,19 +155,19 @@
 						<!-- Location -->
 						<div class="location">
 							<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;">
-							Hạ Long + Cát Bà + Cô Tô
+							<span th:text="*{guide.city}"></span>
 						</div>
 
 						<!-- Languages -->
 						<div class="languages">
 							<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;">
-							Việt Nam, English
+							<span th:text="*{guide.languages}"></span>
 						</div>
 					</div>
 
 					<!-- Action Buttons -->
 					<div class="guide-card-footer">
-						<button class="contact-btn">Thông tin chi tiết</button>
+						<a th:href="@{'/guides/' + ${guide.id}}" class="contact-btn">Thông tin chi tiết</a>
 					</div>
 				</div>
 			</div>
@@ -174,23 +203,24 @@
 			<div th:replace="~{icons :: comment}"></div>
 			<h1 class="text-center" th:text="#{whatTravellersSay}"></h1>
 
-			<div class="col-md-4">
+			<div class="col-md-4" th:each="review : ${reviews}">
 				<div class="comment-card">
 					<br>
 					<img src="images/icons/qoutes-icon.png" style="width: 45px; height: 45px;">
 					<!-- Card Content -->
 					<div class="content">
-						<p class="message">"Chuyến du lịch của tôi là một trong những trải nghiệm tuyệt vời nhất mà tôi
+						<p class="message" th:text="${review.comment}">"Chuyến du lịch của tôi là một trong những trải
+							nghiệm tuyệt vời nhất mà tôi
 							từng
 							có!"</p>
 
 						<!-- Rating -->
 						<div class="rating">
-							⭐⭐⭐⭐⭐
+							<span class="stars" style="color: gold; font-size: 30px;">★★★★★</span>
 						</div>
 
 						<br>
-						<b>YenNguyen</b>
+						<b th:text="${review.author.name}">YenNguyen</b>
 					</div>
 				</div>
 			</div>
