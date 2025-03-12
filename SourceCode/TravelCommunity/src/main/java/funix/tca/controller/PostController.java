@@ -4,6 +4,9 @@ import funix.tca.entity.AppUser;
 import funix.tca.entity.Post;
 import funix.tca.service.PostService;
 import funix.tca.service.AppUserService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +19,9 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/posts")
 public class PostController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ReviewController.class);
+
 
     @Autowired
     private PostService postService;
@@ -24,7 +30,7 @@ public class PostController {
     private AppUserService appUserService;
 
     // Lấy danh sách tất cả bài viết
-    @GetMapping("/")
+    @GetMapping()
     public String getAllPosts(Model model) {
         model.addAttribute("posts", postService.findAll());
         return "post/list"; // Trả về trang Thymeleaf với danh sách bài viết

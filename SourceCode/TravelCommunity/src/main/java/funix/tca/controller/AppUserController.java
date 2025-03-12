@@ -26,7 +26,7 @@ public class AppUserController {
     private AppUserService appUserService;
 
     // Lấy danh sách tất cả người dùng
-    @GetMapping("/")
+    @GetMapping
     public String getAllAppUsers(Model model) {
         List<AppUser> appUsers = appUserService.findAll();
         model.addAttribute("appUsers", appUsers);

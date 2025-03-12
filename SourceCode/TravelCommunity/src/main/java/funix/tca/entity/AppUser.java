@@ -4,6 +4,8 @@ import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -59,12 +61,13 @@ public class AppUser {
     private Gender gender; 
     
     @Enumerated(EnumType.STRING)
-    private Role role;    
+    private Role role = Role.ROLE_USER;    
     
-    @ElementCollection(fetch = FetchType.LAZY, targetClass = Language.class)
+    @ElementCollection(targetClass = Language.class)
     @CollectionTable(name = "user_languages", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "language")
+    @JsonIgnore
     private Set<Language> languages;
     
     @Column(columnDefinition = "NVARCHAR(255)")

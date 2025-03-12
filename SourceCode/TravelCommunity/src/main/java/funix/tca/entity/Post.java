@@ -1,13 +1,15 @@
 package funix.tca.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,7 +39,7 @@ public class Post {
     @Column(columnDefinition = "NVARCHAR(2000)")
     private String content;
     private LocalDateTime createdAt;
-
+    
     @ManyToOne
     @JoinColumn(name = "user_id")
     private AppUser author;
@@ -45,7 +47,13 @@ public class Post {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-    }
+    }   
+   
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
     
+    
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<PostLike> likes = new HashSet<>();    
 }

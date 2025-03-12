@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import funix.tca.entity.AppUser;
+import funix.tca.exception.EmailVerificationException;
 import funix.tca.repository.AppUserRepository;
 
 @Service
@@ -14,9 +16,13 @@ public class AppUserService {
 
     @Autowired
     private AppUserRepository appUserRepository;
+    
+    @Autowired
+	private PasswordEncoder passwordEncoder;
 
     // Lưu một AppUser mới
     public AppUser save(AppUser appUser) {
+    	appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         return appUserRepository.save(appUser);
     }
 
@@ -37,6 +43,7 @@ public class AppUserService {
 
     // Cập nhật thông tin AppUser
     public AppUser update(AppUser appUser) {
+    	appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         return appUserRepository.save(appUser);
     }
 
@@ -44,4 +51,9 @@ public class AppUserService {
     public void deleteById(Long id) {
         appUserRepository.deleteById(id);
     }
+
+	public void verifyEmail(String token) throws EmailVerificationException{
+		// TODO Auto-generated method stub
+		
+	}
 }

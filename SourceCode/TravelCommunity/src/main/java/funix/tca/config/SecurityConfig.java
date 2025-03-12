@@ -18,6 +18,9 @@ public class SecurityConfig {
 	
 	@Autowired
 	private CustomAuthenticationSuccessHandler successHandler;
+	
+	@Autowired
+	private CustomAuthenticationFailureHandler failureHandler;
     
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,6 +35,7 @@ public class SecurityConfig {
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .successHandler(successHandler)
+                .failureHandler(failureHandler)
                 .permitAll()
             )
             .logout(logout -> logout
@@ -50,22 +54,6 @@ public class SecurityConfig {
         return http.build();
     }
     
-    
-    
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeHttpRequests(auth -> auth
-//                .requestMatchers("/tourist/**").hasRole("TOURIST") // Chỉ Tourist có quyền truy cập
-//                .requestMatchers("/tourguide/**").hasRole("TOURGUIDE") // Chỉ TourGuide có quyền truy cập
-//                .anyRequest().permitAll() // Các request khác không yêu cầu đăng nhập
-//            )
-//            .formLogin() // Sử dụng form login mặc định của Spring Security
-//            .and()
-//            .logout().logoutSuccessUrl("/"); // Đăng xuất xong thì quay về trang chủ
-//
-//        return http.build();
-//    }
     
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
