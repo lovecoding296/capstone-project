@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tạo / Chỉnh sửa bình luận</title>
+</head>
+<body>
+    <h1>Tạo bình luận mới</h1>
+    <form th:action="@{/comments/new/{postId}(postId=${postId})}" th:object="${comment}" method="post">
+        <label for="content">Nội dung</label>
+        <textarea th:field="*{content}" required></textarea>
+        <br>
+
+        <label for="commenter">Tác giả</label>
+        <select th:field="*{commenter.id}" required>
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}"></option>
+        </select>
+        <br>
+
+        <button type="submit">Lưu</button>
+    </form>
+</body>
+</html>

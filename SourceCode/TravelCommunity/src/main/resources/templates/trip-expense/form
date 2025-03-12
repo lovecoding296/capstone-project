@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tạo khoản chi phí mới</title>
+</head>
+<body>
+    <h1>Tạo khoản chi phí cho chuyến đi</h1>
+    <form th:action="@{/trip-expenses/new}" th:object="${tripExpense}" method="post">
+        <label for="trip">Chuyến đi</label>
+        <select th:field="*{trip.id}" required>
+            <option th:each="trip : ${trips}" th:value="${trip.id}" th:text="${trip.name}"></option>
+        </select>
+        <br>
+
+        <label for="description">Mô tả</label>
+        <input type="text" th:field="*{description}" required/>
+        <br>
+
+        <label for="amount">Số tiền</label>
+        <input type="number" th:field="*{amount}" required/>
+        <br>
+
+        <label for="paidBy">Người thanh toán</label>
+        <select th:field="*{paidBy.id}" required>
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}"></option>
+        </select>
+        <br>
+
+        <button type="submit">Lưu khoản chi phí</button>
+    </form>
+</body>
+</html>
