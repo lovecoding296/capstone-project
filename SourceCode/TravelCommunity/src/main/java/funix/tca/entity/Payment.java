@@ -29,15 +29,15 @@ public class Payment {
     
     
     @ManyToOne
-    @JoinColumn(name = "trip_id")
+    @JoinColumn(name = "trip_id", nullable = false)
     private Trip trip; // Chuyến đi liên quan
 
     @ManyToOne
-    @JoinColumn(name = "payer_id")
+    @JoinColumn(name = "payer_id", nullable = false)
     private AppUser payer; // Người thanh toán
     
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
+    @JoinColumn(name = "receiver_id", nullable = false)
     private AppUser receiver; // Người nhận       
 
     private double amount;

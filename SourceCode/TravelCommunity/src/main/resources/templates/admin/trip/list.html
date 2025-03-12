@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách chuyến đi</title>
+</head>
+<body>
+    <h1>Danh sách các chuyến đi</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Địa điểm</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày kết thúc</th>
+                <th>Người tổ chức</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="trip : ${trips}">
+                <td th:text="${trip.title}">Tiêu đề</td>
+                <td th:text="${trip.destination}">Địa điểm</td>
+				<th th:text="${#temporals.format(trip.startDate, 'dd/MM/yyyy')}">Ngày bắt đầu</td>
+				<th th:text="${#temporals.format(trip.endDate, 'dd/MM/yyyy')}">Ngày kết thúc</td>
+                <td th:text="${trip.creator.fullName}">Người tổ chức</td>
+                <td>
+                    <a th:href="@{/trips/{id}/edit(id=${trip.id})}">Sửa</a>
+                    <a th:href="@{/trips/{id}/delete(id=${trip.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/trips/new">Tạo chuyến đi mới</a>
+</body>
+</html>

@@ -37,11 +37,11 @@ public class TripExpense {
     private LocalDateTime expenseDate;
 
     @ManyToOne
-    @JoinColumn(name = "trip_id")
+    @JoinColumn(name = "trip_id", nullable = false)
     private Trip trip;
 
     @ManyToOne
-    @JoinColumn(name = "paid_by")
+    @JoinColumn(name = "paid_by", nullable = false)
     private AppUser paidBy; // Người đã thanh toán
 
     @ManyToMany

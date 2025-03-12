@@ -80,4 +80,8 @@ public class AppUser {
     private boolean verified = false; // Chỉ cho phép đăng nhập nếu user đã xác thực email  
     private boolean kycApproved = false;  //Chỉ cho phép tạo trip nếu admin đã duyệt ảnh và tên
     private String cccd; //Căn cước công dân
+    
+	public boolean isAdmin() {
+		return this.role == Role.ROLE_ADMIN;
+	}
 }

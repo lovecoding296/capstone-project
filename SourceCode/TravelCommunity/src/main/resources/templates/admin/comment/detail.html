@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết bình luận</title>
+</head>
+<body>
+    <h1>Chi tiết bình luận</h1>
+    <p><strong>Nội dung:</strong> <span th:text="${comment.content}"></span></p>
+    <p><strong>Tác giả:</strong> <span th:text="${comment.commenter.fullName}"></span></p>
+    <p><strong>Ngày tạo:</strong> <span th:text="${#dates.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+    <a th:href="@{/comments/post/{postId}(postId=${postId})}">Quay lại</a>
+</body>
+</html>

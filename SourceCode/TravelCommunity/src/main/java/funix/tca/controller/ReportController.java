@@ -1,17 +1,20 @@
 package funix.tca.controller;
 
+import funix.tca.entity.AppUser;
 import funix.tca.entity.Report;
 import funix.tca.service.ReportService;
 import funix.tca.service.AppUserService;
 import funix.tca.service.PostService;
 import funix.tca.service.TripService;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -32,7 +35,12 @@ public class ReportController {
 
     // Lấy tất cả báo cáo
     @GetMapping("/")
-    public String listReports(Model model) {
+    public String listReports(Model model, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null || !loggedInUser.isAdmin()) {
+            return "redirect:/login"; // Chỉ admin mới có quyền xem danh sách báo cáo
+        }
+
         List<Report> reports = reportService.findAll();
         model.addAttribute("reports", reports);
         return "report/list"; // Trả về trang danh sách báo cáo
@@ -40,50 +48,74 @@ public class ReportController {
 
     // Lấy các báo cáo chưa giải quyết
     @GetMapping("/pending")
-    public String listPendingReports(Model model) {
+    public String listPendingReports(Model model, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null || !loggedInUser.isAdmin()) {
+            return "redirect:/login";
+        }
+
         List<Report> pendingReports = reportService.findByResolved(false);
         model.addAttribute("reports", pendingReports);
-        return "report/list"; // Trả về trang danh sách báo cáo chưa giải quyết
+        return "report/list";
     }
 
     // Tạo mới báo cáo
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        Report report = new Report();
-        model.addAttribute("report", report);
-        model.addAttribute("users", appUserService.findAll()); // Cung cấp danh sách người dùng
-        model.addAttribute("posts", postService.findAll()); // Cung cấp danh sách bài viết
-        model.addAttribute("trips", tripService.findAll()); // Cung cấp danh sách chuyến đi
-        return "report/form"; // Trả về trang tạo báo cáo
+    public String showCreateForm(Model model, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Yêu cầu đăng nhập để tạo báo cáo
+        }
+
+        model.addAttribute("report", new Report());
+        model.addAttribute("users", appUserService.findAll());
+        model.addAttribute("posts", postService.findAll());
+        model.addAttribute("trips", tripService.findAll());
+        return "report/form";
     }
 
     @PostMapping("/new")
-    public String createReport(@Valid @ModelAttribute Report report, BindingResult result, Model model) {
+    public String createReport(@Valid @ModelAttribute Report report, BindingResult result, Model model, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/login";
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("users", appUserService.findAll());
             model.addAttribute("posts", postService.findAll());
             model.addAttribute("trips", tripService.findAll());
-            return "report/form"; // Trả về lại trang tạo báo cáo nếu có lỗi
+            return "report/form";
         }
 
-        // Thiết lập người dùng báo cáo và báo cáo đối tượng
+        report.setReportedBy(loggedInUser);
         reportService.save(report);
-        return "redirect:/reports/"; // Chuyển hướng về trang danh sách báo cáo
+        return "redirect:/reports/";
     }
 
     // Xử lý báo cáo
     @GetMapping("/{id}/resolve")
-    public String resolveReport(@PathVariable Long id) {
+    public String resolveReport(@PathVariable Long id, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null || !loggedInUser.isAdmin()) {
+            return "redirect:/login"; // Chỉ admin mới có quyền xử lý báo cáo
+        }
+
         Report report = reportService.findById(id).orElseThrow(() -> new RuntimeException("Report not found"));
         report.setResolved(true);
         reportService.update(report);
-        return "redirect:/reports/pending"; // Chuyển hướng về trang báo cáo chưa giải quyết
+        return "redirect:/reports/pending";
     }
 
     // Xóa báo cáo
     @GetMapping("/{id}/delete")
-    public String deleteReport(@PathVariable Long id) {
+    public String deleteReport(@PathVariable Long id, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null || !loggedInUser.isAdmin()) {
+            return "redirect:/login";
+        }
+
         reportService.deleteById(id);
-        return "redirect:/reports/"; // Chuyển hướng về trang danh sách báo cáo
+        return "redirect:/reports/";
     }
 }

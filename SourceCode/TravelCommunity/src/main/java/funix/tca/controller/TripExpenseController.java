@@ -1,16 +1,20 @@
 package funix.tca.controller;
 
+import funix.tca.entity.AppUser;
+import funix.tca.entity.Trip;
 import funix.tca.entity.TripExpense;
 import funix.tca.service.AppUserService;
 import funix.tca.service.TripExpenseService;
 import funix.tca.service.TripService;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -44,31 +48,53 @@ public class TripExpenseController {
 
     // Tạo mới một khoản chi phí
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        TripExpense tripExpense = new TripExpense();
-        model.addAttribute("tripExpense", tripExpense);
-        model.addAttribute("trips", tripService.findAll()); // Cung cấp danh sách chuyến đi
-        model.addAttribute("users", appUserService.findAll()); // Cung cấp danh sách người dùng
+    public String showCreateForm(Model model, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
+        }
+
+        model.addAttribute("tripExpense", new TripExpense());
+        model.addAttribute("trips", tripService.findAll());
+        model.addAttribute("users", appUserService.findAll());
         return "trip-expense/form"; // Trang tạo mới khoản chi phí
     }
 
     @PostMapping("/new")
-    public String createTripExpense(@Valid @ModelAttribute TripExpense tripExpense, BindingResult result, Model model) {
+    public String createTripExpense(@Valid @ModelAttribute TripExpense tripExpense, BindingResult result, Model model, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("trips", tripService.findAll());
             model.addAttribute("users", appUserService.findAll());
-            return "trip-expense/form"; // Trả lại trang nếu có lỗi
+            return "trip-expense/form";
         }
 
-        // Lưu khoản chi phí
+        tripExpense.setPaidBy(loggedInUser); // Gán người tạo chi phí là loggedInUser
         tripExpenseService.save(tripExpense);
-        return "redirect:/trip-expenses/"; // Chuyển hướng về trang danh sách
+        return "redirect:/trip-expenses/";
     }
 
     // Xóa một khoản chi phí
     @GetMapping("/{id}/delete")
-    public String deleteTripExpense(@PathVariable Long id) {
+    public String deleteTripExpense(@PathVariable Long id, HttpSession session) {
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
+        }
+
+        TripExpense expense = tripExpenseService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid expense ID: " + id));
+        Trip trip = expense.getTrip();
+
+        // Kiểm tra quyền xóa (chỉ người tạo chuyến đi hoặc người ghi nhận chi phí mới có quyền)
+        if (!trip.getCreator().getId().equals(loggedInUser.getId()) && !expense.getPaidBy().getId().equals(loggedInUser.getId())) {
+            return "redirect:/trip-expenses/?error=unauthorized";
+        }
+
         tripExpenseService.deleteById(id);
-        return "redirect:/trip-expenses/"; // Chuyển hướng về trang danh sách
+        return "redirect:/trip-expenses/";
     }
 }

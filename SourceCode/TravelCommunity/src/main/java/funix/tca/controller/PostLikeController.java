@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,16 +40,25 @@ public class PostLikeController {
     public ResponseEntity<Map<String, Object>> likePost(@PathVariable Long postId, HttpSession session) {
 
     	AppUser  user = (AppUser) session.getAttribute("loggedInUser");
-        Optional<Post> post = postService.findById(postId);
-        //Optional<AppUser> user = userService.findById(userId);
+    	
+    	if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User chưa đăng nhập"));
+        }
+    	
+        Optional<Post> optionalPost = postService.findById(postId);
+        if (optionalPost.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Bài viết không tồn tại"));
+        }
+        
+        Post post = optionalPost.get();
 
-        boolean liked = postLikeService.toggleLike(post.get(), user);
+        boolean liked = postLikeService.toggleLike(post, user);
         
         
         
      // Trả về số lượt thích và trạng thái thích của user
         Map<String, Object> response = new HashMap<>();
-        response.put("likeCount", post.get().getLikes().size()); // Số lượt thích
+        response.put("likeCount", post.getLikes().size()); // Số lượt thích
         response.put("liked", liked); // Trạng thái user đã thích hay chưa
 
         return ResponseEntity.ok(response);

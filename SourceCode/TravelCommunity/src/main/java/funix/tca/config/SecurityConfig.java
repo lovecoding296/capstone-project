@@ -27,6 +27,7 @@ public class SecurityConfig {
     	logger.info("check login");
         http
             .authorizeHttpRequests(auth -> auth
+            	.requestMatchers("/admin/**").hasRole("ADMIN")
         		.requestMatchers("/profile").authenticated()
                 .anyRequest().permitAll() // Allow all requests
             )

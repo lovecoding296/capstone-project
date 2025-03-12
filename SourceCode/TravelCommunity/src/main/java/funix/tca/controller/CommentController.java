@@ -19,44 +19,43 @@ import java.util.List;
 @RequestMapping("/api/comments")
 public class CommentController {
 
-    @Autowired
-    private CommentService commentService;
+	@Autowired
+	private CommentService commentService;
 
-    @Autowired
-    private PostService postService;
+	@Autowired
+	private PostService postService;
 
-    @Autowired
-    private AppUserService appUserService;
+	@Autowired
+	private AppUserService appUserService;
 
-    // Lấy tất cả bình luận của một bài viết
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<List<Comment>> getCommentsByPost(@PathVariable Long postId) {
-        List<Comment> comments = commentService.findByPostId(postId);
-        
-        for(Comment comment : comments) {
-        	System.out.println("comment " + comment.getCommenter().getFullName() );
-        }
-        
-        return ResponseEntity.ok(comments);
-    }
+	// Lấy tất cả bình luận của một bài viết
+	@GetMapping("/post/{postId}")
+	public ResponseEntity<List<Comment>> getCommentsByPost(@PathVariable Long postId) {
+		List<Comment> comments = commentService.findByPostId(postId);
 
-    // Tạo mới bình luận
-    @PostMapping("/post/{postId}")
-    public ResponseEntity<Comment> createComment(@PathVariable Long postId, @RequestBody @Valid Comment comment, HttpSession session) {
-        Post post = postService.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-        comment.setPost(post);
-        AppUser  user = (AppUser) session.getAttribute("loggedInUser");
-        comment.setCommenter(user);
-        Comment savedComment = commentService.save(comment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
-    }
+		for (Comment comment : comments) {
+			System.out.println("comment " + comment.getCommenter().getFullName());
+		}
 
-    // Xóa bình luận
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
-        commentService.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
+		return ResponseEntity.ok(comments);
+	}
+
+	// Tạo mới bình luận
+	@PostMapping("/post/{postId}")
+	public ResponseEntity<Comment> createComment(@PathVariable Long postId, @RequestBody @Valid Comment comment,
+			HttpSession session) {
+		Post post = postService.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+		comment.setPost(post);
+		AppUser user = (AppUser) session.getAttribute("loggedInUser");
+		comment.setCommenter(user);
+		Comment savedComment = commentService.save(comment);
+		return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
+	}
+
+	// Xóa bình luận
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
+		commentService.deleteById(id);
+		return ResponseEntity.noContent().build();
+	}
 }
-

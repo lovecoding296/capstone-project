@@ -39,7 +39,7 @@ public class Report {
     private boolean resolved;
 
     @ManyToOne
-    @JoinColumn(name = "reported_by")
+    @JoinColumn(name = "reported_by", nullable = false)
     private AppUser reportedBy;
 
     @Enumerated(EnumType.STRING)

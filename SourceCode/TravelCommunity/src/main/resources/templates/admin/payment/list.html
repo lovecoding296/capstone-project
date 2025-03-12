@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách giao dịch thanh toán</title>
+</head>
+<body>
+    <h1>Danh sách giao dịch thanh toán</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Chuyến đi</th>
+                <th>Người thanh toán</th>
+                <th>Người nhận</th>
+                <th>Số tiền</th>
+                <th>Ngày thanh toán</th>
+                <th>Trạng thái xác nhận</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="payment : ${payments}">
+                <td th:text="${payment.trip.name}">Chuyến đi</td>
+                <td th:text="${payment.payer.fullName}">Người thanh toán</td>
+                <td th:text="${payment.receiver.fullName}">Người nhận</td>
+                <td th:text="${payment.amount}">Số tiền</td>
+                <td th:text="${#dates.format(payment.paymentDate, 'dd/MM/yyyy HH:mm')}">Ngày thanh toán</td>
+                <td th:text="${payment.confirmed ? 'Đã xác nhận' : 'Chưa xác nhận'}">Trạng thái xác nhận</td>
+                <td>
+                    <a th:href="@{/payments/{id}/confirm(id=${payment.id})}" th:if="${!payment.confirmed}">Xác nhận</a>
+                    <a th:href="@{/payments/{id}/delete(id=${payment.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/payments/new">Tạo giao dịch thanh toán mới</a>
+</body>
+</html>

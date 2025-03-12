@@ -49,7 +49,7 @@ public class Trip {
     private double estimatedCost;
     
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private AppUser creator; // Người tổ chức chuyến đi
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

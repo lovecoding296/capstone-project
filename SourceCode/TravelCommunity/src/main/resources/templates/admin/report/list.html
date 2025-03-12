@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách báo cáo</title>
+</head>
+<body>
+    <h1>Danh sách báo cáo</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Loại báo cáo</th>
+                <th>Lý do</th>
+                <th>Ngày báo cáo</th>
+                <th>Giải quyết</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="report : ${reports}">
+                <td th:text="${report.reportType}">Loại báo cáo</td>
+                <td th:text="${report.reason}">Lý do</td>
+                <td th:text="${#dates.format(report.reportDate, 'dd/MM/yyyy HH:mm')}">Ngày báo cáo</td>
+                <td th:text="${report.resolved ? 'Đã giải quyết' : 'Chưa giải quyết'}">Trạng thái</td>
+                <td>
+                    <a th:href="@{/reports/{id}/resolve(id=${report.id})}" th:if="${!report.resolved}">Giải quyết</a>
+                    <a th:href="@{/reports/{id}/delete(id=${report.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/reports/new">Tạo báo cáo mới</a>
+</body>
+</html>

@@ -42,11 +42,11 @@ public class Review {
     private LocalDateTime reviewDate;
 
     @ManyToOne
-    @JoinColumn(name = "reviewer_id")
+    @JoinColumn(name = "reviewer_id", nullable = false)
     private AppUser reviewer; // Người đánh giá
 
     @ManyToOne
-    @JoinColumn(name = "reviewed_user_id")
+    @JoinColumn(name = "reviewed_user_id", nullable = false)
     private AppUser reviewedUser; // Người được đánh giá
 
 }
