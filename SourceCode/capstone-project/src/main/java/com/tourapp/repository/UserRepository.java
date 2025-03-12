@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
 	// Tìm 4 tour có averageRating cao nhất
     List<AppUser> findTop4ByOrderByAverageRatingDesc();
 
+	Optional<AppUser> findByVerificationToken(String token);
+
 }

@@ -1,4 +1,4 @@
-package com.tourapp.config;
+package com.tourapp.auth;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,10 +36,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         // Save user in session
         HttpSession session = request.getSession();
-        session.setAttribute("loggedUser", user);
+        session.setAttribute("loggedInUser", user);
         
         // Redirect to profile page
-        response.sendRedirect("/profile");
+        response.sendRedirect("/");
     }
 }
 

@@ -1,8 +1,11 @@
 package com.tourapp.entity;
 
 import java.time.LocalDate;
+import java.util.Set;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -56,4 +59,14 @@ public class Tour {
     @ManyToOne()
     @JoinColumn(name = "guide_id")
     private AppUser guide;
+    
+    @ManyToOne()
+    @JoinColumn(name = "agency_id")
+    private AppUser agency;
+    
+    
+    @ElementCollection
+    @CollectionTable(name = "tour_languages", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "language", columnDefinition = "NVARCHAR(255)")
+    private Set<String> languages;
 }

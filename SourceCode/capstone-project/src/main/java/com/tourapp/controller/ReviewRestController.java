@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,8 +50,19 @@ public class ReviewRestController {
      * Add a new review for a tour
      */
     @PostMapping("/add")
-    public ResponseEntity<?> addReview(@Valid @RequestBody Review review) {
+    public ResponseEntity<?> addReview(@Valid @RequestBody Review review, BindingResult result,
+            @AuthenticationPrincipal UserDetails user2) {
         try {
+        	if (result.hasErrors()) {
+        		logger.error("result.hasErrors()", result.getAllErrors().toString());
+        		
+                return ResponseEntity.badRequest().body(result.getAllErrors());
+                
+            }
+        	
+        	 	
+        	logger.info("user:" +user2.getUsername());
+        	
         	AppUser user = userService.getCurrentAuthenticatedUser();
         	
             if (user == null) {

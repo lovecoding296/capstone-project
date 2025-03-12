@@ -6,13 +6,17 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tourapp.entity.AppUser;
 import com.tourapp.entity.Role;
+import com.tourapp.exception.EmailAlreadyExistsException;
+import com.tourapp.exception.EmailVerificationException;
 import com.tourapp.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,24 +41,42 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+    private EmailService emailService; // Service gửi email
+	
+    public void verifyEmail(String token) throws EmailVerificationException {
+        Optional<AppUser> optionalUser = userRepository.findByVerificationToken(token);
+
+        if (optionalUser.isPresent()) {
+            AppUser user = optionalUser.get();
+            user.setVerified(true);
+            user.setVerificationToken(null); // Xóa token sau khi xác thực
+            userRepository.save(user);
+        } else {
+            throw new EmailVerificationException("Invalid verification token or the token has expired.");
+        }
+    }
+	
 
 	public void save(AppUser user) {
 		userRepository.save(user);
 	}
 
-	public AppUser registerTourist(AppUser user) {
-		return registerUser(user, Role.ROLE_TOURIST);
-	}
-
-	public AppUser registerTourGuide(AppUser user) {
-		return registerUser(user, Role.ROLE_TOUR_GUIDE);
-	}
-
-	private AppUser registerUser(AppUser user, Role role) {
+	public AppUser registerUser(AppUser user, Role role) throws EmailAlreadyExistsException {
 		if (userRepository.existsByEmail(user.getEmail())) {
 			logger.warn("Attempt to register with existing email: {}", user.getEmail());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+			throw new EmailAlreadyExistsException("Email already exists");
 		}
+		
+		// Tạo token ngẫu nhiên
+        String token = UUID.randomUUID().toString();
+        logger.info("Tạo token ngẫu nhiên " + token);
+        
+        user.setVerificationToken(token);
+        user.setVerified(false);
+		
+		emailService.sendVerificationEmail(user.getEmail(), token);
 
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		user.setRole(role);

@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.tourapp.auth.CustomAuthenticationFailureHandler;
+import com.tourapp.auth.CustomAuthenticationSuccessHandler;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +22,9 @@ public class SecurityConfig {
 	
 	@Autowired
 	private CustomAuthenticationSuccessHandler successHandler;
+	
+	@Autowired
+	private CustomAuthenticationFailureHandler failureHandler;
     
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,6 +39,7 @@ public class SecurityConfig {
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .successHandler(successHandler)
+                .failureHandler(failureHandler)
                 .permitAll()
             )
             .logout(logout -> logout

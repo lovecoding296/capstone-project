@@ -36,8 +36,9 @@ public class AppUser {
     private String facebook;
     private String tiktok;
     private String instagram;
-       
-    private String profilePicture;
+    
+    @Enumerated(EnumType.STRING) 
+    private Gender gender; 
     
     @Column(columnDefinition = "FLOAT DEFAULT 0")
     private double averageRating;
@@ -50,13 +51,22 @@ public class AppUser {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+    
+    
+    private String verificationToken;
+    private boolean verified = false; // Chỉ cho phép đăng nhập nếu user đã xác thực email    
+    private boolean kycApproved = false; //Chỉ cho phép đăng nhập nếu admin đã duyệt KYC dành cho guide/agency
+    private String profilePicture;
+    private String cccd;
+    private String guideLicensePicture;
+    private String agencyLicensePicture;
 
     // Thuộc tính dành riêng cho hướng dẫn viên du lịch
     @Column(columnDefinition = "NVARCHAR(255)")
     private String bio;
     
     @ElementCollection
-    @CollectionTable(name = "tour_guide_languages", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "guide_languages", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "language", columnDefinition = "NVARCHAR(255)")
     private Set<String> languages;
     
@@ -69,4 +79,6 @@ public class AppUser {
     // Thuộc tính dành riêng cho khách du lịch
     @Column(columnDefinition = "NVARCHAR(255)")
     private String preferences;
+    
+    
 }

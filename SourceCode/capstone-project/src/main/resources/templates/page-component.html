@@ -18,7 +18,7 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav ms-auto">
-					<!--<li class="nav-item dropdown">
+					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
 							data-bs-toggle="dropdown" aria-expanded="false">
 							<img id="selected-flag" th:src="@{'/images/icons/flags/' + ${#locale.language} + '.svg'}"
@@ -26,7 +26,6 @@
 							<span id="selected-language" th:text="${#locale.language.toUpperCase()}"></span>
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="languageDropdown">
-							<li><a class="dropdown-item" href="#">EN</a></li>
 							<th:block th:with="languages=${'en,vn'.split(',')}">
 								<li th:each="lang : ${languages}" th:if="${#locale.language != lang}">
 									<a class="dropdown-item" th:attr="onclick='changeLanguage(\'' + ${lang} + '\')'"
@@ -38,19 +37,33 @@
 								</li>
 							</th:block>
 						</ul>
-					</li>-->
+					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/tours" >Tour</a>
+						<a class="nav-link" href="/tours">Tour</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/guides">Hướng dẫn viên</a>
 					</li>
-					<li class="nav-item" sec:authorize="hasRole('ROLE_TOUR_GUIDE')">
+					<!-- Nếu user có ROLE_AGENCY hoặc ROLE_ADMIN, hiển thị "Tạo Tour" -->
+					<li class="nav-item" sec:authorize="hasAnyRole('ROLE_AGENCY', 'ROLE_ADMIN')">
 						<a class="nav-link" href="/tours/create">Tạo Tour</a>
 					</li>
-					<li class="nav-item" sec:authorize="!hasRole('ROLE_TOUR_GUIDE')">
-						<a class="nav-link" href="/become-a-guide" th:text="#{becomeAGuide}"></a>
+
+					<!-- Nếu user KHÔNG có ROLE_AGENCY, hiển thị "Đăng ký làm Agency" -->
+					<li class="nav-item" sec:authorize="!hasRole('ROLE_AGENCY')">
+						<a class="nav-link" href="#">Đăng ký làm Agency</a>
 					</li>
+
+					<!-- Nếu user là ROLE_TOURIST, hiển thị "Nâng cấp lên Guide" -->
+					<li class="nav-item" sec:authorize="hasRole('ROLE_TOURIST')">
+						<a class="nav-link" href="/guides/upgrade">Nâng cấp lên Guide</a>
+					</li>
+
+					<!-- Nếu user CHƯA ĐĂNG NHẬP, hiển thị "Đăng ký làm Guide" -->
+					<li class="nav-item" sec:authorize="isAnonymous()">
+						<a class="nav-link" href="/guides/apply">Đăng ký làm Guide</a>
+					</li>
+
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
 							data-bs-toggle="dropdown" aria-expanded="false">

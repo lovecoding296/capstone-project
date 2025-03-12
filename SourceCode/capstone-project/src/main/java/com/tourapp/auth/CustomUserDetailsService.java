@@ -1,4 +1,4 @@
-package com.tourapp.service;
+package com.tourapp.auth;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,11 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	    AppUser user = accountRepository.findByEmail(email)
 	            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-	    return new User(
-	            user.getEmail(),
-	            user.getPassword(),
-	            Collections.singletonList(new SimpleGrantedAuthority(user.getRole().toString()))
-	    );
+	    return new CustomUserDetails(user);
 	}
 
 }
