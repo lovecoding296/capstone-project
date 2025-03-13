@@ -49,7 +49,11 @@
 						<a class="nav-link" href="/trips/manage-all-requests">
 							Quản lý yêu cầu</a>
 					</li>
-					
+					<li class="nav-item" th:if="${session.loggedInUser != null}">
+						<a class="nav-link" href="/manager-appuser/verify">
+							Manage Verify Account</a>
+					</li>
+
 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -68,7 +72,8 @@
 						<ul sec:authorize="!isAnonymous()" class="dropdown-menu" aria-labelledby="userDropdown"
 							id="userPopup">
 							<li>
-								<a class="dropdown-item" th:href="@{/appusers/{id}(id=${session.loggedInUser.id})}">Tài khoản</a>
+								<a class="dropdown-item" th:href="@{/appusers/{id}(id=${session.loggedInUser.id})}">Tài
+									khoản</a>
 							</li>
 							<li>
 								<a class="dropdown-item" href="/logout">Đăng xuất</a>

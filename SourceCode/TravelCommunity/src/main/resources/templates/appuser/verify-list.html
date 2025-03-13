@@ -2,8 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Danh sách chuyến đi</title>
-
+	<title>Danh sách người dùng</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 	<!-- Bootstrap CSS -->
@@ -17,46 +16,41 @@
 
 <body>
 	<!--<nav th:replace="~{page-component :: header}"></nav>
-				<footer th:replace="~{page-component :: footer}"></footer>-->
+		<footer th:replace="~{page-component :: footer}"></footer>-->
 
-	<nav th:replace="~{page-component :: header}"></nav>
-
-
-
-	<h3 class="text-center page-title">Danh sách các chuyến đi</h3>
+		<nav th:replace="~{page-component :: header}"></nav>
+	<h3 class="page-title text-center">Danh sách người đăng ký</h3>
 	<div class="container mt-4">
 		<table class="table table-hover table-bordered">
 			<thead class="table-dark">
 				<tr>
-					<th>Tiêu đề</th>
-					<th>Địa điểm</th>
-					<th>Ngày bắt đầu</th>
-					<th>Ngày kết thúc</th>
-					<th>Người tổ chức</th>
+					<th>Họ và tên</th>
+					<th>Email</th>
+					<th>Avatar</th>
 					<th>Hành động</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="trip : ${trips}">
-					<td th:text="${trip.title}"></td>
-					<td th:text="${trip.destination}"></td>
-					<td th:text="${#temporals.format(trip.startDate, 'dd/MM/yyyy')}"></td>
-					<td th:text="${#temporals.format(trip.endDate, 'dd/MM/yyyy')}"></td>
-					<td th:text="${trip.creator.fullName}"></td>
+				<tr th:each="user : ${appUsers}">
+					<td th:text="${user.fullName}"></td>
+					<td th:text="${user.email}"></td>
 					<td>
-						<a th:href="@{/trips/{id}/details(id=${trip.id})}" class="btn btn-info btn-sm">Chi tiết</a>
-						<a th:href="@{/trips/{id}/edit(id=${trip.id})}" class="btn btn-primary btn-sm">Sửa</a>
-						<a th:href="@{/trips/{id}/delete(id=${trip.id})}" class="btn btn-danger btn-sm"
+						<img th:src="${user.avatarUrl}" alt="Avatar" class="rounded-circle" width="50" height="50">
+					</td>
+					<td>
+						<a th:href="@{/appusers/{id}(id=${user.id})}" class="btn btn-info btn-sm">Chi tiết</a>
+						<a th:href="@{/appusers/{id}/edit(id=${user.id})}" class="btn btn-primary btn-sm">Sửa</a>
+						<a th:href="@{/manager-appuser/verify/{id}/approve(id=${user.id})}"
+							class="btn btn-success btn-sm">Approve</a>
+						<a th:href="@{/appusers/{id}/delete(id=${user.id})}" class="btn btn-danger btn-sm"
 							onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-
-	<a href="/trips/new">Tạo chuyến đi mới</a>
-
 	<footer th:replace="~{page-component :: footer}"></footer>
+
 </body>
 
 </html>

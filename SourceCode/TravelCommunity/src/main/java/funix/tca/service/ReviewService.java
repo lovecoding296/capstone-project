@@ -38,6 +38,10 @@ public class ReviewService {
     public List<Review> findByReviewerId(Long reviewerId) {
         return reviewRepository.findByReviewerId(reviewerId);
     }
+    
+    public List<Review> findByTripId(Long tripId) {
+        return reviewRepository.findByTripId(tripId);
+    }
 
     // Cập nhật đánh giá
     public Review update(Review review) {

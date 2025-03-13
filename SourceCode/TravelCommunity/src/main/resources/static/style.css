@@ -1,4 +1,6 @@
 /* General Styles */
+
+
 body {
 	overflow-x: hidden;
 	margin: 0;
@@ -10,6 +12,10 @@ body {
 
 #main-nav {
 	background-color: #002147;
+}
+
+.page-title {
+	margin-top: 80px;
 }
 
 .custom-header {

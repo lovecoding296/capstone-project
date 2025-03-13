@@ -1,10 +1,12 @@
 package funix.tca.controller;
 
 import funix.tca.entity.AppUser;
+import funix.tca.entity.Review;
 import funix.tca.entity.Trip;
 import funix.tca.entity.TripRequest;
 import funix.tca.enums.RequestStatus;
 import funix.tca.service.AppUserService;
+import funix.tca.service.ReviewService;
 import funix.tca.service.TripRequestService;
 import funix.tca.service.TripService;
 import funix.tca.util.FileUploadHelper;
@@ -36,6 +38,9 @@ public class TripController {
 
 	@Autowired
 	private TripRequestService tripRequestService;
+	
+	@Autowired
+	private ReviewService reviewService;
 
 	// Danh sách các chuyến đi
 	@GetMapping("/")
@@ -67,8 +72,10 @@ public class TripController {
 				model.addAttribute("isParticipant", false);
 				model.addAttribute("hasRequested", false);
 			}
-
-			return "trip/trip-detail";
+			
+			List<Review> reviews = reviewService.findByTripId(id);
+			model.addAttribute("reviews", reviews);
+			return "trip/trip-details";
 		}
 		return "error";
 	}

@@ -32,6 +32,10 @@ public class AppUserService {
     	appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         return appUserRepository.save(appUser);
     }
+    
+    public List<AppUser> getUnapprovedUsers() {
+        return appUserRepository.findByKycApprovedFalse();
+    }
 
     // Tìm AppUser theo ID
     public Optional<AppUser> findById(Long id) {
@@ -61,6 +65,30 @@ public class AppUserService {
 	public void verifyEmail(String token) throws EmailVerificationException{
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public boolean approveAppUser(Long id) {
+		Optional<AppUser> currentUserOption = findById(id);
+
+		if (currentUserOption.isPresent()) {
+			AppUser currentUser = currentUserOption.get();
+			currentUser.setKycApproved(true);
+			appUserRepository.save(currentUser);
+			return true;
+		}
+		return false;		
+	}
+	
+	public boolean rejectAppUser(Long id) {
+		Optional<AppUser> currentUserOption = findById(id);
+
+		if (currentUserOption.isPresent()) {
+			AppUser currentUser = currentUserOption.get();
+			currentUser.setKycApproved(false);
+			appUserRepository.save(currentUser);
+			return true;
+		}
+		return false;		
 	}
 	
 	public void updateCurrentUser(AppUser user) {
@@ -128,6 +156,7 @@ public class AppUserService {
 		if (user.getCccd() != null && !user.getCccd().isEmpty()) {
 			currentUser.setCccd(user.getCccd());
 		}
+		
 
 		appUserRepository.save(currentUser);
 	}	

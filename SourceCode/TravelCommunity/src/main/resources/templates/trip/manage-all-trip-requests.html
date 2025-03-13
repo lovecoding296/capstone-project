@@ -21,30 +21,53 @@
 	<!--<nav th:replace="~{page-component :: header}"></nav>
 			<footer th:replace="~{page-component :: footer}"></footer>-->
 
-	<nav th:replace="~{page-component :: header}"></nav>
+	<nav th:replace="~{page-component :: header}" ></nav>
 
+	<h3 class="text-center page-title">Quản lý các yêu cầu tham gia trip</h3>
 
 	<!-- Hiển thị thông báo khi có thông báo -->
-	<div th:if="${message}">
-		<p th:text="${message}" style="color: green;"></p>
-	</div>
-	<div th:if="${error}">
-		<p th:text="${error}" style="color: red;"></p>
+	<div class="container mt-4">
+		<div th:if="${message}" class="alert alert-success" role="alert">
+			<p th:text="${message}"></p>
+		</div>
+		<div th:if="${error}" class="alert alert-danger" role="alert">
+			<p th:text="${error}"></p>
+		</div>
+
+		<table class="table table-hover table-bordered">
+			<thead class="table-dark">
+				<tr>
+					<th>Trip Title</th>
+					<th>Người đăng ký tham gia</th>
+					<th>Status</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="request : ${allRequests}">
+					<td th:text="${request.trip.title}"></td>
+					<td th:text="${request.user.fullName}"></td>
+					<td>
+						<span
+							th:classappend="${request.status == 'APPROVED' ? 'badge bg-success' : (request.status == 'PENDING' ? 'badge bg-warning text-dark' : 'badge bg-danger')}"
+							th:text="${request.status}">
+						</span>
+					</td>
+					<td>
+						<form
+							th:action="@{/trips/{id}/manage-requests/{requestId}(id=${request.trip.id}, requestId=${request.id})}"
+							method="post">
+							<button type="submit" name="action" value="approve"
+								class="btn btn-success btn-sm">Approve</button>
+							<button type="submit" name="action" value="reject"
+								class="btn btn-danger btn-sm">Reject</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 
-	<tr th:each="request : ${allRequests}">
-		<td th:text="${request.trip.title}"></td>
-		<td th:text="${request.user.fullName}"></td>
-		<td th:text="${request.status}"></td>
-		<td>
-			<!-- Add your approve/reject actions here -->
-			<form th:action="@{/trips/{id}/manage-requests/{requestId}(id=${request.trip.id}, requestId=${request.id})}"
-				method="post">
-				<button type="submit" name="action" value="approve">Approve</button>
-				<button type="submit" name="action" value="reject">Reject</button>
-			</form>
-		</td>
-	</tr>
 
 	<footer th:replace="~{page-component :: footer}">
 </body>

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import funix.tca.entity.AppUser;
 import funix.tca.entity.Trip;
@@ -28,7 +29,6 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/appusers")
 public class AppUserController {
 
     @Autowired
@@ -41,17 +41,17 @@ public class AppUserController {
     private PostService postService;
     
     // Lấy danh sách tất cả người dùng
-    @GetMapping
+    @GetMapping("/appusers")
     public String getAllAppUsers(Model model) {
         List<AppUser> appUsers = appUserService.findAll();
         
         
         model.addAttribute("appUsers", appUsers);
-        return "appuser/list"; // Trả về trang Thymeleaf với danh sách người dùng
+        return "appuser/appuser-list"; // Trả về trang Thymeleaf với danh sách người dùng
     }
 
     // Lấy thông tin người dùng theo ID
-    @GetMapping("/{id}")
+    @GetMapping("/appusers/{id}")
     public String getAppUserById(@PathVariable Long id, Model model) {
         Optional<AppUser> appUser = appUserService.findById(id);
         if (appUser.isPresent()) {
@@ -62,29 +62,29 @@ public class AppUserController {
             model.addAttribute("appUser", appUser.get());
             model.addAttribute("trips", trips);
             model.addAttribute("posts", posts);
-            return "appuser/detail"; // Trả về trang chi tiết người dùng
+            return "appuser/appuser-details"; // Trả về trang chi tiết người dùng
         }
         return "redirect:/appusers"; // Nếu không tìm thấy, chuyển hướng về trang danh sách
     }
 
     // Tạo mới người dùng
-    @GetMapping("/new")
+    @GetMapping("/appusers/new")
     public String showCreateForm(Model model) {
         model.addAttribute("appUser", new AppUser());
         return "appuser/form"; // Trả về trang Thymeleaf để tạo người dùng mới
     }
 
-    @PostMapping("/new")
+    @PostMapping("/appusers/new")
     public String createAppUser(@Valid @ModelAttribute AppUser appUser, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "appuser/form"; // Trả về lại trang tạo nếu có lỗi
+            return "appuser/appuser-form"; // Trả về lại trang tạo nếu có lỗi
         }
         appUserService.save(appUser);
         return "redirect:/appusers"; // Chuyển hướng đến danh sách người dùng sau khi lưu
     }
 
     // Cập nhật thông tin người dùng
-    @GetMapping("/{id}/edit")
+    @GetMapping("/appusers/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model, HttpSession session) {
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
 
@@ -99,13 +99,13 @@ public class AppUserController {
         Optional<AppUser> appUser = appUserService.findById(id);
         if (appUser.isPresent()) {
             model.addAttribute("appUser", appUser.get());
-            return "appuser/form"; // Trả về trang chỉnh sửa
+            return "appuser/appuser-form"; // Trả về trang chỉnh sửa
         }
         return "redirect:/appusers"; // Không tìm thấy người dùng -> Chuyển hướng
     }
 
 
-    @PostMapping("/{id}/edit")
+    @PostMapping("/appusers/{id}/edit")
     public String updateAppUser(@PathVariable Long id, @Valid @ModelAttribute AppUser appUser, BindingResult result,
     		@RequestParam("avatarFile") MultipartFile avatarFile, @RequestParam("cccdFile") MultipartFile cccdFile,Model model, HttpSession session) {
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
@@ -119,7 +119,7 @@ public class AppUserController {
         }
 
         if (result.hasErrors()) {
-            return "appuser/form"; // Trả về lại trang chỉnh sửa nếu có lỗi
+            return "appuser/appuser-form"; // Trả về lại trang chỉnh sửa nếu có lỗi
         }
 
         appUser.setId(id);
@@ -144,7 +144,7 @@ public class AppUserController {
 
 
     // Xóa người dùng theo ID
-    @GetMapping("/{id}/delete")
+    @GetMapping("/appusers/{id}/delete")
     public String deleteAppUser(@PathVariable Long id, HttpSession session) {
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
 
@@ -159,5 +159,36 @@ public class AppUserController {
         appUserService.deleteById(id);
         return "redirect:/appusers"; // Chuyển hướng sau khi xóa
     }
+    
+    //verify
+    @GetMapping("/manager-appuser/verify")
+    public String manageVerify(Model model) {
+    	 List<AppUser> appUsers = appUserService.getUnapprovedUsers();     
+         model.addAttribute("appUsers", appUsers);
+         return "appuser/verify-list";
+    }
+    
+    
+    @GetMapping("/manager-appuser/verify/{id}/approve")
+	public String approveRequest(@PathVariable Long id, RedirectAttributes redirectAttributes) {    	
+		boolean approved = appUserService.approveAppUser(id);
+		if (approved) {
+			redirectAttributes.addFlashAttribute("message", "User approved successfully.");
+		} else {
+			redirectAttributes.addFlashAttribute("error", "Failed to approve User.");
+		}
+		return "redirect:/manager-appuser/verify";
+	}
+
+	@GetMapping("/manager-appuser/verify/{id}/reject")
+	public String rejectRequest(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+		boolean rejected = appUserService.rejectAppUser(id);
+		if (rejected) {
+			redirectAttributes.addFlashAttribute("message", "User rejected successfully.");
+		} else {
+			redirectAttributes.addFlashAttribute("error", "Failed to reject User.");
+		}
+		return "redirect:/manager-appuser/verify";
+	}
 
 }

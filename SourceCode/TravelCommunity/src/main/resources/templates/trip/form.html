@@ -18,13 +18,13 @@
 
 	<nav th:replace="~{page-component :: header}"></nav>
 
-	<h1 th:text="${#strings.isEmpty(trip.id) ? 'Tạo chuyến đi mới' : 'Chỉnh sửa chuyến đi'}" style="margin-top: 80px;">
-	</h1>
+	<h3 class="text-center page-title" th:text="${#strings.isEmpty(trip.id) ? 'Tạo chuyến đi mới' : 'Chỉnh sửa chuyến đi'}" >
+	</h3>
 	<form th:action="@{${#strings.isEmpty(trip.id) ? '/trips/new' : '/trips/' + trip.id + '/edit'}}" th:object="${trip}"
 		method="post" class="container mt-4" enctype="multipart/form-data">
 
 		<div>
-			<img th:src="@{${trip.tripPictureUrl} ?: '/uploads/default.jpg'}" width="500" height="200">
+			<img th:src="@{${trip.tripPictureUrl} ?: '/uploads/trip-default.png'}" style="border: solid black 1px;" width="500" height="200">
 			<br>
 			<br>
 			<label>Add/change trip picture:</label>

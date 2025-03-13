@@ -107,6 +107,7 @@ public class HomeController {
 	    	}
 			appUserService.save(appUser);
 			System.out.println("Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
+			model.addAttribute("successMessage", "Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
 			model.addAttribute("appUser", new AppUser());
 			return "signup";
 		} catch (IOException e) {
@@ -114,6 +115,7 @@ public class HomeController {
 			e.printStackTrace();
 		}        
 		model.addAttribute("appUser", appUser);
+		model.addAttribute("errorMessage", "Có lỗi khi đăng ký hãy thử lại sau.");
         return "signup";
     }
 

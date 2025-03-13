@@ -30,16 +30,16 @@ public class DummyData implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 
         
-        createUser("admin@tca.com", "123", Role.ROLE_ADMIN);
-        createUser("phi@tca.com", "123", Role.ROLE_USER);
-        createUser("giang@tca.com", "123", Role.ROLE_USER);
-        createUser("duc@tca.com", "123", Role.ROLE_USER);
+        createUser("admin@tca.com", "admin", "123", Role.ROLE_ADMIN);
+        createUser("phi@tca.com", "phi", "123", Role.ROLE_USER);
+        createUser("giang@tca.com", "giang", "123", Role.ROLE_USER);
+        createUser("duc@tca.com", "duc", "123", Role.ROLE_USER);
         
         
         
 	}
 	
-	private void createUser(String email, String rawPassword, Role role) {
+	private void createUser(String email, String fullName, String rawPassword, Role role) {
         Optional<AppUser> adminUser = userRepository.findByEmail(email);
 
         if (adminUser.isEmpty()) {
@@ -48,6 +48,7 @@ public class DummyData implements ApplicationRunner {
             admin.setEmail(email);
             admin.setPassword(passwordEncoder.encode(rawPassword)); // Mật khẩu mã hóa
             admin.setRole(role);
+            admin.setFullName(fullName);
 
             userRepository.save(admin);
             System.out.println("Admin account created successfully!");
@@ -55,5 +56,6 @@ public class DummyData implements ApplicationRunner {
             System.out.println("Admin account already exists.");
         }
     }
+	
 
 }

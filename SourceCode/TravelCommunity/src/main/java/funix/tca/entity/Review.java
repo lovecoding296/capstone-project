@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,10 @@ public class Review {
     private String feedback;
     
     private LocalDateTime reviewDate;
+    
+    @ManyToOne
+    @JoinColumn(name = "trip_id", nullable = false)
+    private Trip trip; // Đánh giá thuộc về chuyến đi nào
 
     @ManyToOne
     @JoinColumn(name = "reviewer_id", nullable = false)
@@ -48,6 +53,11 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "reviewed_user_id", nullable = false)
     private AppUser reviewedUser; // Người được đánh giá
+    
+    @PrePersist
+    protected void onCreate() {
+    	reviewDate = LocalDateTime.now();
+    } 
 
 }
 

@@ -31,6 +31,9 @@
 <body>
 	<nav th:replace="~{page-component :: header}"></nav>
 	<h2 class="text-center mb-4 text-primary fw-bold" style="margin-top: 80px;">Chi tiết chuyến đi</h2>
+
+
+
 	<div class="container mt-5">
 		<div class="trip-card shadow-lg border-0 rounded-3">
 			<div class="card-body p-4">
@@ -105,6 +108,31 @@
 			</div>
 		</div>
 	</div>
+	
+	<h3>Danh sách đánh giá</h3>
+
+	<!--<th:block" th:if="@{reviews.size() > 0}">-->
+		<div th:each="review : ${reviews}" class="review-card">
+			<p><strong>Người đánh giá:</strong> <span th:text="${review.reviewer.fullName}"></span></p>
+			<p><strong>Số sao:</strong> <span th:text="${review.rating} + ' ⭐'"></span></p>
+			<p><strong>Nhận xét:</strong> <span th:text="${review.feedback}"></span></p>
+			<p><strong>Ngày đánh giá:</strong> <span
+					th:text="${#temporals.format(review.reviewDate, 'dd/MM/yyyy')}"></span></p>
+
+			<th:block th:if="${session.loggedInUser != null and session.loggedInUser.id == review.reviewer.id}">
+				<a th:href="@{/trips/{tripId}/reviews/{reviewId}/edit(tripId=${trip.id}, reviewId=${review.id})}"
+					class="btn btn-sm btn-warning">Chỉnh sửa</a>
+				<form th:action="@{/trips/{tripId}/reviews/{reviewId}/delete(tripId=${trip.id}, reviewId=${review.id})}"
+					method="post" class="d-inline">
+					<button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+				</form>
+			</th:block>
+		</div>
+	<!--</th:block>-->
+
+	<th:block th:if="${isParticipant && trip.completed && !hasReviewed}">
+		<a th:href="@{/trips/{tripId}/reviews/add(tripId=${trip.id})}" class="btn btn-primary">Thêm đánh giá</a>
+	</th:block>
 
 
 	<footer th:replace="~{page-component :: footer}"></footer>
