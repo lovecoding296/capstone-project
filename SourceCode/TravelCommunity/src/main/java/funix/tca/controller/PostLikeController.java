@@ -2,6 +2,7 @@ package funix.tca.controller;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import funix.tca.entity.Post;
+import funix.tca.entity.PostLike;
 import funix.tca.config.CustomUserDetails;
 import funix.tca.entity.AppUser;
 import funix.tca.service.PostLikeService;
@@ -53,12 +55,12 @@ public class PostLikeController {
         Post post = optionalPost.get();
 
         boolean liked = postLikeService.toggleLike(post, user);
-        
+        List<PostLike> likes =  postLikeService.findByPostId(postId);
         
         
      // Trả về số lượt thích và trạng thái thích của user
         Map<String, Object> response = new HashMap<>();
-        response.put("likeCount", post.getLikes().size()); // Số lượt thích
+        response.put("likeCount", likes.size()); // Số lượt thích
         response.put("liked", liked); // Trạng thái user đã thích hay chưa
 
         return ResponseEntity.ok(response);

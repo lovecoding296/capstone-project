@@ -38,22 +38,58 @@
 							</th:block>
 						</ul>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="/trips/new">Tạo trip</a>
+
+
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+							aria-expanded="false">
+							<span>Trip</span>
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="languageDropdown">
+							<li>
+								<a class="dropdown-item" href="/trips/new">
+									<span>Tạo Trip</span>
+								</a>
+							</li>
+							<li sec:authorize="!isAnonymous()">
+								<a class="dropdown-item" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}">
+									<span>Trip của tôi</span>
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="/trips/manage-all-requests">
+									<span>Quản lý yêu cầu</span>
+								</a>
+							</li>
+						</ul>
 					</li>
-					<li class="nav-item" th:if="${session.loggedInUser != null}">
-						<a class="nav-link" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}">
-							Trip của tôi</a>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+							aria-expanded="false">
+							<span>Post</span>
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="languageDropdown">
+							<li>
+								<a class="dropdown-item" href="/posts/new">
+									<span>Tạo Post</span>
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item">
+									<span>Post của tôi</span>
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item">
+									<span>Quản lý yêu cầu</span>
+								</a>
+							</li>
+						</ul>
 					</li>
-					<li class="nav-item" th:if="${session.loggedInUser != null}">
-						<a class="nav-link" href="/trips/manage-all-requests">
-							Quản lý yêu cầu</a>
-					</li>
-					<li class="nav-item" th:if="${session.loggedInUser != null}">
+					<li class="nav-item" sec:authorize="!isAnonymous()">
 						<a class="nav-link" href="/manager-appuser/verify">
 							Manage Verify Account</a>
 					</li>
-
 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"

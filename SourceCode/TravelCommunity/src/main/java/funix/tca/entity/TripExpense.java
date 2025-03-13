@@ -1,7 +1,8 @@
 package funix.tca.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -30,7 +31,7 @@ public class TripExpense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String description;
     
     private double amount;
@@ -42,7 +43,7 @@ public class TripExpense {
 
     @ManyToOne
     @JoinColumn(name = "paid_by", nullable = false)
-    private AppUser paidBy; // Người đã thanh toán
+    private AppUser paidBy;
 
     @ManyToMany
     @JoinTable(
@@ -50,6 +51,6 @@ public class TripExpense {
         joinColumns = @JoinColumn(name = "expense_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<AppUser> participants; // Những người tham gia chia sẻ chi phí
-
+    private Set<AppUser> participants = new HashSet<>();
 }
+

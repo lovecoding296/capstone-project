@@ -60,7 +60,8 @@ public class Trip {
         name = "trip_members",
         joinColumns = @JoinColumn(name = "trip_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
-    )    
-    private List<AppUser> participants; // Danh sách thành viên tham gia
+    )
+    private List<AppUser> participants;
+ // Danh sách thành viên tham gia
 }
 

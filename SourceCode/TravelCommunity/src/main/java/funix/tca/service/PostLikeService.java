@@ -11,6 +11,7 @@ import funix.tca.entity.AppUser;
 import funix.tca.repository.PostLikeRepository;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,4 +43,8 @@ public class PostLikeService {
     public long countLikes(Post post) {
         return likeRepository.countByPost(post);
     }
+
+	public List<PostLike> findByPostId(Long postId) {
+		return likeRepository.findByPostId(postId);
+	}
 }

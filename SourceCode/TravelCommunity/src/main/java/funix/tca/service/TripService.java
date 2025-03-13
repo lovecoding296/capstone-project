@@ -56,6 +56,7 @@ public class TripService {
 
     // Xóa chuyến đi theo ID
     public void deleteById(Long id) {
+    	System.out.println("TripService deleteById id = " + id);
         tripRepository.deleteById(id);
     }
 

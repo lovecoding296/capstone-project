@@ -47,7 +47,7 @@ public class TripController {
 	public String listTrips(Model model) {
 		List<Trip> trips = tripService.findAll();
 		model.addAttribute("trips", trips);
-		return "trip/list";
+		return "trip/trip-list";
 	}
 
 	// Xem chi tiết chuyến đi
@@ -85,7 +85,7 @@ public class TripController {
 	public String listTripsByCreator(@PathVariable Long creatorId, Model model) {
 		List<Trip> trips = tripService.findByCreatorId(creatorId);
 		model.addAttribute("trips", trips);
-		return "trip/list"; // Trang các chuyến đi của người tổ chức
+		return "trip/trip-list"; // Trang các chuyến đi của người tổ chức
 	}
 
 	// Tạo mới một chuyến đi
@@ -98,7 +98,7 @@ public class TripController {
 
 		model.addAttribute("trip", new Trip());
 		model.addAttribute("users", appUserService.findAll());
-		return "trip/form"; // Trang tạo mới chuyến đi
+		return "trip/trip-form"; // Trang tạo mới chuyến đi
 	}
 
 	@PostMapping("/new")
@@ -110,7 +110,7 @@ public class TripController {
 
 		if (result.hasErrors()) {
 			model.addAttribute("users", appUserService.findAll());
-			return "trip/form"; // Trả lại trang nếu có lỗi
+			return "trip/trip-form"; // Trả lại trang nếu có lỗi
 		}
 
 		trip.setCreator(user);
@@ -135,7 +135,7 @@ public class TripController {
 
 		model.addAttribute("trip", trip);
 		model.addAttribute("users", appUserService.findAll());
-		return "trip/form"; // Trang chỉnh sửa chuyến đi
+		return "trip/trip-form"; // Trang chỉnh sửa chuyến đi
 	}
 
 	@PostMapping("/{id}/edit")
@@ -156,7 +156,7 @@ public class TripController {
 
 		if (result.hasErrors()) {
 			model.addAttribute("users", appUserService.findAll());
-			return "trip/form";
+			return "trip/trip-form";
 		}
 
 		trip.setId(id);
@@ -172,7 +172,7 @@ public class TripController {
 			System.out.println("upload image error");
 		}
 		tripService.save(trip);
-		return "redirect:/trips/";
+		return "redirect:/trips/{id}/details";
 	}
 
 	// Xóa một chuyến đi
@@ -189,7 +189,7 @@ public class TripController {
 		if (!trip.getCreator().getId().equals(user.getId())) {
 			return "redirect:/trips/?error=unauthorized";
 		}
-
+		System.out.println("TripController deleteById id = " + id);
 		tripService.deleteById(id);
 		return "redirect:/trips/";
 	}

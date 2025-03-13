@@ -4,9 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import funix.tca.entity.AppUser;
 import funix.tca.entity.Review;
+import funix.tca.entity.Trip;
 import funix.tca.service.AppUserService;
 import funix.tca.service.ReviewService;
-
+import funix.tca.service.TripService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/reviews")
@@ -28,6 +30,9 @@ public class ReviewController {
 
     @Autowired
     private AppUserService appUserService;
+    
+    @Autowired
+    private TripService tripService;
 
     // Lấy tất cả các đánh giá
     @GetMapping("/")
@@ -49,7 +54,7 @@ public class ReviewController {
     }
 
     // Tạo mới một đánh giá
-    @GetMapping("/new")
+    @GetMapping("/trip/{id}/new")
     public String showCreateForm(Model model, HttpSession session) {
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
@@ -61,8 +66,8 @@ public class ReviewController {
         return "review/form"; // Trang tạo mới đánh giá
     }
 
-    @PostMapping("/new")
-    public String createReview(@Valid @ModelAttribute Review review, BindingResult result, Model model, HttpSession session) {
+    @PostMapping("/trip/{tripId}/new")
+    public String createReview(@PathVariable Long tripId,@Valid @ModelAttribute Review review, BindingResult result, Model model, HttpSession session) {
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
             return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
@@ -72,10 +77,15 @@ public class ReviewController {
             model.addAttribute("users", appUserService.findAll());
             return "review/form"; // Trả lại trang nếu có lỗi
         }
-
-        review.setReviewer(loggedInUser); // Gán người đánh giá là loggedInUser
-        reviewService.save(review);
-        return "redirect:/reviews/"; // Chuyển hướng về trang danh sách
+        Optional<Trip> tripOp = tripService.findById(tripId);
+        if(tripOp.isPresent()) {
+        	review.setTrip(tripOp.get());
+            review.setReviewer(loggedInUser); // Gán người đánh giá là loggedInUser
+            reviewService.save(review);
+        } else {
+        	model.addAttribute("users", appUserService.findAll());
+        }            
+        return "redirect:/trips/{id}/details";
     }
 
     // Xóa một đánh giá
