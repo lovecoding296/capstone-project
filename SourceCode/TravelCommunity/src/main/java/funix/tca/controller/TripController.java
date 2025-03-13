@@ -112,7 +112,6 @@ public class TripController {
 			model.addAttribute("users", appUserService.findAll());
 			return "trip/trip-form"; // Trả lại trang nếu có lỗi
 		}
-
 		trip.setCreator(user);
 		tripService.save(trip);
 		return "redirect:/trips/"; // Chuyển hướng về trang danh sách

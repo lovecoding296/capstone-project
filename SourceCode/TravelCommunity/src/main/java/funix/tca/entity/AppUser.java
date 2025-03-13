@@ -2,6 +2,7 @@ package funix.tca.entity;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
@@ -100,5 +101,10 @@ public class AppUser {
         }
         AppUser user = (AppUser) obj;
         return this.getId().equals(user.getId());
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

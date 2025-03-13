@@ -2,6 +2,8 @@ package funix.tca.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.CascadeType;
@@ -15,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,7 +64,6 @@ public class Trip {
         joinColumns = @JoinColumn(name = "trip_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<AppUser> participants;
- // Danh sách thành viên tham gia
+    private Set<AppUser> participants;
 }
 

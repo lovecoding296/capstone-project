@@ -1,6 +1,7 @@
 package funix.tca.service;
 
 import funix.tca.entity.AppUser;
+import funix.tca.entity.Review;
 import funix.tca.entity.Trip;
 import funix.tca.entity.TripRequest;
 import funix.tca.repository.TripRepository;
@@ -81,5 +82,9 @@ public class TripService {
 		trip.getParticipants().add(user);
         tripRepository.save(trip);
 		
+	}
+
+	public Optional<Trip> getTripById(Long tripId) {
+		return tripRepository.getTripById(tripId);
 	}
 }
