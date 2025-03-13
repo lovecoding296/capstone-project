@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import funix.tca.entity.AppUser;
 import funix.tca.entity.Post;
-import funix.tca.entity.Role;
+import funix.tca.enums.Role;
 import funix.tca.repository.AppUserRepository;
 import funix.tca.repository.PostRepository;
 

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.validation.annotation.Validated;
 
+import funix.tca.enums.ReportType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

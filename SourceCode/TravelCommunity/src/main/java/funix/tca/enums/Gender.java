@@ -1,4 +1,4 @@
-package funix.tca.entity;
+package funix.tca.enums;
 
 public enum Gender {
     MALE, FEMALE, OTHER

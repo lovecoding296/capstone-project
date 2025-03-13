@@ -1,14 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi">
+
 <head>
-    <title>Chi tiết người dùng</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Thông Tin Người Dùng</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
 </head>
+
 <body>
-    <h1>Chi tiết người dùng</h1>
-    <p><strong>Họ và tên:</strong> <span th:text="${appUser.fullName}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${appUser.email}"></span></p>
-    <p><strong>Avatar:</strong> <img th:src="${appUser.avatarUrl}" alt="Avatar" width="100" height="100"></p>
-    <p><strong>Giới thiệu:</strong> <span th:text="${appUser.bio}"></span></p>
-    <a th:href="@{/appusers}">Quay lại</a>
+	<!--<nav th:replace="~{page-component :: header}"></nav>
+	<footer th:replace="~{page-component :: footer}"></footer>-->
+
+	<nav th:replace="~{page-component :: header}"></nav>
+
+	<div class="container">
+		<h1>Thông Tin Người Dùng</h1>
+		<div class="row">
+			<div class="col-md-4">
+				<img th:src="@{${appUser.avatarUrl} ?: '/uploads/default.jpg'}" width="204" height="204"
+					style="border-radius: 15px; border: solid 4px darkseagreen;">
+			</div>
+			<div class="col-md-8">
+				<h3 th:text="${appUser.fullName}"></h3>
+				<p><strong>Email:</strong> <span th:text="${appUser.email}"></span></p>
+				<p><strong>Giới tính:</strong> <span th:text="${appUser.gender}"></span></p>
+				<p><strong>Ngày sinh:</strong> <span th:text="${appUser.age}"></span></p>
+				<p><strong>Số điện thoại:</strong> <span th:text="${appUser.phone}"></span></p>
+				<p><strong>Điện thoại gia đình:</strong> <span th:text="${appUser.familyPhone}"></span></p>
+				<p><strong>Địa chỉ:</strong> <span th:text="${appUser.homeAddress}"></span></p>
+				<p><strong>Thành phố:</strong> <span th:text="${appUser.city}"></span></p>
+				<p><strong>Giới thiệu bản thân:</strong> <span th:text="${appUser.bio}"></span></p>
+				<p><strong>Sở thích du lịch:</strong> <span th:text="${appUser.interests}"></span></p>
+				<p><strong>Facebook:</strong> <a th:href="${appUser.facebook}" th:text="${appUser.facebook}"></a></p>
+				<p><strong>Tiktok:</strong> <a th:href="${appUser.tiktok}" th:text="${appUser.tiktok}"></a></p>
+				<p><strong>Instagram:</strong> <a th:href="${appUser.instagram}" th:text="${appUser.instagram}"></a></p>
+				<p><strong>Điểm uy tín:</strong> <span th:text="${appUser.averageRating}"></span></p>
+				<p><strong>Đã xác thực email:</strong> <span th:text="${appUser.verified ? 'Có' : 'Chưa'}"></span></p>
+				<p><strong>Được phê duyệt KYC:</strong> <span th:text="${appUser.kycApproved ? 'Có' : 'Chưa'}"></span>
+				</p>
+				<div th:if="${session.loggedInUser != null and session.loggedInUser.id == appUser.id}">
+					<a th:href="@{/appusers/{id}/edit(id=${appUser.id})}" class="btn btn-primary">Chỉnh sửa thông
+						tin</a>
+				</div>
+
+			</div>
+		</div>
+
+		<!-- Section: Danh sách chuyến đi tham gia -->
+		<div class="section-title">
+			<h3>Danh sách Chuyến Đi Đã Tham Gia</h3>
+		</div>
+		<ul class="trip-list">
+			<li th:each="trip : ${trips}" class="trip-item">
+				<h5 th:text="${trip.title}">Tên chuyến đi</h5>
+				<p th:text="${trip.destination}">Mô tả chuyến đi</p>
+			</li>
+		</ul>
+
+		<!-- Section: Danh sách bài viết đã viết -->
+		<div class="section-title">
+			<h3>Danh sách Bài Viết</h3>
+		</div>
+		<ul class="post-list">
+			<li th:each="post : ${posts}" class="post-item">
+				<h5 th:text="${post.title}">Tiêu đề bài viết</h5>
+				<p th:text="${post.content}">Nội dung bài viết</p>
+			</li>
+		</ul>
+	</div>
+
+
+	<footer th:replace="~{page-component :: footer}"></footer>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

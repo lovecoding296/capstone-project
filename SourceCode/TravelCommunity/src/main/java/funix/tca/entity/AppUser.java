@@ -6,6 +6,9 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import funix.tca.enums.Gender;
+import funix.tca.enums.Language;
+import funix.tca.enums.Role;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -56,6 +59,16 @@ public class AppUser {
     private String interests; // Sở thích du lịch
     
     private int age;
+    
+    @Pattern(regexp = "0\\d{9}", message = "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số")
+    private String phone;
+    
+    @Pattern(regexp = "0\\d{9}", message = "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số")
+    private String familyPhone;
+    
+    private String facebook;
+    private String tiktok;
+    private String instagram;
 
     @Enumerated(EnumType.STRING) 
     private Gender gender; 
@@ -73,6 +86,9 @@ public class AppUser {
     @Column(columnDefinition = "NVARCHAR(255)")
     private String city;
     
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String homeAddress;
+    
     private double averageRating; // Điểm uy tín từ đánh giá
     
     //auth
@@ -83,5 +99,17 @@ public class AppUser {
     
 	public boolean isAdmin() {
 		return this.role == Role.ROLE_ADMIN;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+            return true;
+        }
+		if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+		AppUser user = (AppUser) obj;
+		return this.getId() == user.getId();
 	}
 }

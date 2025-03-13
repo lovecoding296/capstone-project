@@ -2,48 +2,94 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Tạo/Chỉnh sửa chuyến đi</title>
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
 </head>
 
 <body>
-	<h1 th:text="${#strings.isEmpty(trip.id) ? 'Tạo chuyến đi mới' : 'Chỉnh sửa chuyến đi'}"></h1>
+
+	<nav th:replace="~{page-component :: header}"></nav>
+
+	<h1 th:text="${#strings.isEmpty(trip.id) ? 'Tạo chuyến đi mới' : 'Chỉnh sửa chuyến đi'}" style="margin-top: 80px;">
+	</h1>
 	<form th:action="@{${#strings.isEmpty(trip.id) ? '/trips/new' : '/trips/' + trip.id + '/edit'}}" th:object="${trip}"
-		method="post">
-		<label for="title">Tiêu đề</label>
-		<input type="text" th:field="*{title}" required /><br>
+		method="post" class="container mt-4" enctype="multipart/form-data">
 
-		<label for="destination">Địa điểm</label>
-		<input type="text" th:field="*{destination}" required /><br>
+		<div>
+			<img th:src="@{${trip.tripPictureUrl} ?: '/uploads/default.jpg'}" width="500" height="200">
+			<br>
+			<br>
+			<label>Add/change trip picture:</label>
+			<br>
 
-		<label for="startDate">Ngày bắt đầu</label>
-		<input type="datetime-local" th:field="*{startDate}" required /><br>
-
-		<label for="endDate">Ngày kết thúc</label>
-		<input type="datetime-local" th:field="*{endDate}" required /><br>
-
-		<label for="itinerary">Lịch trình</label>
-		<textarea th:field="*{itinerary}" required></textarea><br>
-
-		<label for="estimatedCost">Chi phí ước tính</label>
-		<input type="number" th:field="*{estimatedCost}" required /><br>
-
-		<!-- Người tổ chức (Chỉ hiển thị, không chọn được) -->
-		<!--<label>Người tổ chức</label>
-		<input type="text" th:value="${session.loggedInUser.fullName}" readonly>
-		<input type="hidden" th:field="*{creator}" th:value="${loggedInUser.id}"><br>-->
-
-		<label for="participantEmail">Thêm thành viên tham gia</label>
-		<input type="email" id="participantEmail" placeholder="Nhập email" />
-		<button type="button" id="addParticipant">Thêm</button>
-
-		<!-- Danh sách thành viên được chọn -->
-		<ul id="participantList"></ul>
-
-		<!-- Trường ẩn để lưu danh sách participant IDs -->
-		<input type="hidden" th:field="*{participants}" id="participants" />
+			<input type="hidden" name="tripPictureUrl" th:field="*{tripPictureUrl}"></input>
 
 
-		<button type="submit">Lưu chuyến đi</button>
+			<div class="file-upload">
+				<input type="file" id="fileInput" name="tripPictureFile" accept="image/*">
+				<label for="fileInput">Choose file</label>
+				<span id="fileName">No file chosen</span>
+			</div>
+		</div>
+		<br><br>
+
+		<div class="mb-3">
+			<label for="title" class="form-label">Tiêu đề</label>
+			<input type="text" th:field="*{title}" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="destination" class="form-label">Địa điểm</label>
+			<input type="text" th:field="*{destination}" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="startDate" class="form-label">Ngày bắt đầu</label>
+			<input type="datetime-local" th:field="*{startDate}" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="endDate" class="form-label">Ngày kết thúc</label>
+			<input type="datetime-local" th:field="*{endDate}" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="itinerary" class="form-label">Lịch trình</label>
+			<textarea th:field="*{itinerary}" class="form-control" rows="3" required></textarea>
+		</div>
+
+		<div class="mb-3">
+			<label for="description" class="form-label">Mô tả chi tiết</label>
+			<textarea th:field="*{description}" class="form-control" rows="4" required></textarea>
+		</div>
+
+		<div class="mb-3">
+			<label for="estimatedCost" class="form-label">Chi phí ước tính</label>
+			<input type="number" th:field="*{estimatedCost}" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="participantEmail" class="form-label">Thêm thành viên tham gia</label>
+			<div class="input-group">
+				<input type="email" id="participantEmail" class="form-control" placeholder="Nhập email">
+				<button type="button" id="addParticipant" class="btn btn-outline-primary">Thêm</button>
+			</div>
+		</div>
+
+		<ul id="participantList" class="list-group mb-3"></ul>
+
+		<input type="hidden" th:field="*{participants}" id="participants">
+
+		<button type="submit" class="btn btn-primary">Lưu chuyến đi</button>
+		<a th:href="@{/trips}" class="btn btn-secondary">Hủy</a>
 	</form>
 
 	<script>
@@ -81,6 +127,8 @@
 				.catch(error => alert(error.message));
 		});
 	</script>
+
+	<footer th:replace="~{page-component :: footer}"></footer>
 
 </body>
 

@@ -1,9 +1,15 @@
 package funix.tca.service;
 
+import funix.tca.entity.AppUser;
 import funix.tca.entity.Trip;
+import funix.tca.entity.TripRequest;
 import funix.tca.repository.TripRepository;
+import funix.tca.repository.TripRequestRepository;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +19,10 @@ public class TripService {
 
     @Autowired
     private TripRepository tripRepository;
+    
+    @Autowired
+    private TripRequestRepository tripRequestRepository;
+    
 
     // Lưu một chuyến đi
     public Trip save(Trip trip) {
@@ -48,4 +58,27 @@ public class TripService {
     public void deleteById(Long id) {
         tripRepository.deleteById(id);
     }
+
+    public void deleteParticipantFromTrip(AppUser user, Trip trip) {
+    	
+        if (trip.getParticipants().contains(user)) {
+        	TripRequest tripRequest = tripRequestRepository.findRequestByUserAndTrip(user, trip);
+        	
+            // Nếu tìm thấy yêu cầu tham gia, xóa yêu cầu
+            if (tripRequest != null) {
+            	tripRequestRepository.delete(tripRequest);  // Xóa yêu cầu khỏi cơ sở dữ liệu
+            }
+        	
+            trip.getParticipants().remove(user);            
+            System.out.println("deleteParticipantFromTrip thành công");
+            tripRepository.save(trip);
+        }
+    }
+
+    
+	public void addParticipantToTrip(AppUser user, Trip trip) {
+		trip.getParticipants().add(user);
+        tripRepository.save(trip);
+		
+	}
 }

@@ -39,30 +39,17 @@
 						</ul>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/tours">Tour</a>
+						<a class="nav-link" href="/trips/new">Tạo trip</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="/guides">Hướng dẫn viên</a>
+					<li class="nav-item" th:if="${session.loggedInUser != null}">
+						<a class="nav-link" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}">
+							Trip của tôi</a>
 					</li>
-					<!-- Nếu user có ROLE_AGENCY hoặc ROLE_ADMIN, hiển thị "Tạo Tour" -->
-					<li class="nav-item" sec:authorize="hasAnyRole('ROLE_AGENCY', 'ROLE_ADMIN')">
-						<a class="nav-link" href="/tours/create">Tạo Tour</a>
+					<li class="nav-item" th:if="${session.loggedInUser != null}">
+						<a class="nav-link" href="/trips/manage-all-requests">
+							Quản lý yêu cầu</a>
 					</li>
-
-					<!-- Nếu user KHÔNG có ROLE_AGENCY, hiển thị "Đăng ký làm Agency" -->
-					<li class="nav-item" sec:authorize="!hasRole('ROLE_AGENCY')">
-						<a class="nav-link" href="#">Đăng ký làm Agency</a>
-					</li>
-
-					<!-- Nếu user là ROLE_TOURIST, hiển thị "Nâng cấp lên Guide" -->
-					<li class="nav-item" sec:authorize="hasRole('ROLE_TOURIST')">
-						<a class="nav-link" href="/guides/upgrade">Nâng cấp lên Guide</a>
-					</li>
-
-					<!-- Nếu user CHƯA ĐĂNG NHẬP, hiển thị "Đăng ký làm Guide" -->
-					<li class="nav-item" sec:authorize="isAnonymous()">
-						<a class="nav-link" href="/guides/apply">Đăng ký làm Guide</a>
-					</li>
+					
 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -81,7 +68,7 @@
 						<ul sec:authorize="!isAnonymous()" class="dropdown-menu" aria-labelledby="userDropdown"
 							id="userPopup">
 							<li>
-								<a class="dropdown-item" href="/profile">Tài khoản</a>
+								<a class="dropdown-item" th:href="@{/appusers/{id}(id=${session.loggedInUser.id})}">Tài khoản</a>
 							</li>
 							<li>
 								<a class="dropdown-item" href="/logout">Đăng xuất</a>

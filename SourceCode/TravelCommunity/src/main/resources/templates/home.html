@@ -11,9 +11,9 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Bootstrap Bundle with Popper -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet" href="style.css">
-	<script src="jquery-3.6.0.min.js"></script>
-	<script src="app-script.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
 	<style>
 		.post-card {
 			border-radius: 10px;
@@ -116,112 +116,156 @@
 		.carousel-control-next-icon {
 			filter: invert(1);
 		}
-		
-		.carousel-control-prev, .carousel-control-next {
-		    width: 5%;
+
+		.carousel-control-prev,
+		.carousel-control-next {
+			width: 5%;
 		}
 
 		.carousel-control-prev-icon,
 		.carousel-control-next-icon {
-		    background-color: rgba(0, 0, 0, 0.5); /* Màu nền tối để dễ nhìn hơn */
-		    border-radius: 50%;
-		    padding: 15px;
-		    width: 40px;
-		    height: 40px;
+			background-color: rgba(0, 0, 0, 0.5);
+			/* Màu nền tối để dễ nhìn hơn */
+			border-radius: 50%;
+			padding: 15px;
+			width: 40px;
+			height: 40px;
 		}
 
 		.carousel-control-prev:hover .carousel-control-prev-icon,
 		.carousel-control-next:hover .carousel-control-next-icon {
-		    background-color: rgba(0, 0, 0, 0.8);
+			background-color: rgba(0, 0, 0, 0.8);
 		}
-		
+
 		.carousel-item {
-		    transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+			transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
 		}
-
-
 	</style>
 
 
 </head>
 
 <body>
+	<!--<nav th:replace="~{page-component :: header}"></nav>
+	<footer th:replace="~{page-component :: footer}"></footer>-->
+	
 	<nav th:replace="~{page-component :: header}"></nav>
 
 	<h1 style="margin-top: 80px;">Danh sách các chuyến đi</h1>
-	
+
 	<div id="tripCarousel" class="carousel slide" data-bs-ride="carousel">
-			<div class="carousel-inner">
-				<div th:each="trip, iterStat : ${trips}" th:if="${iterStat.index % 2 == 0}" class="carousel-item"
-					th:classappend="${iterStat.index == 0} ? 'active'">
-					<div class="row justify-content-center">
-						<!-- Chuyến đi 1 -->
-						<div class="col-md-5 mx-2" th:if="${trips[iterStat.index] != null}">
-							<div class="card trip-card-home">
-								<div class="trip-card-home-body">
-									<h5 class="trip-card-home-title" th:text="${trips[iterStat.index].title}">Tiêu đề</h5>
-									<p class="card-text"><strong>Địa điểm:</strong> <span
-											th:text="${trips[iterStat.index].destination}">Địa điểm</span></p>
-									<p class="card-text">
-										<strong>Thời gian:</strong>
-										<span
-											th:text="${#temporals.format(trips[iterStat.index].startDate, 'dd/MM/yyyy')}">Ngày
-												bắt đầu</span> -
-										<span
-											th:text="${#temporals.format(trips[iterStat.index].endDate, 'dd/MM/yyyy')}">Ngày
-												kết thúc</span>
-									</p>
-									<p class="card-text"><strong>Người tổ chức:</strong> <span
-											th:text="${trips[iterStat.index].creator.fullName}">Người tổ chức</span></p>
-									<p class="card-text"><strong>Số người tham gia:</strong> <span
-											th:text="${#lists.size(trips[iterStat.index].participants)}">0</span></p>
-									<a th:href="@{/trips/{id}/details(id=${trips[iterStat.index].id})}"
-										class="btn btn-info">Xem chi tiết</a>
+		<div class="carousel-inner">
+			<div th:each="trip, iterStat : ${trips}" th:if="${iterStat.index % 2 == 0}" class="carousel-item"
+				th:classappend="${iterStat.index == 0} ? 'active'">
+				<div class="row justify-content-center">
+					<!-- Chuyến đi 1 -->
+					<div class="col-md-5 mx-2" th:if="${trips[iterStat.index] != null}">
+						<div class="card trip-card-home">
+							<div class="trip-card-home-body">
+								<h5 class="trip-card-home-title" th:text="${trips[iterStat.index].title}">Tiêu đề</h5>
+								<p class="card-text"><strong>Địa điểm:</strong> <span
+										th:text="${trips[iterStat.index].destination}">Địa điểm</span></p>
+								<p class="card-text">
+									<strong>Thời gian:</strong>
+									<span
+										th:text="${#temporals.format(trips[iterStat.index].startDate, 'dd/MM/yyyy')}">Ngày
+										bắt đầu</span> -
+									<span
+										th:text="${#temporals.format(trips[iterStat.index].endDate, 'dd/MM/yyyy')}">Ngày
+										kết thúc</span>
+								</p>
+								<p class="card-text"><strong>Người tổ chức:</strong> <span
+										th:text="${trips[iterStat.index].creator.fullName}">Người tổ chức</span></p>
+								<p class="card-text"><strong>Số người tham gia:</strong> <span
+										th:text="${#lists.size(trips[iterStat.index].participants)}">0</span></p>
+
+								<div th:if="${participantStatus != null}">
+									<div th:if="${participantStatus[trips[iterStat.index].id]}"
+										class="alert alert-success">
+										✅ Bạn đã tham gia chuyến đi này
+									</div>
+									<div th:if="${requestStatus[trips[iterStat.index].id]}" class="alert alert-warning">
+										⏳ Yêu cầu tham gia đang chờ duyệt
+									</div>
+									<!--<form
+										th:unless="${participantStatus[trips[iterStat.index].id] || requestStatus[trips[iterStat.index].id]}"
+										th:action="@{/trips/{id}/request(id=${trips[iterStat.index].id})}"
+										method="post">
+										<button type="submit" class="btn btn-primary">Yêu cầu tham gia</button>
+									</form>-->
 								</div>
+
+
+								<a th:href="@{/trips/{id}/details(id=${trips[iterStat.index].id})}"
+									class="btn btn-info">Xem chi tiết</a>
+
 							</div>
 						</div>
+					</div>
 
-						<!-- Chuyến đi 2 -->
-						<div class="col-md-5 mx-2" th:if="${iterStat.index + 1 < trips.size()}">
-							<div class="card trip-card-home">
-								<div class="trip-card-home-body">
-									<h5 class="trip-card-home-title" th:text="${trips[iterStat.index + 1].title}">Tiêu đề</h5>
-									<p class="card-text"><strong>Địa điểm:</strong> <span
-											th:text="${trips[iterStat.index + 1].destination}">Địa điểm</span></p>
-									<p class="card-text">
-										<strong>Thời gian:</strong>
-										<span
-											th:text="${#temporals.format(trips[iterStat.index + 1].startDate, 'dd/MM/yyyy')}">Ngày
-												bắt đầu</span> -
-										<span
-											th:text="${#temporals.format(trips[iterStat.index + 1].endDate, 'dd/MM/yyyy')}">Ngày
-												kết thúc</span>
-									</p>
-									<p class="card-text"><strong>Người tổ chức:</strong> <span
-											th:text="${trips[iterStat.index + 1].creator.fullName}">Người tổ chức</span></p>
-									<p class="card-text"><strong>Số người tham gia:</strong> <span
-											th:text="${#lists.size(trips[iterStat.index + 1].participants)}">0</span></p>
-									<a th:href="@{/trips/{id}/details(id=${trips[iterStat.index + 1].id})}"
-										class="btn btn-info">Xem chi tiết</a>
+					<!-- Chuyến đi 2 -->
+					<div class="col-md-5 mx-2" th:if="${iterStat.index + 1 < trips.size()}">
+						<div class="card trip-card-home">
+							<div class="trip-card-home-body">
+								<h5 class="trip-card-home-title" th:text="${trips[iterStat.index + 1].title}">Tiêu đề
+								</h5>
+								<p class="card-text"><strong>Địa điểm:</strong> <span
+										th:text="${trips[iterStat.index + 1].destination}">Địa điểm</span></p>
+								<p class="card-text">
+									<strong>Thời gian:</strong>
+									<span
+										th:text="${#temporals.format(trips[iterStat.index + 1].startDate, 'dd/MM/yyyy')}">Ngày
+										bắt đầu</span> -
+									<span
+										th:text="${#temporals.format(trips[iterStat.index + 1].endDate, 'dd/MM/yyyy')}">Ngày
+										kết thúc</span>
+								</p>
+								<p class="card-text"><strong>Người tổ chức:</strong> <span
+										th:text="${trips[iterStat.index + 1].creator.fullName}">Người tổ chức</span></p>
+								<p class="card-text"><strong>Số người tham gia:</strong> <span
+										th:text="${#lists.size(trips[iterStat.index + 1].participants)}">0</span></p>
+								<div th:if="${participantStatus != null}">
+									<div th:if="${participantStatus[trips[iterStat.index + 1].id]}"
+										class="alert alert-success">
+										✅ Bạn đã tham gia chuyến đi này
+									</div>
+									<div th:if="${requestStatus[trips[iterStat.index + 1].id]}"
+										class="alert alert-warning">
+										⏳ Yêu cầu tham gia đang chờ duyệt
+									</div>
+									<!--<form
+										th:unless="${participantStatus[trips[iterStat.index + 1].id] || requestStatus[trips[iterStat.index + 1].id]}"
+										th:action="@{/trips/{id}/request(id=${trips[iterStat.index + 1].id})}"
+										method="post">
+										<button type="submit" class="btn btn-primary">Yêu cầu tham gia</button>
+									</form>-->
 								</div>
+
+
+								<a th:href="@{/trips/{id}/details(id=${trips[iterStat.index + 1].id})}"
+									class="btn btn-info">Xem chi tiết</a>
+
+
+
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-
-			<!-- Nút điều hướng -->
-			<button class="carousel-control-prev" type="button" data-bs-target="#tripCarousel" data-bs-slide="prev">
-			    <span class="carousel-control-prev-icon d-flex align-items-center justify-content-center">
-			        <i class="fas fa-chevron-left text-white"></i>
-			    </span>
-			</button>
-			<button class="carousel-control-next" type="button" data-bs-target="#tripCarousel" data-bs-slide="next">
-			    <span class="carousel-control-next-icon d-flex align-items-center justify-content-center">
-			        <i class="fas fa-chevron-right text-white"></i>
-			    </span>
-			</button>
 		</div>
+
+		<!-- Nút điều hướng -->
+		<button class="carousel-control-prev" type="button" data-bs-target="#tripCarousel" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon d-flex align-items-center justify-content-center">
+				<i class="fas fa-chevron-left text-white"></i>
+			</span>
+		</button>
+		<button class="carousel-control-next" type="button" data-bs-target="#tripCarousel" data-bs-slide="next">
+			<span class="carousel-control-next-icon d-flex align-items-center justify-content-center">
+				<i class="fas fa-chevron-right text-white"></i>
+			</span>
+		</button>
+	</div>
 
 
 
@@ -343,6 +387,33 @@
 						.catch(error => console.error("Error loading comments:", error));
 				}
 			</script>
+			
+			<script>
+			    function requestJoinTrip(tripId) {
+			        fetch(`/trips/${tripId}/request`, {
+			            method: "POST",
+			            headers: {
+			                "Content-Type": "application/json"
+			            }
+			        })
+			        .then(response => {
+						console.log(response)
+			            if (!response.ok) {
+			                throw new Error("Lỗi khi gửi yêu cầu");
+			            }
+			            return response.json();
+			        })
+			        .then(data => {
+			            alert("✅ Yêu cầu tham gia đã được gửi thành công!");
+			            document.getElementById(`join-trip-${tripId}`).disabled = true; // Vô hiệu hóa nút sau khi gửi
+			        })
+			        .catch(error => {
+			            console.error("Lỗi:", error);
+			            alert("❌ Có lỗi xảy ra, vui lòng thử lại sau.");
+			        });
+			    }
+			</script>
+
 
 
 

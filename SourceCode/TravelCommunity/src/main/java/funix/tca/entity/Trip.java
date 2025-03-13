@@ -2,8 +2,6 @@ package funix.tca.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
-
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.CascadeType;
@@ -17,7 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,7 +43,13 @@ public class Trip {
     @Column(columnDefinition = "NVARCHAR(1000)")
     private String itinerary; // Lịch trình chi tiết 
     
+    @Column(columnDefinition = "NVARCHAR(2000)")
+    private String description; //
+    
     private double estimatedCost;
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String tripPictureUrl;
     
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

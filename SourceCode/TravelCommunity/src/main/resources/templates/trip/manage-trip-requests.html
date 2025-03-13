@@ -1,0 +1,35 @@
+<!-- manage-trip-requests.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Trip Requests</title>
+</head>
+<body>
+    <h1>Manage Requests for Trip: <span th:text="${trip.title}"></span></h1>
+
+    <!-- Hiển thị thông báo khi có thông báo -->
+    <div th:if="${message}">
+        <p th:text="${message}" style="color: green;"></p>
+    </div>
+    <div th:if="${error}">
+        <p th:text="${error}" style="color: red;"></p>
+    </div>
+
+    <div th:each="request : ${requests}">
+        <div>
+            <p><b>User:</b> <span th:text="${request.user.fullName}"></span></p>
+            <p><b>Status:</b> <span th:text="${request.status}"></span></p>
+
+            <!-- Hiển thị nút phê duyệt và từ chối chỉ cho người tạo chuyến đi hoặc admin -->
+            <div th:if="${isOwnerOrAdmin}">
+                <form th:action="@{/trips/{tripId}/requests/{requestId}/approve(tripId=${trip.id}, requestId=${request.id})}" method="post">
+                    <button type="submit">Approve</button>
+                </form>
+                <form th:action="@{/trips/{tripId}/requests/{requestId}/reject(tripId=${trip.id}, requestId=${request.id})}" method="post">
+                    <button type="submit">Reject</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
