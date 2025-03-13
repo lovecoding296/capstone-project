@@ -58,7 +58,7 @@ public class Trip {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser creator; // Người tổ chức chuyến đi
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "trip_members",
         joinColumns = @JoinColumn(name = "trip_id"),

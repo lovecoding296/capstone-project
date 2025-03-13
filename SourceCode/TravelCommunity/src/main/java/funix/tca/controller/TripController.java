@@ -43,7 +43,7 @@ public class TripController {
 	private ReviewService reviewService;
 
 	// Danh sách các chuyến đi
-	@GetMapping("/")
+	@GetMapping
 	public String listTrips(Model model) {
 		List<Trip> trips = tripService.findAll();
 		model.addAttribute("trips", trips);
@@ -114,7 +114,7 @@ public class TripController {
 		}
 		trip.setCreator(user);
 		tripService.save(trip);
-		return "redirect:/trips/"; // Chuyển hướng về trang danh sách
+		return "redirect:/trips"; // Chuyển hướng về trang danh sách
 	}
 
 	// Cập nhật một chuyến đi

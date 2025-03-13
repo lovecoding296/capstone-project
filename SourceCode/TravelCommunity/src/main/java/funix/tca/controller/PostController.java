@@ -15,6 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -33,16 +35,25 @@ public class PostController {
     @GetMapping()
     public String getAllPosts(Model model) {
         model.addAttribute("posts", postService.findAll());
-        return "post/list"; // Trả về trang danh sách bài viết
+        return "post/post-list"; // Trả về trang danh sách bài viết
     }
 
+    
+    // Lấy bài viết theo current user ID
+    @GetMapping("/author/{id}")
+    public String getPostByAppUserId(@PathVariable Long id, Model model) {
+        List<Post> posts = postService.findByAuthorId(id);
+        model.addAttribute("posts", posts);
+        return "post/post-list"; // Trả về trang danh sách bài viết
+    }
+    
     // Lấy bài viết theo ID
     @GetMapping("/{id}")
     public String getPostById(@PathVariable Long id, Model model) {
         Optional<Post> post = postService.findById(id);
         if (post.isPresent()) {
             model.addAttribute("post", post.get());
-            return "post/detail"; // Trả về trang chi tiết bài viết
+            return "post/post-details"; // Trả về trang chi tiết bài viết
         }
         return "redirect:/posts"; // Nếu không tìm thấy, chuyển hướng về trang danh sách
     }
@@ -57,7 +68,7 @@ public class PostController {
 
         model.addAttribute("post", new Post());
         model.addAttribute("users", appUserService.findAll());
-        return "post/form"; // Trả về trang tạo bài viết mới
+        return "post/post-form"; // Trả về trang tạo bài viết mới
     }
 
     @PostMapping("/new")
@@ -69,7 +80,7 @@ public class PostController {
 
         if (result.hasErrors()) {
             model.addAttribute("users", appUserService.findAll());
-            return "post/form";
+            return "post/post-form";
         }
         post.setAuthor(loggedInUser);
         postService.save(post);
@@ -88,7 +99,7 @@ public class PostController {
         if (post.isPresent()) {
             model.addAttribute("post", post.get());
             model.addAttribute("users", appUserService.findAll());
-            return "post/form";
+            return "post/post-form";
         }
         return "redirect:/posts";
     }
@@ -102,7 +113,7 @@ public class PostController {
 
         if (result.hasErrors()) {
             model.addAttribute("users", appUserService.findAll());
-            return "post/form";
+            return "post/post-form";
         }
 
         post.setId(id);

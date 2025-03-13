@@ -11,4 +11,5 @@ public interface TripRequestRepository extends JpaRepository<TripRequest, Long> 
     List<TripRequest> findByTrip(Trip trip);
     boolean existsByUserAndTrip(AppUser user, Trip trip);
     TripRequest findRequestByUserAndTrip(AppUser user, Trip trip);
+	void deleteByTripId(Long id);
 }

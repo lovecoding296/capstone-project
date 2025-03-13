@@ -4,8 +4,11 @@ import funix.tca.entity.AppUser;
 import funix.tca.entity.Review;
 import funix.tca.entity.Trip;
 import funix.tca.entity.TripRequest;
+import funix.tca.repository.PaymentRepository;
+import funix.tca.repository.ReviewRepository;
 import funix.tca.repository.TripRepository;
 import funix.tca.repository.TripRequestRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,9 @@ public class TripService {
 
     @Autowired
     private TripRepository tripRepository;
+    
+    @Autowired
+    private ReviewRepository reviewRepository;
     
     @Autowired
     private TripRequestRepository tripRequestRepository;
@@ -56,8 +62,11 @@ public class TripService {
     }
 
     // Xóa chuyến đi theo ID
+    @Transactional
     public void deleteById(Long id) {
     	System.out.println("TripService deleteById id = " + id);
+    	reviewRepository.deleteByTripId(id);
+    	tripRequestRepository.deleteByTripId(id);
         tripRepository.deleteById(id);
     }
 

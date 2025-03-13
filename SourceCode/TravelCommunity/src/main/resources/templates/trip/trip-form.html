@@ -89,7 +89,7 @@
 		<input type="hidden" th:field="*{participants}" id="participants">
 
 		<button type="submit" class="btn btn-primary">Lưu chuyến đi</button>
-		<a th:href="@{/trips/{id}/details(id=${trip.id})}" class="btn btn-secondary">Hủy</a>
+		<a sec:authorize="!isAnonymous()" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}" class="btn btn-secondary">Hủy</a>
 	</form>
 
 	<script>

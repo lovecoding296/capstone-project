@@ -46,13 +46,19 @@
 							<span>Trip</span>
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="languageDropdown">
+							<!--<li>
+								<a class="dropdown-item" href="/trips/new">
+									<span>Danh sách Trip</span>
+								</a>
+							</li>-->
 							<li>
 								<a class="dropdown-item" href="/trips/new">
 									<span>Tạo Trip</span>
 								</a>
 							</li>
 							<li sec:authorize="!isAnonymous()">
-								<a class="dropdown-item" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}">
+								<a class="dropdown-item"
+									th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}">
 									<span>Trip của tôi</span>
 								</a>
 							</li>
@@ -68,20 +74,38 @@
 							aria-expanded="false">
 							<span>Post</span>
 						</a>
-						<ul class="dropdown-menu" aria-labelledby="languageDropdown">
+						<ul class="dropdown-menu">
+							<!--<li>
+								<a class="dropdown-item" href="/posts/new">
+									<span>Danh sách Post</span>
+								</a>
+							</li>-->
 							<li>
 								<a class="dropdown-item" href="/posts/new">
 									<span>Tạo Post</span>
 								</a>
 							</li>
-							<li>
-								<a class="dropdown-item">
+							<li sec:authorize="!isAnonymous()">
+								<a class="dropdown-item" th:href="@{/posts/author/{id}(id=${session.loggedInUser.id})}">
 									<span>Post của tôi</span>
 								</a>
 							</li>
+						</ul>
+					</li>
+					<li class="nav-item dropdown" sec:authorize="!isAnonymous()">
+						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+							aria-expanded="false">
+							<span>Rating</span>
+						</a>
+						<ul class="dropdown-menu">
 							<li>
-								<a class="dropdown-item">
-									<span>Quản lý yêu cầu</span>
+								<a class="dropdown-item" th:href="@{/reviews/{id}(id=${session.loggedInUser.id})}">
+									<span>Đánh giá đã nhận</span>
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item" th:href="@{/reviews/reviewed/{id}(id=${session.loggedInUser.id})}">
+									<span>Đánh giá đã cho</span>
 								</a>
 							</li>
 						</ul>

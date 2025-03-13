@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/reviews")
@@ -30,6 +31,32 @@ public class ReviewController {
     private  AppUserService userService;
 
 
+	@GetMapping("/{appUserId}")
+    public String getReviewsById(@PathVariable Long appUserId, Model model, HttpSession session) {
+        List<Review> reviews = reviewService.findByReviewedUserId(appUserId);
+        
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+                
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("review", new Review());
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        return "review/reviewed-user-list";
+    }
+	
+	@GetMapping("/reviewed/{appUserId}")
+    public String getGivenReviewsById(@PathVariable Long appUserId, Model model, HttpSession session) {
+        List<Review> reviews = reviewService.findByReviewerId(appUserId);
+        
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+                
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("review", new Review());
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        return "review/given-review-list";
+    }
+    
 
     /**
      * Hiển thị danh sách đánh giá của chuyến đi
@@ -39,10 +66,13 @@ public class ReviewController {
         List<Review> reviews = reviewService.findByTripId(tripId);
         Trip trip = tripService.getTripById(tripId).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chuyến đi."));
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-
+        
+        Set<AppUser> participants = trip.getParticipants();        
+        participants.remove(loggedInUser);
+        
         model.addAttribute("reviews", reviews);
         model.addAttribute("trip", trip);
-        model.addAttribute("participants", trip.getParticipants());
+        model.addAttribute("participants", participants);
         model.addAttribute("review", new Review());
         model.addAttribute("loggedInUser", loggedInUser);
 
@@ -55,10 +85,11 @@ public class ReviewController {
         List<Review> reviews = reviewService.findByTripId(tripId);
         Trip trip = tripService.getTripById(tripId).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chuyến đi."));
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-
+        Set<AppUser> participants = trip.getParticipants();        
+        participants.remove(loggedInUser);
         model.addAttribute("reviews", reviews);
         model.addAttribute("trip", trip);
-        model.addAttribute("participants", trip.getParticipants());
+        model.addAttribute("participants", participants);
         model.addAttribute("review", new Review());
         model.addAttribute("loggedInUser", loggedInUser);
 
