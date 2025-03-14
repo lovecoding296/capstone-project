@@ -20,8 +20,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import funix.tca.entity.AppUser;
 import funix.tca.entity.Trip;
 import funix.tca.entity.Post;
+import funix.tca.entity.Review;
 import funix.tca.service.AppUserService;
 import funix.tca.service.PostService;
+import funix.tca.service.ReviewService;
 import funix.tca.service.TripService;
 import funix.tca.util.FileUploadHelper;
 import jakarta.servlet.http.HttpSession;
@@ -38,6 +40,11 @@ public class AppUserController {
     
     @Autowired
     private PostService postService;
+    
+	@Autowired
+    private ReviewService reviewService;
+    
+    
     
     // Lấy danh sách tất cả người dùng
     @GetMapping("/appusers")
@@ -57,10 +64,12 @@ public class AppUserController {
         	
         	List<Trip> trips = tripService.findByCreatorId(appUser.get().getId());
             List<Post> posts = postService.findByAuthorId(appUser.get().getId());
+            List<Review> reviews = reviewService.findByReviewedUserId(appUser.get().getId());
         	
             model.addAttribute("appUser", appUser.get());
             model.addAttribute("trips", trips);
             model.addAttribute("posts", posts);
+            model.addAttribute("reviews", reviews);
             return "appuser/appuser-details"; // Trả về trang chi tiết người dùng
         }
         return "redirect:/appusers"; // Nếu không tìm thấy, chuyển hướng về trang danh sách

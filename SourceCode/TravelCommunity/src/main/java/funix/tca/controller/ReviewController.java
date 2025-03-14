@@ -68,6 +68,7 @@ public class ReviewController {
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
         
         Set<AppUser> participants = trip.getParticipants();        
+        participants.add(trip.getCreator());
         participants.remove(loggedInUser);
         
         model.addAttribute("reviews", reviews);
@@ -85,8 +86,11 @@ public class ReviewController {
         List<Review> reviews = reviewService.findByTripId(tripId);
         Trip trip = tripService.getTripById(tripId).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chuyến đi."));
         AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        
         Set<AppUser> participants = trip.getParticipants();        
+        participants.add(trip.getCreator());
         participants.remove(loggedInUser);
+        
         model.addAttribute("reviews", reviews);
         model.addAttribute("trip", trip);
         model.addAttribute("participants", participants);

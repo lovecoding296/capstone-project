@@ -36,7 +36,7 @@ public class Post {
     @Column(columnDefinition = "NVARCHAR(255)", nullable = false)
     private String title;
     
-    @Column(columnDefinition = "NVARCHAR(2000)", nullable = false)
+    @Column(columnDefinition = "NVARCHAR(MAX)", nullable = false)
     private String content;
     private LocalDateTime createdAt;
     

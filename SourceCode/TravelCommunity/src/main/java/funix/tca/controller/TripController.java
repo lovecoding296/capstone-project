@@ -102,7 +102,8 @@ public class TripController {
 	}
 
 	@PostMapping("/new")
-	public String createTrip(@Valid @ModelAttribute Trip trip, BindingResult result, Model model, HttpSession session) {
+	public String createTrip(@Valid @ModelAttribute Trip trip, BindingResult result, 
+			@RequestParam("tripPictureFile") MultipartFile tripPictureFile, Model model, HttpSession session) {
 		AppUser user = (AppUser) session.getAttribute("loggedInUser");
 		if (user == null) {
 			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
@@ -112,6 +113,15 @@ public class TripController {
 			model.addAttribute("users", appUserService.findAll());
 			return "trip/trip-form"; // Trả lại trang nếu có lỗi
 		}
+		try {
+			String tripPictureUrl = FileUploadHelper.uploadFile(tripPictureFile);
+			if(tripPictureUrl != null) {
+				trip.setTripPictureUrl(tripPictureUrl);
+			}
+		} catch (IOException e) {
+			System.out.println("upload image error");
+		}
+		
 		trip.setCreator(user);
 		tripService.save(trip);
 		return "redirect:/trips"; // Chuyển hướng về trang danh sách

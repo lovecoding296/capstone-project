@@ -43,10 +43,10 @@ public class Trip {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     
-    @Column(columnDefinition = "NVARCHAR(1000)")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String itinerary; // Lịch trình chi tiết 
     
-    @Column(columnDefinition = "NVARCHAR(2000)")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description; //
     
     private double estimatedCost;

@@ -55,6 +55,7 @@ public class PostController {
     public String getPostById(@PathVariable Long id, Model model) {
         Optional<Post> post = postService.findById(id);
         if (post.isPresent()) {
+        	model.addAttribute("categories", categoryService.findAll());
             model.addAttribute("post", post.get());
             return "post/post-details"; // Trả về trang chi tiết bài viết
         }
@@ -102,6 +103,7 @@ public class PostController {
 
         Optional<Post> post = postService.findById(id);
         if (post.isPresent()) {
+        	model.addAttribute("categories", categoryService.findAll());
             model.addAttribute("post", post.get());
             model.addAttribute("users", appUserService.findAll());
             return "post/post-form";

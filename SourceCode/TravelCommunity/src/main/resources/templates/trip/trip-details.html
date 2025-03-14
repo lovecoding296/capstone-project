@@ -90,7 +90,11 @@
 					<span th:text="${#temporals.format(trip.endDate, 'dd/MM/yyyy HH:mm')}" class="badge bg-info"></span>
 				</p>
 				<p><i class="bi bi-journal text-warning"></i> <strong>Lịch trình:</strong></p>
-				<p class="text-muted" th:text="${trip.itinerary}"></p>
+				<p class="text-muted" th:utext="${trip.itinerary}"></p>
+
+				<p><i class="bi bi-journal text-warning"></i> <strong>Mô tả chi tiết:</strong></p>
+				<p class="text-muted" th:utext="${trip.description}"></p>
+
 				<p><i class="bi bi-cash-coin text-success"></i> <strong>Chi phí ước tính:</strong>
 					<span class="fw-bold text-danger" th:text="${trip.estimatedCost} + ' VND'"></span>
 				</p>
@@ -123,13 +127,13 @@
 					</button>
 				</form>
 			</div>
-			
+
 			<a th:href="@{/reviews/trip/{id}(id=${trip.id})}">
 				Chuyến đi đã kết thúc, hãy để lại đánh giá.
 			</a>
-			
+
 			<a th:href="@{/trips/{id}/edit(id=${trip.id})}">Edit</a>
-			
+
 		</div>
 	</div>
 

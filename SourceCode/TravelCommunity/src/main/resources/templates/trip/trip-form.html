@@ -12,19 +12,23 @@
 	<link rel="stylesheet" th:href="@{/style.css}">
 	<script th:src="@{/jquery-3.6.0.min.js}"></script>
 	<script th:src="@{/app-script.js}"></script>
+
+	<script th:src="@{/ckeditor/ckeditor.js}"></script>
 </head>
 
 <body>
 
 	<nav th:replace="~{page-component :: header}"></nav>
 
-	<h3 class="text-center page-title" th:text="${#strings.isEmpty(trip.id) ? 'Tạo chuyến đi mới' : 'Chỉnh sửa chuyến đi'}" >
+	<h3 class="text-center page-title"
+		th:text="${#strings.isEmpty(trip.id) ? 'Tạo chuyến đi mới' : 'Chỉnh sửa chuyến đi'}">
 	</h3>
 	<form th:action="@{${#strings.isEmpty(trip.id) ? '/trips/new' : '/trips/' + trip.id + '/edit'}}" th:object="${trip}"
 		method="post" class="container mt-4" enctype="multipart/form-data">
 
 		<div>
-			<img th:src="@{${trip.tripPictureUrl} ?: '/uploads/trip-default.png'}" style="border: solid black 1px;" width="500" height="200">
+			<img th:src="@{${trip.tripPictureUrl} ?: '/uploads/trip-default.png'}" style="border: solid black 1px;"
+				width="500" height="200">
 			<br>
 			<br>
 			<label>Add/change trip picture:</label>
@@ -89,7 +93,8 @@
 		<input type="hidden" th:field="*{participants}" id="participants">
 
 		<button type="submit" class="btn btn-primary">Lưu chuyến đi</button>
-		<a sec:authorize="!isAnonymous()" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}" class="btn btn-secondary">Hủy</a>
+		<a sec:authorize="!isAnonymous()" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}"
+			class="btn btn-secondary">Hủy</a>
 	</form>
 
 	<script>
@@ -127,6 +132,22 @@
 				.catch(error => alert(error.message));
 		});
 	</script>
+
+	<script>
+		// Lấy tất cả các textarea
+		const textareas = document.querySelectorAll('textarea');
+
+		// Khởi tạo CKEditor cho mỗi textarea
+		textareas.forEach(textarea => {
+			CKEDITOR.replace(textarea, {
+				versionCheck: false,
+				extraPlugins: 'videoembed',
+			});
+		});
+
+
+	</script>
+
 
 	<footer th:replace="~{page-component :: footer}"></footer>
 
