@@ -116,8 +116,7 @@ public class PostController {
             return "post/post-form";
         }
 
-        post.setId(id);
-        postService.update(post);
+        postService.update(id, post);
         return "redirect:/posts";
     }
 

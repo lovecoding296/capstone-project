@@ -33,15 +33,15 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(255)", nullable = false)
     private String title;
     
-    @Column(columnDefinition = "NVARCHAR(2000)")
+    @Column(columnDefinition = "NVARCHAR(2000)", nullable = false)
     private String content;
     private LocalDateTime createdAt;
     
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private AppUser author;
     
     @PrePersist

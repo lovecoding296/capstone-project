@@ -1,6 +1,5 @@
 package funix.tca.config;
 
-
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -14,7 +13,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @Configuration
-public class LocaleConfig implements WebMvcConfigurer{
+public class LocaleConfig implements WebMvcConfigurer {
 
 	@Bean
 	LocaleResolver localeResolver() {
@@ -28,20 +27,20 @@ public class LocaleConfig implements WebMvcConfigurer{
 	@Bean
 	LocaleChangeInterceptor localeChangeInterceptor() {
 		System.out.println("localeChangeInterceptor");
-		LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();		
-		interceptor.setParamName("lang"); // Change language via URL param		
+		LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+		interceptor.setParamName("lang"); // Change language via URL param
 		return interceptor;
 	}
-	
+
 	@Override
-    public void addInterceptors(InterceptorRegistry registry) {
+	public void addInterceptors(InterceptorRegistry registry) {
 		System.out.println("addInterceptors");
-        registry.addInterceptor(localeChangeInterceptor());
-    }
-	
+		registry.addInterceptor(localeChangeInterceptor());
+	}
+
 	@Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
-    }
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/uploads/**").addResourceLocations("file:uploads/");
+		registry.addResourceHandler("/ckeditor/**").addResourceLocations("classpath:/static/ckeditor/");
+	}
 }

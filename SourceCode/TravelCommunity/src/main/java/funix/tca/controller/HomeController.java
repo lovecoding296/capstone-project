@@ -100,8 +100,7 @@ public class HomeController {
             return "signup";
         }
 		try {
-			String emailName = appUser.getEmail().replaceAll("@.+$", "");
-			String cccd = FileUploadHelper.uploadFile(cccdFile,"appusers/cccd/", emailName);			
+			String cccd = FileUploadHelper.uploadFile(cccdFile);			
 			if(cccd != null) {
 	    		appUser.setCccd(cccd);
 	    	}

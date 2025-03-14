@@ -162,8 +162,7 @@ public class TripController {
 		trip.setCreator(existingTrip.getCreator()); // Giữ nguyên creator
 		
 		try {
-			String emailName = trip.getCreator().getEmail().replaceAll("@.+$", "");
-			String tripPictureUrl = FileUploadHelper.uploadFile(tripPictureFile, "trips/", emailName);
+			String tripPictureUrl = FileUploadHelper.uploadFile(tripPictureFile);
 			if(tripPictureUrl != null) {
 				trip.setTripPictureUrl(tripPictureUrl);
 			}

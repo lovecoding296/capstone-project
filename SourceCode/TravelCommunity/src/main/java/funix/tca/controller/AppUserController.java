@@ -124,12 +124,12 @@ public class AppUserController {
 
         appUser.setId(id);
         try {
-        	String avatarFileUrl = FileUploadHelper.uploadFile(avatarFile,"appusers/", appUser.getId().toString());
+        	String avatarFileUrl = FileUploadHelper.uploadFile(avatarFile);
         	if(avatarFileUrl != null) {
         		appUser.setAvatarUrl(avatarFileUrl); 
         	}
         	
-        	String cccd = FileUploadHelper.uploadFile(cccdFile,"appusers/cccd/", appUser.getId().toString());
+        	String cccd = FileUploadHelper.uploadFile(cccdFile);
         	if(cccd != null) {
         		appUser.setCccd(cccd);
         	}

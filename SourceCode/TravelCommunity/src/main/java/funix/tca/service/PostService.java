@@ -35,8 +35,20 @@ public class PostService {
     }
 
     // Cập nhật bài viết
-    public Post update(Post post) {
-        return postRepository.save(post);
+    public boolean update(Long id, Post post) {
+        return postRepository.findById(id).map(currentPost -> {
+        	if (post.getContent() != null && !post.getContent().isBlank()) {
+                currentPost.setContent(post.getContent());
+            }
+            if (post.getTitle() != null && !post.getTitle().isBlank()) {
+                currentPost.setTitle(post.getTitle());
+            }
+            postRepository.save(currentPost);
+            return true;
+        }).orElseGet(() -> {
+            System.out.println("Cannot find post with id: " + id);
+            return false;
+        });
     }
 
     // Xóa bài viết theo ID

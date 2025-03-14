@@ -32,6 +32,7 @@ public class SecurityConfig {
         		.requestMatchers("/appusers/**").authenticated()
         		.requestMatchers("/trips/**").authenticated()
         		.requestMatchers("/posts/**").authenticated()
+        		.requestMatchers("/ckeditor/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().permitAll() // Allow all requests
             )
             .formLogin(form -> form
@@ -63,6 +64,9 @@ public class SecurityConfig {
     AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
+    
+
+
     
 
 }
