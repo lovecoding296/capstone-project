@@ -55,4 +55,8 @@ public class PostService {
     public void deleteById(Long id) {
         postRepository.deleteById(id);
     }
+
+	public List<Post> findTop3ByAuthorIdOrderByCreatedAtDesc(Long id) {
+		return postRepository.findTop3ByAuthorIdOrderByCreatedAtDesc(id);
+	}
 }

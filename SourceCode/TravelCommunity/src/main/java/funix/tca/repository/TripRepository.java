@@ -10,4 +10,5 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     List<Trip> findByCreatorId(Long creatorId); // Lấy các chuyến đi do một người tổ chức
     List<Trip> findByParticipantsId(Long participantId); // Lấy các chuyến đi mà người tham gia tham gia
 	Optional<Trip> getTripById(Long tripId);
+	List<Trip> findTop3ByCreatorId(Long id);
 }

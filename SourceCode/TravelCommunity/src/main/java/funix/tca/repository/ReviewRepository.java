@@ -14,4 +14,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 	boolean existsByTripIdAndReviewerIdAndReviewedUserId(Long tripId, Long reviewerId, Long reviewedUserId);
 	Optional<Review> getReviewById(Long reviewId);
 	void deleteByTripId(Long id);
+	
+	List<Review> findTop3ByReviewedUserIdOrderByReviewDateDesc(Long reviewedUserId);
 }

@@ -26,7 +26,9 @@ public class ReviewService {
     @Autowired
     private  AppUserRepository userRepository;
     
-    
+    public List<Review> findTop3ByReviewedUserIdOrderByReviewDateDesc(Long reviewedUserId){
+    	return reviewRepository.findTop3ByReviewedUserIdOrderByReviewDateDesc(reviewedUserId);
+    }
 
     // Lưu một đánh giá
     public Review save(Review review) {

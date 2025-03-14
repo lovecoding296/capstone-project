@@ -213,6 +213,11 @@ public class TripController {
 		Optional<Trip> tripOptional = tripService.findById(id);
 		if (tripOptional.isPresent()) {
 			Trip trip = tripOptional.get();
+			
+			if(trip.getCreator().getId() == loggedInUser.getId()) {
+				System.out.println("Error you_are_creator");
+				return "redirect:/trips/" + id + "/details?error=you_are_creator";
+			}
 
 			// Kiểm tra nếu đã gửi yêu cầu trước đó
 			if (tripRequestService.hasUserRequested(loggedInUser, trip)) {

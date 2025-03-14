@@ -116,7 +116,7 @@ public class ReviewController {
         reviewService.addReview(tripId, loggedInUser.getId(), review.getReviewedUser().getId(),
                 review.getRating(), review.getFeedback());
         
-        return "redirect:/reviews/trip/" + tripId + "/new";
+        return "redirect:/reviews/trip/" + tripId;
     }
 
     /**

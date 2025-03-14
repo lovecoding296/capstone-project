@@ -30,6 +30,7 @@ public class TripService {
     @Autowired
     private TripRequestRepository tripRequestRepository;
     
+    
 
     // Lưu một chuyến đi
     public Trip save(Trip trip) {
@@ -95,5 +96,9 @@ public class TripService {
 
 	public Optional<Trip> getTripById(Long tripId) {
 		return tripRepository.getTripById(tripId);
+	}
+
+	public List<Trip> findTop3ByCreatorId(Long id) {
+		return tripRepository.findTop3ByCreatorId(id);
 	}
 }

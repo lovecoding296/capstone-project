@@ -117,7 +117,7 @@
 					</li>
 				</ul>
 			</div>
-			<div class="mt-4 text-center" th:unless="${isOwnerOrAdmin}">
+			<div class="mt-4 text-center" th:if="${session.loggedInUser != null && (trip.creator.id != session.loggedInUser.id)}">
 				<div th:if="${isParticipant}" class="alert alert-success">✅ Bạn đã tham gia chuyến đi này</div>
 				<div th:if="${hasRequested}" class="alert alert-warning">⏳ Yêu cầu tham gia đang chờ duyệt</div>
 				<form th:if="${!(isParticipant || hasRequested)}" th:action="@{/trips/{id}/request(id=${trip.id})}"

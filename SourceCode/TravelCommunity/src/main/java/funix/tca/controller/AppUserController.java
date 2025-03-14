@@ -62,9 +62,10 @@ public class AppUserController {
         Optional<AppUser> appUser = appUserService.findById(id);
         if (appUser.isPresent()) {
         	
-        	List<Trip> trips = tripService.findByCreatorId(appUser.get().getId());
-            List<Post> posts = postService.findByAuthorId(appUser.get().getId());
-            List<Review> reviews = reviewService.findByReviewedUserId(appUser.get().getId());
+        	List<Trip> trips = tripService.findTop3ByCreatorId(appUser.get().getId());
+            List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(appUser.get().getId());            
+            List<Review> reviews = reviewService.findTop3ByReviewedUserIdOrderByReviewDateDesc(appUser.get().getId());
+
         	
             model.addAttribute("appUser", appUser.get());
             model.addAttribute("trips", trips);

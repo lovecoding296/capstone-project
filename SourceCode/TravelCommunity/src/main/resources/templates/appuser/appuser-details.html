@@ -13,6 +13,16 @@
 	<link rel="stylesheet" th:href="@{/style.css}">
 	<script th:src="@{/jquery-3.6.0.min.js}"></script>
 	<script th:src="@{/app-script.js}"></script>
+	
+	<style>
+		.card img{
+			height: 200px;
+			width: 100%;
+			object-fit: cover;
+		}
+		
+		
+	</style>
 </head>
 
 <body>
@@ -63,54 +73,83 @@
 		<div class="section-title">
 			<h5><strong>Các đánh giá nổi bật về <span th:text="${appUser.fullName}"></span></strong></h5>
 		</div>
-		<table class="table table-striped table-bordered mt-4">
-			<thead class="table-success">
-				<tr>
-					<th>Chuyến đi</th>
-					<th>Người đánh giá</th>
-					<th>Số sao</th>
-					<th>Nhận xét</th>
-					<th>Ngày đánh giá</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:if="${reviews.isEmpty()}">
-					<td colspan="4" class="text-center text-muted">Không có dữ liệu</td>
-				</tr>
-				<tr th:each="review : ${reviews}">
-					<td th:text="${review.trip.title}"></td>
-					<td th:text="${review.reviewer.fullName}"></td>
-					<td th:text="${review.rating} + ' ⭐'"></td>
-					<td th:text="${review.feedback}"></td>
-					<td th:text="${#temporals.format(review.reviewDate, 'dd/MM/yyyy')}"></td>
-				</tr>
-			</tbody>
-		</table>
+
+
+		<div class="container mt-5">
+
+			<div th:if="${reviews.isEmpty()}" class="text-center text-muted mt-4">
+				Không có dữ liệu
+			</div>
+
+			<div th:each="review : ${reviews}" class="border-bottom py-3">
+				<div class="d-flex align-items-start">
+					<!-- Avatar of the reviewer -->
+					<img th:src="@{${review.reviewer.avatarUrl} ?: '/uploads/default-avatar.png'}"
+						class="rounded-circle me-3" width="50" height="50" alt="Avatar">
+
+					<!-- Review details -->
+					<div>
+						<div class="d-flex align-items-center">
+							<!-- Reviewer name -->
+							<h5 th:text="${review.reviewer.fullName}" class="fw-bold mb-0"></h5>
+
+							<!-- Star rating -->
+							<div class="ms-2">
+								<span th:each="i : ${#numbers.sequence(1, 5)}" th:text="'★'"
+									th:classappend="${i <= review.rating} ? 'text-warning' : 'text-muted'">
+								</span>
+							</div>
+						</div>
+
+						<!-- Review feedback -->
+						<p th:text="${review.feedback}" class="mt-2"></p>
+
+						<!-- Review date -->
+						<small
+							th:text="${review.trip.title} + ' - ' + ${#temporals.format(review.reviewDate, 'dd/MM/yyyy')}"></small>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<br><br>
+
+
 		<!-- Section: Danh sách chuyến đi tham gia -->
-		<div class="section-title">
+		<div class="section-title mt-5">
 			<h5><strong>Chuyến đi nổi bật của <span th:text="${appUser.fullName}"></span></strong></h5>
 		</div>
-		<table class="table table-striped table-bordered mt-4">
-			<thead class="table-success">
-				<tr>
-					<th>Tên chuyến đi</th>
-					<th>Mô tả chuyến đi</th>
-					<th>Số người tham gia</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:if="${trips.isEmpty()}">
-					<td colspan="4" class="text-center text-muted">Không có dữ liệu</td>
-				</tr>
-				<tr th:each="trip : ${trips}">
-					<td th:text="${trip.title}">Tên chuyến đi</td>
-					<td th:text="${trip.destination}">Mô tả chuyến đi</td>
-					<td th:text="${trip.participants.size()}"></td>
-				</tr>
-			</tbody>
-		</table>
+
+		<div class="row mt-4">
+			<!-- Check if there are trips available -->
+			<div th:if="${trips.isEmpty()}" class="col-12 text-center text-muted">
+				Không có dữ liệu
+			</div>
+
+			<!-- Display each trip -->
+			<div th:each="trip : ${trips}" class="col-12 col-md-4 mb-4">
+				<div class="card">
+					<!-- Display trip image or a default image -->
+					<img th:src="@{${trip.tripPictureUrl} ?: '/uploads/default-trip.jpg'}" class="card-img-top"
+						alt="Hình ảnh chuyến đi">
+
+					<div class="card-body">
+						<!-- Trip title -->
+						<h5 class="card-title" th:text="${trip.title}">Tên chuyến đi</h5>
+
+						<!-- Trip description -->
+						<p class="card-text" th:text="${trip.destination}">Mô tả chuyến đi</p>
+
+						<!-- Number of participants -->
+						<p class="card-text text-muted">
+							<i class="bi bi-person-fill"></i> <span th:text="${trip.participants.size()}"></span> người
+							tham gia
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
 
 		<br><br>
 		<!-- Section: Danh sách bài viết đã viết -->
@@ -138,6 +177,9 @@
 				</tr>
 			</tbody>
 		</table>
+
+
+
 
 	</div>
 
