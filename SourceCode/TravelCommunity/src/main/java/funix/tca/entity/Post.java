@@ -48,6 +48,11 @@ public class Post {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }   
+    
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+    
    
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

@@ -4,7 +4,7 @@ import funix.tca.entity.AppUser;
 import funix.tca.entity.Post;
 import funix.tca.service.PostService;
 import funix.tca.service.AppUserService;
-
+import funix.tca.service.CategoryService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,10 @@ public class PostController {
     private PostService postService;
 
     @Autowired
-    private AppUserService appUserService;
+    private AppUserService appUserService;    
+    
+    @Autowired
+    private CategoryService categoryService;
 
     // Lấy danh sách tất cả bài viết
     @GetMapping()
@@ -65,9 +68,11 @@ public class PostController {
         if (loggedInUser == null) {
             return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
         }
-
+        
+        
+		model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("post", new Post());
-        model.addAttribute("users", appUserService.findAll());
+        //model.addAttribute("users", appUserService.findAll());
         return "post/post-form"; // Trả về trang tạo bài viết mới
     }
 
