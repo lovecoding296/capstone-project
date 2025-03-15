@@ -36,7 +36,7 @@
 			<tbody>
 				<tr th:each="post : ${posts}">
 					<td th:text="${post.title}">Tiêu đề</td>
-					<td th:text="${post.content}">Nội dung</td>
+					<td th:text="${#messages.msg(post.category.name)}">Chuyên mục</td>
 					<td th:text="${post.author.fullName}">Tác giả</td>
 					<td>
 						<a th:href="@{/posts/{id}(id=${post.id})}" class="btn btn-info btn-sm">Chi tiết</a>

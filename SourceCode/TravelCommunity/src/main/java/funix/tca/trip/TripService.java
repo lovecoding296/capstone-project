@@ -1,6 +1,7 @@
 package funix.tca.trip;
 
 import funix.tca.appuser.AppUser;
+import funix.tca.appuser.Gender;
 import funix.tca.review.ReviewRepository;
 import funix.tca.trip.request.TripRequest;
 import funix.tca.trip.request.TripRequestRepository;
@@ -96,4 +97,8 @@ public class TripService {
 	public List<Trip> findTop3ByCreatorId(Long id) {
 		return tripRepository.findTop3ByCreatorId(id);
 	}
+
+	public List<Trip> searchTrips(String destination, TripCategory category, String language, Gender gender) {
+        return tripRepository.findByFilters(destination, category, language, gender);
+    }
 }

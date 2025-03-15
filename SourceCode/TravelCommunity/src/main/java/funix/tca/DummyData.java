@@ -53,6 +53,8 @@ public class DummyData implements ApplicationRunner {
             user.setFullName(fullName);
             user.setAvatarUrl("/uploads/default-avatar.jpg");
             user.setLanguages(new HashSet<>(Set.of(Language.Vietnamese, Language.English)));
+            user.setKycApproved(true);
+            user.setVerified(true);
             userRepository.save(user);
             System.out.println("account created successfully!");
         } else {

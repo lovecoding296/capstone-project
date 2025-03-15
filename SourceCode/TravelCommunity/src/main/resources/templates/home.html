@@ -120,11 +120,55 @@
 <body>
 	<nav th:replace="~{page-component :: header}"></nav>
 
+	<div class="container-fluid page-title">
+	    <div class="card p-3 shadow">
+	        <h4 class="text-start mb-3" th:text="#{label.searchTrips}">Tìm kiếm chuyến đi</h4>
+	        <form th:action="@{/trips/search}" method="get">
+	            <div class="row d-flex align-items-center g-2">
+	                <!-- Địa điểm -->
+	                <div class="col-md-2">
+	                    <input type="text" name="location" class="form-control" th:placeholder="#{label.destination}">
+	                </div>
+
+	                <!-- Danh mục -->
+	                <div class="col-md-2">
+	                    <select id="category" name="category" class="form-select">
+	                        <option value="" th:text="#{label.category}">Danh mục</option>
+	                        <option th:each="cat : ${categories}" th:value="${cat}" th:text="${#messages.msg(cat.name())}"></option>
+	                    </select>
+	                </div>
+
+	                <!-- Ngôn ngữ -->
+	                <div class="col-md-2">
+	                    <input type="text" name="language" class="form-control" th:placeholder="#{label.language}">
+	                </div>
+
+	                <!-- Giới tính -->
+	                <div class="col-md-2">
+	                    <select name="gender" class="form-select">
+	                        <option value="" th:text="#{label.gender}">Giới tính</option>
+	                        <option value="MALE" th:text="#{MALE}">Nam</option>
+	                        <option value="FEMALE" th:text="#{FEMALE}">Nữ</option>
+	                    </select>
+	                </div>
+
+	                <!-- Nút tìm kiếm -->
+	                <div class="col-md-2 text-end">
+	                    <button type="submit" class="btn btn-primary w-100"th:text="#{label.search}">🔍 Tìm kiếm</button>
+	                </div>
+	            </div>
+	        </form>
+	    </div>
+	</div>
+
+
+
+
 	<div class="text-center page-title">
 		<svg th:replace="~{icons :: destination}"></svg>
 	</div>
 
-	<h3 class="text-center" style="margin-top: 10px;">Các chuyến đi nổi bật</h3>
+	<h3 class="text-center" style="margin-top: 10px;" th:text="#{label.highlightTrips}">Các chuyến đi nổi bật</h3>
 
 	<div class="container mt-4">
 		<div class="row">
@@ -146,50 +190,45 @@
 							<div class="col-12">
 								<div class="trip-card-home-body">
 									<h5 class="trip-card-home-title" th:text="${trip.title}">Tiêu đề</h5>
-									<p class="card-text"><strong>Địa điểm:</strong> <span
+									<p class="card-text" ><strong th:text="#{label.destination}">Địa điểm:</strong> <span
 											th:text="${trip.destination}">Địa
 											điểm</span></p>
 									<p class="card-text">
-										<strong>Thời gian:</strong>
+										<strong th:text="#{label.duration}">Thời gian:</strong>
 										<span th:text="${#temporals.format(trip.startDate, 'dd/MM/yyyy')}">Ngày bắt
 											đầu</span> -
 										<span th:text="${#temporals.format(trip.endDate, 'dd/MM/yyyy')}">Ngày kết
 											thúc</span>
 									</p>
-									<p class="card-text"><strong>Người tổ chức:</strong> <span
-											th:text="${trip.creator.fullName}">Người tổ chức</span></p>
-									<p class="card-text"><strong>Số người tham gia:</strong> <span
+									<p class="card-text"><strong th:text="#{label.organizer}">Người tổ chức:</strong> <span
+											th:text="${trip.creator.fullName}">adnmin</span></p>
+									<p class="card-text"><strong th:text="#{label.participants}">Số người tham gia:</strong> <span
 											th:text="${#lists.size(trip.participants)}">0</span></p>
 
 									<div
 										th:if="${session.loggedInUser != null && (trip.creator.id != session.loggedInUser.id)}">
 										<!-- Check if the user has already joined the trip -->
-										<p th:if="${participantStatus[trip.id]}" class="alert alert-success">
+										<p th:if="${participantStatus[trip.id]}" class="alert alert-success" th:text="#{label.alreadyJoined}">
 											✅ Đã tham gia
 										</p>
 
 										<!-- Check if the request is pending -->
-										<p th:if="${requestStatus[trip.id]}" class="alert alert-warning">
+										<p th:if="${requestStatus[trip.id]}" class="alert alert-warning" th:text="#{label.pendingApproval}">
 											⏳ Đang chờ duyệt
 										</p>
 
 										<!-- Show the Join button if the user hasn't joined or requested to join -->
 										<form th:if="${!(participantStatus[trip.id] || requestStatus[trip.id])}"
 											th:action="@{/trips/{id}/request(id=${trip.id})}" method="post">
-											<button type="submit" class="alert alert-warning w-100">
+											<button type="submit" class="alert alert-warning w-100" th:text="#{label.joinRequest}">
 												Yêu cầu tham gia
 											</button>
 										</form>
 									</div>
 									<p class="alert alert-success"
-										th:if="${session.loggedInUser != null && (trip.creator.id == session.loggedInUser.id)}">
+										th:if="${session.loggedInUser != null && (trip.creator.id == session.loggedInUser.id)}" th:text="#{label.alreadyJoined}">
 										✅ Đã tham gia
 									</p>
-
-
-
-
-									<!--<a th:href="@{/trips/{id}/details(id=${trip.id})}" class="btn btn-info"></a>-->
 								</div>
 							</div>
 						</div>
@@ -217,7 +256,7 @@
 						<p><strong th:text="#{label.author}"></strong> <span th:text="${post.author.fullName}"></span>
 						</p>
 						<p><strong th:text="#{label.category}"></strong> <span
-								th:text="${#messages.msg(post.postCategory.name)}"></span>
+								th:text="${#messages.msg(post.category.name)}"></span>
 						</p>
 						<p><strong th:text="#{label.content}"></strong> <span th:utext="${post.content}"></span></p>
 

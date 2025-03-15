@@ -27,6 +27,7 @@ import funix.tca.post.Post;
 import funix.tca.post.PostService;
 import funix.tca.review.ReviewController;
 import funix.tca.trip.Trip;
+import funix.tca.trip.TripCategory;
 import funix.tca.trip.TripService;
 import funix.tca.trip.request.TripRequestService;
 import funix.tca.util.FileUploadHelper;
@@ -56,6 +57,7 @@ public class HomeController {
 		List<Trip> trips = tripService.findAll();
 		List<Post> posts = postService.findAll();
 
+		model.addAttribute("categories", TripCategory.values());
 		model.addAttribute("trips", trips);
 		model.addAttribute("posts", posts);
 

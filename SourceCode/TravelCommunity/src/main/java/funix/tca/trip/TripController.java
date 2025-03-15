@@ -2,6 +2,7 @@ package funix.tca.trip;
 
 import funix.tca.appuser.AppUser;
 import funix.tca.appuser.AppUserService;
+import funix.tca.appuser.Gender;
 import funix.tca.appuser.Language;
 import funix.tca.trip.TripCategory;
 import funix.tca.review.Review;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +51,21 @@ public class TripController {
 		model.addAttribute("trips", trips);
 		return "trip/trip-list";
 	}
+	
+	@GetMapping("/search")
+    public String searchTrips(
+            @RequestParam(required = false) String destination,
+            @RequestParam(required = false) TripCategory category,
+            @RequestParam(required = false) String language,
+            @RequestParam(required = false) Gender gender,
+            Model model) {
+
+        List<Trip> results = tripService.searchTrips(destination, category, language, gender);
+        model.addAttribute("trips", results);
+        model.addAttribute("categories", TripCategory.values());
+
+        return "trip/search-results"; // Trả về trang Thymeleaf
+    }
 
 	// Xem chi tiết chuyến đi
 	@GetMapping("/{id}/details")
@@ -96,9 +113,12 @@ public class TripController {
 			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
 		}
 		
+		model.addAttribute("genders", Gender.values());
 		model.addAttribute("languages", Language.values());
 		model.addAttribute("categories", TripCategory.values());
-		model.addAttribute("trip", new Trip());
+		Trip trip = new Trip();
+		trip.setLanguages(new HashSet<>());
+		model.addAttribute("trip", trip);
 		model.addAttribute("users", appUserService.findAll());
 		return "trip/trip-form"; // Trang tạo mới chuyến đi
 	}
@@ -143,6 +163,7 @@ public class TripController {
 		if (!trip.getCreator().getId().equals(user.getId())) {
 			return "redirect:/trips/?error=unauthorized"; // Không cho phép chỉnh sửa nếu không phải chủ sở hữu
 		}
+		model.addAttribute("genders", Gender.values());
 		model.addAttribute("languages", Language.values());
 		model.addAttribute("categories", TripCategory.values());
 		model.addAttribute("trip", trip);

@@ -76,6 +76,14 @@
 			</select>
 		</div>
 
+		<div class="mb-3">
+			<label for="category" class="form-label">Điều kiện giới tính</label>
+			<select id="category" name="category" th:field="*{category}" class="form-control" required>
+				<option value="">-- Any --</option>
+				<option th:each="cat : ${genders}" th:value="${gender}" th:text="${#messages.msg(gender.name())}"></option>
+			</select>
+		</div>
+
 		<div class="d-flex">
 			<!-- Dropdown chọn ngôn ngữ -->
 			<div class="dropdown me-3">

@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.validation.annotation.Validated;
 
 import funix.tca.appuser.AppUser;
+import funix.tca.appuser.Gender;
 import funix.tca.appuser.Language;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -70,8 +71,14 @@ public class Trip {
     @Enumerated(EnumType.STRING) // Lưu dưới dạng chuỗi
     @Column(name = "language", nullable = false)
     private Set<Language> languages;
+    
+    @Enumerated(EnumType.STRING)
+	private Gender gender;
 
 
+    @Column(nullable = false)
+    private int maxParticipants;
+    
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "trip_members",
