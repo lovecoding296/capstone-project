@@ -48,5 +48,14 @@ public class AdminController {
 	public String verify(HttpSession session, Model model) {
 		return "admin/admin-dashboard";
 	}
+	
+	
+	/*
+	 * @GetMapping("/admin/posts") public String posts(HttpSession session, Model
+	 * model) { return "admin/admin-dashboard"; }
+	 * 
+	 * @GetMapping("/admin/trips") public String trips(HttpSession session, Model
+	 * model) { return "admin/admin-dashboard"; }
+	 */
 
 }

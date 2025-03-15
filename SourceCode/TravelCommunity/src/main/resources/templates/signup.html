@@ -13,6 +13,13 @@
 	<link rel="stylesheet" th:href="@{/style.css}">
 	<script th:src="@{/jquery-3.6.0.min.js}"></script>
 	<script th:src="@{/app-script.js}"></script>
+	
+	<style>
+		.form-control {
+			border-radius: 25px;
+		}
+	</style>
+	
 </head>
 
 <body>
@@ -38,7 +45,7 @@
 			<form class="row" th:action="@{/signup}" th:object="${appUser}" method="post" enctype="multipart/form-data">
 
 				<div class="col-md-4">
-					<img th:src="@{${appUser.cccd} ?: '/uploads/default.jpg'}" width="170" height="108">
+					<img th:src="@{${appUser.cccd} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">
 					<br>
 					<br>
 					<label>Add/change căn cước công dân (Không hiển thị với tất cả mọi người):</label>
@@ -49,10 +56,10 @@
 					</div>
 				</div>
 				<div class="col-md-6">
-					<label for="email">Họ tên:</label>
+					<label for="fullName" th:text="#{fullName}">Họ tên:</label>
 					<input type="text" name="fullName" id="fullName" class="form-control" required>
 
-					<label for="email">Email:</label>
+					<label for="email">Email</label>
 					<input class="form-control" type="email" id="email" th:field="*{email}" required>
 					<span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 
@@ -60,7 +67,7 @@
 					<input class="form-control" type="password" id="password" th:field="*{password}" required>
 					<span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
 
-					<label for="repassword" th:text="#{repassword}">Nhập lại mật khẩu:</label>
+					<label for="repassword" th:text="#{rePassword}">Nhập lại mật khẩu:</label>
 					<input class="form-control" type="password" id="repassword" required>
 					<span class="error" id="repassword-error"></span>
 
@@ -70,34 +77,34 @@
 								style="display: none;">
 								<path fill="green"
 									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
-							</svg> <span th:text="#{8characterCondition}"></span>
+							</svg> <span th:text="#{passwordCondition8chars}"></span>
 						</p>
 						<p id="uppercaseCondition"> <span class="error-icon"> • </span>
 							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
 								style="display: none;">
 								<path fill="green"
 									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
-							</svg> <span th:text="#{uppercaseCondition}"></span>
+							</svg> <span th:text="#{passwordConditionUppercase}"></span>
 						</p>
 						<p id="specialCondition"> <span class="error-icon"> • </span>
 							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
 								style="display: none;">
 								<path fill="green"
 									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
-							</svg> <span th:text="#{specialCondition}"></span>
+							</svg> <span th:text="#{passwordConditionSpecial}"></span>
 						</p>
 						<p id="passwordCondition"> <span class="error-icon"> • </span>
 							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
 								style="display: none;">
 								<path fill="green"
 									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
-							</svg> <span th:text="#{passwordCondition}"></span>
+							</svg> <span th:text="#{passwordConditionMatch}"></span>
 						</p>
 					</div>
 
 
 					<label>
-						<span>Bằng cách đăng ký, bạn đồng ý với Điều khoản và Chính sách quyền riêng tư của chúng
+						<span th:text="#{register.agreement}">Bằng cách đăng ký, bạn đồng ý với Điều khoản và Chính sách quyền riêng tư của chúng
 							tôi.</span>
 					</label>
 				</div>

@@ -63,7 +63,7 @@ public class PostController {
 
 		List<Post> searchResults = postService.searchPosts(title, author, category);
 		model.addAttribute("posts", searchResults);
-		return "post/post-list"; // Trả về trang danh sách bài viết
+		return "post/post-search-results"; // Trả về trang danh sách bài viết
 	}
 
 	// Tạo mới bài viết

@@ -41,13 +41,13 @@
 
 					<li class="nav-item">
 						<a class="nav-link" href="/trips/new" role="button">
-							<span>Tạo chuyến đi mới</span>
+							<span th:text="#{trip.create}">Tạo chuyến đi mới</span>
 						</a>
 					</li>
 
 					<li class="nav-item">
 						<a class="nav-link" href="/posts/new" role="button">
-							<span>Tạo bài viết mới</span>
+							<span th:text="#{post.create}">Tạo bài viết mới</span>
 						</a>
 					</li>
 
@@ -74,22 +74,22 @@
 							id="userPopup">
 							<li>
 								<a class="dropdown-item"
-									th:href="@{/appusers/{id}(id=${session.loggedInUser.id})}">Trang cá nhân</a>
+									th:href="@{/appusers/{id}(id=${session.loggedInUser.id})}"  th:text="#{profile.page}">Trang cá nhân</a>
 							</li>
 							<li>
-								<a class="dropdown-item" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}">Chuyến đi của tôi</a>
+								<a class="dropdown-item" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}"  th:text="#{trip.mine}">Chuyến đi của tôi</a>
 							</li>
 							<li>
-								<a class="dropdown-item" href="/trips/manage-all-requests">Yêu cầu tham gia chuyến đi</a>
+								<a class="dropdown-item" href="/trips/manage-all-requests"  th:text="#{post.create}">Yêu cầu tham gia chuyến đi</a>
 							</li>
 							<li>
-								<a class="dropdown-item" th:href="@{/posts/author/{id}(id=${session.loggedInUser.id})}">Bài viết của tôi</a>
+								<a class="dropdown-item" th:href="@{/posts/author/{id}(id=${session.loggedInUser.id})}" th:text="#{post.mine}">Bài viết của tôi</a>
 							</li>
 							<li>
-								<a class="dropdown-item" th:href="@{/reviews/{id}(id=${session.loggedInUser.id})}">Đánh giá của tôi</a>
+								<a class="dropdown-item" th:href="@{/reviews/{id}(id=${session.loggedInUser.id})}" th:text="#{review.mine}">Đánh giá của tôi</a>
 							</li>
 							<li>
-								<a class="dropdown-item" th:href="@{/reviews/reviewed/{id}(id=${session.loggedInUser.id})}">Đánh giá đã cho</a>
+								<a class="dropdown-item" th:href="@{/reviews/reviewed/{id}(id=${session.loggedInUser.id})}" th:text="#{review.given}">Đánh giá đã cho</a>
 							</li>
 							<li>
 								<a class="dropdown-item" href="/logout">Đăng xuất</a>
