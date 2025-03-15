@@ -24,6 +24,7 @@ import funix.tca.appuser.AppUser;
 import funix.tca.appuser.AppUserService;
 import funix.tca.exception.EmailVerificationException;
 import funix.tca.post.Post;
+import funix.tca.post.PostCategory;
 import funix.tca.post.PostService;
 import funix.tca.review.ReviewController;
 import funix.tca.trip.Trip;
@@ -57,7 +58,8 @@ public class HomeController {
 		List<Trip> trips = tripService.findAll();
 		List<Post> posts = postService.findAll();
 
-		model.addAttribute("categories", TripCategory.values());
+		model.addAttribute("postCategories", PostCategory.values());
+		model.addAttribute("tripCategories", TripCategory.values());
 		model.addAttribute("trips", trips);
 		model.addAttribute("posts", posts);
 

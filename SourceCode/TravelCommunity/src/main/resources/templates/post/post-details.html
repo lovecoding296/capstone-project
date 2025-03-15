@@ -33,7 +33,7 @@
 								đăng</span>
 						</p>
 						<p><strong>Tác giả:</strong> <span th:text="${post.author.fullName}">Tác giả</span></p>
-						<p><strong>Nội dung:</strong> <span th:text="${post.content}">Nội dung</span></p>
+						<p><strong>Nội dung:</strong> <span th:utext="${post.content}">Nội dung</span></p>
 
 						<p>
 							<span class="like-comment-count">

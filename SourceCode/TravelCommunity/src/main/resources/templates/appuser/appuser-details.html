@@ -171,7 +171,7 @@
 				</tr>
 				<tr th:each="post : ${posts}">
 					<td th:text="${post.title}">Tiêu đề bài viết</td>
-					<td th:text="${#messages.msg(post.postCategory.name)}"></td>
+					<td th:text="${#messages.msg(post.category.name)}"></td>
 					<td th:text="'👍' + ${post.likes.size()} + ' 💬' + ${post.comments.size()}"></td>
 					<td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}"></td>
 				</tr>

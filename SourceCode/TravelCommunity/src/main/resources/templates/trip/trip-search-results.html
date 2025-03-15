@@ -120,7 +120,7 @@
 										<span th:text="${trip.creator.fullName}">adnmin</span>
 									</p>
 									<p class="card-text"><strong th:text="#{label.participants}">Số người tham
-											gia:</strong> <span th:text="${#lists.size(trip.participants)}">0</span></p>
+											gia:</strong> <span th:text="${#lists.size(trip.participants) + '/' + trip.maxParticipants}">0</span></p>
 
 									<div
 										th:if="${session.loggedInUser != null && (trip.creator.id != session.loggedInUser.id)}">

@@ -57,4 +57,8 @@ public class PostService {
 	public List<Post> findTop3ByAuthorIdOrderByCreatedAtDesc(Long id) {
 		return postRepository.findTop3ByAuthorIdOrderByCreatedAtDesc(id);
 	}
+
+	public List<Post> searchPosts(String title, String author, PostCategory category) {
+		return postRepository.findByFilters(title, author, category);
+	}
 }

@@ -64,7 +64,7 @@ public class TripController {
         model.addAttribute("trips", results);
         model.addAttribute("categories", TripCategory.values());
 
-        return "trip/search-results"; // Trả về trang Thymeleaf
+        return "trip/trip-search-results"; // Trả về trang Thymeleaf
     }
 
 	// Xem chi tiết chuyến đi
