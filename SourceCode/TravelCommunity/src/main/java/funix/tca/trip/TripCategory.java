@@ -1,9 +1,9 @@
 package funix.tca.trip;
 
 public enum TripCategory {
-	
-	NATURE_EXPLORATION,
+	FOODTOUR,
 	SURVIVAL,
+	NATURE_EXPLORATION,	
 	ADVENTURE,       // Du lịch khám phá
     RELAXATION,      // Du lịch nghỉ dưỡng
     CULTURAL,        // Du lịch văn hóa & lịch sử

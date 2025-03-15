@@ -99,7 +99,7 @@
 					<span class="fw-bold text-danger" th:text="${trip.estimatedCost} + ' VND'"></span>
 				</p>
 				<p><i class="bi bi-person-check text-primary"></i> <strong>Người tổ chức:</strong>
-					<span class="fw-bold text-dark" th:text="${trip.creator.fullName}"></span>
+					<a th:href="@{/appusers/{id}(id=${trip.creator.id})}"> <span class="fw-bold text-dark" th:text="${trip.creator.fullName}"></span> </a>
 				</p>
 				<p><i class="bi bi-people text-secondary"></i> <strong>Số người tham gia:</strong>
 					<span class="badge bg-primary fs-6" th:text="${#lists.size(trip.participants)}"></span>

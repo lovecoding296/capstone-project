@@ -66,6 +66,10 @@ public class TripService {
     	tripRequestRepository.deleteByTripId(id);
         tripRepository.deleteById(id);
     }
+    
+    public List<Trip> getLatestTrips() {
+        return tripRepository.findTop4ByOrderByCreatedAtDesc();
+    }
 
     public void deleteParticipantFromTrip(AppUser user, Trip trip) {
     	

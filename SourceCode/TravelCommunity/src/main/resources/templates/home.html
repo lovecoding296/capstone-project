@@ -127,7 +127,7 @@
 				<div class="row d-flex align-items-center g-2">
 					<!-- Địa điểm -->
 					<div class="col-md-2">
-						<input type="text" name="location" class="form-control" th:placeholder="#{label.destination}">
+						<input type="text" name="destination" class="form-control" th:placeholder="#{label.destination}">
 					</div>
 
 					<!-- Danh mục -->
@@ -207,7 +207,7 @@
 									</p>
 									<p class="card-text"><strong th:text="#{label.participants}">Số người tham
 											gia:</strong> <span
-											th:text="${#lists.size(trip.participants) + '/' + trip.maxParticipants}">0</span>
+											th:text="${(#lists.size(trip.participants) + 1)   + '/' + trip.maxParticipants}">0</span>
 									</p>
 
 									<div

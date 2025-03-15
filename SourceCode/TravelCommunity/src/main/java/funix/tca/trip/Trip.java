@@ -22,6 +22,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -76,6 +78,7 @@ public class Trip {
 	private Gender gender;
 
 
+    @Min(value = 2, message = "Số lượng người tham gia phải lớn hơn 1")
     @Column(nullable = false)
     private int maxParticipants;
     
@@ -86,5 +89,12 @@ public class Trip {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<AppUser> participants;
+    
+    private LocalDateTime createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }  
 }
 

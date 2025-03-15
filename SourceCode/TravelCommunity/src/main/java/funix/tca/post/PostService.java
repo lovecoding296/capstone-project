@@ -48,6 +48,10 @@ public class PostService {
             return false;
         });
     }
+    
+    public List<Post> getLatestPosts() {
+        return postRepository.findTop4ByOrderByCreatedAtDesc();
+    }
 
     // Xóa bài viết theo ID
     public void deleteById(Long id) {

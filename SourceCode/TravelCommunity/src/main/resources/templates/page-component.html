@@ -80,7 +80,7 @@
 								<a class="dropdown-item" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}"  th:text="#{trip.mine}">Chuyến đi của tôi</a>
 							</li>
 							<li>
-								<a class="dropdown-item" href="/trips/manage-all-requests"  th:text="#{post.create}">Yêu cầu tham gia chuyến đi</a>
+								<a class="dropdown-item" href="/trips/manage-all-requests"  th:text="#{trip.request}">Yêu cầu tham gia chuyến đi</a>
 							</li>
 							<li>
 								<a class="dropdown-item" th:href="@{/posts/author/{id}(id=${session.loggedInUser.id})}" th:text="#{post.mine}">Bài viết của tôi</a>

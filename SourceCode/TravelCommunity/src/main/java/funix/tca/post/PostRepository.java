@@ -10,6 +10,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByAuthorId(Long authorId); // Tìm bài viết theo tác giả
 
 	List<Post> findTop3ByAuthorIdOrderByCreatedAtDesc(Long id);
+	
+	List<Post> findTop4ByOrderByCreatedAtDesc();
 
 	
     @Query("SELECT p FROM Post p WHERE " +

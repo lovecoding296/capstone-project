@@ -24,8 +24,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -58,11 +60,35 @@ public class TripController {
             @RequestParam(required = false) TripCategory category,
             @RequestParam(required = false) String language,
             @RequestParam(required = false) Gender gender,
-            Model model) {
+            Model model, HttpSession session) {
 
         List<Trip> results = tripService.searchTrips(destination, category, language, gender);
         model.addAttribute("trips", results);
         model.addAttribute("categories", TripCategory.values());
+        
+        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+		if (loggedInUser != null) {
+			// Tạo một Map để lưu trạng thái tham gia của người dùng với từng chuyến đi
+			Map<Long, Boolean> participantStatus = new HashMap<>();
+			Map<Long, Boolean> requestStatus = new HashMap<>();
+
+			for (Trip trip : results) {
+				
+				for(AppUser user : trip.getParticipants()) {
+					System.out.println("user id " + user.getId() + " loggedInUser is " + loggedInUser.getId() + " isParticipant " + trip.getParticipants().contains(loggedInUser) + " name " +user.getFullName() );
+				}
+				
+				boolean isParticipant = trip.getParticipants().contains(loggedInUser);
+				participantStatus.put(trip.getId(), isParticipant);
+				
+				boolean hasRequested = !isParticipant && tripRequestService.hasUserRequested(loggedInUser, trip);			
+	            requestStatus.put(trip.getId(), hasRequested);
+			}
+
+			model.addAttribute("participantStatus", participantStatus);
+			model.addAttribute("requestStatus", requestStatus);
+		}
+
 
         return "trip/trip-search-results"; // Trả về trang Thymeleaf
     }
@@ -135,6 +161,10 @@ public class TripController {
 			model.addAttribute("users", appUserService.findAll());
 			return "trip/trip-form"; // Trả lại trang nếu có lỗi
 		}
+		
+		
+		System.out.println("trip category " + trip.getCategory());
+		
 		try {
 			String tripPictureUrl = FileUploadHelper.uploadFile(tripPictureFile);
 			if(tripPictureUrl != null) {
@@ -223,7 +253,7 @@ public class TripController {
 		}
 		System.out.println("TripController deleteById id = " + id);
 		tripService.deleteById(id);
-		return "redirect:/trips/";
+		return "redirect:/trips/creator/{id}";
 	}
 
 	// Người dùng gửi yêu cầu tham gia chuyến đi

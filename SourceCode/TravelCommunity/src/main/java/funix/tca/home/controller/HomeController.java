@@ -55,8 +55,8 @@ public class HomeController {
 	@GetMapping("/")
 	public String home(Model model, HttpSession session) {
 		logger.info("home");
-		List<Trip> trips = tripService.findAll();
-		List<Post> posts = postService.findAll();
+		List<Trip> trips = tripService.getLatestTrips();
+		List<Post> posts = postService.getLatestPosts();
 
 		model.addAttribute("postCategories", PostCategory.values());
 		model.addAttribute("tripCategories", TripCategory.values());
