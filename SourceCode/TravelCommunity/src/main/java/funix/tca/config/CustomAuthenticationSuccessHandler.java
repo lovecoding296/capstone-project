@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import funix.tca.entity.AppUser;
-import funix.tca.service.AppUserService;
+import funix.tca.appuser.AppUser;
+import funix.tca.appuser.AppUserService;
 
 import java.io.IOException;
 import java.util.Optional;

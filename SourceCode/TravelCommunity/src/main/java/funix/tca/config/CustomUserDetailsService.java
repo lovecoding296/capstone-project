@@ -9,8 +9,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import funix.tca.entity.AppUser;
-import funix.tca.repository.AppUserRepository;
+import funix.tca.appuser.AppUser;
+import funix.tca.appuser.AppUserRepository;
 
 import java.util.Collections;
 

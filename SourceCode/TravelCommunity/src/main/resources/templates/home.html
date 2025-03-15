@@ -217,7 +217,7 @@
 						<p><strong th:text="#{label.author}"></strong> <span th:text="${post.author.fullName}"></span>
 						</p>
 						<p><strong th:text="#{label.category}"></strong> <span
-								th:text="${#messages.msg(post.category.name)}"></span>
+								th:text="${#messages.msg(post.postCategory.name)}"></span>
 						</p>
 						<p><strong th:text="#{label.content}"></strong> <span th:utext="${post.content}"></span></p>
 

@@ -1,6 +1,8 @@
 package funix.tca;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -8,11 +10,12 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import funix.tca.entity.AppUser;
-import funix.tca.entity.Post;
-import funix.tca.enums.Role;
-import funix.tca.repository.AppUserRepository;
-import funix.tca.repository.PostRepository;
+import funix.tca.appuser.AppUser;
+import funix.tca.appuser.AppUserRepository;
+import funix.tca.appuser.Language;
+import funix.tca.appuser.Role;
+import funix.tca.post.Post;
+import funix.tca.post.PostRepository;
 
 @Component
 public class DummyData implements ApplicationRunner {
@@ -40,20 +43,21 @@ public class DummyData implements ApplicationRunner {
 	}
 	
 	private void createUser(String email, String fullName, String rawPassword, Role role) {
-        Optional<AppUser> adminUser = userRepository.findByEmail(email);
+        Optional<AppUser> userOp = userRepository.findByEmail(email);
 
-        if (adminUser.isEmpty()) {
-            AppUser admin = new AppUser();
-            admin.setFullName("Administrator");
-            admin.setEmail(email);
-            admin.setPassword(passwordEncoder.encode(rawPassword)); // Mật khẩu mã hóa
-            admin.setRole(role);
-            admin.setFullName(fullName);
-
-            userRepository.save(admin);
-            System.out.println("Admin account created successfully!");
+        if (userOp.isEmpty()) {
+            AppUser user = new AppUser();
+            user.setFullName("Administrator");
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode(rawPassword)); // Mật khẩu mã hóa
+            user.setRole(role);
+            user.setFullName(fullName);
+            user.setAvatarUrl("/uploads/default-avatar.jpg");
+            user.setLanguages(new HashSet<>(Set.of(Language.Vietnamese, Language.English)));
+            userRepository.save(user);
+            System.out.println("account created successfully!");
         } else {
-            System.out.println("Admin account already exists.");
+            System.out.println("account already exists.");
         }
     }
 	

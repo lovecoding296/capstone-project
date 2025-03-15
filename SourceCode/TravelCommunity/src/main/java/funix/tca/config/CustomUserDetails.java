@@ -5,7 +5,8 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import funix.tca.entity.AppUser;
+import funix.tca.appuser.AppUser;
+
 import java.util.Collections;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

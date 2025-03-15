@@ -41,7 +41,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-4">
-				<img th:src="@{${appUser.avatarUrl} ?: '/uploads/default.jpg'}" width="204" height="204"
+				<img th:src="@{${appUser.avatarUrl}}" width="204" height="204"
 					style="border-radius: 15px; border: solid 4px darkseagreen;">
 				<br><br><br>
 			</div>
@@ -171,7 +171,7 @@
 				</tr>
 				<tr th:each="post : ${posts}">
 					<td th:text="${post.title}">Tiêu đề bài viết</td>
-					<td th:text="${#messages.msg(post.category.name)}"></td>
+					<td th:text="${#messages.msg(post.postCategory.name)}"></td>
 					<td th:text="'👍' + ${post.likes.size()} + ' 💬' + ${post.comments.size()}"></td>
 					<td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}"></td>
 				</tr>
