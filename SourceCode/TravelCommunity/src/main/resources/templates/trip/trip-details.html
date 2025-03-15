@@ -104,6 +104,13 @@
 				<p><i class="bi bi-people text-secondary"></i> <strong>Số người tham gia:</strong>
 					<span class="badge bg-primary fs-6" th:text="${#lists.size(trip.participants)}"></span>
 				</p>
+				
+				<p>Ngôn ngữ đã chọn: 
+				    <span th:if="${not #lists.isEmpty(trip.languages)}" th:text="${#strings.listJoin(trip.languages, ', ')}"></span>
+				    <span th:unless="${not #lists.isEmpty(trip.languages)}">Chưa chọn</span>
+				</p>
+
+				
 				<p><strong>Thành viên tham gia:</strong></p>
 				<ul class="list-group">
 					<li class="list-group-item d-flex align-items-center" th:each="participant : ${trip.participants}">

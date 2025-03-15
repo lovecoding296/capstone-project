@@ -14,7 +14,6 @@ import funix.tca.appuser.AppUser;
 import funix.tca.appuser.AppUserRepository;
 import funix.tca.appuser.Language;
 import funix.tca.appuser.Role;
-import funix.tca.post.Post;
 import funix.tca.post.PostRepository;
 
 @Component

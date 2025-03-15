@@ -14,6 +14,19 @@
 	<script th:src="@{/app-script.js}"></script>
 
 	<script th:src="@{/ckeditor/ckeditor.js}"></script>
+
+	<style>
+		.scrollable-dropdown {
+			max-height: 200px;
+			/* Giới hạn chiều cao */
+			overflow-y: auto;
+			/* Thêm thanh cuộn khi danh sách dài */
+			width: 250px;
+			/* Định dạng chiều rộng */
+			padding: 10px;
+			/* Khoảng cách bên trong */
+		}
+	</style>
 </head>
 
 <body>
@@ -54,6 +67,57 @@
 			<label for="destination" class="form-label">Địa điểm</label>
 			<input type="text" th:field="*{destination}" class="form-control" required>
 		</div>
+
+		<div class="mb-3">
+			<label for="category" class="form-label">Danh mục</label>
+			<select id="category" name="category" th:field="*{category}" class="form-control" required>
+				<option value="">-- Chọn danh mục --</option>
+				<option th:each="cat : ${categories}" th:value="${cat}" th:text="${#messages.msg(cat.name())}"></option>
+			</select>
+		</div>
+
+		<div class="d-flex">
+			<!-- Dropdown chọn ngôn ngữ -->
+			<div class="dropdown me-3">
+				<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+					Chọn ngôn ngữ
+				</button>
+				<ul class="dropdown-menu scrollable-dropdown">
+					<li th:each="lang : ${languages}">
+						<input type="checkbox" th:id="${'lang_' + lang}" th:name="languages" th:value="${lang}"
+							th:checked="${#sets.contains(trip.languages, lang)}" class="form-check-input lang-checkbox"
+							onchange="updateSelectedLanguages()">
+						<label th:for="${'lang_' + lang}" class="form-check-label" th:text="${lang}"></label>
+					</li>
+				</ul>
+			</div>
+
+			<!-- Danh sách ngôn ngữ đã chọn -->
+			<div>
+				<p id="selectedLanguages"></p>
+			</div>
+		</div>
+
+		<script>
+			function updateSelectedLanguages() {
+				let selectedLanguages = [];
+				document.querySelectorAll('.lang-checkbox:checked').forEach(checkbox => {
+					selectedLanguages.push(checkbox.value);
+				});
+
+				let display = selectedLanguages.length > 0 ? selectedLanguages.join(', ') : "";
+				document.getElementById('selectedLanguages').innerText = display;
+			}
+
+			// Gọi hàm này khi trang tải để hiển thị danh sách ngôn ngữ đã chọn sẵn
+			document.addEventListener("DOMContentLoaded", updateSelectedLanguages);
+
+		</script>
+
+
+
+
+
 
 		<div class="mb-3">
 			<label for="startDate" class="form-label">Ngày bắt đầu</label>

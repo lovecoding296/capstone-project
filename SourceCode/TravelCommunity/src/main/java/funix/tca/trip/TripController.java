@@ -2,6 +2,7 @@ package funix.tca.trip;
 
 import funix.tca.appuser.AppUser;
 import funix.tca.appuser.AppUserService;
+import funix.tca.appuser.Language;
 import funix.tca.trip.TripCategory;
 import funix.tca.review.Review;
 import funix.tca.review.ReviewService;
@@ -71,7 +72,7 @@ public class TripController {
 				model.addAttribute("isParticipant", false);
 				model.addAttribute("hasRequested", false);
 			}
-			
+			System.out.println("languages " + trip.getLanguages().size());
 			List<Review> reviews = reviewService.findByTripId(id);
 			model.addAttribute("reviews", reviews);
 			return "trip/trip-details";
@@ -94,6 +95,8 @@ public class TripController {
 		if (loggedInUser == null) {
 			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
 		}
+		
+		model.addAttribute("languages", Language.values());
 		model.addAttribute("categories", TripCategory.values());
 		model.addAttribute("trip", new Trip());
 		model.addAttribute("users", appUserService.findAll());
@@ -140,6 +143,7 @@ public class TripController {
 		if (!trip.getCreator().getId().equals(user.getId())) {
 			return "redirect:/trips/?error=unauthorized"; // Không cho phép chỉnh sửa nếu không phải chủ sở hữu
 		}
+		model.addAttribute("languages", Language.values());
 		model.addAttribute("categories", TripCategory.values());
 		model.addAttribute("trip", trip);
 		model.addAttribute("users", appUserService.findAll());
