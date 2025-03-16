@@ -51,7 +51,7 @@
 
 			<!-- Kiểm tra nếu có lỗi thì hiển thị thông báo -->
 			<div th:if="${param.error}" class="alert alert-danger" role="alert">
-				<p>
+				<p th:text="${param.error}">
 					Sai tên đăng nhập hoặc mật khẩu!
 				</p>
 			</div>

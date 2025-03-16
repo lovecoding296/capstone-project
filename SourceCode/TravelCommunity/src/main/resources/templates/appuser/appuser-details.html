@@ -51,7 +51,7 @@
 			<div class="col-md-8">
 				<h3 th:text="${appUser.fullName}"></h3>
 				<!--<p><strong>Email:</strong> <span th:text="${appUser.email}"></span></p>-->
-				<p><strong>Giới tính:</strong> <span th:text="${#messages.msg(appUser.gender)}"></span></p>
+				<p><strong>Giới tính:</strong> <span th:if="${appUser.gender != null}" th:text="${#messages.msg(appUser.gender)}"></span></p>
 				<p><strong>Tuổi:</strong> <span th:text="${appUser.age}"></span></p>
 				<!--<p><strong>Số điện thoại:</strong> <span th:text="${appUser.phone}"></span></p>
 				<p><strong>Điện thoại gia đình:</strong> <span th:text="${appUser.familyPhone}"></span></p>

@@ -22,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import funix.tca.appuser.AppUser;
 import funix.tca.appuser.AppUserService;
+import funix.tca.appuser.Role;
+import funix.tca.exception.EmailAlreadyExistsException;
 import funix.tca.exception.EmailVerificationException;
 import funix.tca.post.Post;
 import funix.tca.post.PostCategory;
@@ -109,13 +111,16 @@ public class HomeController {
 			if(cccd != null) {
 	    		appUser.setCccd(cccd);
 	    	}
-			appUserService.save(appUser);
+			appUserService.registerUser(appUser);
 			System.out.println("Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
-			model.addAttribute("successMessage", "Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
+			model.addAttribute("successMessage", "Đăng ký thành công, hãy kiểm tra email và chờ quản trị viên phê duyệt tài khoản.");
 			model.addAttribute("appUser", new AppUser());
 			return "signup";
 		} catch (IOException e) {
 			
+			e.printStackTrace();
+		} catch (EmailAlreadyExistsException e) {
+			System.out.println("EmailAlreadyExistsException error");
 			e.printStackTrace();
 		}        
 		model.addAttribute("appUser", appUser);

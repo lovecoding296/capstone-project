@@ -1,20 +1,15 @@
 package funix.tca.appuser;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
+import funix.tca.exception.EmailAlreadyExistsException;
 import funix.tca.exception.EmailVerificationException;
-import jakarta.validation.Valid;
+import funix.tca.util.EmailHelper;
 
 @Service
 public class AppUserService {
@@ -24,6 +19,10 @@ public class AppUserService {
     
     @Autowired
 	private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private EmailHelper emailHelper;
+    
 
     // Lưu một AppUser mới
     public AppUser save(AppUser appUser) {
@@ -62,10 +61,39 @@ public class AppUserService {
     public void deleteById(Long id) {
         appUserRepository.deleteById(id);
     }
+    
+    public AppUser registerUser(AppUser user) throws EmailAlreadyExistsException {
+		if (appUserRepository.existsByEmail(user.getEmail())) {
+			System.out.println("Attempt to register with existing email: " + user.getEmail());
+			throw new EmailAlreadyExistsException("Email already exists");
+		}
+		
+		// Tạo token ngẫu nhiên
+        String token = UUID.randomUUID().toString();
+        System.out.println("Tạo token ngẫu nhiên " + token);
+        
+        user.setVerificationToken(token);
+        user.setVerified(false);
+		
+		emailHelper.sendVerificationEmail(user.getEmail(), token);
+
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+		AppUser savedUser = appUserRepository.save(user);
+		return savedUser;
+	}
 
 	public void verifyEmail(String token) throws EmailVerificationException{
-		// TODO Auto-generated method stub
-		
+		Optional<AppUser> optionalUser = appUserRepository.findByVerificationToken(token);
+
+        if (optionalUser.isPresent()) {
+            AppUser user = optionalUser.get();
+            user.setVerified(true);
+            user.setVerificationToken(null); // Xóa token sau khi xác thực
+            appUserRepository.save(user);
+        } else {
+            throw new EmailVerificationException("Invalid verification token or the token has expired.");
+        }
 	}
 	
 	public boolean approveAppUser(Long id) {

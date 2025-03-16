@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import funix.tca.exception.EmailVerificationException;
 import funix.tca.post.Post;
 import funix.tca.post.PostService;
 import funix.tca.review.Review;
@@ -167,7 +168,8 @@ public class AppUserController {
         return "redirect:/appusers"; // Chuyển hướng sau khi xóa
     }
     
-    //verify
+    
+    //verify cccd
     @GetMapping("/manager-appuser/verify")
     public String manageVerify(Model model) {
     	 List<AppUser> appUsers = appUserService.getUnapprovedUsers();     

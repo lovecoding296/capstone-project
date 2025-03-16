@@ -9,5 +9,9 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 	Optional<AppUser> findByEmail(String email); // Tìm kiếm theo email
 
 	List<AppUser> findByKycApprovedFalse();
+
+	Optional<AppUser> findByVerificationToken(String token);
+
+	boolean existsByEmail(String email);
 }
 

@@ -15,7 +15,7 @@ public class CustomUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	
-	CustomUserDetails(AppUser user){
+	public CustomUserDetails(AppUser user){
 		this.user = user;
 	}
 	
@@ -36,8 +36,8 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-//		return user.isVerified(); // Chặn login nếu chưa xác minh
-		return true;
+		return user.isVerified(); // Chặn login nếu chưa xác minh
+//		return true;
 	}
 
 	@Override
@@ -53,9 +53,9 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public boolean isAccountNonLocked() {
 		 
-//		return user.isKycApproved();
+		return user.isKycApproved();
 		
-		return true;
+//		return true;
 	}
 
 	@Override
