@@ -1,0 +1,75 @@
+.guides {
+	width: 100%;
+	max-width: 1366px;
+	display: grid;
+	gap: 20px;
+	grid-template-columns: repeat(4, 1fr);
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.profile-card {
+	width: 326px;
+}
+
+@media (max-width: 1024px) {
+	.guides {
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+	.profile-card {
+		width: 300px;
+	}
+}
+
+@media (max-width: 768px) {
+	.guides {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.profile-card {
+		width: 300px;
+	}
+}
+
+@media (max-width: 480px) {
+	.guides {
+		grid-template-columns: repeat(1, 1fr);
+	}
+
+	.profile-card {
+		width: 330px;
+	}
+}
+
+
+.subheader {
+	width: 1366px;
+	gap: 20px;
+	justify-content: center;
+	margin: 0 auto;
+	margin: 0 auto;
+	margin-top: 100px;
+}
+
+.subheader ul {
+	list-style: none;
+	display: flex;
+	align-items: center;
+	height: 50px;
+	gap: 10px;
+	padding: 0px;
+}
+
+.subheader a {
+	cursor: pointer;
+	color: black;
+	font-size: 20px;
+}
+
+.subheader a:hover {
+	cursor: pointer;
+	color: blue;
+}

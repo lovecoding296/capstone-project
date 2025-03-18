@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+
+<head>
+	<meta charset="UTF-8">
+</head>
+
+<body>
+
+	<nav th:fragment="header" id="main-nav"
+		class="navbar navbar-expand-lg navbar-dark position-fixed top-0 start-0 w-100 z-3">
+		<div class="container">
+			<a class="navbar-brand" style="font-weight: bold;" href="/" th:text="#{logo}">Nền tảng kết nối du lịch</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
+							data-bs-toggle="dropdown" aria-expanded="false">
+							<img id="selected-flag" th:src="@{'/images/icons/flags/' + ${#locale.language} + '.svg'}"
+								style="height: 20px;">
+							<span id="selected-language" th:text="${#locale.language.toUpperCase()}"></span>
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="languageDropdown">
+							<th:block th:with="languages=${'en,vn'.split(',')}">
+								<li th:each="lang : ${languages}" th:if="${#locale.language != lang}">
+									<a class="dropdown-item" th:attr="onclick='changeLanguage(\'' + ${lang} + '\')'"
+										style="cursor: pointer;">
+										<img th:src="@{'/images/icons/flags/' + ${lang} + '.svg'}"
+											th:alt="${lang.toUpperCase()}" style="height: 20px;">
+										<span th:text="${lang.toUpperCase()}"></span>
+									</a>
+								</li>
+							</th:block>
+						</ul>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/tours">Tour</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/guides">Hướng dẫn viên</a>
+					</li>
+					<!-- Nếu user có ROLE_AGENCY hoặc ROLE_ADMIN, hiển thị "Tạo Tour" -->
+					<li class="nav-item" sec:authorize="hasAnyRole('ROLE_AGENCY', 'ROLE_ADMIN')">
+						<a class="nav-link" href="/tours/create">Tạo Tour</a>
+					</li>
+
+					<!-- Nếu user KHÔNG có ROLE_AGENCY, hiển thị "Đăng ký làm Agency" -->
+					<li class="nav-item" sec:authorize="!hasRole('ROLE_AGENCY')">
+						<a class="nav-link" href="#">Đăng ký làm Agency</a>
+					</li>
+
+					<!-- Nếu user là ROLE_TOURIST, hiển thị "Nâng cấp lên Guide" -->
+					<li class="nav-item" sec:authorize="hasRole('ROLE_TOURIST')">
+						<a class="nav-link" href="/guides/upgrade">Nâng cấp lên Guide</a>
+					</li>
+
+					<!-- Nếu user CHƯA ĐĂNG NHẬP, hiển thị "Đăng ký làm Guide" -->
+					<li class="nav-item" sec:authorize="isAnonymous()">
+						<a class="nav-link" href="/guides/apply">Đăng ký làm Guide</a>
+					</li>
+
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+							data-bs-toggle="dropdown" aria-expanded="false">
+							<svg th:replace="~{icons :: user}"></svg>
+						</a>
+						<ul sec:authorize="isAnonymous()" class="dropdown-menu" aria-labelledby="userDropdown"
+							id="userPopup">
+							<li>
+								<a class="dropdown-item" href="/signup" th:text="#{signup}"></a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="/login" th:text="#{login}"></a>
+							</li>
+						</ul>
+						<ul sec:authorize="!isAnonymous()" class="dropdown-menu" aria-labelledby="userDropdown"
+							id="userPopup">
+							<li>
+								<a class="dropdown-item" href="/profile">Tài khoản</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="/logout">Đăng xuất</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<footer th:fragment="footer" id="footer" class=".container-fluid">
+		<div class="row">
+			<div class="col-3">
+				<h2 th:text="#{support}"></h2>
+				<br><a class="text-start" href="#" th:text="#{FAQs}"></a>
+				<br><a class="text-start" href="#" th:text="#{contactUs}"></a>
+				<br><a class="text-start" href="#" th:text="#{supportUs}"></a>
+			</div>
+			<div class="col-3">
+				<h2 th:text="#{aboutUs}"></h2>
+				<br><a href="#">Blog</a>
+			</div>
+
+			<div class="col-12 text-center">
+				<br><br><br>
+				<br>
+
+				<p>&copy; 2025 Tourism Guide Connection Platform Company. All rights reserved.</p>
+				<div>
+					<a href="#">Privacy Policy</a> |
+					<a href="#">Terms of Service</a> |
+					<a href="#">Contact</a>
+				</div>
+				<div class="social-icons">
+					<a href="#">🔵 Facebook</a>
+					<a href="#">🔷 Twitter</a>
+					<a href="#">📸 Instagram</a>
+				</div>
+
+			</div>
+		</div>
+
+	</footer>
+
+
+</body>
+
+</html>

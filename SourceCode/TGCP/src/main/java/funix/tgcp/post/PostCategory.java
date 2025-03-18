@@ -1,0 +1,12 @@
+package funix.tgcp.post;
+
+public enum PostCategory {
+    EXPERIENCE_SHARING,
+    TRAVEL_QNA,
+    HOT_DESTINATIONS,
+    FOOD_SPECIALTIES,
+    CULTURE_AND_PEOPLE,
+    SERVICE_REVIEWS,
+    TICKET_BOOKING_TIPS,
+    TRAVEL_DIARY;
+}

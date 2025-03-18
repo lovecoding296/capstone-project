@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Đăng nhập</title>
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="styles.css">
+	<script src="script.js"></script>
+</head>
+
+<body>
+
+	<!-- Navigation Bar -->
+	<nav th:replace="~{page-component :: header}"></nav>
+
+	<div th:if="${successMessage}" class="alert alert-success text-center">
+		<span th:text="${successMessage}"></span>
+	</div>
+
+
+	<div class="login-container">
+		<div class="login-form">
+			<div th:if="${successMessage}" class="alert alert-success text-center">
+				<span th:text="${successMessage}"></span>
+			</div>
+			<h1>Đăng nhập</h1>
+			<form method="post" action="/login">
+				<label for="email">Email:</label>
+				<input type="email" name="email" id="email" placeholder="Email" class="form-control" required>
+
+				<label for="password">Mật khẩu:</label>
+				<div class="password-container">
+					<input type="password" id="password" name="password" placeholder="Mật khẩu" class="form-control" required>
+				</div>
+
+				<a href="#" class="forgot-password">Quên mật khẩu?</a>
+
+				<button id="login" type="submit" class="login-btn" disabled>Đăng nhập</button>
+				<br><br>
+				<p>Chưa có tài khoản? <a href="/signup">Đăng ký ngay</a></p>
+			</form>
+
+			<!-- Kiểm tra nếu có lỗi thì hiển thị thông báo -->
+			<div th:if="${param.error}" class="alert alert-danger" role="alert">
+				<p>
+					Sai tên đăng nhập hoặc mật khẩu!
+				</p>
+			</div>
+		</div>
+	</div>
+	<footer th:replace="~{page-component :: footer}"></footer>
+	<script>
+		function checkInputs() {
+			var email = document.getElementById('email').value;
+			var password = document.getElementById('password').value;
+			var button = document.getElementById('login');
+
+			if (email && password) {
+				button.disabled = false; // Enable the button
+			} else {
+				button.disabled = true; // Disable the button
+			}
+		}
+
+		// Add event listeners to both inputs
+		document.getElementById('email').addEventListener('input', checkInputs);
+		document.getElementById('password').addEventListener('input', checkInputs);
+	</script>
+
+</body>
+
+
+</html>
