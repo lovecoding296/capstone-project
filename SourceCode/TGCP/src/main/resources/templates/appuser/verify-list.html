@@ -30,18 +30,18 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="user : ${appUsers}">
+				<tr th:each="user : ${users}">
 					<td th:text="${user.fullName}"></td>
 					<td th:text="${user.email}"></td>
 					<td>
 						<img th:src="${user.avatarUrl}" alt="Avatar" class="rounded-circle" width="50" height="50">
 					</td>
 					<td>
-						<a th:href="@{/appusers/{id}(id=${user.id})}" class="btn btn-info btn-sm">Chi tiết</a>
-						<a th:href="@{/appusers/{id}/edit(id=${user.id})}" class="btn btn-primary btn-sm">Sửa</a>
-						<a th:href="@{/manager-appuser/verify/{id}/approve(id=${user.id})}"
+						<a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-info btn-sm">Chi tiết</a>
+						<a th:href="@{/users/{id}/edit(id=${user.id})}" class="btn btn-primary btn-sm">Sửa</a>
+						<a th:href="@{/manager-user/verify/{id}/approve(id=${user.id})}"
 							class="btn btn-success btn-sm">Approve</a>
-						<a th:href="@{/appusers/{id}/delete(id=${user.id})}" class="btn btn-danger btn-sm"
+						<a th:href="@{/users/{id}/delete(id=${user.id})}" class="btn btn-danger btn-sm"
 							onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
 					</td>
 				</tr>

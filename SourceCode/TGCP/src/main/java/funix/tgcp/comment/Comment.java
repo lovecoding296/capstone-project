@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import funix.tgcp.appuser.AppUser;
+import funix.tgcp.user.User;
 import funix.tgcp.post.Post;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,7 +43,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private AppUser commenter;
+    private User commenter;
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)

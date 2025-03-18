@@ -10,17 +10,17 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserRepository;
-import funix.tgcp.appuser.Language;
-import funix.tgcp.appuser.Role;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserRepository;
+import funix.tgcp.user.Language;
+import funix.tgcp.user.Role;
 import funix.tgcp.post.PostRepository;
 
 @Component
 public class DummyData implements ApplicationRunner {
 
 	@Autowired
-    private AppUserRepository userRepository;
+    private UserRepository userRepository;
 	
 	@Autowired
     private PostRepository postRepository;
@@ -42,10 +42,10 @@ public class DummyData implements ApplicationRunner {
 	}
 	
 	private void createUser(String email, String fullName, String rawPassword, Role role) {
-        Optional<AppUser> userOp = userRepository.findByEmail(email);
+        Optional<User> userOp = userRepository.findByEmail(email);
 
         if (userOp.isEmpty()) {
-            AppUser user = new AppUser();
+            User user = new User();
             user.setFullName("Administrator");
             user.setEmail(email);
             user.setPassword(passwordEncoder.encode(rawPassword)); // Mật khẩu mã hóa

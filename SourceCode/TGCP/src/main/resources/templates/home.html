@@ -184,8 +184,8 @@
 								<!--<img th:src="${trip.tripPictureUrl != null ? @{${trip.tripPictureUrl}} : '/uploads/trip-default.png'}"
 							     class="img-fluid rounded-top" alt="Ảnh chuyến đi">-->
 
-								<img th:src="${trip.tripPictureUrl != null and trip.tripPictureUrl != '' ? trip.tripPictureUrl : '/uploads/trip-default.png'}"
-									class="img-fluid rounded-top" alt="Ảnh chuyến đi">
+								<!--<img th:src="${trip.tripPictureUrl != null and trip.tripPictureUrl != '' ? trip.tripPictureUrl : '/uploads/trip-default.png'}"
+									class="img-fluid rounded-top" alt="Ảnh chuyến đi">-->
 
 							</div>
 							<!-- Column for content -->
@@ -193,7 +193,7 @@
 								<div class="trip-card-home-body">
 									<h5 class="trip-card-home-title" th:text="${trip.title}">Tiêu đề</h5>
 									<p class="card-text"><strong th:text="#{label.destination}">Địa điểm:</strong> <span
-											th:text="${trip.destination}">Địa
+											th:text="${trip.city}">Địa
 											điểm</span></p>
 									<p class="card-text">
 										<strong th:text="#{label.duration}">Thời gian:</strong>

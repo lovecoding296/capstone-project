@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
-import funix.tgcp.appuser.AppUser;
+import funix.tgcp.user.User;
 import funix.tgcp.trip.Trip;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,11 +50,11 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "reviewer_id", nullable = false)
-    private AppUser reviewer; // Người đánh giá
+    private User reviewer; // Người đánh giá
 
     @ManyToOne
     @JoinColumn(name = "reviewed_user_id", nullable = false)
-    private AppUser reviewedUser; // Người được đánh giá
+    private User reviewedUser; // Người được đánh giá
     
     @PrePersist
     protected void onCreate() {

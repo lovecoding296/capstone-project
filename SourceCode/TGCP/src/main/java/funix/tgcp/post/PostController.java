@@ -9,8 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserService;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserService;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class PostController {
 	private PostService postService;
 
 	@Autowired
-	private AppUserService appUserService;
+	private UserService userService;
 
 	// Lấy danh sách tất cả bài viết
 	@GetMapping()
@@ -38,7 +38,7 @@ public class PostController {
 
 	// Lấy bài viết theo current user ID
 	@GetMapping("/author/{id}")
-	public String getPostByAppUserId(@PathVariable Long id, Model model) {
+	public String getPostByuserId(@PathVariable Long id, Model model) {
 		List<Post> posts = postService.findByAuthorId(id);
 		model.addAttribute("posts", posts);
 		return "post/post-list"; // Trả về trang danh sách bài viết
@@ -69,26 +69,26 @@ public class PostController {
 	// Tạo mới bài viết
 	@GetMapping("/new")
 	public String showCreateForm(Model model, HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		if (loggedInUser == null) {
 			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
 		}
 
 		model.addAttribute("categories", PostCategory.values());
 		model.addAttribute("post", new Post());
-		// model.addAttribute("users", appUserService.findAll());
+		// model.addAttribute("users", userService.findAll());
 		return "post/post-form"; // Trả về trang tạo bài viết mới
 	}
 
 	@PostMapping("/new")
 	public String createPost(@Valid @ModelAttribute Post post, BindingResult result, Model model, HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		if (loggedInUser == null) {
 			return "redirect:/login"; // Kiểm tra đăng nhập
 		}
 
 		if (result.hasErrors()) {
-			model.addAttribute("users", appUserService.findAll());
+			model.addAttribute("users", userService.findAll());
 			return "post/post-form";
 		}
 		post.setAuthor(loggedInUser);
@@ -99,7 +99,7 @@ public class PostController {
 	// Chỉnh sửa bài viết
 	@GetMapping("/{id}/edit")
 	public String showEditForm(@PathVariable Long id, Model model, HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		if (loggedInUser == null) {
 			return "redirect:/login"; // Kiểm tra đăng nhập
 		}
@@ -108,7 +108,7 @@ public class PostController {
 		if (post.isPresent()) {
 			model.addAttribute("categories", PostCategory.values());
 			model.addAttribute("post", post.get());
-			model.addAttribute("users", appUserService.findAll());
+			model.addAttribute("users", userService.findAll());
 			return "post/post-form";
 		}
 		return "redirect:/posts";
@@ -117,13 +117,13 @@ public class PostController {
 	@PostMapping("/{id}/edit")
 	public String updatePost(@PathVariable Long id, @Valid @ModelAttribute Post post, BindingResult result, Model model,
 			HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		if (loggedInUser == null) {
 			return "redirect:/login"; // Kiểm tra đăng nhập
 		}
 
 		if (result.hasErrors()) {
-			model.addAttribute("users", appUserService.findAll());
+			model.addAttribute("users", userService.findAll());
 			return "post/post-form";
 		}
 
@@ -134,7 +134,7 @@ public class PostController {
 	// Xóa bài viết theo ID
 	@GetMapping("/{id}/delete")
 	public String deletePost(@PathVariable Long id, HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		if (loggedInUser == null) {
 			return "redirect:/login"; // Kiểm tra đăng nhập
 		}

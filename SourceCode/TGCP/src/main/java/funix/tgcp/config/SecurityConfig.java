@@ -29,7 +29,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers("/admin/**").hasRole("ADMIN")
         		.requestMatchers("/reviews/**").authenticated()
-        		.requestMatchers("/appusers/**").authenticated()
+        		.requestMatchers("/users/**").authenticated()
         		.requestMatchers("/trips/**").authenticated()
         		.requestMatchers("/posts/**").authenticated()
         		.requestMatchers("/ckeditor/**", "/css/**", "/js/**", "/images/**").permitAll()

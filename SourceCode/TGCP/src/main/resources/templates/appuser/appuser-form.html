@@ -22,12 +22,12 @@
 	<nav th:replace="~{page-component :: header}"></nav>
 	<h3 class="page-title text-center">Chỉnh sửa thông tin người dùng</h3>
 	<div class="container">
-		<form th:action="@{/appusers/{id}/edit(id=${appUser.id})}" method="post" th:object="${appUser}"
+		<form th:action="@{/users/{id}/edit(id=${user.id})}" method="post" th:object="${user}"
 			enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-md-4">
 					<div>
-						<img th:src="@{${appUser.avatarUrl} ?: '/uploads/default.jpg'}" width="204" height="204"
+						<img th:src="@{${user.avatarUrl} ?: '/uploads/default.jpg'}" width="204" height="204"
 							style="border-radius: 15px; border: solid 4px darkseagreen;">
 						<br>
 						<br>
@@ -40,7 +40,7 @@
 					</div>
 					<br><br><br>
 					<div>
-						<img th:src="@{${appUser.cccd} ?: '/uploads/default.jpg'}" width="170" height="108">
+						<img th:src="@{${user.cccd} ?: '/uploads/default.jpg'}" width="170" height="108">
 						<br>
 						<br>
 						<label>Add/change căn cước công dân (Không hiển thị với tất cả mọi người):</label>
@@ -113,7 +113,7 @@
 						<input type="text" class="form-control" th:field="*{instagram}">
 					</div>
 					<button type="submit" class="btn btn-success">Lưu Thay Đổi</button>
-					<a th:href="@{/appusers/{id}(id=${appUser.id})}" class="btn btn-secondary">Hủy</a>
+					<a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-secondary">Hủy</a>
 				</div>
 			</div>
 		</form>

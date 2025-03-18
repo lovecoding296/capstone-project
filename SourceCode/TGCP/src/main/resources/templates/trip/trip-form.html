@@ -39,23 +39,94 @@
 	<form th:action="@{${#strings.isEmpty(trip.id) ? '/trips/new' : '/trips/' + trip.id + '/edit'}}" th:object="${trip}"
 		method="post" class="container mt-4" enctype="multipart/form-data">
 
-		<div>
-			<img th:src="@{${trip.tripPictureUrl} ?: '/uploads/trip-default.png'}" style="border: solid black 1px;"
-				width="500" height="200">
-			<br>
-			<br>
-			<label>Add/change trip picture:</label>
-			<br>
-
-			<input type="hidden" name="tripPictureUrl" th:field="*{tripPictureUrl}"></input>
-
-
-			<div class="file-upload">
-				<input type="file" id="fileInput" name="tripPictureFile" accept="image/*">
-				<label for="fileInput">Choose file</label>
-				<span id="fileName">No file chosen</span>
-			</div>
+		<!-- Upload nhiều ảnh -->
+		<div class="mb-3">
+			<label for="images" class="form-label">Tải lên ảnh</label>
+			<input type="file" id="images" name="files" multiple accept="image/*" class="form-control"
+				onchange="previewImages()" required>
 		</div>
+
+		<!-- Khu vực xem trước ảnh -->
+		<div id="previewContainer" class="d-flex flex-wrap"></div>
+
+
+
+
+
+		<script>
+			// Xem trước ảnh
+			function previewImages() {
+				const input = document.getElementById("images");
+				const files = input.files;
+				// Kiểm tra số lượng file chọn vào (tối đa 5 ảnh)				
+
+				// Sử dụng th:with để gán giá trị trip.imageUrls.size() vào biến JavaScript
+				const existFileCount = [[${trip.images.size()}]]; // Lấy số lượng ảnh đã có trong database
+				const totalFileCount = files.length + existFileCount;
+				// Kiểm tra số lượng file chọn vào (tối đa 5 ảnh)
+				if (files.length > 5) {
+					alert("Bạn chỉ có thể chọn tối đa 5 ảnh.");
+					// Nếu số file vượt quá 5, reset lại input
+					input.value = '';
+					return;
+				}
+
+
+				const previewContainer = document.getElementById("previewContainer");
+
+				previewContainer.innerHTML = "";  // Xóa preview cũ
+
+				// Render preview mới
+				for (let i = 0; i < input.files.length; i++) {
+					const file = input.files[i];
+					const reader = new FileReader();
+
+					reader.onload = (e) => {
+						const imgWrapper = document.createElement("div");
+						imgWrapper.classList.add("position-relative", "m-2");
+						imgWrapper.style.transition = "opacity 0.3s";
+
+						const img = document.createElement("img");
+						img.src = e.target.result;
+						img.classList.add("rounded", "shadow-sm");
+						img.style.width = "150px";
+						img.style.height = "150px";
+						img.style.objectFit = "cover";
+
+						// Nút xóa
+						const removeBtn = document.createElement("button");
+						removeBtn.textContent = "X";
+						removeBtn.classList.add("btn", "btn-danger", "btn-sm", "position-absolute", "top-0", "end-0");
+						removeBtn.onclick = () => removeImage(i);
+
+						imgWrapper.appendChild(img);
+						imgWrapper.appendChild(removeBtn);
+						previewContainer.appendChild(imgWrapper);
+					};
+
+					reader.readAsDataURL(file);
+				}
+
+			}
+
+			// Xóa ảnh (giật)
+			function removeImage(index) {
+				const input = document.getElementById("images");
+				const imageCount = document.getElementById("imageCount");
+
+				const dataTransfer = new DataTransfer();
+
+				for (let i = 0; i < input.files.length; i++) {
+					if (i !== index) {
+						dataTransfer.items.add(input.files[i]);
+					}
+				}
+
+				input.files = dataTransfer.files;
+
+				previewImages();
+			}
+		</script>
 		<br><br>
 
 		<div class="mb-3">
@@ -64,8 +135,8 @@
 		</div>
 
 		<div class="mb-3">
-			<label for="destination" class="form-label">Địa điểm</label>
-			<input type="text" th:field="*{destination}" class="form-control" required>
+			<label for="destination" class="form-label">Thành phố</label>
+			<input type="text" th:field="*{city}" class="form-control" required>
 		</div>
 
 		<div class="mb-3">
@@ -77,16 +148,134 @@
 		</div>
 
 		<div class="mb-3">
-			<label for="category" class="form-label">Điều kiện giới tính</label>
-			<select id="category" name="category" th:field="*{category}" class="form-control">
-				<option value="">-- Any --</option>
-				<option value="MALE" th:text="#{MALE}">Nam</option>
-				<option value="FEMALE" th:text="#{FEMALE}">Nữ</option>
-			</select>
+			<label class="form-check-label">
+				<input type="checkbox" id="ageRestricted" name="ageRestricted" th:field="*{ageRestricted}"
+					class="form-check-input" onchange="toggleAgeInputs()">
+				Giới hạn độ tuổi
+			</label>
 		</div>
 
+		<div id="ageInputs" class="mb-3" style="display: none;"></div>
+
+		<script>
+			// Hàm tạo ra HTML cho input tuổi khi checkbox được chọn
+			function toggleAgeInputs() {
+				const ageRestricted = document.getElementById("ageRestricted").checked;
+				const ageInputsContainer = document.getElementById("ageInputs");
+
+				// Nếu checkbox được chọn, tạo HTML cho input tuổi
+				if (ageRestricted) {
+					ageInputsContainer.style.display = "block";
+					// Chỉ tạo ra các input nếu chưa được tạo
+					if (!ageInputsContainer.innerHTML.trim()) {
+						const ageInputsHTML = `
+		                    <div class="row">
+		                        <div class="col">
+		                            <label for="fromAge" class="form-label">Từ tuổi</label>
+		                            <input type="number" id="fromAge" name="fromAge" th:field="*{fromAge}" class="form-control" min="1" max="100" required>
+		                        </div>
+		                        <div class="col">
+		                            <label for="toAge" class="form-label">Đến tuổi</label>
+		                            <input type="number" id="toAge" name="toAge" th:field="*{toAge}" class="form-control" min="1" max="100" required>
+		                        </div>
+		                    </div>`;
+						ageInputsContainer.innerHTML = ageInputsHTML;
+					}
+				} else {
+					// Ẩn input nếu checkbox không được chọn
+					ageInputsContainer.style.display = "none";
+					ageInputsContainer.innerHTML = ""; // Xóa HTML khi ẩn
+				}
+			}
+
+			// Đảm bảo hiển thị đúng trạng thái khi tải lại trang (khi edit trip)
+			document.addEventListener("DOMContentLoaded", () => {
+				toggleAgeInputs();
+			});
+		</script>
+
+
+
+
+		<div class="mb-3">
+			<label for="startDate" class="form-label">Ngày bắt đầu</label>
+			<input type="datetime-local" th:field="*{startDate}" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="endDate" class="form-label">Ngày kết thúc</label>
+			<input type="datetime-local" th:field="*{endDate}" class="form-control" required>
+		</div>
+
+
+
+
+
+		<div class="mb-3">
+			<h3 class="text-center">Tạo lịch trình chuyến đi</h3>
+
+			<button type="button" class="btn btn-primary mb-3" onclick="addItinerary()">+ Thêm lịch trình</button>
+
+			<div id="itineraryContainer"></div>
+
+		</div>
+
+		<script>
+			function addItinerary() {
+				let index = document.querySelectorAll(".itinerary").length;
+				let container = document.getElementById("itineraries");
+
+				let itineraryHtml = `
+		                <div class="itinerary" id="itinerary-${index}">
+		                    <h3>Lịch trình ${index + 1}</h3>
+		                    <label>Tiêu đề:</label>
+		                    <input type="text" name="itineraries[${index}].dayNo" required /><br/>
+
+
+		                    <h4>Hoạt động</h4>
+		                    <div id="activities-${index}"></div>
+		                    <button type="button" onclick="addActivity(${index})">Thêm Hoạt Động</button>
+		                    <button type="button" onclick="removeElement('itinerary-${index}')">Xóa Lịch Trình</button>
+		                    <hr/>
+		                </div>
+		            `;
+				container.insertAdjacentHTML("beforeend", itineraryHtml);
+			}
+
+			function addActivity(itineraryIndex) {
+				let activityIndex = document.querySelectorAll(#activities - ${itineraryIndex}.activity).length;
+				let container = document.getElementById(activities - ${itineraryIndex});
+
+				let activityHtml = `
+		                <div class="activity" id="activity-${itineraryIndex}-${activityIndex}">		                    
+						<label>Tên hoạt động:</label>
+		                    <input type="text" name="itineraries[${itineraryIndex}].activities[${activityIndex}].title" required /><br/>
+
+		                    <label>Mô tả:</label>
+		                    <input type="text" name="itineraries[${itineraryIndex}].activities[${activityIndex}].description" required /><br/>
+
+		                    <button type="button" onclick="removeElement('activity-${itineraryIndex}-${activityIndex}')">Xóa Hoạt Động</button>
+		                    <hr/>
+		                </div>
+		            `;
+				container.insertAdjacentHTML("beforeend", activityHtml);
+			}
+
+			function removeElement(id) {
+				let element = document.getElementById(id);
+				if (element) {
+					element.remove();
+				}
+			}
+		</script>
+
+
+
+
+
+		<!--		--------------------------------------
 		<div class="d-flex">
-			<!-- Dropdown chọn ngôn ngữ -->
+			 Dropdown chọn ngôn ngữ 
 			<div class="dropdown me-3">
 				<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
 					Chọn ngôn ngữ
@@ -101,7 +290,7 @@
 				</ul>
 			</div>
 
-			<!-- Danh sách ngôn ngữ đã chọn -->
+			 Danh sách ngôn ngữ đã chọn 
 			<div>
 				<p id="selectedLanguages"></p>
 			</div>
@@ -121,27 +310,9 @@
 			// Gọi hàm này khi trang tải để hiển thị danh sách ngôn ngữ đã chọn sẵn
 			document.addEventListener("DOMContentLoaded", updateSelectedLanguages);
 
-		</script>
+		</script>-->
 
 
-
-
-
-
-		<div class="mb-3">
-			<label for="startDate" class="form-label">Ngày bắt đầu</label>
-			<input type="datetime-local" th:field="*{startDate}" class="form-control" required>
-		</div>
-
-		<div class="mb-3">
-			<label for="endDate" class="form-label">Ngày kết thúc</label>
-			<input type="datetime-local" th:field="*{endDate}" class="form-control" required>
-		</div>
-
-		<div class="mb-3">
-			<label for="itinerary" class="form-label">Lịch trình</label>
-			<textarea th:field="*{itinerary}" class="form-control" rows="3" required></textarea>
-		</div>
 
 		<div class="mb-3">
 			<label for="description" class="form-label">Mô tả chi tiết</label>
@@ -149,26 +320,15 @@
 		</div>
 
 		<div class="mb-3">
-			<label for="estimatedCost" class="form-label">Chi phí ước tính</label>
-			<input type="number" th:field="*{estimatedCost}" class="form-control" required>
+			<label for="price" class="form-label">Giá</label>
+			<input type="number" th:field="*{price}" class="form-control" required>
 		</div>
-
-		<!--<div class="mb-3">
-			<label for="participantEmail" class="form-label">Thêm thành viên tham gia</label>
-			<div class="input-group">
-				<input type="email" id="participantEmail" class="form-control" placeholder="Nhập email">
-				<button type="button" id="addParticipant" class="btn btn-outline-primary">Thêm</button>
-			</div>
-		</div>-->
 
 		<div class="mb-3">
 			<label for="maxParticipants" class="form-label">Số người tham gia tối đa</label>
 			<input type="number" th:field="*{maxParticipants}" class="form-control" min="2" required>
 		</div>
 
-		<ul id="participantList" class="list-group mb-3"></ul>
-
-		<input type="hidden" th:field="*{participants}" id="participants">
 
 		<button type="submit" class="btn btn-primary">Lưu chuyến đi</button>
 		<a sec:authorize="!isAnonymous()" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}"
@@ -210,6 +370,9 @@
 				.catch(error => alert(error.message));
 		});
 	</script>
+
+
+
 
 	<script>
 		// Lấy tất cả các textarea

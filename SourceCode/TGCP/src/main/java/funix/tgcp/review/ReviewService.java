@@ -5,8 +5,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserRepository;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserRepository;
 import funix.tgcp.trip.Trip;
 import funix.tgcp.trip.TripRepository;
 
@@ -23,7 +23,7 @@ public class ReviewService {
     private  TripRepository tripRepository;
     
     @Autowired
-    private  AppUserRepository userRepository;
+    private  UserRepository userRepository;
     
     public List<Review> findTop3ByReviewedUserIdOrderByReviewDateDesc(Long reviewedUserId){
     	return reviewRepository.findTop3ByReviewedUserIdOrderByReviewDateDesc(reviewedUserId);
@@ -82,9 +82,9 @@ public class ReviewService {
 
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chuyến đi."));
-        AppUser reviewer = userRepository.findById(reviewerId)
+        User reviewer = userRepository.findById(reviewerId)
                 .orElseThrow(() -> new IllegalArgumentException("Người đánh giá không hợp lệ."));
-        AppUser reviewedUser = userRepository.findById(reviewedUserId)
+        User reviewedUser = userRepository.findById(reviewedUserId)
                 .orElseThrow(() -> new IllegalArgumentException("Người được đánh giá không hợp lệ."));
 
         Review review = new Review();

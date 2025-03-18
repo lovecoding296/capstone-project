@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import funix.tgcp.appuser.AppUser;
+import funix.tgcp.user.User;
 
 import java.util.Collections;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,17 +15,17 @@ public class CustomUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	
-	public CustomUserDetails(AppUser user){
+	public CustomUserDetails(User user){
 		this.user = user;
 	}
 	
-	private final AppUser user;
+	private final User user;
 	
 	public Long getId() {
 		return user.getId();
 	}
 	
-	public AppUser getAppUser() {
+	public User getuser() {
 		return user;
 	}
 

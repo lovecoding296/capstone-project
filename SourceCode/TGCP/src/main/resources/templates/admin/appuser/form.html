@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Tạo / Chỉnh sửa người dùng</h1>
-    <form th:action="@{/appusers/new}" th:object="${appUser}" method="post">
+    <form th:action="@{/users/new}" th:object="${user}" method="post">
         <label for="fullName">Họ và tên</label>
         <input type="text" th:field="*{fullName}" required>
         <br>

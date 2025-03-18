@@ -38,7 +38,7 @@
 			<tbody>
 				<tr th:each="trip : ${trips}">
 					<td th:text="${trip.title}"></td>
-					<td th:text="${trip.destination}"></td>
+					<td th:text="${trip.city}"></td>
 					<td th:text="${#temporals.format(trip.startDate, 'dd/MM/yyyy')}"></td>
 					<td th:text="${#temporals.format(trip.endDate, 'dd/MM/yyyy')}"></td>
 					<td th:text="${trip.creator.fullName}"></td>

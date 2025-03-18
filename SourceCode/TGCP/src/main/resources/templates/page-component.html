@@ -26,7 +26,7 @@
 							<span id="selected-language" th:text="${#locale.language.toUpperCase()}"></span>
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="languageDropdown">
-							<th:block th:with="languages=${'en,vn'.split(',')}">
+							<th:block th:with="languages=${'en,vi'.split(',')}">
 								<li th:each="lang : ${languages}" th:if="${#locale.language != lang}">
 									<a class="dropdown-item" th:attr="onclick='changeLanguage(\'' + ${lang} + '\')'"
 										style="cursor: pointer;">
@@ -52,7 +52,7 @@
 					</li>
 
 					<li class="nav-item" sec:authorize="!isAnonymous()" >
-						<a class="nav-link" th:if="${session.loggedInUser.isAdmin()}" href="/manager-appuser/verify">
+						<a class="nav-link" th:if="${session.loggedInUser.isAdmin()}" href="/manager-user/verify">
 							Manage Verify Account</a>
 					</li>
 
@@ -74,7 +74,7 @@
 							id="userPopup">
 							<li>
 								<a class="dropdown-item"
-									th:href="@{/appusers/{id}(id=${session.loggedInUser.id})}"  th:text="#{profile.page}">Trang cá nhân</a>
+									th:href="@{/users/{id}(id=${session.loggedInUser.id})}"  th:text="#{profile.page}">Trang cá nhân</a>
 							</li>
 							<li>
 								<a class="dropdown-item" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}"  th:text="#{trip.mine}">Chuyến đi của tôi</a>

@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserService;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserService;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -18,10 +18,10 @@ import java.util.Optional;
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final AppUserService appUserService;
+    private final UserService userService;
 
-    public CustomAuthenticationSuccessHandler(AppUserService appUserService) {
-        this.appUserService = appUserService;
+    public CustomAuthenticationSuccessHandler(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String username = userDetails.getUsername();
 
         // Fetch user from database
-        Optional<AppUser> user = appUserService.findByEmail(username);
+        Optional<User> user = userService.findByEmail(username);
         
         // Save user in session
         HttpSession session = request.getSession();

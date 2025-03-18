@@ -27,7 +27,7 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    // Lấy bài viết của một tác giả (AppUser)
+    // Lấy bài viết của một tác giả (User)
     public List<Post> findByAuthorId(Long authorId) {
         return postRepository.findByAuthorId(authorId);
     }

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.validation.annotation.Validated;
 
-import funix.tgcp.appuser.AppUser;
+import funix.tgcp.user.User;
 import funix.tgcp.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,7 +26,7 @@ public class PostLike {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private AppUser user;
+    private User user;
 
     private LocalDateTime createdAt;
 

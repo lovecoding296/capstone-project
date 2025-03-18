@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.validation.annotation.Validated;
 
-import funix.tgcp.appuser.AppUser;
+import funix.tgcp.user.User;
 import funix.tgcp.post.Post;
 import funix.tgcp.trip.Trip;
 import jakarta.persistence.Column;
@@ -43,7 +43,7 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "reported_by", nullable = false)
-    private AppUser reportedBy;
+    private User reportedBy;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -51,7 +51,7 @@ public class Report {
     
     @ManyToOne
     @JoinColumn(name = "reported_user")
-    private AppUser reportedUser; // Nếu báo cáo một người dùng
+    private User reportedUser; // Nếu báo cáo một người dùng
 
     @ManyToOne
     @JoinColumn(name = "reported_post")

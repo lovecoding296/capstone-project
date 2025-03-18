@@ -1,35 +1,36 @@
 package funix.tgcp.trip;
 
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserService;
-import funix.tgcp.appuser.Gender;
-import funix.tgcp.appuser.Language;
-import funix.tgcp.review.Review;
-import funix.tgcp.review.ReviewService;
-import funix.tgcp.trip.TripCategory;
-import funix.tgcp.trip.request.RequestStatus;
-import funix.tgcp.trip.request.TripRequest;
-import funix.tgcp.trip.request.TripRequestService;
+import funix.tgcp.trip.image.TripImage;
+import funix.tgcp.trip.image.TripImageRepository;
+import funix.tgcp.trip.itinerary.Itinerary;
+import funix.tgcp.user.Language;
+import funix.tgcp.user.User;
 import funix.tgcp.util.FileUploadHelper;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/trips")
@@ -39,421 +40,155 @@ public class TripController {
 	private TripService tripService;
 
 	@Autowired
-	private AppUserService appUserService;
-
-	@Autowired
-	private TripRequestService tripRequestService;
-	
-	@Autowired
-	private ReviewService reviewService;
-	
-	@Autowired
 	private FileUploadHelper fileUploadHelper;
 
-	// Danh sách các chuyến đi
+	@Autowired
+	private TripImageRepository tripImageRepository;
+
 	@GetMapping
-	public String listTrips(Model model) {
+	public String getAllTrips(Model model) {
 		List<Trip> trips = tripService.findAll();
 		model.addAttribute("trips", trips);
-		return "trip/trip-list";
+		return "trip/trip-list"; // Tên của view (HTML)
 	}
-	
-	@GetMapping("/search")
-    public String searchTrips(
-            @RequestParam(required = false) String destination,
-            @RequestParam(required = false) TripCategory category,
-            @RequestParam(required = false) String language,
-            @RequestParam(required = false) Gender gender,
-            Model model, HttpSession session) {
 
-        List<Trip> results = tripService.searchTrips(destination, category, language, gender);
-        model.addAttribute("trips", results);
-        model.addAttribute("categories", TripCategory.values());
-        
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-		if (loggedInUser != null) {
-			// Tạo một Map để lưu trạng thái tham gia của người dùng với từng chuyến đi
-			Map<Long, Boolean> participantStatus = new HashMap<>();
-			Map<Long, Boolean> requestStatus = new HashMap<>();
-
-			for (Trip trip : results) {
-				
-				for(AppUser user : trip.getParticipants()) {
-					System.out.println("user id " + user.getId() + " loggedInUser is " + loggedInUser.getId() + " isParticipant " + trip.getParticipants().contains(loggedInUser) + " name " +user.getFullName() );
-				}
-				
-				boolean isParticipant = trip.getParticipants().contains(loggedInUser);
-				participantStatus.put(trip.getId(), isParticipant);
-				
-				boolean hasRequested = !isParticipant && tripRequestService.hasUserRequested(loggedInUser, trip);			
-	            requestStatus.put(trip.getId(), hasRequested);
-			}
-
-			model.addAttribute("participantStatus", participantStatus);
-			model.addAttribute("requestStatus", requestStatus);
-		}
-
-
-        return "trip/trip-search-results"; // Trả về trang Thymeleaf
-    }
-
-	// Xem chi tiết chuyến đi
 	@GetMapping("/{id}/details")
-	public String tripById(@PathVariable Long id, Model model, HttpSession session) {
-		Optional<Trip> tripOptional = tripService.findById(id);
-		if (tripOptional.isPresent()) {
-			Trip trip = tripOptional.get();
-			model.addAttribute("trip", trip);
-
-			AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-			if (loggedInUser != null) {
-				
-				boolean isOwnerOrAdmin = trip.getCreator().equals(loggedInUser) || loggedInUser.isAdmin();
-				boolean isParticipant = trip.getParticipants().contains(loggedInUser);
-				boolean hasRequested = !isParticipant && tripRequestService.hasUserRequested(loggedInUser, trip);
-
-				model.addAttribute("isOwnerOrAdmin", isOwnerOrAdmin);
-				model.addAttribute("isParticipant", isParticipant);
-				model.addAttribute("hasRequested", hasRequested);
-			} else {
-				model.addAttribute("isParticipant", false);
-				model.addAttribute("hasRequested", false);
-			}
-			System.out.println("languages " + trip.getLanguages().size());
-			List<Review> reviews = reviewService.findByTripId(id);
-			model.addAttribute("reviews", reviews);
-			return "trip/trip-details";
-		}
-		return "error";
-	}
-
-	// Lấy các chuyến đi của người tổ chức
-	@GetMapping("/creator/{creatorId}")
-	public String listTripsByCreator(@PathVariable Long creatorId, Model model) {
-		List<Trip> trips = tripService.findByCreatorId(creatorId);
-		model.addAttribute("trips", trips);
-		return "trip/trip-list"; // Trang các chuyến đi của người tổ chức
-	}
-
-	// Tạo mới một chuyến đi
-	@GetMapping("/new")
-	public String showCreateForm(Model model, HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
-		}
-		
-		model.addAttribute("genders", Gender.values());
-		model.addAttribute("languages", Language.values());
-		model.addAttribute("categories", TripCategory.values());
-		Trip trip = new Trip();
-		trip.setLanguages(new HashSet<>());
+	public String findById(@PathVariable Long id, Model model) {
+		Trip trip = tripService.findById(id);
 		model.addAttribute("trip", trip);
-		model.addAttribute("users", appUserService.findAll());
-		return "trip/trip-form"; // Trang tạo mới chuyến đi
+		return "trip/trip-details"; // View cho chi tiết chuyến đi
+	}
+
+	@GetMapping("/new")
+	public String showCreateForm(Model model) {
+		model.addAttribute("trip", new Trip());
+		model.addAttribute("categories", TripCategory.values());
+		model.addAttribute("languages", Language.values());
+		return "trip/trip-form"; // Form tạo chuyến đi mới
 	}
 
 	@PostMapping("/new")
-	public String createTrip(@Valid @ModelAttribute Trip trip, BindingResult result, 
-			@RequestParam("tripPictureFile") MultipartFile tripPictureFile, Model model, HttpSession session) {
-		AppUser user = (AppUser) session.getAttribute("loggedInUser");
-		if (user == null) {
-			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
-		}
-
-		if (result.hasErrors()) {
-			model.addAttribute("users", appUserService.findAll());
-			return "trip/trip-form"; // Trả lại trang nếu có lỗi
-		}
-		
-		
-		System.out.println("trip category " + trip.getCategory());
-		
-		try {
-			String tripPictureUrl = fileUploadHelper.uploadFile(tripPictureFile);
-			if(tripPictureUrl != null) {
-				trip.setTripPictureUrl(tripPictureUrl);
+	public String createTrip(@Valid @ModelAttribute Trip trip, @RequestParam("files") List<MultipartFile> files,
+			HttpSession session) {
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		System.out.println("create trip....");
+		for (MultipartFile file : files) {
+			System.out.println("Uploaded file: " + file.getOriginalFilename());
+			try {
+				TripImage image = new TripImage();
+				image.setUrl(fileUploadHelper.uploadFile(file));
+				image.setTrip(trip);
+				trip.getImages().add(image);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			System.out.println("upload image error");
 		}
 		
-		trip.setCreator(user);
-		tripService.save(trip);
-		return "redirect:/trips"; // Chuyển hướng về trang danh sách
+		Set<Itinerary> itineraries = trip.getItineraries();
+		System.out.println("itineraries size" + itineraries.size());
+		
+		System.out.println("create trip done ....");
+		tripService.createTrip(trip, loggedInUser.getId());
+		return "redirect:/trips"; // Sau khi tạo xong, chuyển hướng về danh sách chuyến đi
 	}
 
-	// Cập nhật một chuyến đi
 	@GetMapping("/{id}/edit")
-	public String showEditForm(@PathVariable Long id, Model model, HttpSession session) {
-		AppUser user = (AppUser) session.getAttribute("loggedInUser");
-		if (user == null) {
-			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
-		}
-
-		Trip trip = tripService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid trip ID: " + id));
-
-		// Kiểm tra quyền chỉnh sửa
-		if (!trip.getCreator().getId().equals(user.getId())) {
-			return "redirect:/trips/?error=unauthorized"; // Không cho phép chỉnh sửa nếu không phải chủ sở hữu
-		}
-		model.addAttribute("genders", Gender.values());
-		model.addAttribute("languages", Language.values());
-		model.addAttribute("categories", TripCategory.values());
+	public String showEditForm(@PathVariable Long id, Model model) {
+		Trip trip = tripService.findById(id);
 		model.addAttribute("trip", trip);
-		model.addAttribute("users", appUserService.findAll());
-		return "trip/trip-form"; // Trang chỉnh sửa chuyến đi
+		model.addAttribute("categories", TripCategory.values());
+		model.addAttribute("languages", Language.values());
+		return "trip/trip-edit-form"; // Form chỉnh sửa chuyến đi
 	}
 
 	@PostMapping("/{id}/edit")
-	public String updateTrip(@PathVariable Long id, @Valid @ModelAttribute Trip trip, BindingResult result,
-			@RequestParam("tripPictureFile") MultipartFile tripPictureFile, Model model,
+	public String updateTrip(@PathVariable Long id, @Valid @ModelAttribute Trip trip,
+			@RequestParam("files") List<MultipartFile> files, @RequestParam("imagesToDelete") String imagesToDelete,
 			HttpSession session) {
-		AppUser user = (AppUser) session.getAttribute("loggedInUser");
-		if (user == null) {
-			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
+
+		// Chuyển chuỗi imagesToDelete thành List
+		List<String> imagesToDeleteList = Arrays.asList(imagesToDelete.split(";"));
+
+		// Xử lý xóa ảnh
+		for (String url : imagesToDeleteList) {
+			if (!url.isEmpty()) {
+
+				System.out.println("Deleting image: " + url);
+				// Xóa ảnh từ cơ sở dữ liệu
+				deleteImageFromDatabase(url);
+
+				// Nếu ảnh lưu trên file system, xóa ảnh từ hệ thống
+				deleteImageFile(url); // Implement this method if needed
+			}
+		}
+		System.out.println("files size " + files.size());
+		for (MultipartFile file : files) {
+			System.out.println("Uploaded file: " + file.getOriginalFilename());
+			try {
+				if (file.getOriginalFilename().isBlank() == false) {
+					TripImage tripImage = new TripImage();
+					tripImage.setUrl(fileUploadHelper.uploadFile(file));
+					tripImage.setTrip(trip);
+					trip.getImages().add(tripImage);
+					tripImageRepository.save(tripImage);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
-		// Kiểm tra quyền chỉnh sửa
-		Trip existingTrip = tripService.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Invalid trip ID: " + id));
-		if (!existingTrip.getCreator().getId().equals(user.getId())) {
-			return "redirect:/trips/?error=unauthorized";
-		}
+		tripService.updateTrip(id, trip);
 
-		if (result.hasErrors()) {
-			model.addAttribute("users", appUserService.findAll());
-			return "trip/trip-form";
-		}
+		return "redirect:/trips"; // Sau khi sửa xong, chuyển hướng về danh sách chuyến đi
+	}
 
-		trip.setId(id);
-		trip.setCreator(existingTrip.getCreator()); // Giữ nguyên creator
-		
+	private void deleteImageFromDatabase(String imageUrl) {
+		// Tìm và xóa TripImage từ cơ sở dữ liệu theo URL
+		TripImage imageToDelete = tripImageRepository.findByUrl(imageUrl);
+		if (imageToDelete != null) {
+			tripImageRepository.delete(imageToDelete);
+			System.out.println("Image deleted from database: " + imageUrl);
+		}
+	}
+
+	private void deleteImageFile(String imageUrl) {
+		// Logic để xóa ảnh từ hệ thống tệp
+		Path path = Paths.get(imageUrl); // Đảm bảo đường dẫn đúng
 		try {
-			String tripPictureUrl = fileUploadHelper.uploadFile(tripPictureFile);
-			if(tripPictureUrl != null) {
-				trip.setTripPictureUrl(tripPictureUrl);
-			}
+			Files.deleteIfExists(path); // Xóa ảnh nếu tồn tại
+			System.out.println("Image file deleted from system: " + imageUrl);
 		} catch (IOException e) {
-			System.out.println("upload image error");
+			e.printStackTrace();
+			System.out.println("Error deleting image file: " + imageUrl);
 		}
-		tripService.save(trip);
-		return "redirect:/trips/{id}/details";
 	}
 
-	// Xóa một chuyến đi
-	@GetMapping("/{id}/delete")
-	public String deleteTrip(@PathVariable Long id, HttpSession session) {
-		AppUser user = (AppUser) session.getAttribute("loggedInUser");
-		if (user == null) {
-			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
-		}
-
-		Trip trip = tripService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid trip ID: " + id));
-
-		// Kiểm tra quyền xóa
-		if (!trip.getCreator().getId().equals(user.getId())) {
-			return "redirect:/trips/?error=unauthorized";
-		}
-		System.out.println("TripController deleteById id = " + id);
-		tripService.deleteById(id);
-		return "redirect:/trips/creator/{id}";
+	@DeleteMapping("/{id}")
+	public String deleteTrip(@PathVariable Long id) {
+		tripService.deleteTrip(id);
+		return "redirect:/trips"; // Sau khi xóa xong, chuyển hướng về danh sách chuyến đi
 	}
 
-	// Người dùng gửi yêu cầu tham gia chuyến đi
-	@PostMapping("/{id}/request")
-	public String requestToJoinTrip(@PathVariable Long id, HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login";
-		}
-
-		Optional<Trip> tripOptional = tripService.findById(id);
-		if (tripOptional.isPresent()) {
-			Trip trip = tripOptional.get();
-			
-			if(trip.getCreator().getId() == loggedInUser.getId()) {
-				System.out.println("Error you_are_creator");
-				return "redirect:/trips/" + id + "/details?error=you_are_creator";
-			}
-
-			// Kiểm tra nếu đã gửi yêu cầu trước đó
-			if (tripRequestService.hasUserRequested(loggedInUser, trip)) {
-				return "redirect:/trips/" + id + "/details?error=already_requested";
-			}
-
-			TripRequest request = new TripRequest();
-			request.setTrip(trip);
-			request.setUser(loggedInUser);
-			request.setStatus(RequestStatus.PENDING);
-
-			tripRequestService.save(request);
-		}
-		return "redirect:/trips/" + id + "/details?success=request_sent";
+	@GetMapping("/category/{category}")
+	public String getTripsByCategory(@PathVariable TripCategory category, Model model) {
+		List<Trip> trips = tripService.findByCategory(category);
+		model.addAttribute("trips", trips);
+		return "trip/list"; // View danh sách chuyến đi theo category
 	}
 
-	@GetMapping("/{id}/manage-requests")
-	public String manageTripRequests(@PathVariable("id") Long tripId, Model model, HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login";
-		}
-		Optional<Trip> tripOptional = tripService.findById(tripId);
-
-		if (tripOptional.isPresent()) {
-			Trip trip = tripOptional.get();
-
-			// Kiểm tra xem người dùng có phải là chủ chuyến đi hoặc admin
-			boolean isOwnerOrAdmin = (trip.getCreator().equals(loggedInUser) || loggedInUser.isAdmin());
-
-			List<TripRequest> requests = tripRequestService.findByTrip(trip);
-			model.addAttribute("requests", requests);
-			model.addAttribute("trip", trip);
-			model.addAttribute("isOwnerOrAdmin", isOwnerOrAdmin);
-
-			return "trip/manage-trip-requests"; // Thymeleaf template
-		}
-
-		return "trip/manage-trip-requests";
+	@GetMapping("/creator/{userId}")
+	public String findByCreatorId(@PathVariable Long userId, Model model) {
+		List<Trip> trips = tripService.findByCreatorId(userId);
+		model.addAttribute("trips", trips);
+		return "trip/list"; // View danh sách chuyến đi của người tạo
 	}
 
-	@GetMapping("/manage-all-requests")
-	public String manageAllTripRequests(Model model, HttpSession session) {
-		AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login"; // Redirect if not logged in
-		}
-
-		// Get all trips that the logged-in user is associated with
-		List<Trip> userTrips = tripService.findByCreatorId(loggedInUser.getId()); // Assuming there's a method to find
-																					// trips by user
-		List<TripRequest> allRequests = new ArrayList<TripRequest>();
-
-		// Retrieve all trip requests for the user's trips
-		for (Trip trip : userTrips) {
-			List<TripRequest> tripRequests = tripRequestService.findByTrip(trip);
-			allRequests.addAll(tripRequests); // Add requests from each trip
-		}
-
-		model.addAttribute("allRequests", allRequests); // Pass all requests to the template
-		return "trip/manage-all-trip-requests"; // Thymeleaf template
+	@GetMapping("/participant/{userId}")
+	public String getTripsByParticipant(@PathVariable Long userId, Model model) {
+		List<Trip> trips = tripService.findByParticipantId(userId);
+		model.addAttribute("trips", trips);
+		return "trip/list"; // View danh sách chuyến đi của người tham gia
 	}
-
-	@PostMapping("/{tripId}/manage-requests/{requestId}")
-	public String manageRequest(@PathVariable Long tripId,
-	                            @PathVariable Long requestId,
-	                            @RequestParam String action, // action là 'approve' hoặc 'reject'
-	                            HttpSession session,RedirectAttributes redirectAttributes) {
-	    AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-	    if (loggedInUser == null) {
-	        return "redirect:/login"; // Nếu người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
-	    }
-
-	    Optional<Trip> tripOptional = tripService.findById(tripId);
-	    if (!tripOptional.isPresent()) {
-	        return "error"; // Nếu chuyến đi không tồn tại, trả về lỗi
-	    }
-
-	    Trip trip = tripOptional.get();
-
-	    // Kiểm tra quyền của người dùng: Chỉ người tạo chuyến đi hoặc admin mới có quyền duyệt yêu cầu
-	    boolean isOwnerOrAdmin = trip.getCreator().equals(loggedInUser) || loggedInUser.isAdmin();
-	    if (!isOwnerOrAdmin) {
-	        return "redirect:/trips"; // Nếu không phải chủ chuyến đi hoặc admin, chuyển hướng đến trang danh sách chuyến đi
-	    }
-
-	    Optional<TripRequest> requestOptional = tripRequestService.findById(requestId);
-	    if (!requestOptional.isPresent()) {
-	        return "error"; // Nếu yêu cầu không tồn tại, trả về lỗi
-	    }
-
-	    if ("approve".equalsIgnoreCase(action)) {
-	        // Xử lý approve yêu cầu tham gia
-	    	boolean approved = tripRequestService.approveRequest(requestId);
-			if (approved) {
-				redirectAttributes.addFlashAttribute("message", "Request approved successfully.");
-			} else {
-				redirectAttributes.addFlashAttribute("error", "Failed to approve request.");
-			}
-	    } else if ("reject".equalsIgnoreCase(action)) {
-	    	boolean rejected = tripRequestService.rejectRequest(requestId);
-			if (rejected) {
-				redirectAttributes.addFlashAttribute("message", "Request rejected successfully.");
-			} else {
-				redirectAttributes.addFlashAttribute("error", "Failed to reject request.");
-			}
-	    }
-
-	    // Cập nhật chuyến đi
-	    tripService.save(trip);
-
-	    // Sau khi duyệt hoặc từ chối, chuyển hướng lại trang quản lý yêu cầu
-	    return "redirect:/trips/manage-all-requests"; // Điều chỉnh URL phù hợp
-	}
-
-
-	@PostMapping("/{tripId}/requests/{requestId}/approve")
-	public String approveRequest(@PathVariable("tripId") Long tripId, @PathVariable("requestId") Long requestId,
-			RedirectAttributes redirectAttributes) {
-		boolean approved = tripRequestService.approveRequest(requestId);
-		if (approved) {
-			redirectAttributes.addFlashAttribute("message", "Request approved successfully.");
-		} else {
-			redirectAttributes.addFlashAttribute("error", "Failed to approve request.");
-		}
-		return "redirect:/trips/{tripId}/manage-requests";
-	}
-
-	@PostMapping("/{tripId}/requests/{requestId}/reject")
-	public String rejectRequest(@PathVariable("tripId") Long tripId, @PathVariable("requestId") Long requestId,
-			RedirectAttributes redirectAttributes) {
-		boolean rejected = tripRequestService.rejectRequest(requestId);
-		if (rejected) {
-			redirectAttributes.addFlashAttribute("message", "Request rejected successfully.");
-		} else {
-			redirectAttributes.addFlashAttribute("error", "Failed to reject request.");
-		}
-		return "redirect:/trips/{tripId}/manage-requests";
-	}
-	
-	
-	@PostMapping("/{tripId}/remove-participant/{userId}")
-	public String removeParticipant(@PathVariable Long tripId,
-	                                @PathVariable Long userId,
-	                                HttpSession session) {
-	    AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
-
-	    if (loggedInUser == null) {
-	        return "redirect:/login"; // Nếu người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
-	    }
-
-	    Optional<Trip> tripOptional = tripService.findById(tripId);
-	    if (!tripOptional.isPresent()) {
-	        return "error"; // Nếu chuyến đi không tồn tại, trả về lỗi
-	    }
-
-	    Trip trip = tripOptional.get();
-
-	    // Kiểm tra quyền của người dùng: Chỉ người tạo chuyến đi hoặc admin mới có quyền xóa người tham gia
-	    boolean isOwnerOrAdmin = trip.getCreator().equals(loggedInUser) || loggedInUser.isAdmin();
-	    if (!isOwnerOrAdmin) {
-	        return "redirect:/trips"; // Nếu không phải chủ chuyến đi hoặc admin, chuyển hướng đến trang danh sách chuyến đi
-	    }
-
-	    // Kiểm tra người tham gia có tồn tại trong chuyến đi không
-	    Optional<AppUser> participantOptional = trip.getParticipants().stream()
-	                                                .filter(participant -> participant.getId().equals(userId))
-	                                                .findFirst();
-	    if (!participantOptional.isPresent()) {
-	        return "redirect:/trips/{tripId}/details"; // Nếu người tham gia không tồn tại, chuyển hướng về trang chi tiết chuyến đi
-	    }
-
-	    AppUser participant = participantOptional.get();
-	    
-	    tripService.deleteParticipantFromTrip(participant, trip);
-
-	    // Chuyển hướng về trang chi tiết chuyến đi
-	    return "redirect:/trips/{tripId}/details";
-	}
-
 }

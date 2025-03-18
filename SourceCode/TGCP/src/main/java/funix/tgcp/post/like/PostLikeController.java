@@ -15,8 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserService;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserService;
 import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
@@ -36,12 +36,12 @@ public class PostLikeController {
     private PostService postService;
 
     @Autowired
-    private AppUserService userService;
+    private UserService userService;
 
     @PostMapping("/{postId}")
     public ResponseEntity<Map<String, Object>> likePost(@PathVariable Long postId, HttpSession session) {
 
-    	AppUser  user = (AppUser) session.getAttribute("loggedInUser");
+    	User  user = (User) session.getAttribute("loggedInUser");
     	
     	if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User chưa đăng nhập"));

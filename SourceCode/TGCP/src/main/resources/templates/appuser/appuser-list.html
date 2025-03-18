@@ -15,18 +15,18 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="user : ${appUsers}">
+            <tr th:each="user : ${users}">
                 <td th:text="${user.fullName}">Tên</td>
                 <td th:text="${user.email}">Email</td>
                 <td><img th:src="${user.avatarUrl}" alt="Avatar" width="50" height="50"></td>
                 <td>
-                    <a th:href="@{/appusers/{id}(id=${user.id})}">Chi tiết</a>
-                    <a th:href="@{/appusers/{id}/edit(id=${user.id})}">Sửa</a>
-                    <a th:href="@{/appusers/{id}/delete(id=${user.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                    <a th:href="@{/users/{id}(id=${user.id})}">Chi tiết</a>
+                    <a th:href="@{/users/{id}/edit(id=${user.id})}">Sửa</a>
+                    <a th:href="@{/users/{id}/delete(id=${user.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
                 </td>
             </tr>
         </tbody>
     </table>
-    <a href="/appusers/new">Tạo người dùng mới</a>
+    <a href="/users/new">Tạo người dùng mới</a>
 </body>
 </html>

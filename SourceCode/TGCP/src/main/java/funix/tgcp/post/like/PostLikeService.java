@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import funix.tgcp.appuser.AppUser;
+import funix.tgcp.user.User;
 import funix.tgcp.post.Post;
 import funix.tgcp.review.ReviewController;
 import jakarta.transaction.Transactional;
@@ -22,7 +22,7 @@ public class PostLikeService {
     private PostLikeRepository likeRepository;
 
     @Transactional
-    public boolean toggleLike(Post post, AppUser user) {
+    public boolean toggleLike(Post post, User user) {
     	
     	logger.info("toggleLike " + post.toString() + " " + user.toString());
     	

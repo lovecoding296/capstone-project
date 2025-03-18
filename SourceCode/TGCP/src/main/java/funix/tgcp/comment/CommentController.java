@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserService;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserService;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
 import jakarta.servlet.http.HttpSession;
@@ -24,7 +24,7 @@ public class CommentController {
 	private PostService postService;
 
 	@Autowired
-	private AppUserService appUserService;
+	private UserService userService;
 
 	// Lấy tất cả bình luận của một bài viết
 	@GetMapping("/post/{postId}")
@@ -44,7 +44,7 @@ public class CommentController {
 			HttpSession session) {
 		Post post = postService.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
 		comment.setPost(post);
-		AppUser user = (AppUser) session.getAttribute("loggedInUser");
+		User user = (User) session.getAttribute("loggedInUser");
 		comment.setCommenter(user);
 		Comment savedComment = commentService.save(comment);
 		return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);

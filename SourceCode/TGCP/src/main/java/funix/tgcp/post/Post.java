@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
-import funix.tgcp.appuser.AppUser;
+import funix.tgcp.user.User;
 import funix.tgcp.comment.Comment;
 import funix.tgcp.post.like.PostLike;
 import jakarta.persistence.CascadeType;
@@ -47,7 +47,7 @@ public class Post {
     
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private AppUser author;
+    private User author;
     
     @PrePersist
     protected void onCreate() {

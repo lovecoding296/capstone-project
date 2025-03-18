@@ -81,8 +81,11 @@
 		<div class="trip-card shadow-lg border-0 rounded-3 p-4">
 			<h3 class="card-title text-center text-uppercase fw-bold text-secondary" th:text="${trip.title}"></h3>
 			<div class="mt-3">
-				<p><i class="bi bi-geo-alt text-danger"></i> <strong>Điểm đến:</strong>
-					<span th:text="${trip.destination}" class="text-muted"></span>
+
+
+
+				<p><i class="bi bi-geo-alt text-danger"></i> <strong>Thành phố:</strong>
+					<span th:text="${trip.city}" class="text-muted"></span>
 				</p>
 				<p><i class="bi bi-calendar text-success"></i> <strong>Thời gian:</strong>
 					<span th:text="${#temporals.format(trip.startDate, 'dd/MM/yyyy HH:mm')}"
@@ -90,50 +93,37 @@
 					<span th:text="${#temporals.format(trip.endDate, 'dd/MM/yyyy HH:mm')}" class="badge bg-info"></span>
 				</p>
 				<p><i class="bi bi-journal text-warning"></i> <strong>Lịch trình:</strong></p>
-				<p class="text-muted" th:utext="${trip.itinerary}"></p>
 
 				<p><i class="bi bi-journal text-warning"></i> <strong>Mô tả chi tiết:</strong></p>
 				<p class="text-muted" th:utext="${trip.description}"></p>
 
 				<p><i class="bi bi-cash-coin text-success"></i> <strong>Chi phí ước tính:</strong>
-					<span class="fw-bold text-danger" th:text="${trip.estimatedCost} + ' VND'"></span>
+					<span class="fw-bold text-danger" th:text="${trip.price} + ' VND'"></span>
 				</p>
 				<p><i class="bi bi-person-check text-primary"></i> <strong>Người tổ chức:</strong>
-					<a th:href="@{/appusers/{id}(id=${trip.creator.id})}"> <span class="fw-bold text-dark" th:text="${trip.creator.fullName}"></span> </a>
-				</p>
-				<p><i class="bi bi-people text-secondary"></i> <strong>Số người tham gia:</strong>
-					<span class="badge bg-primary fs-6" th:text="${#lists.size(trip.participants)}"></span>
-				</p>
-				
-				<p>Ngôn ngữ đã chọn: 
-				    <span th:if="${not #lists.isEmpty(trip.languages)}" th:text="${#strings.listJoin(trip.languages, ', ')}"></span>
-				    <span th:unless="${not #lists.isEmpty(trip.languages)}">Chưa chọn</span>
+					<a th:href="@{/users/{id}(id=${trip.creator.id})}"> <span class="fw-bold text-dark"
+							th:text="${trip.creator.fullName}"></span> </a>
 				</p>
 
-				
-				<p><strong>Thành viên tham gia:</strong></p>
-				<ul class="list-group">
-					<li class="list-group-item d-flex align-items-center" th:each="participant : ${trip.participants}">
-						<i class="bi bi-person-circle me-2 text-info"></i>
-						<span th:text="${participant.fullName}" class="fw-bold text-secondary"></span>
-						<form
-							th:action="@{/trips/{tripId}/remove-participant/{userId}(tripId=${trip.id}, userId=${participant.id})}"
-							method="post" th:if="${isOwnerOrAdmin}">
-							<button type="submit" class="btn btn-sm btn-danger ms-auto">Remove</button>
-						</form>
-					</li>
-				</ul>
+
+				<p>Ngôn ngữ đã chọn:
+					<span th:if="${not #lists.isEmpty(trip.languages)}"
+						th:text="${#strings.listJoin(trip.languages, ', ')}"></span>
+					<span th:unless="${not #lists.isEmpty(trip.languages)}">Chưa chọn</span>
+				</p>
+
+				<!-- Display Images -->
+				<div class="mt-3">
+					<div class="row">
+						<div class="col-md-3" th:each="image : ${trip.images}">
+							<img th:src="@{${image.url}}" alt="Trip Image" class="img-fluid rounded mb-2"
+								style="height: 200px; width: 100%; object-fit: cover;">
+						</div>
+					</div>
+				</div>
+
 			</div>
-			<div class="mt-4 text-center" th:if="${session.loggedInUser != null && (trip.creator.id != session.loggedInUser.id)}">
-				<div th:if="${isParticipant}" class="alert alert-success">✅ Bạn đã tham gia chuyến đi này</div>
-				<div th:if="${hasRequested}" class="alert alert-warning">⏳ Yêu cầu tham gia đang chờ duyệt</div>
-				<form th:if="${!(isParticipant || hasRequested)}" th:action="@{/trips/{id}/request(id=${trip.id})}"
-					method="post">
-					<button type="submit" class="btn btn-lg btn-outline-success px-4 fw-bold">
-						<i class="bi bi-box-arrow-in-right"></i> Tham gia chuyến đi
-					</button>
-				</form>
-			</div>
+
 
 			<a th:href="@{/reviews/trip/{id}(id=${trip.id})}">
 				Chuyến đi đã kết thúc, hãy để lại đánh giá.

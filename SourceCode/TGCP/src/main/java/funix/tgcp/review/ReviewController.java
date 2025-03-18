@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserService;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserService;
 import funix.tgcp.trip.Trip;
 import funix.tgcp.trip.TripService;
 
@@ -27,14 +27,14 @@ public class ReviewController {
     private  TripService tripService;
 	
 	@Autowired
-    private  AppUserService userService;
+    private  UserService userService;
 
 
-	@GetMapping("/{appUserId}")
-    public String getReviewsById(@PathVariable Long appUserId, Model model, HttpSession session) {
-        List<Review> reviews = reviewService.findByReviewedUserId(appUserId);
+	@GetMapping("/{userId}")
+    public String getReviewsById(@PathVariable Long userId, Model model, HttpSession session) {
+        List<Review> reviews = reviewService.findByReviewedUserId(userId);
         
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
                 
         model.addAttribute("reviews", reviews);
         model.addAttribute("review", new Review());
@@ -43,11 +43,11 @@ public class ReviewController {
         return "review/reviewed-user-list";
     }
 	
-	@GetMapping("/reviewed/{appUserId}")
-    public String getGivenReviewsById(@PathVariable Long appUserId, Model model, HttpSession session) {
-        List<Review> reviews = reviewService.findByReviewerId(appUserId);
+	@GetMapping("/reviewed/{userId}")
+    public String getGivenReviewsById(@PathVariable Long userId, Model model, HttpSession session) {
+        List<Review> reviews = reviewService.findByReviewerId(userId);
         
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
                 
         model.addAttribute("reviews", reviews);
         model.addAttribute("review", new Review());
@@ -63,10 +63,10 @@ public class ReviewController {
     @GetMapping("/trip/{tripId}")
     public String listReviews(@PathVariable Long tripId, Model model, HttpSession session) {
         List<Review> reviews = reviewService.findByTripId(tripId);
-        Trip trip = tripService.getTripById(tripId).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chuyến đi."));
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        Trip trip = tripService.findById(tripId);
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         
-        Set<AppUser> participants = trip.getParticipants();        
+        Set<User> participants = trip.getParticipants();        
         participants.add(trip.getCreator());
         participants.remove(loggedInUser);
         
@@ -83,10 +83,10 @@ public class ReviewController {
     @GetMapping("/trip/{tripId}/new")
     public String createReview(@PathVariable Long tripId, Model model, HttpSession session) {
         List<Review> reviews = reviewService.findByTripId(tripId);
-        Trip trip = tripService.getTripById(tripId).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chuyến đi."));
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        Trip trip = tripService.findById(tripId);
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         
-        Set<AppUser> participants = trip.getParticipants();        
+        Set<User> participants = trip.getParticipants();        
         participants.add(trip.getCreator());
         participants.remove(loggedInUser);
         
@@ -104,7 +104,7 @@ public class ReviewController {
      */
     @PostMapping("/trip/{tripId}/new")
     public String addReview(@PathVariable Long tripId, @ModelAttribute Review review, HttpSession session) {
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (reviewService.hasUserReviewed(tripId, loggedInUser.getId(), review.getReviewedUser().getId())) {
         	System.out.println("bạn đã đánh giá người này rồi");
@@ -129,7 +129,7 @@ public class ReviewController {
         }
 
         Review review = reviewOpt.get();
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (!review.getReviewer().getId().equals(loggedInUser.getId())) {
             return "redirect:/reviews/trip/" + review.getTrip().getId() + "?error=Bạn không thể chỉnh sửa đánh giá của người khác!";
@@ -144,7 +144,7 @@ public class ReviewController {
      */
     @PostMapping("/{reviewId}/edit")
     public String updateReview(@PathVariable Long reviewId, @ModelAttribute Review review, HttpSession session) {
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         Optional<Review> existingReview = reviewService.getReviewById(reviewId);
 
         if (existingReview.isEmpty() || !existingReview.get().getReviewer().getId().equals(loggedInUser.getId())) {
@@ -166,7 +166,7 @@ public class ReviewController {
         }
 
         Review review = reviewOpt.get();
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (!review.getReviewer().getId().equals(loggedInUser.getId())) {
             return "redirect:/reviews/trip/" + review.getTrip().getId() + "?error=Bạn không thể xóa đánh giá của người khác!";

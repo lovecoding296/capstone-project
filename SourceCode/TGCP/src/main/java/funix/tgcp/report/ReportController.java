@@ -8,8 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.AppUserService;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserService;
 import funix.tgcp.post.PostService;
 import funix.tgcp.trip.TripService;
 
@@ -23,7 +23,7 @@ public class ReportController {
     private ReportService reportService;
 
     @Autowired
-    private AppUserService appUserService;
+    private UserService userService;
 
     @Autowired
     private PostService postService;
@@ -34,7 +34,7 @@ public class ReportController {
     // Lấy tất cả báo cáo
     @GetMapping("/")
     public String listReports(Model model, HttpSession session) {
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null || !loggedInUser.isAdmin()) {
             return "redirect:/login"; // Chỉ admin mới có quyền xem danh sách báo cáo
         }
@@ -47,7 +47,7 @@ public class ReportController {
     // Lấy các báo cáo chưa giải quyết
     @GetMapping("/pending")
     public String listPendingReports(Model model, HttpSession session) {
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null || !loggedInUser.isAdmin()) {
             return "redirect:/login";
         }
@@ -60,13 +60,13 @@ public class ReportController {
     // Tạo mới báo cáo
     @GetMapping("/new")
     public String showCreateForm(Model model, HttpSession session) {
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
             return "redirect:/login"; // Yêu cầu đăng nhập để tạo báo cáo
         }
 
         model.addAttribute("report", new Report());
-        model.addAttribute("users", appUserService.findAll());
+        model.addAttribute("users", userService.findAll());
         model.addAttribute("posts", postService.findAll());
         model.addAttribute("trips", tripService.findAll());
         return "report/form";
@@ -74,13 +74,13 @@ public class ReportController {
 
     @PostMapping("/new")
     public String createReport(@Valid @ModelAttribute Report report, BindingResult result, Model model, HttpSession session) {
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
             return "redirect:/login";
         }
 
         if (result.hasErrors()) {
-            model.addAttribute("users", appUserService.findAll());
+            model.addAttribute("users", userService.findAll());
             model.addAttribute("posts", postService.findAll());
             model.addAttribute("trips", tripService.findAll());
             return "report/form";
@@ -94,7 +94,7 @@ public class ReportController {
     // Xử lý báo cáo
     @GetMapping("/{id}/resolve")
     public String resolveReport(@PathVariable Long id, HttpSession session) {
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null || !loggedInUser.isAdmin()) {
             return "redirect:/login"; // Chỉ admin mới có quyền xử lý báo cáo
         }
@@ -108,7 +108,7 @@ public class ReportController {
     // Xóa báo cáo
     @GetMapping("/{id}/delete")
     public String deleteReport(@PathVariable Long id, HttpSession session) {
-        AppUser loggedInUser = (AppUser) session.getAttribute("loggedInUser");
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null || !loggedInUser.isAdmin()) {
             return "redirect:/login";
         }

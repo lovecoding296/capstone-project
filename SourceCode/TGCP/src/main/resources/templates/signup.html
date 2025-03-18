@@ -42,10 +42,10 @@
 			</p>
 
 			<!-- Form đăng ký -->
-			<form class="row" th:action="@{/signup}" th:object="${appUser}" method="post" enctype="multipart/form-data">
+			<form class="row" th:action="@{/signup}" th:object="${user}" method="post" enctype="multipart/form-data">
 
 				<div class="col-md-4">
-					<img th:src="@{${appUser.cccd} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">
+					<img th:src="@{${user.cccd} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">
 					<br>
 					<br>
 					<label>Add/change căn cước công dân (Không hiển thị với tất cả mọi người):</label>

@@ -1,13 +1,16 @@
 package funix.tgcp.trip;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
-import funix.tgcp.appuser.AppUser;
-import funix.tgcp.appuser.Gender;
-import funix.tgcp.appuser.Language;
+import funix.tgcp.user.User;
+import funix.tgcp.trip.image.TripImage;
+import funix.tgcp.trip.itinerary.Itinerary;
+import funix.tgcp.user.Language;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -22,6 +25,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -44,21 +48,23 @@ public class Trip {
     private String title;
     
     @Column(columnDefinition = "NVARCHAR(255)")
-    private String destination;
+    private String city;
     
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     
     @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String itinerary; // Lịch trình chi tiết 
+    private String description;
     
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String description; //
+    private double price;
     
-    private double estimatedCost;
+    private boolean ageRestricted;
+    int fromAge;
+    int toAge;
     
-    @Column(columnDefinition = "NVARCHAR(255)")
-    private String tripPictureUrl;
+    
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<TripImage> images = new HashSet<>(); // Lưu danh sách đường dẫn ảnh
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -66,16 +72,13 @@ public class Trip {
     
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private AppUser creator; // Người tổ chức chuyến đi
+    private User creator; // Người tổ chức chuyến đi
     
     @ElementCollection(targetClass = Language.class)
     @CollectionTable(name = "trip_languages", joinColumns = @JoinColumn(name = "trip_id"))
     @Enumerated(EnumType.STRING) // Lưu dưới dạng chuỗi
     @Column(name = "language", nullable = false)
     private Set<Language> languages;
-    
-    @Enumerated(EnumType.STRING)
-	private Gender gender;
 
 
     @Min(value = 2, message = "Số lượng người tham gia phải lớn hơn 1")
@@ -88,7 +91,15 @@ public class Trip {
         joinColumns = @JoinColumn(name = "trip_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<AppUser> participants;
+    private Set<User> participants;
+    
+    
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Itinerary> itineraries = new HashSet<>();    
+    
+    @Enumerated(EnumType.STRING)
+	private TripStatus status;
+    
     
     private LocalDateTime createdAt;
     
