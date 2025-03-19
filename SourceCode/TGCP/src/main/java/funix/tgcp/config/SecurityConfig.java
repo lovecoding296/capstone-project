@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +25,9 @@ public class SecurityConfig {
 	
 	@Autowired
 	private CustomAuthenticationFailureHandler failureHandler;
+	
+	@Autowired
+	private JwtFilter authenticationFilter;
     
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,7 +62,8 @@ public class SecurityConfig {
                 .maxSessionsPreventsLogin(false) // Nếu user đăng nhập lại thì session cũ bị xóa
             )
             .csrf().disable() // Disable CSRF (optional)
-            .httpBasic().disable(); // Disable basic authentication
+            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .httpBasic();            
         return http.build();
     }
     
@@ -65,6 +73,20 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
     
+    
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:8080"); // Thay bằng domain frontend
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
 
 
     

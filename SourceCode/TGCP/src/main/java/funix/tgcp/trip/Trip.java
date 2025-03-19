@@ -81,7 +81,7 @@ public class Trip {
     private Set<Language> languages;
 
 
-    @Min(value = 2, message = "Số lượng người tham gia phải lớn hơn 1")
+//    @Min(value = 2, message = "Số lượng người tham gia phải lớn hơn 1")
     @Column(nullable = false)
     private int maxParticipants;
     

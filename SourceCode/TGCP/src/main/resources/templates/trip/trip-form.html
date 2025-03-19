@@ -214,58 +214,49 @@
 		<div class="mb-3">
 			<h3 class="text-center">Tạo lịch trình chuyến đi</h3>
 
-			<button type="button" class="btn btn-primary mb-3" onclick="addItinerary()">+ Thêm lịch trình</button>
-
-			<div id="itineraryContainer"></div>
+			<div id="itineraryContainer">
+				<button type="button" onclick="addItinerary()">Add Itinerary</button>
+			</div>
 
 		</div>
 
 		<script>
+			let itineraryIndex = 0;
+
 			function addItinerary() {
-				let index = document.querySelectorAll(".itinerary").length;
-				let container = document.getElementById("itineraries");
-
-				let itineraryHtml = `
-		                <div class="itinerary" id="itinerary-${index}">
-		                    <h3>Lịch trình ${index + 1}</h3>
-		                    <label>Tiêu đề:</label>
-		                    <input type="text" name="itineraries[${index}].dayNo" required /><br/>
-
-
-		                    <h4>Hoạt động</h4>
-		                    <div id="activities-${index}"></div>
-		                    <button type="button" onclick="addActivity(${index})">Thêm Hoạt Động</button>
-		                    <button type="button" onclick="removeElement('itinerary-${index}')">Xóa Lịch Trình</button>
-		                    <hr/>
-		                </div>
-		            `;
-				container.insertAdjacentHTML("beforeend", itineraryHtml);
+				const itineraryHtml = `
+		               <div class="itinerary">
+		                   <label>Itinerary Name:</label>
+		                   <input type="number" name="itineraries[${itineraryIndex}].dayNo" required>
+		                   <button type="button" onclick="addActivity(${itineraryIndex})">Add Activity</button>
+		                   <button type="button" onclick="removeItinerary(this.parentNode)">Remove Itinerary</button>
+		               </div>
+		           `;
+				document.getElementById('itineraryContainer').insertAdjacentHTML('beforeend', itineraryHtml);
+				itineraryIndex++;
+				
+				/* Thêm lịch trình mới vào danh sách itineraries */
+			    
 			}
 
 			function addActivity(itineraryIndex) {
-				let activityIndex = document.querySelectorAll(#activities - ${itineraryIndex}.activity).length;
-				let container = document.getElementById(activities - ${itineraryIndex});
-
-				let activityHtml = `
-		                <div class="activity" id="activity-${itineraryIndex}-${activityIndex}">		                    
-						<label>Tên hoạt động:</label>
-		                    <input type="text" name="itineraries[${itineraryIndex}].activities[${activityIndex}].title" required /><br/>
-
-		                    <label>Mô tả:</label>
-		                    <input type="text" name="itineraries[${itineraryIndex}].activities[${activityIndex}].description" required /><br/>
-
-		                    <button type="button" onclick="removeElement('activity-${itineraryIndex}-${activityIndex}')">Xóa Hoạt Động</button>
-		                    <hr/>
-		                </div>
-		            `;
-				container.insertAdjacentHTML("beforeend", activityHtml);
+				const activityHtml = `
+		               <div class="activity">
+		                   <label>Activity Name:</label>
+		                   <input type="text" name="itineraries[${itineraryIndex}].activities[]" required>
+		                   <button type="button" onclick="removeActivity(this.parentNode)">Remove Activity</button>
+		               </div>
+		           `;
+				document.querySelectorAll('.itinerary')[itineraryIndex].insertAdjacentHTML('beforeend', activityHtml);
+				
 			}
 
-			function removeElement(id) {
-				let element = document.getElementById(id);
-				if (element) {
-					element.remove();
-				}
+			function removeItinerary(element) {
+				element.remove();
+			}
+
+			function removeActivity(element) {
+				element.remove();
 			}
 		</script>
 
