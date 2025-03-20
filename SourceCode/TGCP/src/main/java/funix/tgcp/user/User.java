@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -31,6 +33,7 @@ public class User {
 	private String email;
 
 	@Column(nullable = false)
+	@JsonIgnore
 	private String password;
 
 	@Column(columnDefinition = "NVARCHAR(255)")
@@ -48,10 +51,6 @@ public class User {
 	// @Pattern(regexp = "0\\d{9}", message = "Số điện thoại phải bắt đầu bằng số 0
 	// và có 10 chữ số")
 	private String phone;
-
-	// @Pattern(regexp = "0\\d{9}", message = "Số điện thoại phải bắt đầu bằng số 0
-	// và có 10 chữ số")
-	private String familyPhone;
 
 	private String facebook;
 	private String tiktok;

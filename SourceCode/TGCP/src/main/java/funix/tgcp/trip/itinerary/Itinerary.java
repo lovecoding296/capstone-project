@@ -12,6 +12,8 @@ import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import funix.tgcp.trip.Trip;
 
 @Entity
@@ -28,6 +30,7 @@ public class Itinerary {
     
     @ManyToOne
     @JoinColumn(name = "trip_id", nullable = false)
+    @JsonIgnore
     private Trip trip;
 
     @Column(nullable = false)

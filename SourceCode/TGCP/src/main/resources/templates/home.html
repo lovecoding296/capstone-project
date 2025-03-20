@@ -177,7 +177,7 @@
 			<!-- Loop through trips and display in cards -->
 			<div th:each="trip : ${trips}" class="col-md-3 mb-4">
 				<div class="card trip-card-home">
-					<a th:href="@{/trips/{id}/details(id=${trip.id})}">
+					<a th:href="@{/trips/{id}(id=${trip.id})}">
 						<div class="row g-0">
 							<!-- Column for image -->
 							<div class="col-12">

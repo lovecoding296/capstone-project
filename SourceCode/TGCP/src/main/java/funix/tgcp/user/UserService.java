@@ -164,9 +164,7 @@ public class UserService {
 		if (user.getHomeAddress() != null && !user.getHomeAddress().isEmpty()) {
 			currentUser.setHomeAddress(user.getHomeAddress());
 		}
-		if (user.getFamilyPhone() != null && !user.getFamilyPhone().isEmpty()) {
-			currentUser.setFamilyPhone(user.getFamilyPhone());
-		}
+
 		if (user.getDateOfBirth() != null) {
 			currentUser.setDateOfBirth(user.getDateOfBirth());
 		}

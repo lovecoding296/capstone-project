@@ -3,6 +3,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +25,7 @@ public class Activity {
 
     @ManyToOne
     @JoinColumn(name = "itinerary_id", nullable = false)
+    @JsonIgnore
     private Itinerary itinerary;
 
     @Column(nullable = false)

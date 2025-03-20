@@ -2,6 +2,8 @@ package funix.tgcp.trip.image;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import funix.tgcp.trip.Trip;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +30,7 @@ public class TripImage {
 
 	@ManyToOne
 	@JoinColumn(name = "trip_id", nullable = false)
+	@JsonIgnore
 	private Trip trip; 
 
 	@Column(nullable = false)
