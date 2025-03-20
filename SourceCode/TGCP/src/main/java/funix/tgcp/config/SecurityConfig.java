@@ -26,8 +26,8 @@ public class SecurityConfig {
 	@Autowired
 	private CustomAuthenticationFailureHandler failureHandler;
 	
-	@Autowired
-	private JwtFilter authenticationFilter;
+	//@Autowired
+	//private JwtFilter authenticationFilter;
     
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -62,8 +62,8 @@ public class SecurityConfig {
                 .maxSessionsPreventsLogin(false) // Nếu user đăng nhập lại thì session cũ bị xóa
             )
             .csrf().disable() // Disable CSRF (optional)
-            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .httpBasic();            
+            //.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .httpBasic().disable();            
         return http.build();
     }
     
@@ -74,18 +74,18 @@ public class SecurityConfig {
     }
     
     
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:8080"); // Thay bằng domain frontend
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.addAllowedOrigin("http://localhost:8080"); // Thay bằng domain frontend
+//        config.addAllowedHeader("*");
+//        config.addAllowedMethod("*");
+//        
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//        return new CorsFilter(source);
+//    }
 
 
 

@@ -31,7 +31,7 @@
 				<span th:text="${successMessage}"></span>
 			</div>
 			<h1>Đăng nhập</h1>
-			<form method="post" action="/api/auth/login">				
+			<form method="post" action="/login">				
 				
 				<label for="email">Email:</label>
 				<input type="email" name="email" id="email" class="form-control" required>
@@ -76,23 +76,8 @@
 		document.getElementById('email').addEventListener('input', checkInputs);
 		document.getElementById('password').addEventListener('input', checkInputs);
 		
+	
 		
-		
-		// Hàm gọi API user profile với token trong cookie
-		async function test() {
-			
-		    const response = await fetch("http://localhost:8080/api/test", {
-		        method: "GET",
-				credentials: "include"
-		    });
-
-		    if (!response.ok) {
-		        console.error("Failed to fetch user profile:", response.status);
-		        return;
-		    }
-
-		    console.log("User Profile:", response);
-		}
 		
 	</script>
 

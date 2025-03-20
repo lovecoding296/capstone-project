@@ -210,21 +210,21 @@
 											th:text="${(#lists.size(trip.participants) + 1)   + '/' + trip.maxParticipants}">0</span>
 									</p>
 
-									<div
+									<!--<div
 										th:if="${session.loggedInUser != null && (trip.creator.id != session.loggedInUser.id)}">
-										<!-- Check if the user has already joined the trip -->
+										 Check if the user has already joined the trip 
 										<p th:if="${participantStatus[trip.id]}" class="alert alert-success"
 											th:text="#{label.alreadyJoined}">
 											✅ Đã tham gia
 										</p>
 
-										<!-- Check if the request is pending -->
+										 Check if the request is pending 
 										<p th:if="${requestStatus[trip.id]}" class="alert alert-warning"
 											th:text="#{label.pendingApproval}">
 											⏳ Đang chờ duyệt
 										</p>
 
-										<!-- Show the Join button if the user hasn't joined or requested to join -->
+										 Show the Join button if the user hasn't joined or requested to join 
 										<form th:if="${!(participantStatus[trip.id] || requestStatus[trip.id])}"
 											th:action="@{/trips/{id}/request(id=${trip.id})}" method="post">
 											<button type="submit" class="alert alert-warning w-100"
@@ -232,12 +232,12 @@
 												Yêu cầu tham gia
 											</button>
 										</form>
-									</div>
-									<p class="alert alert-success"
+									</div>-->
+									<!--<p class="alert alert-success"
 										th:if="${session.loggedInUser != null && (trip.creator.id == session.loggedInUser.id)}"
 										th:text="#{label.alreadyJoined}">
 										✅ Đã tham gia
-									</p>
+									</p>-->
 								</div>
 							</div>
 						</div>
