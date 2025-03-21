@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
 import funix.tgcp.post.PostService;
-import funix.tgcp.trip.TripService;
+import funix.tgcp.tour.TourService;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class ReportController {
     private PostService postService;
 
     @Autowired
-    private TripService tripService;
+    private TourService tourService;
 
     // Lấy tất cả báo cáo
     @GetMapping("/")
@@ -68,7 +68,7 @@ public class ReportController {
         model.addAttribute("report", new Report());
         model.addAttribute("users", userService.findAll());
         model.addAttribute("posts", postService.findAll());
-        model.addAttribute("trips", tripService.findAll());
+        model.addAttribute("tours", tourService.findAll());
         return "report/form";
     }
 
@@ -82,7 +82,7 @@ public class ReportController {
         if (result.hasErrors()) {
             model.addAttribute("users", userService.findAll());
             model.addAttribute("posts", postService.findAll());
-            model.addAttribute("trips", tripService.findAll());
+            model.addAttribute("tours", tourService.findAll());
             return "report/form";
         }
 

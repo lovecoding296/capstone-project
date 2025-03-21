@@ -34,7 +34,7 @@ if (!empty($_POST))
 			continue;
 
 		if ( get_magic_quotes_gpc() )
-			$value = htmlspecialchars( stripslashes((string)$value) );
+			$value = htmlspecialchars( stourslashes((string)$value) );
 		else
 			$value = htmlspecialchars( (string)$value );
 ?>

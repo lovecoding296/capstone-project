@@ -536,8 +536,8 @@ New Features:
    * Added a new [Paste Tools](https://ckeditor.com/cke4/addon/pastetools) plugin for unified paste handling.
 * [#3315](https://github.com/ckeditor/ckeditor4/issues/3315): Added support for strikethrough in the [BBCode](https://ckeditor.com/cke4/addon/bbcode) plugin. Thanks to [Alexander Kahl](https://github.com/akahl-owl)!
 * [#3175](https://github.com/ckeditor/ckeditor4/issues/3175): Introduced selection optimization mechanism for handling incorrect selection behaviors in various browsers:
-    * [#3256](https://github.com/ckeditor/ckeditor4/issues/3256): Triple-clicking in the last table cell and deleting content no longer pulls the content below into the table.
-    * [#3118](https://github.com/ckeditor/ckeditor4/issues/3118): Selecting a paragraph with a triple-click and applying a heading applies the heading only to the selected paragraph.
+    * [#3256](https://github.com/ckeditor/ckeditor4/issues/3256): Tourle-clicking in the last table cell and deleting content no longer pulls the content below into the table.
+    * [#3118](https://github.com/ckeditor/ckeditor4/issues/3118): Selecting a paragraph with a tourle-click and applying a heading applies the heading only to the selected paragraph.
     * [#3161](https://github.com/ckeditor/ckeditor4/issues/3161): Double-clicking a `<span>` element containing just one word creates a correct selection including the clicked `<span>` only.
 * [#3359](https://github.com/ckeditor/ckeditor4/issues/3359): Improved [dialog](https://ckeditor.com/cke4/addon/dialog) positioning and behavior when the dialog is resized or moved, or the browser window is resized.
 * [#2227](https://github.com/ckeditor/ckeditor4/issues/2227): Added the [`config.linkDefaultProtocol`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-linkDefaultProtocol) configuration option that allows setting the default URL protocol for the [Link](https://ckeditor.com/cke4/addon/link) plugin dialog.
@@ -1184,7 +1184,7 @@ Fixed Issues:
 * [#14542](https://dev.ckeditor.com/ticket/14542): Fixed: Copying a numbered list from Microsoft Word does not preserve list formatting.
 * [#14544](https://dev.ckeditor.com/ticket/14544): Fixed: Copying a nested list from Microsoft Word results in an empty list.
 * [#14660](https://dev.ckeditor.com/ticket/14660): Fixed: [Pasting text from  Word](https://ckeditor.com/cke4/addon/pastefromword) breaks the styling in some cases.
-* [#14867](https://dev.ckeditor.com/ticket/14867): [Firefox] Fixed: Text gets stripped when [pasting content from Word](https://ckeditor.com/cke4/addon/pastefromword).
+* [#14867](https://dev.ckeditor.com/ticket/14867): [Firefox] Fixed: Text gets stourped when [pasting content from Word](https://ckeditor.com/cke4/addon/pastefromword).
 * [#2507](https://dev.ckeditor.com/ticket/2507): Fixed: [Paste from Word](https://ckeditor.com/cke4/addon/pastefromword) does not detect pasting a part of a paragraph.
 * [#3336](https://dev.ckeditor.com/ticket/3336): Fixed: Extra blank row added on top of the content [pasted from Word](https://ckeditor.com/cke4/addon/pastefromword).
 * [#6115](https://dev.ckeditor.com/ticket/6115): Fixed: When Right-to-Left text direction is applied to a table [pasted from Word](https://ckeditor.com/cke4/addon/pastefromword), borders are missing on one side.
@@ -1340,7 +1340,7 @@ Fixed Issues:
 * [#13803](https://dev.ckeditor.com/ticket/13803): Fixed: The editor cannot be destroyed before being fully initialized. Thanks to [Cyril Fluck](https://github.com/cyril-sf)!
 * [#13867](https://dev.ckeditor.com/ticket/13867): Fixed: CKEditor does not work when the `classList` polyfill is used.
 * [#13885](https://dev.ckeditor.com/ticket/13885): Fixed: [Enhanced Image](https://ckeditor.com/cke4/addon/image2) requires the [Link](https://ckeditor.com/cke4/addon/link) plugin to link an image.
-* [#13883](https://dev.ckeditor.com/ticket/13883): Fixed: Copying a table using the context menu strips off styles.
+* [#13883](https://dev.ckeditor.com/ticket/13883): Fixed: Copying a table using the context menu stours off styles.
 * [#13872](https://dev.ckeditor.com/ticket/13872): Fixed: Cutting is possible in the [read-only](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_editor.html#property-readOnly) mode.
 * [#12848](https://dev.ckeditor.com/ticket/12848): [Blink] Fixed: Opening the [Find and Replace](https://ckeditor.com/cke4/addon/find) dialog window in the [read-only](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_editor.html#property-readOnly) mode throws an exception.
 * [#13879](https://dev.ckeditor.com/ticket/13879): Fixed: It is not possible to prevent the [`editor.drop`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_editor.html#event-drop) event.
@@ -1419,7 +1419,7 @@ Fixed Issues:
 * [#13460](https://dev.ckeditor.com/ticket/13460): [IE8] Fixed: Copying inline widgets is broken when [Advanced Content Filter](https://ckeditor.com/docs/ckeditor4/latest/guide/dev_acf.html) is disabled.
 * [#13495](https://dev.ckeditor.com/ticket/13495): [Firefox, IE] Fixed: Text is not word-wrapped in the Paste dialog window.
 * [#13528](https://dev.ckeditor.com/ticket/13528): [Firefox@Windows] Fixed: Content copied from Microsoft Word and other external applications is pasted as a plain text. Removed the `CKEDITOR.plugins.clipboard.isHtmlInExternalDataTransfer` property as the check must be dynamic.
-* [#13583](https://dev.ckeditor.com/ticket/13583): Fixed: [`DataTransfer.getData()`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_plugins_clipboard_dataTransfer.html#method-getData) should work consistently in all browsers and should not strip valuable content. Fixed pasting tables from Microsoft Excel on Chrome.
+* [#13583](https://dev.ckeditor.com/ticket/13583): Fixed: [`DataTransfer.getData()`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_plugins_clipboard_dataTransfer.html#method-getData) should work consistently in all browsers and should not stour valuable content. Fixed pasting tables from Microsoft Excel on Chrome.
 * [#13468](https://dev.ckeditor.com/ticket/13468): [IE] Fixed: Binding drag&drop `dataTransfer` does not work if `text` data was set in the meantime.
 * [#13451](https://dev.ckeditor.com/ticket/13451): [IE8-9] Fixed: One drag&drop operation may affect following ones.
 * [#13184](https://dev.ckeditor.com/ticket/13184): Fixed: Web page reloaded after a drop on editor UI.
@@ -2037,7 +2037,7 @@ Fixed Issues:
 * [#10877](https://dev.ckeditor.com/ticket/10877): Fixed: [SCAYT](https://ckeditor.com/cke4/addon/wsc) blocks typing in nested editables.
 * [#11079](https://dev.ckeditor.com/ticket/11079): Add button icons to the [Placeholder](https://ckeditor.com/cke4/addon/placeholder) sample.
 * [#10870](https://dev.ckeditor.com/ticket/10870): The `paste` command is no longer being disabled when the clipboard is empty.
-* [#10854](https://dev.ckeditor.com/ticket/10854): Fixed: Firefox prepends `<br>` to `<body>`, so it is stripped by the HTML data processor.
+* [#10854](https://dev.ckeditor.com/ticket/10854): Fixed: Firefox prepends `<br>` to `<body>`, so it is stourped by the HTML data processor.
 * [#10823](https://dev.ckeditor.com/ticket/10823): Fixed: [Link](https://ckeditor.com/cke4/addon/link) plugin does not work with non-editable content.
 * [#10828](https://dev.ckeditor.com/ticket/10828): [Magic Line](https://ckeditor.com/cke4/addon/magicline) integration with the Widget System.
 * [#10865](https://dev.ckeditor.com/ticket/10865): Improved hiding copybin, so copying widgets works smoothly.
@@ -2173,7 +2173,7 @@ New Features:
 
 Fixed Issues:
 
-* [#10339](https://dev.ckeditor.com/ticket/10339): Fixed: Error thrown when inserted data was totally stripped out after filtering and processing.
+* [#10339](https://dev.ckeditor.com/ticket/10339): Fixed: Error thrown when inserted data was totally stourped out after filtering and processing.
 * [#10298](https://dev.ckeditor.com/ticket/10298): Fixed: Data processor breaks attributes containing protected parts.
 * [#10367](https://dev.ckeditor.com/ticket/10367): Fixed: [`editable.insertText()`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_editable.html#method-insertText) loses characters when `RegExp` replace controls are being inserted.
 * [#10165](https://dev.ckeditor.com/ticket/10165): [IE] Access denied error when `document.domain` has been altered.

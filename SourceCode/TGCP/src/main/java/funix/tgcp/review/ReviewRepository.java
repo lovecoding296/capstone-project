@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByReviewedUserId(Long reviewedUserId); // Lấy các đánh giá của một người dùng
     List<Review> findByReviewerId(Long reviewerId); // Lấy các đánh giá do một người dùng thực hiện
-    List<Review> findByTripId(Long tripId);
-    List<Review> findByTripIdAndReviewerId(Long tripId, Long reviewer);
-	boolean existsByTripIdAndReviewerIdAndReviewedUserId(Long tripId, Long reviewerId, Long reviewedUserId);
+    List<Review> findByTourId(Long tourId);
+    List<Review> findByTourIdAndReviewerId(Long tourId, Long reviewer);
+	boolean existsByTourIdAndReviewerIdAndReviewedUserId(Long tourId, Long reviewerId, Long reviewedUserId);
 	Optional<Review> getReviewById(Long reviewId);
-	void deleteByTripId(Long id);
+	void deleteByTourId(Long id);
 	
 	List<Review> findTop3ByReviewedUserIdOrderByReviewDateDesc(Long reviewedUserId);
 }

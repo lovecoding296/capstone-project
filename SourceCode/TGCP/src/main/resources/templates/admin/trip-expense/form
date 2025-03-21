@@ -5,10 +5,10 @@
 </head>
 <body>
     <h1>Tạo khoản chi phí cho chuyến đi</h1>
-    <form th:action="@{/trip-expenses/new}" th:object="${tripExpense}" method="post">
-        <label for="trip">Chuyến đi</label>
-        <select th:field="*{trip.id}" required>
-            <option th:each="trip : ${trips}" th:value="${trip.id}" th:text="${trip.name}"></option>
+    <form th:action="@{/tour-expenses/new}" th:object="${tourExpense}" method="post">
+        <label for="tour">Chuyến đi</label>
+        <select th:field="*{tour.id}" required>
+            <option th:each="tour : ${tours}" th:value="${tour.id}" th:text="${tour.name}"></option>
         </select>
         <br>
 

@@ -40,8 +40,8 @@
 					</li>
 
 					<li class="nav-item">
-						<a class="nav-link" href="/trips/new" role="button">
-							<span th:text="#{trip.create}">Tạo chuyến đi mới</span>
+						<a class="nav-link" href="/tours/new" role="button">
+							<span th:text="#{tour.create}">Tạo chuyến đi mới</span>
 						</a>
 					</li>
 
@@ -50,8 +50,12 @@
 							<span th:text="#{post.create}">Tạo bài viết mới</span>
 						</a>
 					</li>
+					<li class="nav-item" >
+						<a class="nav-link" href="/dashboard">
+							Dashboard</a>
+					</li>
 
-					<li class="nav-item" sec:authorize="!isAnonymous()" >
+					<li class="nav-item" sec:authorize="!isAnonymous()">
 						<a class="nav-link" th:if="${session.loggedInUser.isAdmin()}" href="/manager-user/verify">
 							Manage Verify Account</a>
 					</li>
@@ -73,23 +77,29 @@
 						<ul sec:authorize="!isAnonymous()" class="dropdown-menu" aria-labelledby="userDropdown"
 							id="userPopup">
 							<li>
+								<a class="dropdown-item" th:href="@{/users/{id}(id=${session.loggedInUser.id})}"
+									th:text="#{profile.page}">Trang cá nhân</a>
+							</li>
+							<li>
+								<a class="dropdown-item" th:href="@{/tours/creator/{id}(id=${session.loggedInUser.id})}"
+									th:text="#{tour.mine}">Chuyến đi của tôi</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="/tours/manage-all-requests" th:text="#{tour.request}">Yêu
+									cầu tham gia chuyến đi</a>
+							</li>
+							<li>
+								<a class="dropdown-item" th:href="@{/posts/author/{id}(id=${session.loggedInUser.id})}"
+									th:text="#{post.mine}">Bài viết của tôi</a>
+							</li>
+							<li>
+								<a class="dropdown-item" th:href="@{/reviews/{id}(id=${session.loggedInUser.id})}"
+									th:text="#{review.mine}">Đánh giá của tôi</a>
+							</li>
+							<li>
 								<a class="dropdown-item"
-									th:href="@{/users/{id}(id=${session.loggedInUser.id})}"  th:text="#{profile.page}">Trang cá nhân</a>
-							</li>
-							<li>
-								<a class="dropdown-item" th:href="@{/trips/creator/{id}(id=${session.loggedInUser.id})}"  th:text="#{trip.mine}">Chuyến đi của tôi</a>
-							</li>
-							<li>
-								<a class="dropdown-item" href="/trips/manage-all-requests"  th:text="#{trip.request}">Yêu cầu tham gia chuyến đi</a>
-							</li>
-							<li>
-								<a class="dropdown-item" th:href="@{/posts/author/{id}(id=${session.loggedInUser.id})}" th:text="#{post.mine}">Bài viết của tôi</a>
-							</li>
-							<li>
-								<a class="dropdown-item" th:href="@{/reviews/{id}(id=${session.loggedInUser.id})}" th:text="#{review.mine}">Đánh giá của tôi</a>
-							</li>
-							<li>
-								<a class="dropdown-item" th:href="@{/reviews/reviewed/{id}(id=${session.loggedInUser.id})}" th:text="#{review.given}">Đánh giá đã cho</a>
+									th:href="@{/reviews/reviewed/{id}(id=${session.loggedInUser.id})}"
+									th:text="#{review.given}">Đánh giá đã cho</a>
 							</li>
 							<li>
 								<a class="dropdown-item" href="/logout">Đăng xuất</a>

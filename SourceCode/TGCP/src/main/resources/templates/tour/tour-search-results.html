@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Kết quả tìm kiếm</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
+
+	<style>
+		.tour-card-home {
+			border-radius: 12px;
+			border: 1px solid #ddd;
+			background: #fff;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+			transition: transform 0.3s ease-in-out;
+			padding: 20px;
+		}
+
+		.tour-card-home:hover {
+			transform: scale(1.03);
+		}
+
+		.tour-card-home img {
+			width: 100%;
+			/* Đảm bảo ảnh chiếm toàn bộ chiều rộng của container */
+			height: 200px;
+			/* Đặt chiều cao cố định cho ảnh */
+			object-fit: cover;
+			/* Đảm bảo ảnh không bị biến dạng mà vẫn phủ kín không gian */
+		}
+	</style>
+</head>
+
+<body>
+	<nav th:replace="~{page-component :: header}"></nav>
+
+	<div class="container-fluid page-title">
+		<div class="card p-3 shadow">
+			<h4 class="text-start mb-3" th:text="#{label.searchTours}">Tìm kiếm chuyến đi</h4>
+			<form th:action="@{/tours/search}" method="get">
+				<div class="row d-flex align-items-center g-2">
+					<!-- Địa điểm -->
+					<div class="col-md-2">
+						<input type="text" name="destination" class="form-control" th:placeholder="#{label.destination}">
+					</div>
+
+					<!-- Danh mục -->
+					<div class="col-md-2">
+						<select id="category" name="category" class="form-select">
+							<option value="" th:text="#{label.category}">Danh mục</option>
+							<option th:each="cat : ${categories}" th:value="${cat}"
+								th:text="${#messages.msg(cat.name())}"></option>
+						</select>
+					</div>
+
+					<!-- Ngôn ngữ -->
+					<div class="col-md-2">
+						<input type="text" name="language" class="form-control" th:placeholder="#{label.language}">
+					</div>
+
+					<!-- Giới tính -->
+					<div class="col-md-2">
+						<select name="gender" class="form-select">
+							<option value="" th:text="#{label.gender}">Giới tính</option>
+							<option value="MALE" th:text="#{MALE}">Nam</option>
+							<option value="FEMALE" th:text="#{FEMALE}">Nữ</option>
+						</select>
+					</div>
+
+					<!-- Nút tìm kiếm -->
+					<div class="col-md-2 text-end">
+						<button type="submit" class="btn btn-primary w-100" th:text="#{label.search}">🔍 Tìm
+							kiếm</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<h3 class="text-center page-title">Kết quả tìm kiếm chuyến đi</h3>
+
+	<div class="container mt-4">
+		<div class="row">
+			<!-- Loop through tours and display in cards -->
+			<div th:each="tour : ${tours}" class="col-md-3 mb-4">
+				<div class="card tour-card-home">
+					<a th:href="@{/tours/{id}/details(id=${tour.id})}">
+						<div class="row g-0">
+							<!-- Column for image -->
+							<div class="col-12">
+								<!--<img th:src="${tour.tourPictureUrl != null ? @{${tour.tourPictureUrl}} : '/uploads/tour-default.png'}"
+								     class="img-fluid rounded-top" alt="Ảnh chuyến đi">-->
+
+								<img th:src="${tour.tourPictureUrl != null and tour.tourPictureUrl != '' ? tour.tourPictureUrl : '/uploads/tour-default.png'}"
+									class="img-fluid rounded-top" alt="Ảnh chuyến đi">
+
+							</div>
+							<!-- Column for content -->
+							<div class="col-12">
+								<div class="tour-card-home-body">
+									<h5 class="tour-card-home-title" th:text="${tour.title}">Tiêu đề</h5>
+									<p class="card-text"><strong th:text="#{label.destination}">Địa điểm:</strong> <span
+											th:text="${tour.destination}">Địa
+											điểm</span></p>
+									<p class="card-text">
+										<strong th:text="#{label.duration}">Thời gian:</strong>
+										<span th:text="${#temporals.format(tour.startDate, 'dd/MM/yyyy')}">Ngày bắt
+											đầu</span> -
+										<span th:text="${#temporals.format(tour.endDate, 'dd/MM/yyyy')}">Ngày kết
+											thúc</span>
+									</p>
+									<p class="card-text"><strong th:text="#{label.organizer}">Người tổ chức:</strong>
+										<span th:text="${tour.creator.fullName}">adnmin</span>
+									</p>
+									<p class="card-text"><strong th:text="#{label.participants}">Số người tham
+											gia:</strong> <span th:text="${#lists.size(tour.participants) + '/' + tour.maxParticipants}">0</span></p>
+
+									<div
+										th:if="${session.loggedInUser != null && (tour.creator.id != session.loggedInUser.id)}">
+										<!-- Check if the user has already joined the tour -->
+										<p th:if="${participantStatus[tour.id]}" class="alert alert-success"
+											th:text="#{label.alreadyJoined}">
+											✅ Đã tham gia
+										</p>
+
+										<!-- Check if the request is pending -->
+										<p th:if="${requestStatus[tour.id]}" class="alert alert-warning"
+											th:text="#{label.pendingApproval}">
+											⏳ Đang chờ duyệt
+										</p>
+
+										<!-- Show the Join button if the user hasn't joined or requested to join -->
+										<form th:if="${!(participantStatus[tour.id] || requestStatus[tour.id])}"
+											th:action="@{/tours/{id}/request(id=${tour.id})}" method="post">
+											<button type="submit" class="alert alert-warning w-100"
+												th:text="#{label.joinRequest}">
+												Yêu cầu tham gia
+											</button>
+										</form>
+									</div>
+									<p class="alert alert-success"
+										th:if="${session.loggedInUser != null && (tour.creator.id == session.loggedInUser.id)}"
+										th:text="#{label.alreadyJoined}">
+										✅ Đã tham gia
+									</p>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer th:replace="~{page-component :: footer}"></footer>
+</body>
+
+</html>

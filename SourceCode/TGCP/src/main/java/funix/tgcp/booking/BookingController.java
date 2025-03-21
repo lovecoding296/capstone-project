@@ -16,11 +16,11 @@ public class BookingController {
     // API tạo booking
     @PostMapping("/create")
     public ResponseEntity<Booking> createBooking(
-            @RequestParam Long tripId,
+            @RequestParam Long tourId,
             @RequestParam Long userId,
             @RequestParam String note
     ) {
-        return ResponseEntity.ok(bookingService.createBooking(tripId, userId, note));
+        return ResponseEntity.ok(bookingService.createBooking(tourId, userId, note));
     }
 
     // API lấy tất cả booking của người dùng
@@ -29,10 +29,10 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingsByUser(userId));
     }
 
-    // API lấy tất cả booking của trip
-    @GetMapping("/trip/{tripId}")
-    public ResponseEntity<List<Booking>> getBookingsByTrip(@PathVariable Long tripId) {
-        return ResponseEntity.ok(bookingService.getBookingsByTrip(tripId));
+    // API lấy tất cả booking của tour
+    @GetMapping("/tour/{tourId}")
+    public ResponseEntity<List<Booking>> getBookingsByTour(@PathVariable Long tourId) {
+        return ResponseEntity.ok(bookingService.getBookingsByTour(tourId));
     }
 
     // API xác nhận booking

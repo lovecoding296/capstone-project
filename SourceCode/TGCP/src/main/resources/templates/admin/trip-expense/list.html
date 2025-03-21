@@ -18,17 +18,17 @@
         </thead>
         <tbody>
             <tr th:each="expense : ${expenses}">
-                <td th:text="${expense.trip.name}">Chuyến đi</td>
+                <td th:text="${expense.tour.name}">Chuyến đi</td>
                 <td th:text="${expense.description}">Mô tả</td>
                 <td th:text="${expense.amount}">Số tiền</td>
                 <td th:text="${#dates.format(expense.expenseDate, 'dd/MM/yyyy HH:mm')}">Ngày chi phí</td>
                 <td th:text="${expense.paidBy.fullName}">Người thanh toán</td>
                 <td>
-                    <a th:href="@{/trip-expenses/{id}/delete(id=${expense.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                    <a th:href="@{/tour-expenses/{id}/delete(id=${expense.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
                 </td>
             </tr>
         </tbody>
     </table>
-    <a href="/trip-expenses/new">Tạo khoản chi phí mới</a>
+    <a href="/tour-expenses/new">Tạo khoản chi phí mới</a>
 </body>
 </html>

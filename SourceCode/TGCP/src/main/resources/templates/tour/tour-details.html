@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết chuyến đi</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <h2>Chi tiết chuyến đi</h2>
+
+    <div>
+        <h3 id="tour-title"></h3>
+        <p><strong>Thành phố:</strong> <span id="tour-city"></span></p>
+        <p><strong>Thời gian:</strong> <span id="tour-start"></span> - <span id="tour-end"></span></p>
+
+        <h3>Lịch Trình</h3>
+        <div id="itinerary-container"></div>
+
+        <p><strong>Mô tả chi tiết:</strong></p>
+        <p id="tour-description"></p>
+
+        <p><strong>Chi phí ước tính:</strong> <span id="tour-price"></span></p>
+
+        <p><strong>Người tổ chức:</strong> 
+            <a id="tour-creator-link"><span id="tour-creator-name"></span></a>
+        </p>
+
+        <p>Ngôn ngữ đã chọn: <span id="tour-languages"></span></p>
+
+        <h3>Hình ảnh</h3>
+        <div id="tour-images"></div>
+
+        <a id="tour-review-link">Chuyến đi đã kết thúc, hãy để lại đánh giá.</a>
+        <a id="tour-edit-link">Chỉnh sửa</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {			
+			const pathSegments = window.location.pathname.split('/');
+			const tourId = pathSegments[2]; // Phần tử thứ 2 là {id}
+			console.log(tourId);
+
+
+            if (!tourId) {
+                alert("Không tìm thấy ID chuyến đi.");
+                return;
+            }
+
+            axios.get(`/api/tours/${tourId}`)
+                .then(response => {
+                    const tour = response.data;
+
+                    document.getElementById("tour-title").textContent = tour.title;
+                    document.getElementById("tour-city").textContent = tour.city;
+                    document.getElementById("tour-start").textContent = formatDateTime(tour.startDate);
+                    document.getElementById("tour-end").textContent = formatDateTime(tour.endDate);
+                    document.getElementById("tour-description").innerHTML = tour.description;
+                    document.getElementById("tour-price").textContent = tour.price + " VND";
+
+                    // Creator
+                    const creatorLink = document.getElementById("tour-creator-link");
+                    creatorLink.href = `/users/${tour.creator.id}`;
+                    document.getElementById("tour-creator-name").textContent = tour.creator.fullName;
+
+                    // Ngôn ngữ
+                    document.getElementById("tour-languages").textContent = tour.languages.length > 0
+                        ? tour.languages.join(", ")
+                        : "Chưa chọn";
+
+                    // Hình ảnh
+                    const imageContainer = document.getElementById("tour-images");
+                    tour.images.forEach(image => {
+                        const imgElement = document.createElement("img");
+                        imgElement.src = image.url;
+                        imgElement.alt = "Tour Image";
+                        imgElement.style = "width: 200px; height: 150px; margin: 5px;";
+                        imageContainer.appendChild(imgElement);
+                    });
+
+                    // Lịch trình
+                    const itineraryContainer = document.getElementById("itinerary-container");
+                    tour.itineraries.forEach(itinerary => {
+                        const itineraryDiv = document.createElement("div");
+                        itineraryDiv.innerHTML = `
+                            <h4>Ngày ${itinerary.dayNo}</h4>
+                            ${itinerary.activities.map(activity => `
+                                <p><strong>Tiêu đề:</strong> ${activity.title}</p>
+                                <p><strong>Mô tả:</strong> ${activity.description}</p>
+                            `).join("")}
+                            <hr>
+                        `;
+                        itineraryContainer.appendChild(itineraryDiv);
+                    });
+
+                    // Links
+                    document.getElementById("tour-review-link").href = `/reviews/tour/${tour.id}`;
+                    document.getElementById("tour-edit-link").href = `/tours/${tour.id}/edit`;
+                })
+                .catch(error => {
+                    console.error("Lỗi khi tải chuyến đi:", error);
+                    alert("Không thể tải thông tin chuyến đi.");
+                });
+
+            function formatDateTime(dateTime) {
+                const date = new Date(dateTime);
+                return date.toLocaleDateString("vi-VN") + " " + date.toLocaleTimeString("vi-VN");
+            }
+        });
+    </script>
+</body>
+
+</html>

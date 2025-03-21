@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tạo/Chỉnh sửa chuyến đi</title>
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
+
+	<script th:src="@{/ckeditor/ckeditor.js}"></script>
+
+	<style>
+		.scrollable-dropdown {
+			max-height: 200px;
+			/* Giới hạn chiều cao */
+			overflow-y: auto;
+			/* Thêm thanh cuộn khi danh sách dài */
+			width: 250px;
+			/* Định dạng chiều rộng */
+			padding: 10px;
+			/* Khoảng cách bên trong */
+		}
+	</style>
+</head>
+
+<body>
+
+	<nav th:replace="~{page-component :: header}"></nav>
+
+	<h3 class="text-center page-title" >Tạo chuyến đi mới
+	</h3>
+	<form id="tourForm" method="post" class="container mt-4" enctype="multipart/form-data">
+
+		<!-- Upload nhiều ảnh -->
+		<div class="mb-3">
+			<label for="images" class="form-label">Tải lên ảnh</label>
+			<input type="file" id="images" name="files" multiple accept="image/*" class="form-control"
+				onchange="previewImages()" required>
+		</div>
+
+		<!-- Khu vực xem trước ảnh -->
+		<div id="previewContainer" class="d-flex flex-wrap"></div>
+
+		<script>
+			// Xem trước ảnh
+			function previewImages() {
+				const input = document.getElementById("images");
+				const files = input.files;
+				// Kiểm tra số lượng file chọn vào (tối đa 5 ảnh)				
+
+				// Sử dụng th:with để gán giá trị tour.imageUrls.size() vào biến JavaScript
+				const totalFileCount = files.length;
+				// Kiểm tra số lượng file chọn vào (tối đa 5 ảnh)
+				if (files.length > 5) {
+					alert("Bạn chỉ có thể chọn tối đa 5 ảnh.");
+					// Nếu số file vượt quá 5, reset lại input
+					input.value = '';
+					return;
+				}
+
+
+				const previewContainer = document.getElementById("previewContainer");
+
+				previewContainer.innerHTML = "";  // Xóa preview cũ
+
+				// Render preview mới
+				for (let i = 0; i < input.files.length; i++) {
+					const file = input.files[i];
+					const reader = new FileReader();
+
+					reader.onload = (e) => {
+						const imgWrapper = document.createElement("div");
+						imgWrapper.classList.add("position-relative", "m-2");
+						imgWrapper.style.transition = "opacity 0.3s";
+
+						const img = document.createElement("img");
+						img.src = e.target.result;
+						img.classList.add("rounded", "shadow-sm");
+						img.style.width = "150px";
+						img.style.height = "150px";
+						img.style.objectFit = "cover";
+
+						// Nút xóa
+						const removeBtn = document.createElement("button");
+						removeBtn.textContent = "X";
+						removeBtn.classList.add("btn", "btn-danger", "btn-sm", "position-absolute", "top-0", "end-0");
+						removeBtn.onclick = () => removeImage(i);
+
+						imgWrapper.appendChild(img);
+						imgWrapper.appendChild(removeBtn);
+						previewContainer.appendChild(imgWrapper);
+					};
+
+					reader.readAsDataURL(file);
+				}
+
+			}
+
+			// Xóa ảnh (giật)
+			function removeImage(index) {
+				const input = document.getElementById("images");
+				const imageCount = document.getElementById("imageCount");
+
+				const dataTransfer = new DataTransfer();
+
+				for (let i = 0; i < input.files.length; i++) {
+					if (i !== index) {
+						dataTransfer.items.add(input.files[i]);
+					}
+				}
+
+				input.files = dataTransfer.files;
+
+				previewImages();
+			}
+		</script>
+		<br><br>
+
+		<div class="mb-3">
+			<label for="title" class="form-label">Tiêu đề</label>
+			<input type="text" id="title" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="destination" class="form-label">Thành phố</label>
+			<input type="text" id="destination" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="category" class="form-label">Danh mục</label>
+			<select id="category" name="category" class="form-control" required>
+				<option value="">-- Chọn danh mục --</option>
+				<option th:each="cat : ${categories}" th:value="${cat}" th:text="${#messages.msg(cat.name())}"></option>
+			</select>
+		</div>
+
+
+		<button type="button" onclick="addItinerary()">Thêm Hành Trình</button>
+		<div id="itineraryContainer"></div>
+
+		<script>
+			let itineraryCount = 0;
+
+			function addItinerary() {
+				itineraryCount++;
+				const itineraryId = `itinerary-${itineraryCount}`;
+				const itineraryDiv = document.createElement("div");
+				itineraryDiv.classList.add("itinerary");
+				itineraryDiv.id = itineraryId;
+				itineraryDiv.innerHTML = `
+		                <label>Ngày: <input type="number" min="1" name="dayNo" id="${itineraryId}-day" ></label>
+		                <button onclick="removeElement('${itineraryId}')">Xóa Hành Trình</button>
+		                <button type="button" onclick="addActivity('${itineraryId}')">Thêm Hoạt Động</button>
+		                <div id="${itineraryId}-activities"></div>
+		            `;
+				document.getElementById("itineraryContainer").appendChild(itineraryDiv);
+			}
+
+			function addActivity(itineraryId) {
+				const activityId = `${itineraryId}-activity-${Date.now()}`;
+				const activityDiv = document.createElement("div");
+				activityDiv.classList.add("activity");
+				activityDiv.id = activityId;
+				activityDiv.innerHTML = `
+		                <label>Tiêu đề: <input type="text" name="title"></label>
+		                <label>Mô tả: <input type="text" name="description"></label>
+		                <button onclick="removeElement('${activityId}')">Xóa</button>
+		            `;
+				document.getElementById(`${itineraryId}-activities`).appendChild(activityDiv);
+			}
+
+			function removeElement(elementId) {
+				const element = document.getElementById(elementId);
+				if (element) {
+					element.remove();
+				}
+			}
+		</script>
+
+		<div class="mb-3">
+			<label class="form-check-label">
+				<input type="checkbox" id="ageRestricted" name="ageRestricted"
+					class="form-check-input" onchange="toggleAgeInputs()">
+				Giới hạn độ tuổi
+			</label>
+		</div>
+
+		<div id="ageInputs" class="mb-3" style="display: none;"></div>
+
+		<script>
+			// Hàm tạo ra HTML cho input tuổi khi checkbox được chọn
+			function toggleAgeInputs() {
+				const ageRestricted = document.getElementById("ageRestricted").checked;
+				const ageInputsContainer = document.getElementById("ageInputs");
+
+				// Nếu checkbox được chọn, tạo HTML cho input tuổi
+				if (ageRestricted) {
+					ageInputsContainer.style.display = "block";
+					// Chỉ tạo ra các input nếu chưa được tạo
+					if (!ageInputsContainer.innerHTML.trim()) {
+						const ageInputsHTML = `
+		                    <div class="row">
+		                        <div class="col">
+		                            <label for="fromAge" class="form-label">Từ tuổi</label>
+		                            <input type="number" id="fromAge" name="fromAge"  class="form-control" min="1" max="100" required>
+		                        </div>
+		                        <div class="col">
+		                            <label for="toAge" class="form-label">Đến tuổi</label>
+		                            <input type="number" id="toAge" name="toAge" class="form-control" min="1" max="100" required>
+		                        </div>
+		                    </div>`;
+						ageInputsContainer.innerHTML = ageInputsHTML;
+					}
+				} else {
+					// Ẩn input nếu checkbox không được chọn
+					ageInputsContainer.style.display = "none";
+					ageInputsContainer.innerHTML = ""; // Xóa HTML khi ẩn
+				}
+			}
+
+			// Đảm bảo hiển thị đúng trạng thái khi tải lại trang (khi edit tour)
+			document.addEventListener("DOMContentLoaded", () => {
+				toggleAgeInputs();
+			});
+		</script>
+
+
+
+
+		<div class="mb-3">
+			<label for="startDate" class="form-label">Ngày bắt đầu</label>
+			<input type="datetime-local" id="startDate" class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="endDate" class="form-label">Ngày kết thúc</label>
+			<input type="datetime-local" id="endDate" class="form-control" required>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+		<!--		--------------------------------------
+		<div class="d-flex">
+			 Dropdown chọn ngôn ngữ 
+			<div class="dropdown me-3">
+				<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+					Chọn ngôn ngữ
+				</button>
+				<ul class="dropdown-menu scrollable-dropdown">
+					<li th:each="lang : ${languages}">
+						<input type="checkbox" th:id="${'lang_' + lang}" th:name="languages" th:value="${lang}"
+							th:checked="${#sets.contains(tour.languages, lang)}" class="form-check-input lang-checkbox"
+							onchange="updateSelectedLanguages()">
+						<label th:for="${'lang_' + lang}" class="form-check-label" th:text="${lang}"></label>
+					</li>
+				</ul>
+			</div>
+
+			 Danh sách ngôn ngữ đã chọn 
+			<div>
+				<p id="selectedLanguages"></p>
+			</div>
+		</div>
+
+		<script>
+			function updateSelectedLanguages() {
+				let selectedLanguages = [];
+				document.querySelectorAll('.lang-checkbox:checked').forEach(checkbox => {
+					selectedLanguages.push(checkbox.value);
+				});
+
+				let display = selectedLanguages.length > 0 ? selectedLanguages.join(', ') : "";
+				document.getElementById('selectedLanguages').innerText = display;
+			}
+
+			// Gọi hàm này khi trang tải để hiển thị danh sách ngôn ngữ đã chọn sẵn
+			document.addEventListener("DOMContentLoaded", updateSelectedLanguages);
+
+		</script>-->
+
+
+
+		<div class="mb-3">
+			<label for="description" class="form-label">Mô tả chi tiết</label>
+			<textarea id="description" class="form-control" rows="4" required></textarea>
+		</div>
+
+		<div class="mb-3">
+			<label for="price" class="form-label">Giá</label>
+			<input type="number" id="price"  class="form-control" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="maxParticipants" class="form-label">Số người tham gia tối đa</label>
+			<input type="number" id="maxParticipants" class="form-control" min="2" required>
+		</div>
+
+
+		<button type="button" class="btn btn-primary" onclick="submitTour()">Lưu chuyến đi</button>
+		<a sec:authorize="!isAnonymous()" th:href="@{/tours/creator/{id}(id=${session.loggedInUser.id})}"
+			class="btn btn-secondary">Hủy</a>
+	</form>
+
+
+
+	<script>
+		// Lấy tất cả các textarea
+		const textareas = document.querySelectorAll('textarea');
+
+		// Khởi tạo CKEditor cho mỗi textarea
+		textareas.forEach(textarea => {
+			CKEDITOR.replace(textarea, {
+				versionCheck: false,
+				extraPlugins: 'videoembed',
+			});
+		});
+
+
+	</script>
+
+	<script>
+		function submitTour() {
+			event.preventDefault(); // Ngăn form gửi theo cách truyền thống
+
+			let formData = new FormData(); // Tạo đối tượng FormData để gửi dữ liệu
+
+			// Thu thập dữ liệu từ form
+			let tour = {
+				title: document.getElementById("title").value,
+				city: document.getElementById("destination").value,
+				category: document.getElementById("category").value,
+				description: CKEDITOR.instances["description"].getData(),
+				price: document.getElementById("price").value,
+				maxParticipants: document.getElementById("maxParticipants").value,
+				startDate: document.getElementById("startDate").value,
+				endDate: document.getElementById("endDate").value,
+				ageRestricted: document.getElementById("ageRestricted").checked,
+				fromAge: document.getElementById("fromAge") ? document.getElementById("fromAge").value : null,
+				toAge: document.getElementById("toAge") ? document.getElementById("toAge").value : null,
+				// Lấy danh sách lịch trình (itineraries)
+		        itineraries: Array.from(document.querySelectorAll(".itinerary")).map(itinerary => {
+		            let itineraryId = itinerary.id;
+		            return {
+		                dayNo: parseInt(itinerary.querySelector(`[id="${itineraryId}-day"]`).value) || 1,
+		                activities: Array.from(itinerary.querySelectorAll(".activity")).map(activity => ({
+		                    title: activity.querySelector(`[name="title"]`).value,
+		                    description: activity.querySelector(`[name="description"]`).value
+		                }))
+		            };
+		        })
+			};
+
+			// Thêm JSON vào FormData
+			formData.append("tour", new Blob([JSON.stringify(tour)], {type: "application/json"}));
+
+			// Lấy các file ảnh và thêm vào FormData
+			let filesInput = document.getElementById("images");
+			for (let i = 0; i < filesInput.files.length; i++) {
+				formData.append("files", filesInput.files[i]);
+			}
+
+			// Gửi request đến API REST "/api/tours/new"
+			fetch("/api/tours/new", {
+				method: "POST",
+				body: formData
+			})
+				.then(response => response.json())
+				.then(data => {
+					alert("Chuyến đi đã được tạo thành công!");
+					window.location.href = "/tours/" + data.tourId + "/details"; // Điều hướng sau khi thành công
+				})
+				.catch(error => {
+					console.error("Lỗi:", error);
+					alert("Có lỗi xảy ra khi tạo chuyến đi.");
+				});
+		};
+	
+	</script>
+
+
+
+	<footer th:replace="~{page-component :: footer}"></footer>
+
+</body>
+
+</html>

@@ -19,7 +19,7 @@
         </thead>
         <tbody>
             <tr th:each="payment : ${payments}">
-                <td th:text="${payment.trip.name}">Chuyến đi</td>
+                <td th:text="${payment.tour.name}">Chuyến đi</td>
                 <td th:text="${payment.payer.fullName}">Người thanh toán</td>
                 <td th:text="${payment.receiver.fullName}">Người nhận</td>
                 <td th:text="${payment.amount}">Số tiền</td>

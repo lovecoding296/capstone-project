@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;
-import funix.tgcp.trip.Trip;
-import funix.tgcp.trip.TripRepository;
+import funix.tgcp.tour.Tour;
+import funix.tgcp.tour.TourRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +20,7 @@ public class ReviewService {
     private ReviewRepository reviewRepository;
     
     @Autowired
-    private  TripRepository tripRepository;
+    private  TourRepository tourRepository;
     
     @Autowired
     private  UserRepository userRepository;
@@ -54,8 +54,8 @@ public class ReviewService {
         return reviewRepository.findByReviewerId(reviewerId);
     }
     
-    public List<Review> findByTripId(Long tripId) {
-        return reviewRepository.findByTripId(tripId);
+    public List<Review> findByTourId(Long tourId) {
+        return reviewRepository.findByTourId(tourId);
     }
 
     // Cập nhật đánh giá
@@ -69,18 +69,18 @@ public class ReviewService {
         reviewRepository.deleteById(id);
     }
     
-    List<Review> findByTripIdAndReviewerId(Long tripId, Long reviewer){
-    	return reviewRepository.findByTripIdAndReviewerId(tripId, reviewer);
+    List<Review> findByTourIdAndReviewerId(Long tourId, Long reviewer){
+    	return reviewRepository.findByTourIdAndReviewerId(tourId, reviewer);
     }
     
     @Transactional
-    public void addReview(Long tripId, Long reviewerId, Long reviewedUserId, int rating, String feedback) {
-        if (hasUserReviewed(tripId, reviewerId, reviewedUserId)) {
+    public void addReview(Long tourId, Long reviewerId, Long reviewedUserId, int rating, String feedback) {
+        if (hasUserReviewed(tourId, reviewerId, reviewedUserId)) {
         	System.out.println("Bạn đã đánh giá người này rồi");
             throw new IllegalStateException("Bạn đã đánh giá người này rồi.");            
         }
 
-        Trip trip = tripRepository.findById(tripId)
+        Tour tour = tourRepository.findById(tourId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chuyến đi."));
         User reviewer = userRepository.findById(reviewerId)
                 .orElseThrow(() -> new IllegalArgumentException("Người đánh giá không hợp lệ."));
@@ -88,7 +88,7 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("Người được đánh giá không hợp lệ."));
 
         Review review = new Review();
-        review.setTrip(trip);
+        review.setTour(tour);
         review.setReviewer(reviewer);
         review.setReviewedUser(reviewedUser);
         review.setRating(rating);
@@ -100,8 +100,8 @@ public class ReviewService {
     /**
      * Kiểm tra xem một người dùng đã đánh giá một người khác trong chuyến đi hay chưa
      */
-    public boolean hasUserReviewed(Long tripId, Long reviewerId, Long reviewedUserId) {
-        return reviewRepository.existsByTripIdAndReviewerIdAndReviewedUserId(tripId, reviewerId, reviewedUserId);
+    public boolean hasUserReviewed(Long tourId, Long reviewerId, Long reviewedUserId) {
+        return reviewRepository.existsByTourIdAndReviewerIdAndReviewedUserId(tourId, reviewerId, reviewedUserId);
     }
     
     /**

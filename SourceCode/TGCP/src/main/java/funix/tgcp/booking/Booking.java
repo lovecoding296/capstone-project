@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import org.springframework.validation.annotation.Validated;
 
-import funix.tgcp.trip.Trip;
+import funix.tgcp.tour.Tour;
 import funix.tgcp.user.User;
 
 @Entity
@@ -25,8 +25,8 @@ public class Booking {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "trip_id", nullable = false)
-    private Trip trip;
+    @JoinColumn(name = "tour_id", nullable = false)
+    private Tour tour;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -6,9 +6,9 @@
 <body>
     <h1>Tạo giao dịch thanh toán mới</h1>
     <form th:action="@{/payments/new}" th:object="${payment}" method="post">
-        <label for="trip">Chuyến đi</label>
-        <select th:field="*{trip.id}" required>
-            <option th:each="trip : ${trips}" th:value="${trip.id}" th:text="${trip.name}"></option>
+        <label for="tour">Chuyến đi</label>
+        <select th:field="*{tour.id}" required>
+            <option th:each="tour : ${tours}" th:value="${tour.id}" th:text="${tour.name}"></option>
         </select>
         <br>
 

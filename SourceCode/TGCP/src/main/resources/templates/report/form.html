@@ -36,9 +36,9 @@
         </select>
         <br>
 
-        <label for="reportedTrip">Chuyến đi bị báo cáo</label>
-        <select th:field="*{reportedTrip.id}">
-            <option th:each="trip : ${trips}" th:value="${trip.id}" th:text="${trip.name}"></option>
+        <label for="reportedTour">Chuyến đi bị báo cáo</label>
+        <select th:field="*{reportedTour.id}">
+            <option th:each="tour : ${tours}" th:value="${tour.id}" th:text="${tour.name}"></option>
         </select>
         <br>
 

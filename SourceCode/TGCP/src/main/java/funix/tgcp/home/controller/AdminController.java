@@ -24,13 +24,13 @@ public class AdminController {
 		return "admin/admin-dashboard";
 	}
 	
-	@GetMapping("/admin/trips")
-	public String listTrips(HttpSession session, Model model) {
+	@GetMapping("/admin/tours")
+	public String listTours(HttpSession session, Model model) {
 		return "admin/admin-dashboard";
 	}
 	
-	@GetMapping("/admin/trip-requests")
-	public String listTripRequests(HttpSession session, Model model) {
+	@GetMapping("/admin/tour-requests")
+	public String listTourRequests(HttpSession session, Model model) {
 		return "admin/admin-dashboard";
 	}
 	
@@ -54,7 +54,7 @@ public class AdminController {
 	 * @GetMapping("/admin/posts") public String posts(HttpSession session, Model
 	 * model) { return "admin/admin-dashboard"; }
 	 * 
-	 * @GetMapping("/admin/trips") public String trips(HttpSession session, Model
+	 * @GetMapping("/admin/tours") public String tours(HttpSession session, Model
 	 * model) { return "admin/admin-dashboard"; }
 	 */
 

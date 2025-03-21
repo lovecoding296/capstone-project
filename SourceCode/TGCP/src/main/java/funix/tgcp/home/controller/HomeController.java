@@ -25,9 +25,9 @@ import funix.tgcp.post.Post;
 import funix.tgcp.post.PostCategory;
 import funix.tgcp.post.PostService;
 import funix.tgcp.review.ReviewController;
-import funix.tgcp.trip.Trip;
-import funix.tgcp.trip.TripCategory;
-import funix.tgcp.trip.TripService;
+import funix.tgcp.tour.Tour;
+import funix.tgcp.tour.TourCategory;
+import funix.tgcp.tour.TourService;
 import funix.tgcp.util.FileUploadHelper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -41,7 +41,7 @@ public class HomeController {
 	private UserService userService;
 
 	@Autowired
-	private TripService tripService;
+	private TourService tourService;
 	
 
 	@Autowired
@@ -53,12 +53,12 @@ public class HomeController {
 	@GetMapping("/")
 	public String home(Model model, HttpSession session) {
 		logger.info("home");
-		List<Trip> trips = tripService.findAll();
+		List<Tour> tours = tourService.findAll();
 		List<Post> posts = postService.getLatestPosts();
 
 		model.addAttribute("postCategories", PostCategory.values());
-		model.addAttribute("tripCategories", TripCategory.values());
-		model.addAttribute("trips", trips);
+		model.addAttribute("tourCategories", TourCategory.values());
+		model.addAttribute("tours", tours);
 		model.addAttribute("posts", posts);
 
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -67,14 +67,14 @@ public class HomeController {
 			Map<Long, Boolean> participantStatus = new HashMap<>();
 			Map<Long, Boolean> requestStatus = new HashMap<>();
 
-			for (Trip trip : trips) {
+			for (Tour tour : tours) {
 				
-				for(User user : trip.getParticipants()) {
-					System.out.println("user id " + user.getId() + " loggedInUser is " + loggedInUser.getId() + " isParticipant " + trip.getParticipants().contains(loggedInUser) + " name " +user.getFullName() );
+				for(User user : tour.getParticipants()) {
+					System.out.println("user id " + user.getId() + " loggedInUser is " + loggedInUser.getId() + " isParticipant " + tour.getParticipants().contains(loggedInUser) + " name " +user.getFullName() );
 				}
 				
-				boolean isParticipant = trip.getParticipants().contains(loggedInUser);
-				participantStatus.put(trip.getId(), isParticipant);
+				boolean isParticipant = tour.getParticipants().contains(loggedInUser);
+				participantStatus.put(tour.getId(), isParticipant);
 				
 			}
 
@@ -92,6 +92,11 @@ public class HomeController {
 		}
 		model.addAttribute("user", new User());
 		return "signup"; // Trả về trang signup.html
+	}
+	
+	@GetMapping("/dashboard")
+	public String dashboard() {
+		return "dashboard";
 	}
 	
 	@PostMapping("/signup")

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Thông Tin Người Dùng</title>
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
+
+	<style>
+		.card img {
+			height: 200px;
+			width: 100%;
+			object-fit: cover;
+		}
+	</style>
+</head>
+
+<body>
+	<!--<nav th:replace="~{page-component :: header}"></nav>
+	<footer th:replace="~{page-component :: footer}"></footer>-->
+
+	<nav th:replace="~{page-component :: header}"></nav>
+
+	<div class="container">
+		<h3 class="page-title text-center">Thông tin người dùng</h3>
+		<div class=row>
+			<div class="text-end" th:if="${session.loggedInUser != null and session.loggedInUser.id == user.id}">
+				<a th:href="@{/users/{id}/edit(id=${user.id})}" class="btn btn-primary">Chỉnh sửa thông
+					tin</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<img th:src="@{${user.avatarUrl}}" width="204" height="204"
+					style="border-radius: 15px; border: solid 4px darkseagreen;">
+				<br><br><br>
+				<div th:if="${(session.loggedInUser != null) and (session.loggedInUser.id == user.id || session.loggedInUser.isAdmin())}">
+					<img th:src="@{${user.cccd} ?: '/uploads/default.jpg'}" width="170" height="108">
+					<label>Ảnh căn cước công dân (Không hiển thị với tất cả mọi người):</label>
+				</div>
+			</div>
+
+			<div class="col-md-8">
+				<h3 th:text="${user.fullName}"></h3>
+				<!--<p><strong>Email:</strong> <span th:text="${user.email}"></span></p>-->
+				<p><strong>Giới tính:</strong> <span th:if="${user.gender != null}" th:text="${#messages.msg(user.gender)}"></span></p>
+				<p><strong>Tuổi:</strong> <span th:text="${user.age}"></span></p>
+				<!--<p><strong>Số điện thoại:</strong> <span th:text="${user.phone}"></span></p>
+				<p><strong>Điện thoại gia đình:</strong> <span th:text="${user.familyPhone}"></span></p>
+				<p><strong>Địa chỉ:</strong> <span th:text="${user.homeAddress}"></span></p>-->
+				<p><strong>Thành phố:</strong> <span th:text="${user.city}"></span></p>
+				<p><strong>Giới thiệu bản thân:</strong> <span th:text="${user.bio}"></span></p>
+				<p><strong>Sở thích du lịch:</strong> <span th:text="${user.interests}"></span></p>
+				<p><strong>Facebook:</strong> <a th:href="${user.facebook}" th:text="${user.facebook}"></a></p>
+				<p><strong>Tiktok:</strong> <a th:href="${user.tiktok}" th:text="${user.tiktok}"></a></p>
+				<p><strong>Instagram:</strong> <a th:href="${user.instagram}" th:text="${user.instagram}"></a></p>
+				<p><strong>Điểm uy tín:</strong> <span th:text="${user.averageRating}"></span></p>
+				<!--<p><strong>Đã xác thực email:</strong> <span th:text="${user.verified ? 'Có' : 'Chưa'}"></span></p>
+				<p><strong>Được phê duyệt KYC:</strong> <span th:text="${user.kycApproved ? 'Có' : 'Chưa'}"></span>-->
+				</p>
+
+
+			</div>
+		</div>
+
+		<!-- Section: Danh sách chuyến đi tham gia -->
+		<div class="section-title">
+			<h5><strong>Các đánh giá nổi bật về <span th:text="${user.fullName}"></span></strong></h5>
+		</div>
+
+
+		<div class="container mt-5">
+
+			<div th:if="${reviews.isEmpty()}" class="text-center text-muted mt-4">
+				Không có dữ liệu
+			</div>
+
+			<div th:each="review : ${reviews}" class="border-bottom py-3">
+				<div class="d-flex align-items-start">
+					<!-- Avatar of the reviewer -->
+					<img th:src="@{${review.reviewer.avatarUrl} ?: '/uploads/default-avatar.png'}"
+						class="rounded-circle me-3" width="50" height="50" alt="Avatar">
+
+					<!-- Review details -->
+					<div>
+						<div class="d-flex align-items-center">
+							<!-- Reviewer name -->
+							<h5 th:text="${review.reviewer.fullName}" class="fw-bold mb-0"></h5>
+
+							<!-- Star rating -->
+							<div class="ms-2">
+								<span th:each="i : ${#numbers.sequence(1, 5)}" th:text="'★'"
+									th:classappend="${i <= review.rating} ? 'text-warning' : 'text-muted'">
+								</span>
+							</div>
+						</div>
+
+						<!-- Review feedback -->
+						<p th:text="${review.feedback}" class="mt-2"></p>
+
+						<!-- Review date -->
+						<small
+							th:text="${review.tour.title} + ' - ' + ${#temporals.format(review.reviewDate, 'dd/MM/yyyy')}"></small>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<br><br>
+
+
+		<!-- Section: Danh sách chuyến đi tham gia -->
+		<div class="section-title mt-5">
+			<h5><strong>Chuyến đi nổi bật của <span th:text="${user.fullName}"></span></strong></h5>
+		</div>
+
+		<div class="row mt-4">
+			<!-- Check if there are tours available -->
+			<div th:if="${tours.isEmpty()}" class="col-12 text-center text-muted">
+				Không có dữ liệu
+			</div>
+
+			<!-- Display each tour -->
+			<div th:each="tour : ${tours}" class="col-12 col-md-4 mb-4">
+				<div class="card">
+					<!-- Display tour image or a default image -->
+					<img th:src="@{${tour.tourPictureUrl} ?: '/uploads/default-tour.jpg'}" class="card-img-top"
+						alt="Hình ảnh chuyến đi">
+
+					<div class="card-body">
+						<!-- Tour title -->
+						<h5 class="card-title" th:text="${tour.title}">Tên chuyến đi</h5>
+
+						<!-- Tour description -->
+						<p class="card-text" th:text="${tour.destination}">Mô tả chuyến đi</p>
+
+						<!-- Number of participants -->
+						<p class="card-text text-muted">
+							<i class="bi bi-person-fill"></i> <span th:text="${tour.participants.size()}"></span> người
+							tham gia
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<br><br>
+		<!-- Section: Danh sách bài viết đã viết -->
+		<div class="section-title">
+			<h5><strong>Bài viết nổi bật của <span th:text="${user.fullName}"></span></strong></h5>
+		</div>
+		<table class="table table-stoured table-bordered mt-4">
+			<thead class="table-success">
+				<tr>
+					<th>Tiêu đề</th>
+					<th>Chủ đề</th>
+					<th>Tương tác</th>
+					<th>Ngày đăng</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${posts.isEmpty()}">
+					<td colspan="4" class="text-center text-muted">Không có dữ liệu</td>
+				</tr>
+				<tr th:each="post : ${posts}">
+					<td th:text="${post.title}">Tiêu đề bài viết</td>
+					<td th:text="${#messages.msg(post.category.name)}"></td>
+					<td th:text="'👍' + ${post.likes.size()} + ' 💬' + ${post.comments.size()}"></td>
+					<td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+
+
+
+	</div>
+
+
+	<footer th:replace="~{page-component :: footer}"></footer>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

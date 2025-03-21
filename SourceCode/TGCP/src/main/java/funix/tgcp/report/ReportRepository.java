@@ -10,5 +10,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByReportType(String reportType); // Lấy các báo cáo theo loại
     List<Report> findByReportedUserId(Long userId); // Lấy báo cáo người dùng cụ thể
     List<Report> findByReportedPostId(Long postId); // Lấy báo cáo bài viết cụ thể
-    List<Report> findByReportedTripId(Long tripId); // Lấy báo cáo chuyến đi cụ thể
+    List<Report> findByReportedTourId(Long tourId); // Lấy báo cáo chuyến đi cụ thể
 }

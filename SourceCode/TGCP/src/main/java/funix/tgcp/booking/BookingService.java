@@ -3,8 +3,8 @@ package funix.tgcp.booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import funix.tgcp.trip.Trip;
-import funix.tgcp.trip.TripRepository;
+import funix.tgcp.tour.Tour;
+import funix.tgcp.tour.TourRepository;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;
 
@@ -17,18 +17,18 @@ public class BookingService {
     private BookingRepository bookingRepository;
 
     @Autowired
-    private TripRepository tripRepository;
+    private TourRepository tourRepository;
 
     @Autowired
     private UserRepository userRepository;
 
     // Tạo booking mới
-    public Booking createBooking(Long tripId, Long userId, String note) {
-        Trip trip = tripRepository.findById(tripId).orElseThrow();
+    public Booking createBooking(Long tourId, Long userId, String note) {
+        Tour tour = tourRepository.findById(tourId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
         Booking booking = new Booking();
-        booking.setTrip(trip);
+        booking.setTour(tour);
         booking.setUser(user);
         booking.setStatus(BookingStatus.PENDING); // Mặc định status là PENDING
 
@@ -41,8 +41,8 @@ public class BookingService {
     }
 
     // Lấy danh sách bookings của chuyến đi
-    public List<Booking> getBookingsByTrip(Long tripId) {
-        return bookingRepository.findByTripId(tripId);
+    public List<Booking> getBookingsByTour(Long tourId) {
+        return bookingRepository.findByTourId(tourId);
     }
 
     // Xác nhận booking

@@ -6,7 +6,7 @@ import org.springframework.validation.annotation.Validated;
 
 import funix.tgcp.user.User;
 import funix.tgcp.post.Post;
-import funix.tgcp.trip.Trip;
+import funix.tgcp.tour.Tour;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -58,7 +58,7 @@ public class Report {
     private Post reportedPost; // Nếu báo cáo bài viết
 
     @ManyToOne
-    @JoinColumn(name = "reported_trip")
-    private Trip reportedTrip; // Nếu báo cáo một chuyến đi
+    @JoinColumn(name = "reported_tour")
+    private Tour reportedTour; // Nếu báo cáo một chuyến đi
 
 }
