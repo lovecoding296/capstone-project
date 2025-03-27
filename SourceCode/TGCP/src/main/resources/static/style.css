@@ -5,7 +5,6 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: Arial, sans-serif;
-	background-color: #f8f8f8;
 
 }
 
@@ -41,7 +40,7 @@ a {
 	gap: 15px;
 }
 
-.nav-item a.nav-link {
+#main-nav .nav-item a.nav-link {
 	text-align: center;
 	padding: 10px 15px !important;
 	align-items: center;
@@ -52,7 +51,7 @@ a {
 	font-size: 16px;
 }
 
-.nav-item a.nav-link:hover {
+#main-nav .nav-item a.nav-link:hover {
 	background-color: rgba(255, 255, 255, 0.3);
 	cursor: pointer;
 }

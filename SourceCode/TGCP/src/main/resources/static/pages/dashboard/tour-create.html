@@ -1,39 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Tạo/Chỉnh sửa Tour</title>
-	<!-- Bootstrap CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-	<!-- Bootstrap Bundle with Popper -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet" th:href="@{/style.css}">
-	<script th:src="@{/jquery-3.6.0.min.js}"></script>
-	<script th:src="@{/app-script.js}"></script>
-
-	<script th:src="@{/ckeditor/ckeditor.js}"></script>
-
-	<style>
-		.scrollable-dropdown {
-			max-height: 200px;
-			/* Giới hạn chiều cao */
-			overflow-y: auto;
-			/* Thêm thanh cuộn khi danh sách dài */
-			width: 250px;
-			/* Định dạng chiều rộng */
-			padding: 10px;
-			/* Khoảng cách bên trong */
-		}
-	</style>
-</head>
-
-<body>
-
-	<nav th:replace="~{page-component :: header}"></nav>
-
-	<h3 class="text-center page-title" >Tạo Tour mới
+<div id="tour-create" class="content-section" >
+	<h3 class="text-center page-title">Tạo Tour mới
 	</h3>
 	<form id="tourForm" method="post" class="container mt-4" enctype="multipart/form-data">
 
@@ -154,11 +120,11 @@
 				itineraryDiv.classList.add("itinerary");
 				itineraryDiv.id = itineraryId;
 				itineraryDiv.innerHTML = `
-		                <label>Ngày: <input type="number" min="1" name="dayNo" id="${itineraryId}-day" ></label>
-		                <button onclick="removeElement('${itineraryId}')">Xóa Hành Trình</button>
-		                <button type="button" onclick="addActivity('${itineraryId}')">Thêm Hoạt Động</button>
-		                <div id="${itineraryId}-activities"></div>
-		            `;
+						                <label>Ngày: <input type="number" min="1" name="dayNo" id="${itineraryId}-day" ></label>
+						                <button onclick="removeElement('${itineraryId}')">Xóa Hành Trình</button>
+						                <button type="button" onclick="addActivity('${itineraryId}')">Thêm Hoạt Động</button>
+						                <div id="${itineraryId}-activities"></div>
+						            `;
 				document.getElementById("itineraryContainer").appendChild(itineraryDiv);
 			}
 
@@ -168,10 +134,10 @@
 				activityDiv.classList.add("activity");
 				activityDiv.id = activityId;
 				activityDiv.innerHTML = `
-		                <label>Tiêu đề: <input type="text" name="title"></label>
-		                <label>Mô tả: <input type="text" name="description"></label>
-		                <button onclick="removeElement('${activityId}')">Xóa</button>
-		            `;
+						                <label>Tiêu đề: <input type="text" name="title"></label>
+						                <label>Mô tả: <input type="text" name="description"></label>
+						                <button onclick="removeElement('${activityId}')">Xóa</button>
+						            `;
 				document.getElementById(`${itineraryId}-activities`).appendChild(activityDiv);
 			}
 
@@ -185,8 +151,8 @@
 
 		<div class="mb-3">
 			<label class="form-check-label">
-				<input type="checkbox" id="ageRestricted" name="ageRestricted"
-					class="form-check-input" onchange="toggleAgeInputs()">
+				<input type="checkbox" id="ageRestricted" name="ageRestricted" class="form-check-input"
+					onchange="toggleAgeInputs()">
 				Giới hạn độ tuổi
 			</label>
 		</div>
@@ -205,16 +171,16 @@
 					// Chỉ tạo ra các input nếu chưa được tạo
 					if (!ageInputsContainer.innerHTML.trim()) {
 						const ageInputsHTML = `
-		                    <div class="row">
-		                        <div class="col">
-		                            <label for="fromAge" class="form-label">Từ tuổi</label>
-		                            <input type="number" id="fromAge" name="fromAge"  class="form-control" min="1" max="100" required>
-		                        </div>
-		                        <div class="col">
-		                            <label for="toAge" class="form-label">Đến tuổi</label>
-		                            <input type="number" id="toAge" name="toAge" class="form-control" min="1" max="100" required>
-		                        </div>
-		                    </div>`;
+						                    <div class="row">
+						                        <div class="col">
+						                            <label for="fromAge" class="form-label">Từ tuổi</label>
+						                            <input type="number" id="fromAge" name="fromAge"  class="form-control" min="1" max="100" required>
+						                        </div>
+						                        <div class="col">
+						                            <label for="toAge" class="form-label">Đến tuổi</label>
+						                            <input type="number" id="toAge" name="toAge" class="form-control" min="1" max="100" required>
+						                        </div>
+						                    </div>`;
 						ageInputsContainer.innerHTML = ageInputsHTML;
 					}
 				} else {
@@ -254,43 +220,43 @@
 
 
 		<!--		--------------------------------------
-		<div class="d-flex">
-			 Dropdown chọn ngôn ngữ 
-			<div class="dropdown me-3">
-				<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-					Chọn ngôn ngữ
-				</button>
-				<ul class="dropdown-menu scrollable-dropdown">
-					<li th:each="lang : ${languages}">
-						<input type="checkbox" th:id="${'lang_' + lang}" th:name="languages" th:value="${lang}"
-							th:checked="${#sets.contains(tour.languages, lang)}" class="form-check-input lang-checkbox"
-							onchange="updateSelectedLanguages()">
-						<label th:for="${'lang_' + lang}" class="form-check-label" th:text="${lang}"></label>
-					</li>
-				</ul>
-			</div>
+						<div class="d-flex">
+							 Dropdown chọn ngôn ngữ 
+							<div class="dropdown me-3">
+								<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+									Chọn ngôn ngữ
+								</button>
+								<ul class="dropdown-menu scrollable-dropdown">
+									<li th:each="lang : ${languages}">
+										<input type="checkbox" th:id="${'lang_' + lang}" th:name="languages" th:value="${lang}"
+											th:checked="${#sets.contains(tour.languages, lang)}" class="form-check-input lang-checkbox"
+											onchange="updateSelectedLanguages()">
+										<label th:for="${'lang_' + lang}" class="form-check-label" th:text="${lang}"></label>
+									</li>
+								</ul>
+							</div>
 
-			 Danh sách ngôn ngữ đã chọn 
-			<div>
-				<p id="selectedLanguages"></p>
-			</div>
-		</div>
+							 Danh sách ngôn ngữ đã chọn 
+							<div>
+								<p id="selectedLanguages"></p>
+							</div>
+						</div>
 
-		<script>
-			function updateSelectedLanguages() {
-				let selectedLanguages = [];
-				document.querySelectorAll('.lang-checkbox:checked').forEach(checkbox => {
-					selectedLanguages.push(checkbox.value);
-				});
+						<script>
+							function updateSelectedLanguages() {
+								let selectedLanguages = [];
+								document.querySelectorAll('.lang-checkbox:checked').forEach(checkbox => {
+									selectedLanguages.push(checkbox.value);
+								});
 
-				let display = selectedLanguages.length > 0 ? selectedLanguages.join(', ') : "";
-				document.getElementById('selectedLanguages').innerText = display;
-			}
+								let display = selectedLanguages.length > 0 ? selectedLanguages.join(', ') : "";
+								document.getElementById('selectedLanguages').innerText = display;
+							}
 
-			// Gọi hàm này khi trang tải để hiển thị danh sách ngôn ngữ đã chọn sẵn
-			document.addEventListener("DOMContentLoaded", updateSelectedLanguages);
+							// Gọi hàm này khi trang tải để hiển thị danh sách ngôn ngữ đã chọn sẵn
+							document.addEventListener("DOMContentLoaded", updateSelectedLanguages);
 
-		</script>-->
+						</script>-->
 
 
 
@@ -301,7 +267,7 @@
 
 		<div class="mb-3">
 			<label for="price" class="form-label">Giá</label>
-			<input type="number" id="price"  class="form-control" required>
+			<input type="number" id="price" class="form-control" required>
 		</div>
 
 		<div class="mb-3">
@@ -352,16 +318,16 @@
 				fromAge: document.getElementById("fromAge") ? document.getElementById("fromAge").value : null,
 				toAge: document.getElementById("toAge") ? document.getElementById("toAge").value : null,
 				// Lấy danh sách lịch trình (itineraries)
-		        itineraries: Array.from(document.querySelectorAll(".itinerary")).map(itinerary => {
-		            let itineraryId = itinerary.id;
-		            return {
-		                dayNo: parseInt(itinerary.querySelector(`[id="${itineraryId}-day"]`).value) || 1,
-		                activities: Array.from(itinerary.querySelectorAll(".activity")).map(activity => ({
-		                    title: activity.querySelector(`[name="title"]`).value,
-		                    description: activity.querySelector(`[name="description"]`).value
-		                }))
-		            };
-		        })
+				itineraries: Array.from(document.querySelectorAll(".itinerary")).map(itinerary => {
+					let itineraryId = itinerary.id;
+					return {
+						dayNo: parseInt(itinerary.querySelector(`[id="${itineraryId}-day"]`).value) || 1,
+						activities: Array.from(itinerary.querySelectorAll(".activity")).map(activity => ({
+							title: activity.querySelector(`[name="title"]`).value,
+							description: activity.querySelector(`[name="description"]`).value
+						}))
+					};
+				})
 			};
 
 			// Thêm JSON vào FormData
@@ -388,13 +354,6 @@
 					alert("Có lỗi xảy ra khi tạo Tour.");
 				});
 		};
-	
+
 	</script>
-
-
-
-	<footer th:replace="~{page-component :: footer}"></footer>
-
-</body>
-
-</html>
+</div>

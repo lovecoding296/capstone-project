@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,7 +64,7 @@ public class HomeController {
 
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		if (loggedInUser != null) {
-			// Tạo một Map để lưu trạng thái tham gia của người dùng với từng chuyến đi
+			// Tạo một Map để lưu trạng thái tham gia của người dùng với từng Tour
 			Map<Long, Boolean> participantStatus = new HashMap<>();
 			Map<Long, Boolean> requestStatus = new HashMap<>();
 
@@ -84,6 +85,7 @@ public class HomeController {
 
 		return "home";
 	}
+	
 
 	@GetMapping("/signup")
 	public String showSignupForm(HttpSession session, Model model) {
@@ -94,9 +96,34 @@ public class HomeController {
 		return "signup"; // Trả về trang signup.html
 	}
 	
+	@GetMapping("/tours")
+	public String getAllTours() {
+		return "tour/tour-list"; // Tên của view (HTML)
+	}
+
+	@GetMapping("/tours/new")
+	public String showCreateForm() {
+		return "tour/tour-new"; // Form tạo Tour mới
+	}
+	
+	@GetMapping("/tours/{id}")
+	public String findById(@PathVariable Long id) {
+		return "tour/tour-details"; // View cho chi tiết Tour
+	}
+
+	@GetMapping("/tours/{id}/edit")
+	public String showEditForm(@PathVariable Long id) {
+		return "tour/tour-edit"; // Form chỉnh sửa Tour
+	}
+	
 	@GetMapping("/dashboard")
 	public String dashboard() {
-		return "dashboard";
+		return "/dashboard/dashboard-main";
+	}
+	
+	@GetMapping("/dashboard/guide-approval")
+	public String dashboardGuideApproval() {
+		return "/dashboard/guide-approval";
 	}
 	
 	@PostMapping("/signup")

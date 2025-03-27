@@ -58,7 +58,7 @@ public class ReviewController {
     
 
     /**
-     * Hiển thị danh sách đánh giá của chuyến đi
+     * Hiển thị danh sách đánh giá của Tour
      */
     @GetMapping("/tour/{tourId}")
     public String listReviews(@PathVariable Long tourId, Model model, HttpSession session) {

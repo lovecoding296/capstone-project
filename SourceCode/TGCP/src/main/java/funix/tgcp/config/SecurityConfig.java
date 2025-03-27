@@ -35,10 +35,10 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers("/admin/**").hasRole("ADMIN")
-        		.requestMatchers("/reviews/**").authenticated()
-        		.requestMatchers("/users/**").authenticated()
+        		//.requestMatchers("/reviews/**").authenticated()
+        		//.requestMatchers("/users/**").authenticated()
         		//.requestMatchers("/tours/**").authenticated()
-        		.requestMatchers("/posts/**").authenticated()
+        		//.requestMatchers("/posts/**").authenticated()
         		.requestMatchers("/ckeditor/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().permitAll() // Allow all requests
             )

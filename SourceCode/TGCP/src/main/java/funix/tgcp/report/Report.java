@@ -59,6 +59,6 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "reported_tour")
-    private Tour reportedTour; // Nếu báo cáo một chuyến đi
+    private Tour reportedTour; // Nếu báo cáo một Tour
 
 }

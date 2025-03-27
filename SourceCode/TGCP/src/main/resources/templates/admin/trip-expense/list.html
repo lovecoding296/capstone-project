@@ -8,7 +8,7 @@
     <table>
         <thead>
             <tr>
-                <th>Chuyến đi</th>
+                <th>Tour</th>
                 <th>Mô tả</th>
                 <th>Số tiền</th>
                 <th>Ngày chi phí</th>
@@ -18,7 +18,7 @@
         </thead>
         <tbody>
             <tr th:each="expense : ${expenses}">
-                <td th:text="${expense.tour.name}">Chuyến đi</td>
+                <td th:text="${expense.tour.name}">Tour</td>
                 <td th:text="${expense.description}">Mô tả</td>
                 <td th:text="${expense.amount}">Số tiền</td>
                 <td th:text="${#dates.format(expense.expenseDate, 'dd/MM/yyyy HH:mm')}">Ngày chi phí</td>

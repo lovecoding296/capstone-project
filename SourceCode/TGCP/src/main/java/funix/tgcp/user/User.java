@@ -81,6 +81,7 @@ public class User {
 	private boolean verified = false; // verify email
 	private boolean kycApproved = false; //verify cccd
 	
+	@Column(columnDefinition = "NVARCHAR(255)")
 	private String cccd;//cccd url
 	
 	private boolean isActive = true;
@@ -89,11 +90,23 @@ public class User {
 		return this.role == Role.ROLE_ADMIN;
 	}
 	
+	@Column(columnDefinition = "NVARCHAR(255)")
+	private String guideLicenseUrl;
+	
+	@Column(columnDefinition = "NVARCHAR(255)")
+    private String guideLicense;
+    
+    @Column(columnDefinition = "NVARCHAR(2000)")
+    private String experience;
+    
     private String bankName; // Tên ngân hàng
 
     private String accountNumber; // Số tài khoản
 
     private String accountHolder; // Chủ tài khoản
+    
+    
+    
 
 
 	@Override

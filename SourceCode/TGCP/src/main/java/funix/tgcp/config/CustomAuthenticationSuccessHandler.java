@@ -34,6 +34,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Optional<User> user = userService.findByEmail(username);
         
         // Save user in session
+        
+        System.out.println("session.setAttribute loggedInUser");
+        
         HttpSession session = request.getSession();
         session.setAttribute("loggedInUser", user.get());
         

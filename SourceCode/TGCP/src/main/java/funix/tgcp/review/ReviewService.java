@@ -81,7 +81,7 @@ public class ReviewService {
         }
 
         Tour tour = tourRepository.findById(tourId)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chuyến đi."));
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Tour."));
         User reviewer = userRepository.findById(reviewerId)
                 .orElseThrow(() -> new IllegalArgumentException("Người đánh giá không hợp lệ."));
         User reviewedUser = userRepository.findById(reviewedUserId)
@@ -98,7 +98,7 @@ public class ReviewService {
     }
     
     /**
-     * Kiểm tra xem một người dùng đã đánh giá một người khác trong chuyến đi hay chưa
+     * Kiểm tra xem một người dùng đã đánh giá một người khác trong Tour hay chưa
      */
     public boolean hasUserReviewed(Long tourId, Long reviewerId, Long reviewedUserId) {
         return reviewRepository.existsByTourIdAndReviewerIdAndReviewedUserId(tourId, reviewerId, reviewedUserId);

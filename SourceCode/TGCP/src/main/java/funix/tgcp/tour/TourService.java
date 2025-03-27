@@ -75,6 +75,24 @@ public class TourService {
 		return tourRepository.findByParticipantId(userId);
 	}
 
+	public List<Tour> getPendingTours() {
+		return tourRepository.findByStatus(TourStatus.PENDING);
+	}
+
+	public Tour approveTour(Long id) {
+        Tour tour = tourRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tour not found"));
+        tour.setStatus(TourStatus.OPEN);
+        return tourRepository.save(tour);
+    }
+
+    public Tour rejectTour(Long id) {
+        Tour tour = tourRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tour not found"));
+        tour.setStatus(TourStatus.REJECTED);
+        return tourRepository.save(tour);
+    }
+
 	
 }
 

@@ -64,15 +64,15 @@ public class UserController {
         Optional<User> user = userService.findById(id);
         if (user.isPresent()) {
         	
-        	//List<Tour> tours = tourService.findByCreatorId(user.get().getId());
-            //List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(user.get().getId());            
-            //List<Review> reviews = reviewService.findTop3ByReviewedUserIdOrderByReviewDateDesc(user.get().getId());
+        	List<Tour> tours = tourService.findByCreatorId(user.get().getId());
+            List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(user.get().getId());            
+            List<Review> reviews = reviewService.findTop3ByReviewedUserIdOrderByReviewDateDesc(user.get().getId());
 
         	
-            //model.addAttribute("user", user.get());
-            //model.addAttribute("tours", tours);
-            //model.addAttribute("posts", posts);
-            //model.addAttribute("reviews", reviews);
+            model.addAttribute("user", user.get());
+            model.addAttribute("tours", tours);
+            model.addAttribute("posts", posts);
+            model.addAttribute("reviews", reviews);
             return "user/user-details"; // Trả về trang chi tiết người dùng
         }
         return "redirect:/users"; // Nếu không tìm thấy, chuyển hướng về trang danh sách

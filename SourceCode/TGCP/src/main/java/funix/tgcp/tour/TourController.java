@@ -45,25 +45,7 @@ public class TourController {
 	@Autowired
 	private TourImageRepository tourImageRepository;
 
-	@GetMapping
-	public String getAllTours() {
-		return "tour/tour-list"; // Tên của view (HTML)
-	}
 
-	@GetMapping("/new")
-	public String showCreateForm() {
-		return "tour/tour-new"; // Form tạo chuyến đi mới
-	}
-	
-	@GetMapping("/{id}")
-	public String findById(@PathVariable Long id) {
-		return "tour/tour-details"; // View cho chi tiết chuyến đi
-	}
-
-	@GetMapping("/{id}/edit")
-	public String showEditForm(@PathVariable Long id) {
-		return "tour/tour-edit"; // Form chỉnh sửa chuyến đi
-	}
 
 //	private void deleteImageFromDatabase(String imageUrl) {
 //		// Tìm và xóa TourImage từ cơ sở dữ liệu theo URL
@@ -89,27 +71,27 @@ public class TourController {
 //	@DeleteMapping("/{id}")
 //	public String deleteTour(@PathVariable Long id) {
 //		tourService.deleteTour(id);
-//		return "redirect:/tours"; // Sau khi xóa xong, chuyển hướng về danh sách chuyến đi
+//		return "redirect:/tours"; // Sau khi xóa xong, chuyển hướng về danh sách Tour
 //	}
 //
 //	@GetMapping("/category/{category}")
 //	public String getToursByCategory(@PathVariable TourCategory category, Model model) {
 //		List<Tour> tours = tourService.findByCategory(category);
 //		model.addAttribute("tours", tours);
-//		return "tour/list"; // View danh sách chuyến đi theo category
+//		return "tour/list"; // View danh sách Tour theo category
 //	}
 //
 //	@GetMapping("/creator/{userId}")
 //	public String findByCreatorId(@PathVariable Long userId, Model model) {
 //		List<Tour> tours = tourService.findByCreatorId(userId);
 //		model.addAttribute("tours", tours);
-//		return "tour/list"; // View danh sách chuyến đi của người tạo
+//		return "tour/list"; // View danh sách Tour của người tạo
 //	}
 //
 //	@GetMapping("/participant/{userId}")
 //	public String getToursByParticipant(@PathVariable Long userId, Model model) {
 //		List<Tour> tours = tourService.findByParticipantId(userId);
 //		model.addAttribute("tours", tours);
-//		return "tour/list"; // View danh sách chuyến đi của người tham gia
+//		return "tour/list"; // View danh sách Tour của người tham gia
 //	}
 }

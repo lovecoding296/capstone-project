@@ -57,7 +57,7 @@ public class ReportService {
         return reportRepository.findByReportedPostId(postId);
     }
 
-    // Lấy báo cáo theo chuyến đi bị báo cáo
+    // Lấy báo cáo theo Tour bị báo cáo
     public List<Report> findByReportedTourId(Long tourId) {
         return reportRepository.findByReportedTourId(tourId);
     }

@@ -52,7 +52,7 @@
 				<h3 th:text="${user.fullName}"></h3>
 				<!--<p><strong>Email:</strong> <span th:text="${user.email}"></span></p>-->
 				<p><strong>Giới tính:</strong> <span th:if="${user.gender != null}" th:text="${#messages.msg(user.gender)}"></span></p>
-				<p><strong>Tuổi:</strong> <span th:text="${user.age}"></span></p>
+				<p><strong>Năm sinh:</strong> <span th:text="${user.dateOfBirth}"></span></p>
 				<!--<p><strong>Số điện thoại:</strong> <span th:text="${user.phone}"></span></p>
 				<p><strong>Điện thoại gia đình:</strong> <span th:text="${user.familyPhone}"></span></p>
 				<p><strong>Địa chỉ:</strong> <span th:text="${user.homeAddress}"></span></p>-->
@@ -71,7 +71,7 @@
 			</div>
 		</div>
 
-		<!-- Section: Danh sách chuyến đi tham gia -->
+		<!-- Section: Danh sách Tour tham gia -->
 		<div class="section-title">
 			<h5><strong>Các đánh giá nổi bật về <span th:text="${user.fullName}"></span></strong></h5>
 		</div>
@@ -117,9 +117,9 @@
 		<br><br>
 
 
-		<!-- Section: Danh sách chuyến đi tham gia -->
+		<!-- Section: Danh sách Tour tham gia -->
 		<div class="section-title mt-5">
-			<h5><strong>Chuyến đi nổi bật của <span th:text="${user.fullName}"></span></strong></h5>
+			<h5><strong>Tour nổi bật của <span th:text="${user.fullName}"></span></strong></h5>
 		</div>
 
 		<div class="row mt-4">
@@ -133,14 +133,14 @@
 				<div class="card">
 					<!-- Display tour image or a default image -->
 					<img th:src="@{${tour.tourPictureUrl} ?: '/uploads/default-tour.jpg'}" class="card-img-top"
-						alt="Hình ảnh chuyến đi">
+						alt="Hình ảnh Tour">
 
 					<div class="card-body">
 						<!-- Tour title -->
-						<h5 class="card-title" th:text="${tour.title}">Tên chuyến đi</h5>
+						<h5 class="card-title" th:text="${tour.title}">Tên Tour</h5>
 
 						<!-- Tour description -->
-						<p class="card-text" th:text="${tour.destination}">Mô tả chuyến đi</p>
+						<p class="card-text" th:text="${tour.destination}">Mô tả Tour</p>
 
 						<!-- Number of participants -->
 						<p class="card-text text-muted">

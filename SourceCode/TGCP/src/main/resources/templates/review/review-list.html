@@ -24,7 +24,7 @@
 
 		<!-- Nút tạo đánh giá -->
 		<div class="d-flex justify-content-between align-items-center mb-3">
-			<span class="fw-bold">Chuyến đi: <span th:text="${tour.title}"></span></span>
+			<span class="fw-bold">Tour: <span th:text="${tour.title}"></span></span>
 			<a th:href="@{/reviews/tour/{tourId}/new(tourId=${tourId})}" class="btn btn-success">
 				+ Tạo đánh giá
 			</a>
@@ -73,7 +73,7 @@
 		</table>
 
 		<div class="text-center mt-4">
-			<a th:href="@{/tours/{tourId}/details(tourId=${tourId})}" class="btn btn-secondary">Quay lại chuyến đi</a>
+			<a th:href="@{/tours/{tourId}/details(tourId=${tourId})}" class="btn btn-secondary">Quay lại Tour</a>
 		</div>
 	</div>
 

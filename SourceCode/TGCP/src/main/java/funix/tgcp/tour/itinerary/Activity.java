@@ -28,10 +28,10 @@ public class Activity {
     @JsonIgnore
     private Itinerary itinerary;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(3000)")
     private String description;
     
     private LocalDateTime createdAt;

@@ -72,7 +72,7 @@ public class Tour {
     
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User creator; // Người tổ chức chuyến đi
+    private User creator; // Người tổ chức Tour
     
     @ElementCollection(targetClass = Language.class)
     @CollectionTable(name = "tour_languages", joinColumns = @JoinColumn(name = "tour_id"))
@@ -98,7 +98,11 @@ public class Tour {
     private Set<Itinerary> itineraries = new HashSet<>();    
     
     @Enumerated(EnumType.STRING)
-	private TourStatus status;
+	private TourStatus status = TourStatus.PENDING;
+    
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String rejectedReason;
     
     
     private LocalDateTime createdAt;

@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Tạo/Chỉnh sửa chuyến đi</title>
+	<title>Tạo/Chỉnh sửa Tour</title>
 </head>
 
 <body>
-	<h1 th:text="${#strings.isEmpty(tour.id) ? 'Tạo chuyến đi mới' : 'Chỉnh sửa chuyến đi'}"></h1>
+	<h1 th:text="${#strings.isEmpty(tour.id) ? 'Tạo Tour mới' : 'Chỉnh sửa Tour'}"></h1>
 	<form th:action="@{${#strings.isEmpty(tour.id) ? '/tours/new' : '/tours/' + tour.id + '/edit'}}" th:object="${tour}"
 		method="post">
 		<label for="title">Tiêu đề</label>
@@ -43,7 +43,7 @@
 		<input type="hidden" th:field="*{participants}" id="participants" />
 
 
-		<button type="submit">Lưu chuyến đi</button>
+		<button type="submit">Lưu Tour</button>
 	</form>
 
 	<script>

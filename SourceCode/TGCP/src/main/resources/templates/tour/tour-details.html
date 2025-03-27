@@ -3,12 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Chi tiết chuyến đi</title>
+    <title>Chi tiết Tour</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
-    <h2>Chi tiết chuyến đi</h2>
+    <h2>Chi tiết Tour</h2>
 
     <div>
         <h3 id="tour-title"></h3>
@@ -32,7 +32,7 @@
         <h3>Hình ảnh</h3>
         <div id="tour-images"></div>
 
-        <a id="tour-review-link">Chuyến đi đã kết thúc, hãy để lại đánh giá.</a>
+        <a id="tour-review-link">Tour đã kết thúc, hãy để lại đánh giá.</a>
         <a id="tour-edit-link">Chỉnh sửa</a>
     </div>
 
@@ -44,7 +44,7 @@
 
 
             if (!tourId) {
-                alert("Không tìm thấy ID chuyến đi.");
+                alert("Không tìm thấy ID Tour.");
                 return;
             }
 
@@ -99,8 +99,8 @@
                     document.getElementById("tour-edit-link").href = `/tours/${tour.id}/edit`;
                 })
                 .catch(error => {
-                    console.error("Lỗi khi tải chuyến đi:", error);
-                    alert("Không thể tải thông tin chuyến đi.");
+                    console.error("Lỗi khi tải Tour:", error);
+                    alert("Không thể tải thông tin Tour.");
                 });
 
             function formatDateTime(dateTime) {

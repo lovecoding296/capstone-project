@@ -14,7 +14,7 @@
         <select th:field="*{reportType}" required>
             <option value="USER">Người dùng</option>
             <option value="POST">Bài viết</option>
-            <option value="TRIP">Chuyến đi</option>
+            <option value="TRIP">Tour</option>
         </select>
         <br>
 
@@ -36,7 +36,7 @@
         </select>
         <br>
 
-        <label for="reportedTour">Chuyến đi bị báo cáo</label>
+        <label for="reportedTour">Tour bị báo cáo</label>
         <select th:field="*{reportedTour.id}">
             <option th:each="tour : ${tours}" th:value="${tour.id}" th:text="${tour.name}"></option>
         </select>

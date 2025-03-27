@@ -51,6 +51,9 @@ public class TourRestController {
 
 	@Autowired
 	private ItineraryService itineraryService;
+	
+	
+
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Tour> getTour(@PathVariable Long id) {
@@ -75,6 +78,7 @@ public class TourRestController {
 				image.setUrl(fileUploadHelper.uploadFile(file));
 				image.setTour(tour);
 				tour.getImages().add(image);
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -201,5 +205,7 @@ public class TourRestController {
 		itineraryService.deleteActivityById(activityId);
 		return ResponseEntity.ok("Ảnh đã bị xóa");
 	}
+	
+	
 
 }

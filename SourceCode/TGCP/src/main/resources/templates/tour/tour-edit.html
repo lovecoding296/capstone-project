@@ -4,17 +4,17 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Chỉnh sửa chuyến đi</title>
+	<title>Chỉnh sửa Tour</title>
 	<script src="https://cdn.ckeditor.com/4.19.1/standard/ckeditor.js"></script>
 </head>
 
 <body>
-	<h2>Chỉnh sửa chuyến đi</h2>
+	<h2>Chỉnh sửa Tour</h2>
 
 	<form id="tourForm">
 		<input type="hidden" id="tourId">
 
-		<label for="title">Tên chuyến đi:</label>
+		<label for="title">Tên Tour:</label>
 		<input type="text" id="title" name="title" required>
 
 		<label for="destination">Điểm đến:</label>
@@ -55,7 +55,7 @@
 			<input type="number" id="toAge" name="toAge">
 		</div>
 
-		<h3>Hình ảnh chuyến đi</h3>
+		<h3>Hình ảnh Tour</h3>
 		<div id="imageContainer"></div>
 		<input type="file" id="imageUpload" multiple>
 		<button type="button" onclick="uploadImages()">Tải ảnh lên</button>
@@ -472,12 +472,12 @@
 			})
 				.then(response => response.json())
 				.then(data => {
-					alert("Chuyến đi đã cập nhật thành công!");
+					alert("Tour đã cập nhật thành công!");
 					window.location.href = "/tours/" + data.tourId + "/details"; // Điều hướng sau khi thành công
 				})
 				.catch(error => {
 					console.error("Lỗi:", error);
-					alert("Có lỗi xảy ra khi tạo chuyến đi.");
+					alert("Có lỗi xảy ra khi tạo Tour.");
 				});
 		}
 	</script>

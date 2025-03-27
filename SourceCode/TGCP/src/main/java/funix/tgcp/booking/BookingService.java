@@ -40,7 +40,7 @@ public class BookingService {
         return bookingRepository.findByUserId(userId);
     }
 
-    // Lấy danh sách bookings của chuyến đi
+    // Lấy danh sách bookings của Tour
     public List<Booking> getBookingsByTour(Long tourId) {
         return bookingRepository.findByTourId(tourId);
     }

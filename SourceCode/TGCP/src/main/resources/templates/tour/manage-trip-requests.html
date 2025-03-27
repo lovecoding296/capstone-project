@@ -20,7 +20,7 @@
             <p><b>User:</b> <span th:text="${request.user.fullName}"></span></p>
             <p><b>Status:</b> <span th:text="${request.status}"></span></p>
 
-            <!-- Hiển thị nút phê duyệt và từ chối chỉ cho người tạo chuyến đi hoặc admin -->
+            <!-- Hiển thị nút phê duyệt và từ chối chỉ cho người tạo Tour hoặc admin -->
             <div th:if="${isOwnerOrAdmin}">
                 <form th:action="@{/tours/{tourId}/requests/{requestId}/approve(tourId=${tour.id}, requestId=${request.id})}" method="post">
                     <button type="submit">Approve</button>

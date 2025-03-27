@@ -22,7 +22,7 @@ import lombok.Setter;
 
 
 /**
- * Sau mỗi chuyến đi, thành viên có thể đánh giá lẫn nhau.
+ * Sau mỗi Tour, thành viên có thể đánh giá lẫn nhau.
  * 
  */
 
@@ -46,7 +46,7 @@ public class Review {
     
     @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false)
-    private Tour tour; // Đánh giá thuộc về chuyến đi nào
+    private Tour tour; // Đánh giá thuộc về Tour nào
 
     @ManyToOne
     @JoinColumn(name = "reviewer_id", nullable = false)

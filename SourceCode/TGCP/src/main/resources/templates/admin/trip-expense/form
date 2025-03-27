@@ -4,9 +4,9 @@
     <title>Tạo khoản chi phí mới</title>
 </head>
 <body>
-    <h1>Tạo khoản chi phí cho chuyến đi</h1>
+    <h1>Tạo khoản chi phí cho Tour</h1>
     <form th:action="@{/tour-expenses/new}" th:object="${tourExpense}" method="post">
-        <label for="tour">Chuyến đi</label>
+        <label for="tour">Tour</label>
         <select th:field="*{tour.id}" required>
             <option th:each="tour : ${tours}" th:value="${tour.id}" th:text="${tour.name}"></option>
         </select>
