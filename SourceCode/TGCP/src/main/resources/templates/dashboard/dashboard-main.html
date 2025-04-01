@@ -4,8 +4,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Admin Dashboard</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<title>Dashboard</title>
+
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Bootstrap Bundle with Popper -->
@@ -35,17 +35,22 @@
 					<h4>Dashboard Panel</h4>
 					<ul class="nav flex-column">
 						<li class="nav-item"><a class="panel-link nav-link active" href="#guide-register"
-								onclick="navigate(event,'guide-register')">Đăng ký làm hướng dẫn
-								viên</a>
+								onclick="navigate(event,'guide-register')">Đăng ký làm hướng dẫn viên</a>
 						</li>
 						<li class="nav-item"><a class="panel-link nav-link" href="#guide-approval"
-								onclick="navigate(event,'guide-approval')">Phê duyệt đơn đăng ký
-								hướng dẫn
-								viên</a></li>
+								onclick="navigate(event,'guide-approval')">Phê duyệt đơn đăng ký hướng dẫn viên</a>
+						</li>
 						<li class="nav-item"><a class="panel-link nav-link" href="#tour-approval"
-								onclick="navigate(event,'tour-approval')">Phê duyệt đơn tạo tour</a></li>
+								onclick="navigate(event,'tour-approval')">Phê duyệt đơn tạo tour</a>
+						</li>
+						
+						<li class="nav-item"><a class="panel-link nav-link" href="#manage-tour"
+								onclick="navigate(event,'manage-tour')">Quản lý tour</a>
+						</li>
+								
 						<li class="nav-item"><a class="panel-link nav-link" href="#tour-create"
-								onclick="navigate(event,'tour-create')">Tạo tour</a></li>
+								onclick="navigate(event,'tour-create')">Tạo tour</a>
+						</li>
 					</ul>
 				</div>
 			</nav>
@@ -53,74 +58,84 @@
 			<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
 
 				<div id="content">
-					<h2>Welcome to the Home Page!</h2>
+					<!--<h2>Welcome to the Home Page!</h2>-->
 				</div>
+				<script>
+					
+					
+
+					
+					
+					function navigate(event, page) {
+						event.preventDefault(); // Ngăn chặn tải lại trang
+
+						loadPage(page);
+					}
+
+					function loadPage(page) {
+						fetch(`/pages/dashboard/${page}.html`)
+							.then(response => {
+								if (!response.ok) throw new Error("Page not found");
+								return response.text();
+							})
+							.then(html => {
+								document.getElementById("content").innerHTML = html;
+								
+								// Lấy tất cả các textarea
+								const textareas = document.querySelectorAll('textarea');
+								// Khởi tạo CKEditor cho mỗi textarea
+								textareas.forEach(textarea => {
+									CKEDITOR.replace(textarea, {
+										versionCheck: false,
+										extraPlugins: 'videoembed',
+									});
+								});
+							})
+							.catch(() => {
+								document.getElementById("content").innerHTML = "<h2>Page Not Found</h2>";
+							});
+					}
+
+					loadPage('guide-register')
 
 
 
-			</div>
+					document.addEventListener("DOMContentLoaded", function () {
+						const panelLinks = document.querySelectorAll(".panel-link");
+						const contentSections = document.querySelectorAll(".content-section");
+
+						//fetchGuideRequests();
+
+						panelLinks.forEach(link => {
+							link.addEventListener("click", function (event) {
+								event.preventDefault(); // Ngăn chặn tải lại trang
+
+								// Xóa class "active" khỏi tất cả menu
+								panelLinks.forEach(nav => nav.classList.remove("active"));
+
+								// Thêm class "active" vào menu được chọn
+								this.classList.add("active");
 
 
-			<script>
+								//if (targetId === "guide-approval") {
+								//console.log("guide-approval")
+								//fetchGuideRequests();
+								//} else if (targetId === "tour-approval") {
+								//	fetchPendingTours();
+								//} else if (targetId === "tour-create") {
 
-				function navigate(event, page) {
-					event.preventDefault(); // Ngăn chặn tải lại trang
-
-					loadPage(page);
-				}
-
-				function loadPage(page) {
-					fetch(`/pages/dashboard/${page}.html`)
-						.then(response => {
-							if (!response.ok) throw new Error("Page not found");
-							return response.text();
-						})
-						.then(html => {
-							document.getElementById("content").innerHTML = html;
-						})
-						.catch(() => {
-							document.getElementById("content").innerHTML = "<h2>Page Not Found</h2>";
-						});
-				}
-
-
-
-
-
-				document.addEventListener("DOMContentLoaded", function () {
-					const panelLinks = document.querySelectorAll(".panel-link");
-					const contentSections = document.querySelectorAll(".content-section");
-
-					//fetchGuideRequests();
-
-					panelLinks.forEach(link => {
-						link.addEventListener("click", function (event) {
-							event.preventDefault(); // Ngăn chặn tải lại trang
-
-							// Xóa class "active" khỏi tất cả menu
-							panelLinks.forEach(nav => nav.classList.remove("active"));
-
-							// Thêm class "active" vào menu được chọn
-							this.classList.add("active");
-
-
-							//if (targetId === "guide-approval") {
-							//console.log("guide-approval")
-							//fetchGuideRequests();
-							//} else if (targetId === "tour-approval") {
-							//	fetchPendingTours();
-							//} else if (targetId === "tour-create") {
-
-							//}
+								//}
+							});
 						});
 					});
-				});
 
-			</script>
+				</script>
+				
+
+			</div>
 		</div>
 	</div>
 
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<footer th:replace="~{page-component :: footer}"></footer>
 </body>
 

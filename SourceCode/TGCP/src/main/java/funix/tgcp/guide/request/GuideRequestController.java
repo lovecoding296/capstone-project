@@ -3,6 +3,8 @@ package funix.tgcp.guide.request;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import funix.tgcp.review.ReviewController;
+import funix.tgcp.util.LogHelper;
+
 @RestController
 @RequestMapping("/api/guide-requests")
 public class GuideRequestController {
+	
+	private static final LogHelper logger = new LogHelper(GuideRequestController.class);
+
+	
     @Autowired
     private GuideRequestService guideRequestService;
     
@@ -30,8 +39,10 @@ public class GuideRequestController {
             @RequestParam("guideLicense") String guideLicense,
             @RequestParam("experience") String experience) {
 
-    	Long userId = (long) 2;
+    	Long userId = (long) 4;
         try {
+        	System.out.println("GuideRequestController guideRequestService");
+        	logger.info("xxx");
             guideRequestService.registerGuide(userId, guideLicenseFile, 
             		guideLicense, experience);
             return ResponseEntity.ok("Đăng ký hướng dẫn viên thành công!");

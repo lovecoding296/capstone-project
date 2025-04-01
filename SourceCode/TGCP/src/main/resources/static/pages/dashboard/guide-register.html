@@ -14,30 +14,6 @@
 			<textarea id="experience" class="form-control"></textarea>
 		</div>
 
-		<button type="submit" class="btn btn-success">Gửi</button>
+		<button type="submit" onclick="submitGuideRegister()" class="btn btn-success">Gửi</button>
 	</form>
-
-	<script>
-		document.getElementById("guideForm").addEventListener("submit", async (event) => {
-			event.preventDefault();
-
-			const formData = new FormData();
-			formData.append("guideLicenseFile", document.getElementById("guideLicenseFile").files[0]);
-			formData.append("guideLicense", document.getElementById("guideLicense").value);
-			formData.append("experience", document.getElementById("experience").value);
-
-			try {
-				const response = await fetch("/api/guide-requests/register", {
-					method: "POST",
-					body: formData
-				});
-				if (!response.ok) throw new Error("Gửi yêu cầu thất bại");
-				alert("Đăng ký thành công!");
-				document.getElementById("guideForm").reset();
-			} catch (error) {
-				console.error(error);
-				alert("Có lỗi xảy ra, vui lòng thử lại!");
-			}
-		});
-	</script>
 </div>

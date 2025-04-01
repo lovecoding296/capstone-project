@@ -4,17 +4,24 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import funix.tgcp.home.controller.HomeController;
 import funix.tgcp.user.Role;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;
 import funix.tgcp.util.FileUploadHelper;
+import funix.tgcp.util.LogHelper;
 
 @Service
 public class GuideRequestService {
+	private static final LogHelper logger = new LogHelper(GuideRequestService.class);
+
+	
     @Autowired
     private GuideRequestRepository guideRequestRepository;
 
@@ -28,6 +35,10 @@ public class GuideRequestService {
     		MultipartFile guideLicenseFile, 
     		String guideLicense, 
     		String experience) {
+    	
+    	System.out.println("GuideRequestService registerGuide");
+    	logger.info("yyy");
+    	
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isPresent()) {
             User user = userOpt.get();

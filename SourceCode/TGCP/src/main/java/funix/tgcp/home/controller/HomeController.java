@@ -36,7 +36,7 @@ import jakarta.validation.Valid;
 @Controller
 public class HomeController {
 
-	private static final Logger logger = LoggerFactory.getLogger(ReviewController.class);
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
 	@Autowired
 	private UserService userService;
