@@ -94,6 +94,18 @@ public class HomeController {
 		return "signup"; // Trả về trang signup.html
 	}
 	
+	
+	@GetMapping("/bookings/tour/{id}")
+	public String showBooking() {
+		return "booking/booking"; // Tên của view (HTML)
+	}
+	
+	@GetMapping("/payments/tour/{id}")
+	public String showPayment() {
+		return "payment/payment"; // Tên của view (HTML)
+	}
+
+	
 	@GetMapping("/tours")
 	public String getAllTours() {
 		return "tour/tour-list"; // Tên của view (HTML)

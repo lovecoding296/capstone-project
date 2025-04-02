@@ -32,6 +32,7 @@
         <h3>Hình ảnh</h3>
         <div id="tour-images"></div>
 
+		<a id="tour-join" onclick="joinTour()">Tham gia</a>
         <a id="tour-review-link">Tour đã kết thúc, hãy để lại đánh giá.</a>
         <a id="tour-edit-link">Chỉnh sửa</a>
     </div>
@@ -95,6 +96,7 @@
                     });
 
                     // Links
+					
                     document.getElementById("tour-review-link").href = `/reviews/tour/${tour.id}`;
                     document.getElementById("tour-edit-link").href = `/tours/${tour.id}/edit`;
                 })
@@ -108,6 +110,35 @@
                 return date.toLocaleDateString("vi-VN") + " " + date.toLocaleTimeString("vi-VN");
             }
         });
+		
+		
+		function joinTour() {
+		    const tourId = window.location.pathname.split('/').pop();
+			console.log("tourId " + tourId)
+		    const userId = 1; // Lấy id từ user đã đăng nhập
+		    const numberOfPeople = prompt("Số người tham gia", "1");
+
+		    
+	        const bookingData = {
+	            tour: { id: tourId }, 
+	            user: { id: userId }, 
+	            numberOfPeople: parseInt(numberOfPeople),
+	            status: "PENDING" // Status mặc định
+	        };
+
+	        fetch("http://localhost:8080/api/bookings/create", {
+	            method: "POST",
+	            headers: { "Content-Type": "application/json" },
+	            body: JSON.stringify(bookingData) // Gửi toàn bộ bookingData
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            alert("Đã tham gia tour thành công! Vui lòng thanh toán và gửi phiếu thanh toán");
+	            window.location.href = `/bookings/tour/${tourId}`;
+	        })
+	        .catch(error => console.error("Error joining tour:", error));
+	    
+		}
     </script>
 </body>
 

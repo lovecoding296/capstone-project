@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
 
+import funix.tgcp.payment.Payment;
 import funix.tgcp.tour.Tour;
 import funix.tgcp.user.User;
 
@@ -41,5 +44,8 @@ public class Booking {
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+    
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
+    private List<Payment> payments;
 }
 

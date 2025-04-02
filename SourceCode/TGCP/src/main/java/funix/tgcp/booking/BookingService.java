@@ -3,16 +3,20 @@ package funix.tgcp.booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import funix.tgcp.payment.PaymentController;
 import funix.tgcp.tour.Tour;
 import funix.tgcp.tour.TourRepository;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;
+import funix.tgcp.util.LogHelper;
 
 import java.util.List;
 
 @Service
 public class BookingService {
 
+	private static final LogHelper logger = new LogHelper(BookingService.class);
+	
     @Autowired
     private BookingRepository bookingRepository;
 
@@ -23,16 +27,14 @@ public class BookingService {
     private UserRepository userRepository;
 
     // Tạo booking mới
-    public Booking createBooking(Long tourId, Long userId, String note) {
-        Tour tour = tourRepository.findById(tourId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
-
-        Booking booking = new Booking();
-        booking.setTour(tour);
-        booking.setUser(user);
-        booking.setStatus(BookingStatus.PENDING); // Mặc định status là PENDING
-
-        return bookingRepository.save(booking);
+    public Booking createBooking(Booking bookingRequest) {     
+    	logger.info("");
+    	tourRepository.findById(bookingRequest.getTour().getId()).orElseThrow();
+    	if(bookingRepository.existsByUserAndTour(bookingRequest.getUser(), bookingRequest.getTour())) {
+    		logger.info("create booking");
+    		return bookingRepository.save(bookingRequest);
+    	}
+        return null;
     }
 
     // Lấy danh sách bookings của người dùng
@@ -53,5 +55,20 @@ public class BookingService {
 
         return bookingRepository.save(booking);
     }
+
+	public List<Booking> findAll() {
+		return bookingRepository.findAll();
+	}
+
+	public void deleteBooking(Long bookingId) {
+		Booking booking = bookingRepository.findById(bookingId).orElseThrow();
+        bookingRepository.delete(booking);
+	}
+
+	public Booking findByUserIdAndTourId(Long userId, Long tourId) {
+		return bookingRepository.findByUserIdAndTourId(userId, tourId);
+	}
+
+	
 }
 

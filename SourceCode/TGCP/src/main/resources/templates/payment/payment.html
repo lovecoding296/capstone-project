@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+			
+			const urlParts = window.location.pathname.split('/');
+            const tourId = urlParts[urlParts.length - 1];
+						
+            fetch(`/api/tours/${tourId}`) // Thay URL API thật
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("tour-info").innerText = data.title;
+                    document.getElementById("guide-name").innerText = data.creator.fullName;
+                    document.getElementById("guide-email").innerText = data.creator.email;
+                    document.getElementById("bank-name").innerText = data.creator.bankName;
+                    document.getElementById("account-holder").innerText = data.creator.accountHolder;
+                    document.getElementById("account-number").innerText = data.creator.accountNumber;
+                });
+        });
+        
+        function createPaymentForm() {
+            document.getElementById("payment-form").style.display = "block";
+            document.getElementById("payment-status").innerText = "Pending";
+        }
+        
+        function updatePayment() {
+            document.getElementById("payment-status").innerText = "Updated (Pending)";
+        }
+		
+		function submitPayment() {
+		    const tourId = window.location.pathname.split('/').pop();
+		    console.log("tourId " + tourId);
+		    
+		    let formData = new FormData();
+		    
+		    // Tạo đối tượng paymentData
+		    const paymentData = {
+		        booking: {
+		            tour: {id: tourId},                
+		        },
+		        amount: parseFloat(document.getElementById("amount").value),
+		        senderAccountNumber: document.getElementById("sender-account-number").value,
+		        senderAccountName: document.getElementById("sender-name").value,
+		        transactionNote: document.getElementById("transaction-note").value,
+		        transactionImageUrl: "", // Cần xử lý upload ảnh riêng                
+		    };
+
+		    
+		    formData.append("payment", new Blob([JSON.stringify(paymentData)], {type: "application/json"}));
+		    
+		    // Kiểm tra và thêm file ảnh nếu có
+		    const fileInput = document.getElementById("payment-image");
+		    if (fileInput.files.length > 0) {
+		        formData.append("transactionImage", fileInput.files[0]);
+		    }
+		    
+		    // Gửi dữ liệu tới server
+		    fetch("/api/payments/create", {
+		        method: "POST",
+		        body: formData // Gửi formData thay vì JSON
+		    })
+		    .then(response => response.json())
+		    .then(data => {
+		        document.getElementById("payment-status").innerText = "Submitted";
+		        alert("Payment submitted successfully!");
+		    })
+		    .catch(error => console.error("Error submitting payment:", error));
+		}
+
+    </script>
+</head>
+<body>
+    <h2>Tour Information</h2>
+    <p id="tour-info">Loading...</p>
+    
+    <h2>Guide Information</h2>
+    <p><strong>Name:</strong> <span id="guide-name"></span></p>
+    <p><strong>Email:</strong> <span id="guide-email"></span></p>
+    <p><strong>Bank:</strong> <span id="bank-name"></span></p>
+    <p><strong>Account Holder:</strong> <span id="account-holder"></span></p>
+    <p><strong>Account Number:</strong> <span id="account-number"></span></p>
+    
+    <button onclick="createPaymentForm()">Create Payment Form</button>
+    
+	<form id="payment-form" style="display:none;" enctype="multipart/form-data">
+	    <h2>Payment Form</h2>
+	    <label>Transfer Screenshot:</label>
+	    <input type="file" id="payment-image" required><br>
+	    <label>Amount:</label>
+	    <input type="number" id="amount" required><br>
+	    <label>Sender Account Number:</label>
+	    <input type="text" id="sender-account-number" required><br>
+	    <label>Sender Name:</label>
+	    <input type="text" id="sender-name" required><br>
+	    <label>Transaction Note:</label>
+	    <input type="text" id="transaction-note"><br>
+	    
+	    <p><strong>Status:</strong> <span id="payment-status">Pending</span></p>
+	    <button type="button" onclick="updatePayment()">Update Payment</button>
+	    <button type="button" onclick="submitPayment()">Submit Payment</button>
+	</form>
+</body>
+</html>

@@ -161,9 +161,6 @@ public class UserService {
 		if (user.getInterests() != null && !user.getInterests().isEmpty()) {
 			currentUser.setInterests(user.getInterests());
 		}
-		if (user.getHomeAddress() != null && !user.getHomeAddress().isEmpty()) {
-			currentUser.setHomeAddress(user.getHomeAddress());
-		}
 
 		if (user.getDateOfBirth() != null) {
 			currentUser.setDateOfBirth(user.getDateOfBirth());

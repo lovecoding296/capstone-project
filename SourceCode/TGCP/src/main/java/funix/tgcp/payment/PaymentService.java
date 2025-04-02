@@ -1,6 +1,7 @@
 package funix.tgcp.payment;
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,32 +12,34 @@ import funix.tgcp.util.FileUploadHelper;
 @Service
 public class PaymentService {
 
-	
+	@Autowired
     private PaymentRepository paymentRepository;
+	
+	@Autowired
     private BookingRepository bookingRepository;
-    private FileUploadHelper fileUploadHelper;
+    
+	@Autowired
+	private FileUploadHelper fileUploadHelper;
 
 
 
 
     // Tạo payment mới
-    public Payment createPayment(Long bookingId, double amount, String senderAccountNumber,
-                                 String senderAccountName, String transactionNote, MultipartFile file) throws IOException {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow();
+    public Payment createPayment(Payment paymentRequest, MultipartFile file) throws IOException {
+    	
+    	Long userId = paymentRequest.getBooking().getUser().getId();
+    	Long tourId = paymentRequest.getBooking().getTour().getId();
+    	Booking booking = bookingRepository.findByUserIdAndTourId(userId, tourId);
+    	
+        if(booking != null) {
+        	// Lưu ảnh giao dịch
+            String imageUrl = fileUploadHelper.uploadFile(file);
+            paymentRequest.setTransactionImageUrl(imageUrl);
+            paymentRequest.setBooking(booking);
 
-        Payment payment = new Payment();
-        payment.setBooking(booking);
-        payment.setAmount(amount);
-        payment.setStatus(PaymentStatus.PENDING); // Mặc định status là PENDING
-        payment.setSenderAccountNumber(senderAccountNumber);
-        payment.setSenderAccountName(senderAccountName);
-        payment.setTransactionNote(transactionNote);
-
-        // Lưu ảnh giao dịch
-        String imageUrl = fileUploadHelper.uploadFile(file);
-        payment.setTransactionImageUrl(imageUrl);
-
-        return paymentRepository.save(payment);
+            return paymentRepository.save(paymentRequest);
+        }        
+        return null;
     }
 
     // Guide xác nhận payment
