@@ -63,7 +63,7 @@ public class TourController {
 		    CustomUserDetails userDetails = (CustomUserDetails) principal;
 			Long userId = userDetails.getId();
 			List<Tour> tours;
-			if(userDetails.getuser().isAdmin()) {
+			if(userDetails.isAdmin()) {
 				logger.info("admin get all tours");
 				tours = tourService.findAll();
 			} else {

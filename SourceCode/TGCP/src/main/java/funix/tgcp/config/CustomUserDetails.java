@@ -25,6 +25,10 @@ public class CustomUserDetails implements UserDetails {
 		return user.getId();
 	}
 	
+	public boolean isAdmin() {
+		return user.isAdmin();
+	}
+	
 	public User getUser() {
 		return user;
 	}

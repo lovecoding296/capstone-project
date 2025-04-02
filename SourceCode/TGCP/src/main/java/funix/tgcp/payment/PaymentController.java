@@ -37,7 +37,7 @@ public class PaymentController {
             CustomUserDetails userDetails = (CustomUserDetails) principal;         
 
 			Booking booking = paymentRequest.getBooking();
-			booking.setUser(userDetails.getuser());
+			booking.setUser(userDetails.getUser());
 			
 			paymentRequest.setBooking(booking);
 		    try {

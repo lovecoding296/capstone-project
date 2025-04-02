@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import funix.tgcp.booking.Booking;
 
 @Entity
@@ -26,6 +28,7 @@ public class Payment {
 
     @ManyToOne
     @JoinColumn(name = "booking_id", nullable = false)
+    @JsonIgnore
     private Booking booking;
 
     @Column(nullable = false)
