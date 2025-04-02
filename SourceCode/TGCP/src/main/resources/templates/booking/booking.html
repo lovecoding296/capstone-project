@@ -199,7 +199,7 @@
 		    // Gửi dữ liệu tới server
 		    fetch("/api/payments/create", {
 		        method: "POST",
-		        body: formData // Gửi formData thay vì JSON
+		        body: formData
 		    })
 		    .then(response => response.json())
 		    .then(data => {
@@ -235,7 +235,7 @@
 	        </tr>
 	    </thead>
 	    <tbody id="payment-list">
-	        <tr><td colspan="6">Loading...</td></tr>
+	        <tr><td colspan="7">Loading...</td></tr>
 	    </tbody>
 	</table>
 	

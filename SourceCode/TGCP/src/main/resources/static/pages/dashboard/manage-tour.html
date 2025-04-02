@@ -19,7 +19,7 @@
 				<td th:text="${#temporals.format(tour.endDate, 'dd/MM/yyyy')}"></td>
 				<td th:text="${tour.creator.fullName}"></td>
 				<td>
-					<a th:href="@{/tours/{id}/details(id=${tour.id})}" class="btn btn-info btn-sm">Chi tiết</a>
+					<a th:href="@{/tours/{id}(id=${tour.id})}" class="btn btn-info btn-sm">Chi tiết</a>
 					<a th:href="@{/tours/{id}/edit(id=${tour.id})}" class="btn btn-primary btn-sm">Sửa</a>
 					<a th:href="@{/tours/{id}/delete(id=${tour.id})}" class="btn btn-danger btn-sm"
 						onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
