@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import funix.tgcp.config.CustomUserDetails;
+import funix.tgcp.guide.request.GuideRequestController;
 import funix.tgcp.tour.image.TourImage;
 import funix.tgcp.tour.image.TourImageRepository;
 import funix.tgcp.tour.image.TourImageService;
@@ -32,10 +33,12 @@ import funix.tgcp.tour.itinerary.ItineraryService;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
 import funix.tgcp.util.FileUploadHelper;
+import funix.tgcp.util.LogHelper;
 
 @RestController
-@RequestMapping("/api/tours")
 public class TourController {
+	
+	private static final LogHelper logger = new LogHelper(TourController.class);
 
 	@Autowired
 	private TourService tourService;
@@ -52,20 +55,36 @@ public class TourController {
 	@Autowired
 	private ItineraryService itineraryService;
 	
-	@GetMapping()
-	public ResponseEntity<List<Tour>> findByCreatorId(@RequestParam Long creatorId) {
-		List<Tour> tours = tourService.findByCreatorId(creatorId);
-		return tours != null ? ResponseEntity.ok(tours) : ResponseEntity.notFound().build();
+	@GetMapping("/api/tours")
+	public ResponseEntity<List<Tour>> findByCreatorId() {
+		logger.info("");
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (principal instanceof CustomUserDetails) {
+		    CustomUserDetails userDetails = (CustomUserDetails) principal;
+			Long userId = userDetails.getId();
+			List<Tour> tours;
+			if(userDetails.getuser().isAdmin()) {
+				logger.info("admin get all tours");
+				tours = tourService.findAll();
+			} else {
+				logger.info("get all tours by user id " + userId);
+				tours = tourService.findByCreatorId(userId);
+			}			
+			return tours != null ? ResponseEntity.ok(tours) : ResponseEntity.notFound().build();
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 
-	@GetMapping("/{id}")
+	@GetMapping("/api/tours/{id}")
 	public ResponseEntity<Tour> getTour(@PathVariable Long id) {
 		Tour tour = tourService.findById(id);
 		return tour != null ? ResponseEntity.ok(tour) : ResponseEntity.notFound().build();
 	}
 
-	@PostMapping
+	@PostMapping("/api/tours")
 	public ResponseEntity<?> createTour(@RequestPart("tour") Tour tour,
 			@RequestPart("files") List<MultipartFile> files) {
 
@@ -102,7 +121,7 @@ public class TourController {
 
 	}
 	
-	@PutMapping
+	@PutMapping("/api/tours")
 	public ResponseEntity<?> updateTour(@PathVariable Long tourId, @RequestPart("tour") Tour tour) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -118,20 +137,20 @@ public class TourController {
 	}
 
 	// tour image//
-	@PostMapping("/{tourId}/images")
+	@PostMapping("/api/tours/{tourId}/images")
 	public ResponseEntity<?> uploadImages(@PathVariable Long tourId, @RequestParam("images") MultipartFile[] files) {
 		tourImageService.uploadImages(tourId, files);
 		return ResponseEntity.ok(Map.of("success", true));
 	}
 
-	@DeleteMapping("/images/{imageId}")
+	@DeleteMapping("/api/tours/images/{imageId}")
 	public ResponseEntity<?> deleteImage(@PathVariable Long imageId) {
 		tourImageService.deleteById(imageId);
 		return ResponseEntity.ok("Ảnh đã bị xóa");
 	}
 
 	// tour itinerary//
-	@PutMapping("/itineraries/{itineraryId}")
+	@PutMapping("/api/tours/itineraries/{itineraryId}")
 	public ResponseEntity<?> updateItinerary(@PathVariable Long itineraryId, @RequestBody Itinerary itineraryRequest) {
 		System.out.println("updateItinerary " + itineraryId + " dayNo " + itineraryRequest.getDayNo());
 
@@ -143,14 +162,14 @@ public class TourController {
 		return ResponseEntity.ok(Map.of("success", true));
 	}
 
-	@DeleteMapping("/itineraries/{itineraryId}")
+	@DeleteMapping("/api/tours/itineraries/{itineraryId}")
 	public ResponseEntity<?> deleteItinerary(@PathVariable Long itineraryId) {
 		System.out.println("deleteItinerary " + itineraryId);
 		itineraryService.deleteItineraryById(itineraryId);
 		return ResponseEntity.ok(Map.of("success", true));
 	}
 
-	@PostMapping("/{tourId}/itineraries")
+	@PostMapping("/api/tours/{tourId}/itineraries")
 	public ResponseEntity<?> addItinerary(@PathVariable Long tourId, @RequestBody Itinerary itinerary) {
 		Tour tour = tourService.findById(tourId);
 		itinerary.setTour(tour);
@@ -164,7 +183,7 @@ public class TourController {
 		return ResponseEntity.ok(Map.of("id", savedItinerary.getId()));
 	}
 
-	@PostMapping("/itineraries/{itineraryId}/activities")
+	@PostMapping("/api/tours/itineraries/{itineraryId}/activities")
 	public ResponseEntity<?> addActivity(@PathVariable Long itineraryId, @RequestBody Activity activity) {
 		Itinerary itinerary = itineraryService.findItineraryById(itineraryId);
 
@@ -176,7 +195,7 @@ public class TourController {
 		return ResponseEntity.badRequest().body("");
 	}
 
-	@PutMapping("/itineraries/activities/{activityId}")
+	@PutMapping("/api/tours/itineraries/activities/{activityId}")
 	public ResponseEntity<?> updateActivity(@PathVariable Long activityId, @RequestBody Map<String, Object> updates) {
 		System.out.println("id " + activityId);
 		Activity activity = itineraryService.findActivityById(activityId);
@@ -204,11 +223,30 @@ public class TourController {
 	}
 	
 	
-	@DeleteMapping("/itineraries/activities/{activityId}")
+	@DeleteMapping("/api/tours/itineraries/activities/{activityId}")
 	public ResponseEntity<?> deleteActivity(@PathVariable Long activityId) {
 		itineraryService.deleteActivityById(activityId);
 		return ResponseEntity.ok("Ảnh đã bị xóa");
 	}
+	
+	
+	/*ADMIN*/	
+	@GetMapping("/api/tours/pending")
+	public List<Tour> getPendingTours() {
+		return tourService.getPendingTours();
+	}
+	
+	@PutMapping("/api/tours/{id}/approve")
+    public ResponseEntity<String> approveTour(@PathVariable Long id) {
+		tourService.approveTour(id);
+        return ResponseEntity.ok("Tour approved successfully.");
+    }
+
+    @PutMapping("/api/tours/{id}/reject")
+    public ResponseEntity<String> rejectTour(@PathVariable Long id) {
+    	tourService.rejectTour(id);
+        return ResponseEntity.ok("Tour rejected successfully.");
+    }
 	
 	
 

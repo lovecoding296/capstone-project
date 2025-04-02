@@ -70,6 +70,8 @@
 						event.preventDefault(); // Ngăn chặn tải lại trang
 
 						loadPage(page);
+						
+						
 					}
 
 					function loadPage(page) {
@@ -90,6 +92,19 @@
 										extraPlugins: 'videoembed',
 									});
 								});
+								
+								
+								if (page === "guide-approval") {
+									fetchGuideRequests();
+								} else if (page === "tour-approval") {									
+									fetchPendingTours();
+								} else if (page === "tour-create") {
+
+								} else if(page === "manage-tour") {
+									fetchTours()
+								} else if(page === "guide-register") {
+									checkGuideRequestStatus()
+								}
 							})
 							.catch(() => {
 								document.getElementById("content").innerHTML = "<h2>Page Not Found</h2>";
@@ -97,8 +112,6 @@
 					}
 
 					loadPage('guide-register')
-
-
 
 					document.addEventListener("DOMContentLoaded", function () {
 						const panelLinks = document.querySelectorAll(".panel-link");
@@ -115,16 +128,7 @@
 
 								// Thêm class "active" vào menu được chọn
 								this.classList.add("active");
-
-
-								//if (targetId === "guide-approval") {
-								//console.log("guide-approval")
-								//fetchGuideRequests();
-								//} else if (targetId === "tour-approval") {
-								//	fetchPendingTours();
-								//} else if (targetId === "tour-create") {
-
-								//}
+								
 							});
 						});
 					});

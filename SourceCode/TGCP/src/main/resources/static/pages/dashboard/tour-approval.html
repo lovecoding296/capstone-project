@@ -16,39 +16,6 @@
 	</table>
 
 	<script>
-		async function fetchPendingTours() {
-			console.log("fetchPendingTours....")
-			const response = await fetch('/api/admin/tours/pending');
-			const tours = await response.json();
-			const tableBody = document.getElementById("tourTableBody");
-			tableBody.innerHTML = "";
-
-			tours.forEach(tour => {
-				const row = document.createElement("tr");
-				row.innerHTML = `
-										            <td>${tour.title}</td>
-										            <td>${tour.description}</td>
-										            <td>${tour.price}</td>
-										            <td>${tour.status}</td>
-										            <td>
-										                <button onclick="updateTourStatus(${tour.id}, 'approve')">Approve</button>
-										                <button onclick="updateTourStatus(${tour.id}, 'reject')">Reject</button>
-										            </td>
-										        `;
-				tableBody.appendChild(row);
-			});
-		}
-
-		async function updateTourStatus(id, action) {
-			const url = `/api/admin/tours/${id}/${action}`;
-			const response = await fetch(url, {method: 'PUT'});
-
-			if (response.ok) {
-				alert(`Tour ${action}d successfully!`);
-				fetchPendingTours(); // Refresh list
-			} else {
-				alert(`Failed to ${action} tour.`);
-			}
-		}
+		
 	</script>
 </div>

@@ -72,9 +72,6 @@ public class User {
 	@Column(columnDefinition = "NVARCHAR(255)")
 	private String city;
 
-	@Column(columnDefinition = "NVARCHAR(255)")
-	private String homeAddress;
-
 	private double averageRating;
 
 	private String verificationToken;

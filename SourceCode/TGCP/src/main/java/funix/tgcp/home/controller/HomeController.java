@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,18 +23,18 @@ import funix.tgcp.exception.EmailVerificationException;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostCategory;
 import funix.tgcp.post.PostService;
-import funix.tgcp.review.ReviewController;
 import funix.tgcp.tour.Tour;
 import funix.tgcp.tour.TourCategory;
 import funix.tgcp.tour.TourService;
 import funix.tgcp.util.FileUploadHelper;
+import funix.tgcp.util.LogHelper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
 public class HomeController {
 
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	private static final LogHelper logger = new LogHelper(HomeController.class);
 
 	@Autowired
 	private UserService userService;
