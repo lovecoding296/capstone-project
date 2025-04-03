@@ -101,7 +101,7 @@ public class Tour {
 	private TourStatus status = TourStatus.PENDING;
     
     
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String rejectedReason;
     
     

@@ -106,8 +106,8 @@ function submitGuideRegister() {
 	}
 }
 
-/*manage tour*/
-function fetchTours(){
+/*manage tours*/
+function fetchTours() {
     fetch("/api/tours") // Đổi đường dẫn API nếu cần
         .then(response => response.json())
         .then(data => {
@@ -122,6 +122,13 @@ function fetchTours(){
                     <td>${formatDate(tour.startDate)}</td>
                     <td>${formatDate(tour.endDate)}</td>
                     <td>${tour.creator.fullName}</td>
+					<td>
+					    ${(tour.status !== "PENDING" && tour.status !== "REJECTED") 
+					        ? getStatusDropdown(tour.id, tour.status) 
+					        : `${tour.status}${tour.status === "REJECTED" ? `<br><small>(Lý do: ${tour.rejectedReason || "Không có lý do" })</small>` : ""}`
+					    }
+					</td>
+
                     <td>
                         <a href="/tours/${tour.id}/details" class="btn btn-info btn-sm">Chi tiết</a>
                         <a href="/tours/${tour.id}/edit" class="btn btn-primary btn-sm">Sửa</a>
@@ -132,12 +139,44 @@ function fetchTours(){
             });
         })
         .catch(error => console.error("Lỗi khi lấy danh sách tour:", error));
-};
+}
 
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString("vi-VN"); // Định dạng ngày tháng theo Việt Nam
 }
+
+// Hàm tạo dropdown cho trạng thái tour
+function getStatusDropdown(tourId, currentStatus) {
+    return `
+        <select onchange="updateTourStatus(${tourId}, this.value)" class="form-select form-select-sm">
+            <option value="OPEN" ${currentStatus === "OPEN" ? "selected" : ""}>OPEN</option>
+            <option value="REGISTRATION_CLOSED">REGISTRATION_CLOSED</option>
+            <option value="ONGOING">ONGOING</option>
+            <option value="COMPLETED">COMPLETED</option>
+            <option value="CANCELED">CANCELED</option>
+        </select>
+    `;
+}
+
+// Hàm cập nhật trạng thái tour
+function updateTourStatus(tourId, newStatus) {
+    fetch(`/api/tours/${tourId}/update-status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Lỗi cập nhật trạng thái");
+        return response.json();
+    })
+    .then(() => {
+        alert("Cập nhật trạng thái thành công!");
+        fetchTours(); // Reload danh sách tour sau khi cập nhật
+    })
+    .catch(error => console.error("Lỗi khi cập nhật trạng thái tour:", error));
+}
+
 
 
 /*tour approval*/
@@ -151,30 +190,49 @@ async function fetchPendingTours() {
 	tours.forEach(tour => {
 		const row = document.createElement("tr");
 		row.innerHTML = `
-								            <td>${tour.title}</td>
-								            <td>${tour.description}</td>
-								            <td>${tour.price}</td>
-								            <td>${tour.status}</td>
-								            <td>
-								                <button onclick="updateTourStatus(${tour.id}, 'approve')">Approve</button>
-								                <button onclick="updateTourStatus(${tour.id}, 'reject')">Reject</button>
-								            </td>
-								        `;
+				            <td>${tour.title}</td>
+				            <td>${tour.description}</td>
+				            <td>${tour.price}</td>
+				            <td>${tour.status}</td>
+				            <td>
+				                <button onclick="updateTourStatus(${tour.id}, 'approve')">Approve</button>
+				                <button onclick="updateTourStatus(${tour.id}, 'reject')">Reject</button>
+				            </td>
+				        `;
 		tableBody.appendChild(row);
 	});
 }
 
 async function updateTourStatus(id, action) {
-	const url = `/api/admin/tours/${id}/${action}`;
-	const response = await fetch(url, {method: 'PUT'});
+    let url = `/api/admin/tours/${id}/${action}`;
+    let options = { method: 'PUT' };
 
-	if (response.ok) {
-		alert(`Tour ${action}d successfully!`);
-		fetchPendingTours(); // Refresh list
-	} else {
-		alert(`Failed to ${action} tour.`);
-	}
+    // Nếu action là "reject", yêu cầu nhập lý do từ chối
+    if (action === "reject") {
+        let reason = prompt("Nhập lý do từ chối:");
+        if (!reason) {
+            alert("Bạn cần nhập lý do từ chối!");
+            return;
+        }
+
+        // Gửi request với lý do từ chối
+        options = {
+            method: 'PUT',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reason }) 
+        };
+    }
+
+    const response = await fetch(url, options);
+
+    if (response.ok) {
+        alert(`Tour ${action}d successfully!`);
+        fetchPendingTours(); // Refresh danh sách
+    } else {
+        alert(`Failed to ${action} tour.`);
+    }
 }
+
 /* guide approval */
 async function fetchGuideRequests() {
 	console.log("fetchGuideRequests....")

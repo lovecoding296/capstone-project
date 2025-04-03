@@ -59,22 +59,24 @@ public class TourController {
 	public ResponseEntity<List<Tour>> findByCreatorId() {
 		logger.info("");
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		List<Tour> tours;
 		if (principal instanceof CustomUserDetails) {
 		    CustomUserDetails userDetails = (CustomUserDetails) principal;
 			Long userId = userDetails.getId();
-			List<Tour> tours;
+			
 			if(userDetails.isAdmin()) {
-				logger.info("admin get all tours");
+				logger.info("admin -> get all tours");
 				tours = tourService.findAll();
 			} else {
 				logger.info("get all tours by user id " + userId);
 				tours = tourService.findByCreatorId(userId);
 			}			
-			return tours != null ? ResponseEntity.ok(tours) : ResponseEntity.notFound().build();
 		}
 		else {
-			return ResponseEntity.notFound().build();
+			logger.info("not logged in -> get all tours");
+			tours = tourService.findAll();
 		}
+		return  ResponseEntity.ok(tours);
 	}
 
 
@@ -103,7 +105,6 @@ public class TourController {
 				tour.getImages().add(image);
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -121,17 +122,11 @@ public class TourController {
 
 	}
 	
-	@PutMapping("/api/tours")
+	@PutMapping("/api/tours/{tourId}")
 	public ResponseEntity<?> updateTour(@PathVariable Long tourId, @RequestPart("tour") Tour tour) {
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-		Long userId = userDetails.getId();
-		
-		
-
+		logger.info("");
+		logger.debug("Phi " + tour.getDescription());
 		Tour tourSaved = tourService.updateTour(tourId  , tour);
-
 		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("tourId", tourSaved.getId()));
 
 	}
@@ -231,20 +226,22 @@ public class TourController {
 	
 	
 	/*ADMIN*/	
-	@GetMapping("/api/tours/pending")
+	@GetMapping("/api/admin/tours/pending")
 	public List<Tour> getPendingTours() {
 		return tourService.getPendingTours();
 	}
 	
-	@PutMapping("/api/tours/{id}/approve")
+	@PutMapping("/api/admin/tours/{id}/approve")
     public ResponseEntity<String> approveTour(@PathVariable Long id) {
+		logger.info("");
 		tourService.approveTour(id);
         return ResponseEntity.ok("Tour approved successfully.");
     }
 
-    @PutMapping("/api/tours/{id}/reject")
-    public ResponseEntity<String> rejectTour(@PathVariable Long id) {
-    	tourService.rejectTour(id);
+    @PutMapping("/api/admin/tours/{id}/reject")
+    public ResponseEntity<String> rejectTour(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+    	logger.info("reason " +  requestBody.get("reason"));
+    	tourService.rejectTour(id, requestBody.get("reason"));
         return ResponseEntity.ok("Tour rejected successfully.");
     }
 	

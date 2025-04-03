@@ -44,8 +44,11 @@
 								onclick="navigate(event,'tour-approval')">Phê duyệt đơn tạo tour</a>
 						</li>
 						
-						<li class="nav-item"><a class="panel-link nav-link" href="#manage-tour"
-								onclick="navigate(event,'manage-tour')">Quản lý tour</a>
+						<li class="nav-item"><a class="panel-link nav-link" href="#manage-tours"
+								onclick="navigate(event,'manage-tours')">Các tour đã tạo</a>
+						</li>
+						<li class="nav-item"><a class="panel-link nav-link" href="#joined-tours"
+								onclick="navigate(event,'joined-tours')">Các tour đã tham gia</a>
 						</li>
 								
 						<li class="nav-item"><a class="panel-link nav-link" href="#tour-create"
@@ -61,10 +64,6 @@
 					<!--<h2>Welcome to the Home Page!</h2>-->
 				</div>
 				<script>
-					
-					
-
-					
 					
 					document.addEventListener("DOMContentLoaded", function () {
 					    // Lắng nghe khi người dùng thay đổi hash trên URL
@@ -128,7 +127,7 @@
 									fetchPendingTours();
 								} else if (page === "tour-create") {
 
-								} else if(page === "manage-tour") {
+								} else if(page === "manage-tours") {
 									fetchTours()
 								} else if(page === "guide-register") {
 									checkGuideRequestStatus()
@@ -138,12 +137,6 @@
 								document.getElementById("content").innerHTML = "<h2>Page Not Found</h2>";
 							});
 					}
-
-					//loadPage('guide-register')
-					
-
-
-					
 
 				</script>
 				

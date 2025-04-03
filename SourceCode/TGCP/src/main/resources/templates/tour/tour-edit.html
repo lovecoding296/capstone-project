@@ -19,13 +19,26 @@
 
 		<label for="destination">Điểm đến:</label>
 		<input type="text" id="destination" name="destination" required>
-
-		<label for="category">Loại hình du lịch:</label>
-		<select id="category" name="category">
-			<option value="nature">Thiên nhiên</option>
-			<option value="adventure">Phiêu lưu</option>
-			<option value="culture">Văn hóa</option>
-		</select>
+		
+		
+	    <label for="category" >Loại hình du lịch:</label>
+	    <select id="category" name="category" required>
+	        <option value="">-- Chọn danh mục --</option>
+	        <option value="FOODTOUR">FOODTOUR</option>
+	        <option value="SURVIVAL">SURVIVAL</option>
+	        <option value="NATURE_EXPLORATION">NATURE EXPLORATION</option>
+	        <option value="ADVENTURE">ADVENTURE</option>
+	        <option value="RELAXATION">RELAXATION</option>
+	        <option value="CULTURAL">CULTURAL</option>
+	        <option value="CULINARY">CULINARY</option>
+	        <option value="ECO_TOURISM">ECO TOURISM</option>
+	        <option value="SPIRITUAL">SPIRITUAL</option>
+	        <option value="BEACH">BEACH</option>
+	        <option value="CAMPING">CAMPING</option>
+	        <option value="SPORTS">SPORTS</option>
+	        <option value="VOLUNTEER">VOLUNTEER</option>
+	    </select>
+		
 
 		<label for="description">Mô tả:</label>
 		<textarea id="description" name="description"></textarea>
@@ -464,16 +477,16 @@
 			// Thêm JSON vào FormData
 			formData.append("tour", new Blob([JSON.stringify(tour)], {type: "application/json"}));
 			
+			console.log("description " + tour.description)
 			
-			// Gửi request đến API REST "/api/tours/new"
-			fetch("/api/tours/{$tourId}", {
+			fetch(`/api/tours/${tourId}`, {
 				method: "PUT",
 				body: formData
 			})
 				.then(response => response.json())
 				.then(data => {
 					alert("Tour đã cập nhật thành công!");
-					window.location.href = "/tours/" + data.tourId + "/details"; // Điều hướng sau khi thành công
+					window.location.href = "/tours/" + tourId; // Điều hướng sau khi thành công
 				})
 				.catch(error => {
 					console.error("Lỗi:", error);

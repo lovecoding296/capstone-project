@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;
+import funix.tgcp.util.LogHelper;
 
 @Service
 public class TourService {
+	
+	private static final LogHelper logger = new LogHelper(TourService.class);
 	
 	@Autowired
     private TourRepository tourRepository;
@@ -47,6 +50,7 @@ public class TourService {
         tour.setToAge(tourDetails.getToAge());
         tour.setCategory(tourDetails.getCategory());
         tour.setMaxParticipants(tourDetails.getMaxParticipants());
+        tour.setStatus(TourStatus.PENDING);
         return tourRepository.save(tour);
     }
     
@@ -82,14 +86,17 @@ public class TourService {
 	public Tour approveTour(Long id) {
         Tour tour = tourRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tour not found"));
+        logger.info("" + tour.getId() + " " + tour.getStatus());
         tour.setStatus(TourStatus.OPEN);
         return tourRepository.save(tour);
     }
 
-    public Tour rejectTour(Long id) {
+    public Tour rejectTour(Long id, String reason) {
         Tour tour = tourRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tour not found"));
+        logger.info("" + tour.getId() + " " + tour.getStatus());
         tour.setStatus(TourStatus.REJECTED);
+        tour.setRejectedReason(reason);
         return tourRepository.save(tour);
     }
 
