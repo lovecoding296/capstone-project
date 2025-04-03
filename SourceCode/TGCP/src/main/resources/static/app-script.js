@@ -10,6 +10,42 @@ function autoResize(textarea) {
     textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
 }
 
+/*joined tours */
+async function fetchBookings() {
+    const response = await fetch('/api/bookings');
+    const bookings = await response.json();
+    const tableBody = document.getElementById('bookings-table-body');
+    tableBody.innerHTML = '';
+    
+    bookings.forEach(booking => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${booking.tour.title}</td>
+            <td>${booking.tour.startDate}</td>
+            <td>${booking.tour.endDate}</td>
+            <td>${booking.tour.creator.fullName}</td>
+            <td>${booking.tour.status}</td>
+            <td id="status-${booking.id}">${booking.status}</td>
+            <td>
+                ${booking.status !== 'CANCELED' ? `<button onclick="updateStatus(${booking.id})">Cancel</button>` : ''}
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Example usage: fetchBookings('admin') or fetchBookings('customer')
+
+
+async function updateStatus(bookingId) {
+    await fetch(`/api/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'CANCELED' })
+    });
+    fetchBookings();
+}
+
 /*guide register */
 function previewImage(event) {
 	console.log("previewImage...")
@@ -130,7 +166,7 @@ function fetchTours() {
 					</td>
 
                     <td>
-                        <a href="/tours/${tour.id}/details" class="btn btn-info btn-sm">Chi tiết</a>
+                        <a href="/tours/${tour.id}" class="btn btn-info btn-sm">Chi tiết</a>
                         <a href="/tours/${tour.id}/edit" class="btn btn-primary btn-sm">Sửa</a>
                         <a href="/tours/${tour.id}/delete" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
                     </td>

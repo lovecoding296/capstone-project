@@ -32,7 +32,7 @@ import funix.tgcp.tour.itinerary.Itinerary;
 import funix.tgcp.tour.itinerary.ItineraryService;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
-import funix.tgcp.util.FileUploadHelper;
+import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
 
 @RestController
@@ -50,30 +50,28 @@ public class TourController {
 	private TourImageService tourImageService;
 
 	@Autowired
-	private FileUploadHelper fileUploadHelper;
+	private FileHelper fileHelper;
 
 	@Autowired
 	private ItineraryService itineraryService;
 	
 	@GetMapping("/api/tours")
 	public ResponseEntity<List<Tour>> findByCreatorId() {
-		logger.info("");
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+    	logger.info("userDetails " + userDetails);	
+		
 		List<Tour> tours;
-		if (principal instanceof CustomUserDetails) {
-		    CustomUserDetails userDetails = (CustomUserDetails) principal;
+		if (userDetails != null) {
+			logger.info("is admin " + userDetails.isAdmin());
 			Long userId = userDetails.getId();
 			
 			if(userDetails.isAdmin()) {
-				logger.info("admin -> get all tours");
 				tours = tourService.findAll();
 			} else {
-				logger.info("get all tours by user id " + userId);
 				tours = tourService.findByCreatorId(userId);
 			}			
 		}
 		else {
-			logger.info("not logged in -> get all tours");
 			tours = tourService.findAll();
 		}
 		return  ResponseEntity.ok(tours);
@@ -89,10 +87,9 @@ public class TourController {
 	@PostMapping("/api/tours")
 	public ResponseEntity<?> createTour(@RequestPart("tour") Tour tour,
 			@RequestPart("files") List<MultipartFile> files) {
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-		Long userId = userDetails.getId();
+		
+		CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+    	logger.info("userDetails " + userDetails);		
 
 		System.out.println("tour title " + tour.getTitle() + " " + tour.getCity());
 
@@ -100,7 +97,7 @@ public class TourController {
 			System.out.println("Uploaded file: " + file.getOriginalFilename());
 			try {
 				TourImage image = new TourImage();
-				image.setUrl(fileUploadHelper.uploadFile(file));
+				image.setUrl(fileHelper.uploadFile(file));
 				image.setTour(tour);
 				tour.getImages().add(image);
 				
@@ -115,9 +112,12 @@ public class TourController {
 				activity.setItinerary(itinerary);
 			}
 		}
-
-		Tour tourSaved = tourService.createTour(tour, userId);
-
+		Tour tourSaved;
+		if(userDetails != null) {
+			tourSaved = tourService.createTour(tour, userDetails.getId());
+		} else {
+			tourSaved = tourService.createTour(tour, (long)1);
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("tourId", tourSaved.getId()));
 
 	}
@@ -129,6 +129,12 @@ public class TourController {
 		Tour tourSaved = tourService.updateTour(tourId  , tour);
 		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("tourId", tourSaved.getId()));
 
+	}
+	
+	@GetMapping("/api/tours/{tourId}/delete")
+	public ResponseEntity<?> deleteTour(@PathVariable Long tourId) {
+		tourService.deleteTour(tourId);
+		return ResponseEntity.ok("Tour đã bị xóa");
 	}
 
 	// tour image//

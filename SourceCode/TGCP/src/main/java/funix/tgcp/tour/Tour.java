@@ -27,7 +27,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -111,5 +110,7 @@ public class Tour {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }  
+    
+    
 }
 

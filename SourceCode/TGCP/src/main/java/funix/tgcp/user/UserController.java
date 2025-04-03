@@ -24,7 +24,7 @@ import funix.tgcp.review.Review;
 import funix.tgcp.review.ReviewService;
 import funix.tgcp.tour.Tour;
 import funix.tgcp.tour.TourService;
-import funix.tgcp.util.FileUploadHelper;
+import funix.tgcp.util.FileHelper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -44,7 +44,7 @@ public class UserController {
     private ReviewService reviewService;
 	
 	@Autowired
-	private FileUploadHelper fileUploadHelper;
+	private FileHelper fileHelper;
     
     
     
@@ -135,12 +135,12 @@ public class UserController {
 
         user.setId(id);
         try {
-        	String avatarFileUrl = fileUploadHelper.uploadFile(avatarFile);
+        	String avatarFileUrl = fileHelper.uploadFile(avatarFile);
         	if(avatarFileUrl != null) {
         		user.setAvatarUrl(avatarFileUrl); 
         	}
         	
-        	String cccd = fileUploadHelper.uploadFile(cccdFile);
+        	String cccd = fileHelper.uploadFile(cccdFile);
         	if(cccd != null) {
         		user.setCccd(cccd);
         	}

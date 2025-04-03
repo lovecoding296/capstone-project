@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Page</title>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 			
 			const urlParts = window.location.pathname.split('/');
-            const tourId = urlParts[urlParts.length - 1];
+            const bookingId = urlParts[urlParts.length - 1];
 						
-            fetch(`/api/bookings/users/tour/${tourId}`)
+            fetch(`/api/bookings/${bookingId}`)
                 .then(response => response.json())
                 .then(data => {
+					
+					console.log(data)
+					
                     document.getElementById("tour-info").innerText = data.tour.title;
                     document.getElementById("guide-name").innerText = data.tour.creator.fullName;
                     document.getElementById("guide-email").innerText = data.tour.creator.email;
@@ -35,14 +39,15 @@
 					    row.id = `payment-row-${payment.id}`; // Đặt ID cho từng dòng
 
 					    row.innerHTML = `
-					        <td class="sender-name">${payment.senderAccountName}</td>
-					        <td class="amount">${payment.amount}</td>
-					        <td class="transaction-note">${payment.transactionNote || "N/A"}</td>
 							<td>
 					            ${payment.transactionImageUrl ? 
 					                `<img src="${payment.transactionImageUrl}" alt="Payment Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="viewFullImage('${payment.transactionImageUrl}')">` 
 					                : "No Image"}
 					        </td>
+					        <td class="sender-name">${payment.senderAccountName}</td>
+					        <td class="amount">${payment.amount}</td>
+					        <td class="transaction-note">${payment.transactionNote || "N/A"}</td>
+							
 					        <td>${payment.status || "PENDING"}</td>
 					        <td class="sender-account-number">${payment.senderAccountNumber}</td>
 					        <td>
@@ -169,44 +174,49 @@
         
 
 		
-		function submitPayment() {
-		    const tourId = window.location.pathname.split('/').pop();
-		    console.log("tourId " + tourId);
-		    
+		async function submitPayment() {
+		    const bookingId = window.location.pathname.split('/').pop();
+		    console.log("bookingId:", bookingId);
+
 		    let formData = new FormData();
-		    
+
 		    // Tạo đối tượng paymentData
-		    const paymentData = {
-		        booking: {
-		            tour: {id: tourId},                
-		        },
+		    let paymentData = {
 		        amount: parseFloat(document.getElementById("amount").value),
 		        senderAccountNumber: document.getElementById("sender-account-number").value,
 		        senderAccountName: document.getElementById("sender-name").value,
 		        transactionNote: document.getElementById("transaction-note").value,
-		        transactionImageUrl: "", // Cần xử lý upload ảnh riêng                
+		        transactionImageUrl: "" // Cần xử lý upload ảnh riêng
 		    };
+			formData.append("bookingId", bookingId)
+		    // Thêm JSON payment vào FormData
+		    formData.append("payment", new Blob([JSON.stringify(paymentData)], { type: "application/json" }));
 
-		    
-		    formData.append("payment", new Blob([JSON.stringify(paymentData)], {type: "application/json"}));
-		    
 		    // Kiểm tra và thêm file ảnh nếu có
 		    const fileInput = document.getElementById("payment-image");
 		    if (fileInput.files.length > 0) {
 		        formData.append("transactionImage", fileInput.files[0]);
 		    }
-		    
-		    // Gửi dữ liệu tới server
-		    fetch("/api/payments/create", {
-		        method: "POST",
-		        body: formData
-		    })
-		    .then(response => response.json())
-		    .then(data => {
-		        alert("Payment submitted successfully!");
-		    })
-		    .catch(error => console.error("Error submitting payment:", error));
+
+		    try {
+		        // Gửi dữ liệu bằng Axios
+		        const response = await axios.post("/api/payments/create", formData, {
+		            headers: {
+		                "Content-Type": "multipart/form-data"
+		            }
+		        });
+				
+				if(response.status === 200) {
+					alert("Payment submitted successfully!");
+					location.reload();
+				}					
+		        console.log("Server response:", response.data);
+		    } catch (error) {
+		        console.error("Error submitting payment:", error);
+		        alert("Failed to submit payment. Please try again.");
+		    }
 		}
+
 
     </script>
 </head>
@@ -225,10 +235,10 @@
 	<table border="1">
 	    <thead>
 	        <tr>
+				<th>Image</th>
 	            <th>Sender Name</th>
 	            <th>Amount</th>
 	            <th>Nội dung chuyển khoản</th>
-	            <th>Image</th>
 	            <th>Status</th>
 				<th>Số tài khoản</th>
 				<th>Actions</th>

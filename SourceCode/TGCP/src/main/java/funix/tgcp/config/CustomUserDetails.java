@@ -9,6 +9,7 @@ import funix.tgcp.user.User;
 
 import java.util.Collections;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 public class CustomUserDetails implements UserDetails {
@@ -71,4 +72,15 @@ public class CustomUserDetails implements UserDetails {
 	public String getPassword() {
 		return user.getPassword();
 	}
+	
+	// New method to get the current authenticated user
+    public static CustomUserDetails getCurrentUserDetails() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if (principal instanceof CustomUserDetails) {
+            return (CustomUserDetails) principal;
+        }
+
+        return null; // Return null if user is not authenticated or principal is not an instance of CustomUserDetails
+    }
 }

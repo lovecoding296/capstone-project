@@ -1,73 +1,105 @@
 package funix.tgcp.booking;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.config.CustomUserDetails;
-import funix.tgcp.home.controller.HomeController;
+import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;
 
 @RestController
-@RequestMapping("/api/bookings")
 public class BookingController {
 	
 	private static final LogHelper logger = new LogHelper(BookingController.class);
 
     @Autowired
     private BookingService bookingService;
-    
-    
- // API lấy tất cả booking của người dùng
-    @GetMapping()
-    public ResponseEntity<List<Booking>> findAll() {
-        return ResponseEntity.ok(bookingService.findAll());
-    }
 
     // API tạo booking
-    @PostMapping("/create")
+    @PostMapping("/api/bookings/create")
     public ResponseEntity<Booking> createBooking(@RequestBody Booking bookingRequest) {
-    	logger.info("");
-    	//TODO
-    	//lấy userId từ loggedInUser
+    	
+    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+    	logger.info("userDetails " + userDetails);
+    	if(userDetails != null ) {
+    		bookingRequest.setUser(userDetails.getUser());
+    		return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
+    	} else {
+    		User user = new User();
+    		user.setId((long)1);
+    		bookingRequest.setUser(user);
+    	}    	
         return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
     }
+    
+    
 
     // API lấy tất cả booking của người dùng
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Booking>> getBookingsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(bookingService.getBookingsByUser(userId));
+    @GetMapping("/api/bookings")
+    public ResponseEntity<List<Booking>> getBookings() {
+    	
+    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+    	logger.info("userDetails " + userDetails);
+    	
+    	List<Booking> bookings;    	
+		if (userDetails != null) {
+			logger.info("is admin " + userDetails.isAdmin());
+			if(userDetails.isAdmin()) {
+				bookings = bookingService.findAll();
+			} else {
+				Long userId = userDetails.getId();
+				bookings = bookingService.getBookingsByUser(userId);
+			}			
+		}
+		else {
+			logger.info("not logged in -> get all bookings");
+			bookings = bookingService.findAll();
+		}    	
+    	
+        return ResponseEntity.ok(bookings);
     }
 
-    // API lấy tất cả booking của tour
-    @GetMapping("/tour/{tourId}")
-    public ResponseEntity<List<Booking>> getBookingsByTour(@PathVariable Long tourId) {
-        return ResponseEntity.ok(bookingService.getBookingsByTour(tourId));
+    @GetMapping("/api/bookings/{bookingId}")
+    public ResponseEntity<?> getBookingById(@PathVariable Long bookingId) {
+        Optional<Booking> booking = bookingService.findById(bookingId);
+        
+        if (booking.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(booking.get());
     }
     
-    @GetMapping("/users/tour/{tourId}")
+    @GetMapping("/api/tours/{tourId}/bookings/user")
     public ResponseEntity<?> getBookingsByUserAndTour(@PathVariable Long tourId) {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (principal instanceof CustomUserDetails) {
-			CustomUserDetails userDetails = (CustomUserDetails) principal;
+    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+    	logger.info("userDetails " + userDetails);
+    	
+		if (userDetails != null) {
 			Long userId = userDetails.getId();
-
 			return ResponseEntity.ok(bookingService.findByUserIdAndTourId(userId, tourId));
 		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("UNAUTHORIZED");
     }
+    
+    // API lấy tất cả booking của tour
+    @GetMapping("/api/tours/{tourId}/bookings")
+    public ResponseEntity<List<Booking>> getBookingsByTour(@PathVariable Long tourId) {
+        return ResponseEntity.ok(bookingService.getBookingsByTour(tourId));
+    }
 
     // API xác nhận booking
-    @PutMapping("/{bookingId}/confirm")
+    @PutMapping("/api/bookings/{bookingId}/confirm")
     public ResponseEntity<Booking> confirmBooking(@PathVariable Long bookingId) {
         return ResponseEntity.ok(bookingService.confirmBooking(bookingId));
     }
     
-    @DeleteMapping("/{bookingId}")
+    @DeleteMapping("/api/bookings/{bookingId}")
     public ResponseEntity<String> deleteBooking(@PathVariable Long bookingId) {
     	//bookingService.deleteBooking(bookingId);
         try {
@@ -78,7 +110,7 @@ public class BookingController {
         }
     }
     
-    @GetMapping("/delete/{bookingId}")
+    @GetMapping("/api/bookings/delete/{bookingId}")
     public ResponseEntity<String> testDeleteBooking(@PathVariable Long bookingId) {
     	//bookingService.deleteBooking(bookingId);
         try {

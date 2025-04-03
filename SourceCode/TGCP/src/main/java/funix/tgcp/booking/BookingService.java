@@ -3,14 +3,11 @@ package funix.tgcp.booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import funix.tgcp.payment.PaymentController;
-import funix.tgcp.tour.Tour;
 import funix.tgcp.tour.TourRepository;
-import funix.tgcp.user.User;
-import funix.tgcp.user.UserRepository;
 import funix.tgcp.util.LogHelper;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -23,18 +20,12 @@ public class BookingService {
     @Autowired
     private TourRepository tourRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
     // Tạo booking mới
     public Booking createBooking(Booking bookingRequest) {     
     	logger.info("");
-    	tourRepository.findById(bookingRequest.getTour().getId()).orElseThrow();
-    	if(bookingRepository.existsByUserAndTour(bookingRequest.getUser(), bookingRequest.getTour())) {
-    		logger.info("create booking");
-    		return bookingRepository.save(bookingRequest);
-    	}
-        return null;
+    	tourRepository.findById(bookingRequest.getTour().getId()).orElseThrow();    	 
+    	return bookingRepository.save(bookingRequest);
     }
 
     // Lấy danh sách bookings của người dùng
@@ -67,6 +58,10 @@ public class BookingService {
 
 	public Booking findByUserIdAndTourId(Long userId, Long tourId) {
 		return bookingRepository.findByUserIdAndTourId(userId, tourId);
+	}
+
+	public Optional<Booking> findById(Long bookingId) {
+		return bookingRepository.findById(bookingId);
 	}
 
 	

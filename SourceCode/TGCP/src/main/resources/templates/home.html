@@ -181,12 +181,7 @@
 						<div class="row g-0">
 							<!-- Column for image -->
 							<div class="col-12">
-								<!--<img th:src="${tour.tourPictureUrl != null ? @{${tour.tourPictureUrl}} : '/uploads/tour-default.png'}"
-							     class="img-fluid rounded-top" alt="Ảnh Tour">-->
-
-								<!--<img th:src="${tour.tourPictureUrl != null and tour.tourPictureUrl != '' ? tour.tourPictureUrl : '/uploads/tour-default.png'}"
-									class="img-fluid rounded-top" alt="Ảnh Tour">-->
-
+								<img th:src="@{${tour.images[0].url} ?: '/uploads/default-tour.jpg'}" class="img-fluid rounded-top">
 							</div>
 							<!-- Column for content -->
 							<div class="col-12">

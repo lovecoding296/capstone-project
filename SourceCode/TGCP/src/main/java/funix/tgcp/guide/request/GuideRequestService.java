@@ -1,9 +1,6 @@
 package funix.tgcp.guide.request;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,15 +11,12 @@ import org.springframework.web.multipart.MultipartFile;
 import funix.tgcp.user.Role;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;
-import funix.tgcp.util.FileUploadHelper;
+import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
 
 @Service
 public class GuideRequestService {
 	private static final LogHelper logger = new LogHelper(GuideRequestService.class);
-	private static final String UPLOAD_DIR = Paths.get("uploads").toAbsolutePath().toString();
-
-
 	
     @Autowired
     private GuideRequestRepository guideRequestRepository;
@@ -31,7 +25,7 @@ public class GuideRequestService {
     private UserRepository userRepository;
     
     @Autowired
-    private FileUploadHelper fileUploadHelper;
+    private FileHelper fileHelper;
 
     public boolean registerGuide(Long userId, 
     		MultipartFile guideLicenseFile, 
@@ -56,7 +50,7 @@ public class GuideRequestService {
             request.setExperience(experience);
             request.setGuideLicense(guideLicense);
             try {
-				request.setGuideLicenseUrl(fileUploadHelper.uploadFile(guideLicenseFile));
+				request.setGuideLicenseUrl(fileHelper.uploadFile(guideLicenseFile));
 				guideRequestRepository.save(request);
 				return true;
 			} catch (IOException e) {
@@ -78,20 +72,9 @@ public class GuideRequestService {
 			existingRequest.setStatus(GuideRequestStatus.PENDING);
 			
 			try {
-				String filePath = fileUploadHelper.uploadFile(guideLicenseFile);
+				String filePath = fileHelper.uploadFile(guideLicenseFile);
 				if(filePath != null) {
-					if(existingRequest.getGuideLicenseUrl() != null) {
-						logger.info("path " + existingRequest.getGuideLicenseUrl().replaceFirst("^/uploads", ""));
-						Path oldFilePath =  Paths.get(UPLOAD_DIR, existingRequest.getGuideLicenseUrl().replaceFirst("^/uploads", ""));
-						if (Files.exists(oldFilePath)) {
-						    System.out.println("File exists: " + oldFilePath);
-						} else {
-						    System.out.println("File not found: " + oldFilePath);
-						}
-						logger.info("Attempting to delete file at: " + oldFilePath.toAbsolutePath());
-						boolean isDeleted = Files.deleteIfExists(oldFilePath);
-						logger.info("isDeleted " + isDeleted);
-					}
+					fileHelper.deleteFile(existingRequest.getGuideLicenseUrl());
 					existingRequest.setGuideLicenseUrl(filePath); 
 				}
 			} catch (IOException e) {

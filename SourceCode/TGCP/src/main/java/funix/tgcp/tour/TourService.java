@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import funix.tgcp.booking.BookingRepository;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;
 import funix.tgcp.util.LogHelper;
@@ -18,7 +20,12 @@ public class TourService {
     private TourRepository tourRepository;
 	
 	@Autowired
+    private BookingRepository bookingRepository;
+	
+	@Autowired
     private UserRepository userRepository;
+	
+	
     
     public List<Tour> findAll() {
         return tourRepository.findAll();
@@ -54,9 +61,13 @@ public class TourService {
         return tourRepository.save(tour);
     }
     
+    @Transactional
     public void deleteTour(Long id) {
         Tour tour = findById(id);
-        tourRepository.delete(tour);
+        if(tour != null ) {
+			bookingRepository.deleteByTour(tour);
+			tourRepository.delete(tour);
+        }
     }
     
     public List<Tour> findByTourStatus(TourStatus status) {

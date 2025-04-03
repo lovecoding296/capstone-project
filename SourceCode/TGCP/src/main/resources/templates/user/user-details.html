@@ -132,7 +132,7 @@
 			<div th:each="tour : ${tours}" class="col-12 col-md-4 mb-4">
 				<div class="card">
 					<!-- Display tour image or a default image -->
-					<img th:src="@{${tour.tourPictureUrl} ?: '/uploads/default-tour.jpg'}" class="card-img-top"
+					<img th:src="@{${tour.images[0].url} ?: '/uploads/default-tour.jpg'}" class="card-img-top"
 						alt="Hình ảnh Tour">
 
 					<div class="card-body">
@@ -140,7 +140,7 @@
 						<h5 class="card-title" th:text="${tour.title}">Tên Tour</h5>
 
 						<!-- Tour description -->
-						<p class="card-text" th:text="${tour.destination}">Mô tả Tour</p>
+						<p class="card-text" th:text="${tour.city}">city</p>
 
 						<!-- Number of participants -->
 						<p class="card-text text-muted">

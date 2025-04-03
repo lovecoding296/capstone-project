@@ -26,7 +26,7 @@ import funix.tgcp.post.PostService;
 import funix.tgcp.tour.Tour;
 import funix.tgcp.tour.TourCategory;
 import funix.tgcp.tour.TourService;
-import funix.tgcp.util.FileUploadHelper;
+import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -47,7 +47,7 @@ public class HomeController {
 	private PostService postService;
 	
 	@Autowired
-	private FileUploadHelper fileUploadHelper;
+	private FileHelper fileHelper;
 
 	@GetMapping("/")
 	public String home(Model model, HttpSession session) {
@@ -95,12 +95,12 @@ public class HomeController {
 	}
 	
 	
-	@GetMapping("/bookings/tour/{id}")
+	@GetMapping("/tours/{tourId}/bookings/{bookingId}")
 	public String showBooking() {
 		return "booking/booking"; // Tên của view (HTML)
 	}
 	
-	@GetMapping("/payments/tour/{id}")
+	@GetMapping("/tours/{id}/payments")
 	public String showPayment() {
 		return "payment/payment"; // Tên của view (HTML)
 	}
@@ -143,7 +143,7 @@ public class HomeController {
             return "signup";
         }
 		try {
-			String cccd = fileUploadHelper.uploadFile(cccdFile);			
+			String cccd = fileHelper.uploadFile(cccdFile);			
 			if(cccd != null) {
 	    		user.setCccd(cccd);
 	    	}

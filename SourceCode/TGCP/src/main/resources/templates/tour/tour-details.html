@@ -115,18 +115,28 @@
 		function joinTour() {
 		    const tourId = window.location.pathname.split('/').pop();
 			console.log("tourId " + tourId)
-		    const userId = 1; // Lấy id từ user đã đăng nhập
+		    //const userId = 1; // Lấy id từ user đã đăng nhập
 		    const numberOfPeople = prompt("Số người tham gia", "1");
 
+			if (numberOfPeople === null) {
+		        console.log("User cancelled the input.");
+		        return; 
+		    }
+			
+			const numberOfPeopleInt = parseInt(numberOfPeople);
+		    if (isNaN(numberOfPeopleInt) || numberOfPeopleInt <= 0) {
+		        alert("Số người tham gia không hợp lệ.");
+		        return;  // Nếu số người không hợp lệ, dừng lại
+		    }
 		    
 	        const bookingData = {
 	            tour: { id: tourId }, 
-	            user: { id: userId }, 
+	            //user: { id: userId }, 
 	            numberOfPeople: parseInt(numberOfPeople),
 	            status: "PENDING" // Status mặc định
 	        };
 
-	        fetch("http://localhost:8080/api/bookings/create", {
+	        fetch("/api/bookings/create", {
 	            method: "POST",
 	            headers: { "Content-Type": "application/json" },
 	            body: JSON.stringify(bookingData) // Gửi toàn bộ bookingData
@@ -134,7 +144,7 @@
 	        .then(response => response.json())
 	        .then(data => {
 	            alert("Đã tham gia tour thành công! Vui lòng thanh toán và gửi phiếu thanh toán");
-	            window.location.href = `/bookings/tour/${tourId}`;
+	            window.location.href = `/tours/${tourId}/bookings/${data.id}`;
 	        })
 	        .catch(error => console.error("Error joining tour:", error));
 	    

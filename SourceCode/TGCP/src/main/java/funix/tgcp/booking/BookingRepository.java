@@ -13,5 +13,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     
     boolean existsByUserAndTour(User user, Tour tour);
     Booking findByUserIdAndTourId(Long userId, Long tourId);
+	void deleteByTour(Tour tour);
 }
 
