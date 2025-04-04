@@ -2,7 +2,6 @@ package funix.tgcp.tour.itinerary;
 import java.time.LocalDateTime;
 
 import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -39,6 +38,6 @@ public class Activity {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-    }  
+    }
 }
 

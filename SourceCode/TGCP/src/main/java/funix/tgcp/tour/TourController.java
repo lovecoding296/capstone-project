@@ -1,36 +1,33 @@
 package funix.tgcp.tour;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import funix.tgcp.config.CustomUserDetails;
-import funix.tgcp.guide.request.GuideRequestController;
 import funix.tgcp.tour.image.TourImage;
-import funix.tgcp.tour.image.TourImageRepository;
 import funix.tgcp.tour.image.TourImageService;
 import funix.tgcp.tour.itinerary.Activity;
 import funix.tgcp.tour.itinerary.Itinerary;
 import funix.tgcp.tour.itinerary.ItineraryService;
-import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
 import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
@@ -74,6 +71,8 @@ public class TourController {
 		else {
 			tours = tourService.findAll();
 		}
+		Set<TourImage> images = tours.get(0).getImages();
+		logger.info("images " + (images instanceof TreeSet) + " " + (images instanceof List) + " " + (images instanceof HashSet) + " " + (images instanceof ArrayList) + " " + images.getClass());
 		return  ResponseEntity.ok(tours);
 	}
 

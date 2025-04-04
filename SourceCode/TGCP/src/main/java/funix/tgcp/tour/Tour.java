@@ -3,7 +3,7 @@ package funix.tgcp.tour;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
+import java.util.SortedSet;
 import org.springframework.validation.annotation.Validated;
 
 import funix.tgcp.user.User;
@@ -26,6 +26,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -63,7 +64,8 @@ public class Tour {
     
     
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<TourImage> images = new HashSet<>(); // Lưu danh sách đường dẫn ảnh
+    @OrderBy("id ASC")
+    private Set<TourImage> images = new HashSet<>();
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -77,7 +79,7 @@ public class Tour {
     @CollectionTable(name = "tour_languages", joinColumns = @JoinColumn(name = "tour_id"))
     @Enumerated(EnumType.STRING) // Lưu dưới dạng chuỗi
     @Column(name = "language", nullable = false)
-    private Set<Language> languages;
+    private Set<Language> languages = new HashSet<>();
 
 
 //    @Min(value = 2, message = "Số lượng người tham gia phải lớn hơn 1")
@@ -94,7 +96,8 @@ public class Tour {
     
     
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Itinerary> itineraries = new HashSet<>();    
+    @OrderBy("dayNo ASC, id ASC")
+    private Set<Itinerary> itineraries = new HashSet<>();
     
     @Enumerated(EnumType.STRING)
 	private TourStatus status = TourStatus.PENDING;

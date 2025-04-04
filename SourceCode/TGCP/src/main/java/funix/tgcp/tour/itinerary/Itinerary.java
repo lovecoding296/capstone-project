@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,6 +37,7 @@ public class Itinerary {
     
     
     @OneToMany(mappedBy = "itinerary", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
     private Set<Activity> activities = new HashSet<>();
     
     private LocalDateTime createdAt;
@@ -45,6 +45,6 @@ public class Itinerary {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-    }  
+    }
 }
 
