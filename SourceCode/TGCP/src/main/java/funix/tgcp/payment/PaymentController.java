@@ -1,6 +1,7 @@
 package funix.tgcp.payment;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,40 @@ public class PaymentController {
 				}
 				
 			}
+			Payment updated = paymentService.save(existingPayment);
+			return ResponseEntity.ok(updated);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@PatchMapping("/{paymentId}")
+	public ResponseEntity<Payment> updatePayment(@PathVariable Long paymentId, @RequestBody Map<String, Object> updates) {
+
+		try {
+			// Tìm Payment theo ID
+			Optional<Payment> existingPaymentOpt = paymentService.findById(paymentId);
+			if (!existingPaymentOpt.isPresent()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			}
+			
+			logger.info("");
+
+			Payment existingPayment = existingPaymentOpt.get();
+			updates.forEach((key, value) -> {
+				switch (key) {
+				case "status":
+					logger.info("update status " + value.toString());
+					existingPayment.setStatus(PaymentStatus.valueOf(value.toString()));
+					break;
+				
+				default:
+					logger.info("Invalid field: " + key);
+				}
+			});
+
+			
 			Payment updated = paymentService.save(existingPayment);
 			return ResponseEntity.ok(updated);
 		} catch (Exception e) {

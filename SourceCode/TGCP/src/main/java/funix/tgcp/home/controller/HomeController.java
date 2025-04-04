@@ -95,35 +95,40 @@ public class HomeController {
 	}
 	
 	
-	@GetMapping("/tours/{tourId}/bookings/{bookingId}")
+	@GetMapping("/users/bookings/{bookingId}")
 	public String showBooking() {
-		return "booking/booking"; // Tên của view (HTML)
+		return "booking/booking";
+	}
+	
+	@GetMapping("/guides/bookings/{bookingId}")
+	public String showBookingForGuide() {
+		return "booking/booking-approval";
 	}
 	
 	@GetMapping("/tours/{id}/payments")
 	public String showPayment() {
-		return "payment/payment"; // Tên của view (HTML)
+		return "payment/payment"; 
 	}
 
 	
 	@GetMapping("/tours")
 	public String getAllTours() {
-		return "tour/tour-list"; // Tên của view (HTML)
+		return "tour/tour-list"; 
 	}
 
 	@GetMapping("/tours/new")
 	public String showCreateForm() {
-		return "tour/tour-new"; // Form tạo Tour mới
+		return "tour/tour-new"; 
 	}
 	
 	@GetMapping("/tours/{id}")
 	public String findById(@PathVariable Long id) {
-		return "tour/tour-details"; // View cho chi tiết Tour
+		return "tour/tour-details"; 
 	}
 
 	@GetMapping("/tours/{id}/edit")
 	public String showEditForm(@PathVariable Long id) {
-		return "tour/tour-edit"; // Form chỉnh sửa Tour
+		return "tour/tour-edit"; 
 	}
 	
 	@GetMapping("/dashboard")

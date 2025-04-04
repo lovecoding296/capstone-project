@@ -9,6 +9,22 @@ body {
 }
 
 
+.disabled-btn {
+    background-color: #d6d6d6 !important; /* Màu nền xám nhạt */
+    color: #aaa !important; /* Màu chữ xám nhạt */
+    border-color: #ccc !important; /* Màu viền xám */
+	pointer-events: all !important;
+}
+
+.disabled-btn:hover {
+    cursor: not-allowed !important; /* Đổi con trỏ thành not-allowed */
+}
+
+.disabled-btn:active {
+    cursor: not-allowed !important; /* Giữ con trỏ không cho phép */
+}
+
+
 #main-nav {
 	background-color: #002147;
 }

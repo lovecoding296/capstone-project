@@ -1,6 +1,7 @@
 package funix.tgcp.booking;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import funix.tgcp.tour.TourRepository;
@@ -62,6 +63,31 @@ public class BookingService {
 
 	public Optional<Booking> findById(Long bookingId) {
 		return bookingRepository.findById(bookingId);
+	}
+
+	public ResponseEntity<?> cancelBooking(Long bookingId, String reason) {
+		Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
+
+        if (bookingOpt.isEmpty()) {
+            return ResponseEntity.status(404).body("{\"error\": \"Booking not found\", \"bookingId\": " + bookingId + "}");
+        }
+
+        Booking booking = bookingOpt.get();
+        
+        if (booking.getStatus() == BookingStatus.CANCELED) {
+            return ResponseEntity.status(400).body("{\"error\": \"Booking is already canceled\", \"bookingId\": " + bookingId + "}");
+        }
+
+//        if (!booking.isCancelable()) { // Điều kiện nếu không thể hủy
+//            return ResponseEntity.status(403).body("{\"error\": \"Cancellation not allowed\", \"bookingId\": " + bookingId + "}");
+//        }
+
+        booking.setStatus(BookingStatus.CANCELED);
+        booking.setCanceledReason(reason);
+        bookingRepository.save(booking);
+
+        return ResponseEntity.ok("{\"message\": \"Booking canceled successfully\", \"bookingId\": " + bookingId + "}");
+
 	}
 
 	

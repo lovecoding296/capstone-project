@@ -41,6 +41,9 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookingStatus status = BookingStatus.PENDING;
+    
+    @Column(columnDefinition = "NVARCHAR(MAX)")
+    private String canceledReason;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

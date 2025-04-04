@@ -46,16 +46,20 @@
 					        </td>
 					        <td class="sender-name">${payment.senderAccountName}</td>
 					        <td class="amount">${payment.amount}</td>
-					        <td class="transaction-note">${payment.transactionNote || "N/A"}</td>
-							
-					        <td>${payment.status || "PENDING"}</td>
+					        <td class="transaction-note">${payment.transactionNote || "N/A"}</td>					
+					        
 					        <td class="sender-account-number">${payment.senderAccountNumber}</td>
-					        <td>
-					            ${payment.status === "PENDING" ? `
-					                <button onclick="editPayment(${payment.id})">Edit</button>
-					                <button onclick="deletePayment(${payment.id})">Delete</button>
-					            ` : ""}
-					        </td>
+							<td>${payment.status || "PENDING"}</td>
+							<td>
+							    ${payment.status === "PENDING" ? `
+							        <button onclick="editPayment(${payment.id})">Edit</button>
+							        <button onclick="deletePayment(${payment.id})">Delete</button>
+							    ` : `
+									<button disabled>Edit</button>
+							        <button disabled>Delete</button>
+								`}
+							</td>
+
 					    `;
 					    paymentList.appendChild(row);
 					});
@@ -238,9 +242,9 @@
 				<th>Image</th>
 	            <th>Sender Name</th>
 	            <th>Amount</th>
-	            <th>Nội dung chuyển khoản</th>
-	            <th>Status</th>
+	            <th>Nội dung chuyển khoản</th>	            
 				<th>Số tài khoản</th>
+				<th>Status</th>
 				<th>Actions</th>
 	        </tr>
 	    </thead>

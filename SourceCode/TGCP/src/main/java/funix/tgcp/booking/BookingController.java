@@ -75,6 +75,11 @@ public class BookingController {
         return ResponseEntity.ok(booking.get());
     }
     
+    @PatchMapping("/api/bookings/{bookingId}")
+    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId, @RequestBody String reason) {
+    	return bookingService.cancelBooking(bookingId, reason);
+    }
+    
     @GetMapping("/api/tours/{tourId}/bookings/user")
     public ResponseEntity<?> getBookingsByUserAndTour(@PathVariable Long tourId) {
     	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
@@ -90,7 +95,50 @@ public class BookingController {
     // API lấy tất cả booking của tour
     @GetMapping("/api/tours/{tourId}/bookings")
     public ResponseEntity<List<Booking>> getBookingsByTour(@PathVariable Long tourId) {
-        return ResponseEntity.ok(bookingService.getBookingsByTour(tourId));
+        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+    	logger.info("userDetails " + userDetails);
+    	
+    	List<Booking> bookings;    	
+		if (userDetails != null) {
+			logger.info("is admin " + userDetails.isAdmin());
+			if(userDetails.isAdmin()) {
+				bookings = bookingService.findAll();
+			} else {
+				Long userId = userDetails.getId();
+				bookings = bookingService.getBookingsByTour(tourId);
+			}			
+		}
+		else {
+			logger.info("not logged in -> get all bookings");
+			bookings = bookingService.findAll();
+		}    	
+    	
+        return ResponseEntity.ok(bookings);
+    }
+    
+ // API lấy tất cả booking nhận được của guide
+    @GetMapping("/api/guides/bookings")
+    public ResponseEntity<List<Booking>> getBookingsByGuide(@PathVariable Long tourId) {      
+        
+        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+    	logger.info("userDetails " + userDetails);
+    	
+    	List<Booking> bookings;    	
+		if (userDetails != null) {
+			logger.info("is admin " + userDetails.isAdmin());
+			if(userDetails.isAdmin()) {
+				bookings = bookingService.findAll();
+			} else {
+				Long userId = userDetails.getId();
+				bookings = bookingService.getBookingsByTour(tourId);
+			}			
+		}
+		else {
+			logger.info("not logged in -> get all bookings");
+			bookings = bookingService.findAll();
+		}    	
+    	
+        return ResponseEntity.ok(bookings);
     }
 
     // API xác nhận booking
