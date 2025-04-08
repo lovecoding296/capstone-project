@@ -11,65 +11,114 @@ function autoResize(textarea) {
 }
 
 /*manage bookings*/
-function fetchGuidesBookings() {		
-  fetch("/api/guides/bookings")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to fetch bookings");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const tbody = document.getElementById("bookingTableBody");
-      tbody.innerHTML = "";
 
-      data.forEach((booking) => {
-        const row = document.createElement("tr");
+let guideBooking = {
+  currentPage: 1,
+  itemsPerPage: 10
+};
 
-        row.innerHTML = `
-          <td>${booking.tour.title}</td>
-          <td>${booking.user.fullName}</td>
-          <td>${booking.createdAt}</td>
+
+async function fetchGuidesBookings(page = 1) {
+	guideBooking.currentPage = page;
+    const response = await fetch('/api/bookings');
+    const bookings = await response.json();
+    
+    // Tính toán chỉ số bắt đầu và kết thúc cho phân trang
+    const startIdx = (page - 1) * guideBooking.itemsPerPage;
+    const endIdx = startIdx + guideBooking.itemsPerPage;
+    
+    // Lấy dữ liệu bookings cho trang hiện tại
+    const bookingsToShow = bookings.slice(startIdx, endIdx);
+    
+	
+	const tbody = document.getElementById("bookingTableBody");
+	tbody.innerHTML = "";
+	
+	bookingsToShow.forEach((booking) => {
+		const row = document.createElement("tr");
+
+		row.innerHTML = `
+		<td>
+		  <img src="${booking.tour.images[0].url}" alt="Tour Image" style="width: 80px; height: auto; border-radius: 6px;">
+		</td>
+
+
+	      <td>${booking.tour.title}</td>
+	      <td>${formatDate(booking.tour.startDate)}</td>
+		  <td>${formatDate(booking.tour.endDate)}</td>
+		  <td>${formatDate(booking.createdAt)}</td>
+		  <td>${booking.user.fullName}</td>
 		  <td>
 		    <span class="badge ${getStatusBadgeClass(booking.status)}">
 		      ${booking.status}
 		    </span>
-		    ${
-		      booking.status === "CANCELED"
-		        ? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.canceledReason || "Không có lý do"}</div>`
-		        : ""
-		    }
+		    ${booking.status === "CANCELED"
+				? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.canceledReason || "Không có lý do"}</div>`
+				: ""
+			}
 		  </td>
-          <td>
-            <div class="d-flex gap-2">
-				${booking.status === "PENDING" ? `
-				  <button class="btn btn-sm btn-success" onclick="handleBookingAction('${booking.id}', 'confirm')">Confirm</button>
-				` : `
-				  <button class="btn btn-sm btn-success disabled-btn" disabled>Confirm</button>
-				`}
+	      <td>
+	        <div class="d-flex gap-2">
+			<a class="btn btn-sm btn-primary" href="/guides/bookings/${booking.id}" data-id="${booking.id}" >View</a>
+			${booking.status === "PENDING" ? `
+			  <button class="btn btn-sm btn-success" onclick="handleBookingAction('${booking.id}', 'confirm')">Confirm</button>
+			` : `
+			  <button class="btn btn-sm btn-success disabled-btn" disabled>Confirm</button>
+			`}
+	        </div>
+	      </td>
+	    `;
 
-            	<a class="btn btn-sm btn-primary" href="/guides/bookings/${booking.id}" data-id="${booking.id}" >View</a>
-            </div>
-          </td>
-        `;
+		tbody.appendChild(row);
+	});
+    
+    // Cập nhật trạng thái các nút pagination
+    updatePaginationButtons(page, bookings.length, guideBooking.itemsPerPage);
+}
 
-        tbody.appendChild(row);
-      });
-    })
-    .catch((error) => {
-      console.error("Error loading bookings:", error);
-    });
+function updatePaginationButtons(page, totalItems, itemsPerPage) {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+	const prevBtn = document.getElementById('prev-btn');
+	const nextBtn = document.getElementById('next-btn');
 
-  function getStatusBadgeClass(status) {
-    switch (status.toLowerCase()) {
-      case "confirmed": return "bg-success";
-      case "pending": return "bg-warning text-dark";
-      case "cancled": return "bg-danger";
-      default: return "bg-secondary";
+	// Nếu là trang đầu tiên, disable nút "Previous"
+	if (page === 1) {
+	    prevBtn.disabled = true;
+	    prevBtn.classList.add('disabled-btn');
+	} else {
+	    prevBtn.disabled = false;
+	    prevBtn.classList.remove('disabled-btn');
+	}
+
+	// Nếu là trang cuối cùng, disable nút "Next"
+	if (page === totalPages) {
+	    nextBtn.disabled = true;
+	    nextBtn.classList.add('disabled-btn');
+	} else {
+	    nextBtn.disabled = false;
+	    nextBtn.classList.remove('disabled-btn');
+	}
+}
+
+function changePage(direction) {
+    if (direction === 'prev') {
+        userBooking.currentPage -= 1;
+    } else if (direction === 'next') {
+        userBooking.currentPage += 1;
     }
-  }
+    
+    fetchBookings(userBooking.currentPage); // Fetch lại bookings cho trang mới
+}
 
-};
+function getStatusBadgeClass(status) {
+  switch (status.toLowerCase()) {
+    case "confirmed": return "bg-success";
+    case "pending": return "bg-warning text-dark";
+    case "cancled": return "bg-danger";
+    default: return "bg-secondary";
+  }
+}
 
 function handleBookingAction(bookingId, action) {
   console.log("handleBookingAction " + bookingId + " " + action);
@@ -112,86 +161,80 @@ function handleBookingAction(bookingId, action) {
 
 
 /*booking history*/
-let currentPage = 1;
-const cardsPerPage = 3; // Hiển thị tối đa 3 card mỗi lần
+let userBooking = {
+  currentPage: 1,
+  itemsPerPage: 10
+};
+
 
 async function fetchBookings(page = 1) {
-	currentPage = page;
+	userBooking.currentPage = page;
     const response = await fetch('/api/bookings');
     const bookings = await response.json();
     
     // Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-    const startIdx = (page - 1) * cardsPerPage;
-    const endIdx = startIdx + cardsPerPage;
+    const startIdx = (page - 1) * userBooking.itemsPerPage;
+    const endIdx = startIdx + userBooking.itemsPerPage;
     
     // Lấy dữ liệu bookings cho trang hiện tại
     const bookingsToShow = bookings.slice(startIdx, endIdx);
     
-    const cardsBody = document.getElementById('bookings-cards-body');
-    cardsBody.innerHTML = ''; // Xóa nội dung cũ
-    
-    bookingsToShow.forEach((booking) => {
-        const col = document.createElement('div');
-        col.classList.add('col-md-4', 'mb-4'); // col-md-4 tạo 3 card mỗi hàng
-        
-        const card = document.createElement('div');
-        card.classList.add('card');
-        
-        const tourImage = booking.tour.images[0].url;
-        
-        card.innerHTML = `
-            <img src="${tourImage}" class="card-img-top" alt="Tour Image">
-            <div class="card-body">
-                <h5 class="card-title"><strong>${booking.tour.title}</strong></h5>
-                <p class="card-text">
-                    Start Date:<strong> ${booking.tour.startDate}</strong><br>
-                    End Date:<strong> ${booking.tour.endDate}</strong><br>
-                    Creator:<strong> ${booking.tour.creator.fullName}</strong><br>
-                    Booking Status:<strong> <span id="status-${booking.id}">${booking.status}</span></strong>
-                </p>
-				<div class="card-footer d-flex">
-				    <a class="btn btn-primary flex-fill" href="/users/bookings/${booking.id}">View Details</a>
-				    ${booking.status !== 'CANCELED' ? 
-				        `<button class="btn btn-danger flex-fill" onclick="cancelBooking(${booking.id})">Cancel</button>` : 
-				        `<button class="btn btn-danger flex-fill disabled-btn" disabled>Cancel</button>`}
-				</div>
-            </div>
-        `;
-        
-        col.appendChild(card);
-        cardsBody.appendChild(col);
-    });
+	
+	const tbody = document.getElementById("bookingTableBody");
+	tbody.innerHTML = "";
+	
+	bookingsToShow.forEach((booking) => {
+		const row = document.createElement("tr");
+
+		row.innerHTML = `
+		<td>
+		  <img src="${booking.tour.images[0].url}" alt="Tour Image" style="width: 80px; height: auto; border-radius: 6px;">
+		</td>
+
+
+	      <td>${booking.tour.title}</td>
+	      <td>${formatDate(booking.tour.startDate)}</td>
+		  <td>${formatDate(booking.tour.endDate)}</td>
+		  <td>${formatDate(booking.createdAt)}</td>
+		  <td>${booking.tour.creator.fullName}</td>
+		  <td>
+		    <span class="badge ${getStatusBadgeClass(booking.status)}">
+		      ${booking.status}
+		    </span>
+		    ${booking.status === "CANCELED"
+				? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.canceledReason || "Không có lý do"}</div>`
+				: ""
+			}
+		  </td>
+	      <td>
+	        <div class="d-flex gap-2">
+				<a class="btn btn-sm btn-primary" href="/users/bookings/${booking.id}" data-id="${booking.id}" >View</a>
+				${booking.status === "PENDING" ? `
+				  <button class="btn btn-sm btn-success" onclick="handleBookingAction('${booking.id}', 'cancel')">Cancel</button>
+				` : `
+				  <button class="btn btn-sm btn-success disabled-btn" disabled>Cancel</button>
+				`}
+	
+	        	
+	        </div>
+	      </td>
+	    `;
+
+		tbody.appendChild(row);
+	});
     
     // Cập nhật trạng thái các nút pagination
-    updatePaginationButtons(page, bookings.length);
-}
-
-function updatePaginationButtons(page, totalItems) {
-    const totalPages = Math.ceil(totalItems / cardsPerPage);
-    
-    // Nếu là trang đầu tiên, disable nút "Previous"
-    if (page === 1) {
-        document.getElementById('prev-btn').disabled = true;
-    } else {
-        document.getElementById('prev-btn').disabled = false;
-    }
-
-    // Nếu là trang cuối cùng, disable nút "Next"
-    if (page === totalPages) {
-        document.getElementById('next-btn').disabled = true;
-    } else {
-        document.getElementById('next-btn').disabled = false;
-    }
+    updatePaginationButtons(page, bookings.length, userBooking.itemsPerPage);
 }
 
 function changePage(direction) {
     if (direction === 'prev') {
-        currentPage -= 1;
+        userBooking.currentPage -= 1;
     } else if (direction === 'next') {
-        currentPage += 1;
+        userBooking.currentPage += 1;
     }
     
-    fetchBookings(currentPage); // Fetch lại bookings cho trang mới
+    fetchBookings(userBooking.currentPage); // Fetch lại bookings cho trang mới
 }
 
 
@@ -321,6 +364,7 @@ function fetchTours() {
                     <td>${tour.city}</td>
                     <td>${formatDate(tour.startDate)}</td>
                     <td>${formatDate(tour.endDate)}</td>
+					
                     <td>${tour.creator.fullName}</td>
 					<td>
 					    ${(tour.status !== "PENDING" && tour.status !== "REJECTED") 
@@ -343,7 +387,7 @@ function fetchTours() {
 
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString("vi-VN"); // Định dạng ngày tháng theo Việt Nam
+    return date.toLocaleString("vi-VN"); // Định dạng ngày tháng theo Việt Nam
 }
 
 // Hàm tạo dropdown cho trạng thái tour

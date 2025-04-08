@@ -1,17 +1,39 @@
+<style>
+
+	
+	.btn-pagination {
+		text-align: center;
+		margin: 0 5px;
+		width: 100px;
+		
+	}
+
+</style>
+
 <div id="manage-bookings" class="content-section">
-		<h2>Duyệt đặt chỗ</h2>
-		<table class="table table-bordered table-hover align-middle bg-white">
-			<thead class="table-light">
-				<tr>
-					<th scope="col">Tour title</th>
-					<th scope="col">User</th>
-					<th scope="col">Date</th>
-					<th scope="col">Status</th>
-					<th scope="col">Actions</th>
-				</tr>
-			</thead>
-			<tbody id="bookingTableBody">
-				
-			</tbody>
-		</table>
+	<h2>Duyệt đặt chỗ</h2>
+	<table class="table table-bordered table-hover align-middle bg-white">
+		<thead class="table-light">
+			<tr>
+				<th scope="col">Tour image</th>
+				<th scope="col">Tour title</th>
+				<th scope="col">Start Date</th>
+				<th scope="col">End Date</th>
+				<th scope="col">Created at</th>
+				<th scope="col">User</th>
+				<th scope="col">Booking Status</th>
+				<th scope="col">Actions</th>
+			</tr>
+		</thead>
+		<tbody id="bookingTableBody">
+
+		</tbody>
+	</table>
+
+	<div id="pagination" class="d-flex justify-content-center mt-4">
+		<button id="prev-btn" class="btn btn-primary d-flex justify-content-center btn-pagination"
+			onclick="changePage('prev')">Previous</button>
+		<button id="next-btn" class="btn btn-primary d-flex justify-content-center btn-pagination"
+			onclick="changePage('next')">Next</button>
 	</div>
+</div>
