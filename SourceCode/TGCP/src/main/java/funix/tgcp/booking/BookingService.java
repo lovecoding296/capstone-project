@@ -39,14 +39,6 @@ public class BookingService {
         return bookingRepository.findByTourId(tourId);
     }
 
-    // Xác nhận booking
-    public Booking confirmBooking(Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow();
-
-        booking.setStatus(BookingStatus.CONFIRMED);
-
-        return bookingRepository.save(booking);
-    }
 
 	public List<Booking> findAll() {
 		return bookingRepository.findAll();
@@ -65,23 +57,46 @@ public class BookingService {
 		return bookingRepository.findById(bookingId);
 	}
 
+	
+	public ResponseEntity<?> confirmBooking(Long bookingId) {
+		Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
+
+        if (bookingOpt.isEmpty()) {
+            return ResponseEntity.status(404).body("{\"message\": \"Booking not found\", \"bookingId\": " + bookingId + "}");
+        }
+
+        Booking booking = bookingOpt.get();
+        
+        if (booking.getStatus() == BookingStatus.CONFIRMED) {
+            return ResponseEntity.status(400).body("{\"message\": \"Booking is already confirmed\", \"bookingId\": " + bookingId + "}");
+        }
+        
+        
+        booking.setCanceledReason(null);
+		booking.setStatus(BookingStatus.CONFIRMED);
+		bookingRepository.save(booking);
+
+		return ResponseEntity.ok("{\"message\": \"Booking confirmed successfully\", \"bookingId\": " + bookingId + "}");
+	}
+	 
 	public ResponseEntity<?> cancelBooking(Long bookingId, String reason) {
 		Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
 
         if (bookingOpt.isEmpty()) {
-            return ResponseEntity.status(404).body("{\"error\": \"Booking not found\", \"bookingId\": " + bookingId + "}");
+            return ResponseEntity.status(404).body("{\"message\": \"Booking not found\", \"bookingId\": " + bookingId + "}");
         }
 
         Booking booking = bookingOpt.get();
         
         if (booking.getStatus() == BookingStatus.CANCELED) {
-            return ResponseEntity.status(400).body("{\"error\": \"Booking is already canceled\", \"bookingId\": " + bookingId + "}");
+            return ResponseEntity.status(400).body("{\"message\": \"Booking is already canceled\", \"bookingId\": " + bookingId + "}");
         }
 
 //        if (!booking.isCancelable()) { // Điều kiện nếu không thể hủy
 //            return ResponseEntity.status(403).body("{\"error\": \"Cancellation not allowed\", \"bookingId\": " + bookingId + "}");
 //        }
 
+        logger.info(reason);
         booking.setStatus(BookingStatus.CANCELED);
         booking.setCanceledReason(reason);
         bookingRepository.save(booking);

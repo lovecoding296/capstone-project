@@ -1,6 +1,7 @@
 package funix.tgcp.booking;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,10 +76,7 @@ public class BookingController {
         return ResponseEntity.ok(booking.get());
     }
     
-    @PatchMapping("/api/bookings/{bookingId}")
-    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId, @RequestBody String reason) {
-    	return bookingService.cancelBooking(bookingId, reason);
-    }
+    
     
     @GetMapping("/api/tours/{tourId}/bookings/user")
     public ResponseEntity<?> getBookingsByUserAndTour(@PathVariable Long tourId) {
@@ -116,9 +114,9 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
     
- // API lấy tất cả booking nhận được của guide
+    // API lấy tất cả booking nhận được của guide
     @GetMapping("/api/guides/bookings")
-    public ResponseEntity<List<Booking>> getBookingsByGuide(@PathVariable Long tourId) {      
+    public ResponseEntity<List<Booking>> getBookingsByGuide() {      
         
         CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
@@ -130,7 +128,7 @@ public class BookingController {
 				bookings = bookingService.findAll();
 			} else {
 				Long userId = userDetails.getId();
-				bookings = bookingService.getBookingsByTour(tourId);
+				bookings = bookingService.getBookingsByTour(userId);
 			}			
 		}
 		else {
@@ -143,10 +141,17 @@ public class BookingController {
 
     // API xác nhận booking
     @PutMapping("/api/bookings/{bookingId}/confirm")
-    public ResponseEntity<Booking> confirmBooking(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(bookingService.confirmBooking(bookingId));
+    public ResponseEntity<?> confirmBooking(@PathVariable Long bookingId) {
+    	return bookingService.confirmBooking(bookingId);
     }
     
+    @PutMapping("/api/bookings/{bookingId}/cancel")
+    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
+        logger.info(requestBody.get("reason"));
+    	return bookingService.cancelBooking(bookingId, requestBody.get("reason"));
+    }
+    
+
     @DeleteMapping("/api/bookings/{bookingId}")
     public ResponseEntity<String> deleteBooking(@PathVariable Long bookingId) {
     	//bookingService.deleteBooking(bookingId);

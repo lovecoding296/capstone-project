@@ -10,6 +10,107 @@ function autoResize(textarea) {
     textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
 }
 
+/*manage bookings*/
+function fetchGuidesBookings() {		
+  fetch("/api/guides/bookings")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch bookings");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const tbody = document.getElementById("bookingTableBody");
+      tbody.innerHTML = "";
+
+      data.forEach((booking) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${booking.tour.title}</td>
+          <td>${booking.user.fullName}</td>
+          <td>${booking.createdAt}</td>
+		  <td>
+		    <span class="badge ${getStatusBadgeClass(booking.status)}">
+		      ${booking.status}
+		    </span>
+		    ${
+		      booking.status === "CANCELED"
+		        ? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.canceledReason || "Không có lý do"}</div>`
+		        : ""
+		    }
+		  </td>
+          <td>
+            <div class="d-flex gap-2">
+				${booking.status === "PENDING" ? `
+				  <button class="btn btn-sm btn-success" onclick="handleBookingAction('${booking.id}', 'confirm')">Confirm</button>
+				` : `
+				  <button class="btn btn-sm btn-success disabled-btn" disabled>Confirm</button>
+				`}
+
+            	<a class="btn btn-sm btn-primary" href="/guides/bookings/${booking.id}" data-id="${booking.id}" >View</a>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    })
+    .catch((error) => {
+      console.error("Error loading bookings:", error);
+    });
+
+  function getStatusBadgeClass(status) {
+    switch (status.toLowerCase()) {
+      case "confirmed": return "bg-success";
+      case "pending": return "bg-warning text-dark";
+      case "cancled": return "bg-danger";
+      default: return "bg-secondary";
+    }
+  }
+
+};
+
+function handleBookingAction(bookingId, action) {
+  console.log("handleBookingAction " + bookingId + " " + action);
+  let reason = null;
+
+  if (action === 'cancel') {
+    reason = prompt("Nhập lý do:");
+    if (!reason) {
+      alert("Bạn cần nhập lý do hủy!");
+      return;
+    }
+  }
+
+  fetch(`/api/bookings/${bookingId}/${action}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      reason
+    })
+  })
+    .then(async (res) => {
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Đã xảy ra lỗi");
+      }
+      return data;
+    })
+    .then((result) => {
+      alert(result.message || `${action} thành công`);
+      fetchGuidesBookings(); // hoặc update riêng dòng nếu bạn muốn tối ưu
+    })
+    .catch((err) => {
+      console.error(err);
+      alert(err.message || "Đã xảy ra lỗi");
+    });
+}
+
+
+
 /*booking history*/
 let currentPage = 1;
 const cardsPerPage = 3; // Hiển thị tối đa 3 card mỗi lần
@@ -99,8 +200,8 @@ async function cancelBooking(bookingId) {
 	if (confirm("Bạn có chắc chắn muốn hủy đặt chỗ?")) {
 	    let canceledReason = prompt("Nhập lý do hủy:");
 		if(canceledReason) {
-			await fetch(`/api/bookings/${bookingId}`, {
-		        method: 'PATCH',
+			await fetch(`/api/bookings/${bookingId}/cancel`, {
+		        method: 'PUT',
 		        headers: { 'Content-Type': 'application/json' },
 		        body: JSON.stringify({ reason: canceledReason })
 		    });
