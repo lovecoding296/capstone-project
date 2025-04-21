@@ -49,11 +49,15 @@
 					
 					
 					
-                    document.getElementById("tour-info").innerText = data.tour.title;
-					document.getElementById("user-image").src = data.user.avatarUrl;
-					document.getElementById("user-name").innerText = data.user.fullName;
-					document.getElementById("user-rating").innerText = `⭐ ${data.user.averageRating}/5`;
-					document.getElementById("user-participants").innerText = `📊 ${data.numberOfPeople} người tham gia`;
+					document.getElementById("destination").innerText = data.destination;
+					document.getElementById("start-date").innerText = data.startDate;
+					document.getElementById("end-date").innerText = data.endDate;
+					document.getElementById("num-people").innerText = data.numberOfPeople;
+					
+					
+					document.getElementById("user-image").src = data.customer.avatarUrl;
+					document.getElementById("user-name").innerText = data.customer.fullName;
+					document.getElementById("user-rating").innerText = `⭐ ${data.customer.averageRating}/5`;
 					
 					// Lấy danh sách payments từ data.payments
 		            const payments = data.payments;
@@ -120,15 +124,17 @@
     </script>
 </head>
 <body>
-    <h2>Tour Information</h2>
-    <p id="tour-info">Loading...</p>
+	<h2> Booking information </h2>
+	<p><strong>Destination:</strong> <span id="destination"></span></p>
+	<p><strong>Start date:</strong> <span id="start-date"></span></p>
+	<p><strong>End date:</strong> <span id="end-date"></span></p>
+	<p><strong>Số người tham gia:</strong> <span id="num-people"></span></p>
 	
 	<div id="user-profile">
 	    <img id="user-image" src="" alt="Avatar">
 	    <div id="user-info">
 	        <div id="user-name">Tên Người Dùng</div>
 	        <div id="user-rating">⭐ 4.5/5</div>
-	        <div id="user-participants">📊 150 người tham gia</div>
 	    </div>
 	</div>
 	
@@ -142,7 +148,7 @@
 	            <th>Số tiền</th>
 	            <th>Nội dung chuyển khoản</th>	            
 				<th>Số tài khoản</th>
-				<th>Status</th>
+				<th>Thay đổi Status</th>
 				
 	        </tr>
 	    </thead>

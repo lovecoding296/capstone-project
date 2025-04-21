@@ -100,6 +100,12 @@ public class BookingController {
     	return bookingService.confirmBooking(bookingId);
     }
     
+    // API xác nhận complete booking
+    @PutMapping("/api/bookings/{bookingId}/complete")
+    public ResponseEntity<?> completeBooking(@PathVariable Long bookingId) {
+    	return bookingService.completeBooking(bookingId);
+    }
+    
     @PutMapping("/api/bookings/{bookingId}/cancel")
     public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
         logger.info(requestBody.get("reason"));

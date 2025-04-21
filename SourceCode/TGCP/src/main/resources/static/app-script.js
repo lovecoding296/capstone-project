@@ -11,6 +11,39 @@ function autoResize(textarea) {
 }
 
 
+/*income summary */
+
+function loadIncomeSummary() {
+  fetch(`/api/guides/income-summary`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("totalIncome").textContent = data.totalIncome.toLocaleString("vi-VN");
+
+      // Vẽ biểu đồ
+      const ctx = document.getElementById("incomeChart").getContext("2d");
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(data.monthlyIncome),
+          datasets: [{
+            label: 'Thu nhập theo tháng',
+            data: Object.values(data.monthlyIncome),
+            backgroundColor: 'rgba(75, 192, 192, 0.5)'
+          }]
+        }
+      });
+
+      // Hiển thị danh sách đơn
+      const list = document.getElementById("completedBookingsList");
+      data.bookings.forEach(b => {
+        const item = document.createElement("li");
+        item.textContent = `Khách: ${b.customer.fullName} | Số tiền: ${b.totalPrice} | Ngày: ${b.endDate}`;
+        list.appendChild(item);
+      });
+    });
+}
+
+
 /* manage BusyDate */
 let flatpickrInstance;
 let originalDates = [];   // các ngày đã lưu từ server
@@ -135,16 +168,11 @@ async function fetchGuidesBookings(page = 1) {
 		const row = document.createElement("tr");
 
 		row.innerHTML = `
-		<td>
-		  <img src="${booking.tour.images[0].url}" alt="Tour Image" style="width: 80px; height: auto; border-radius: 6px;">
-		</td>
-
-
-	      <td>${booking.tour.title}</td>
-	      <td>${formatDate(booking.tour.startDate)}</td>
-		  <td>${formatDate(booking.tour.endDate)}</td>
+	      <td>${booking.destination}</td>
+	      <td>${formatDate(booking.startDate)}</td>
+		  <td>${formatDate(booking.endDate)}</td>
 		  <td>${formatDate(booking.createdAt)}</td>
-		  <td>${booking.user.fullName}</td>
+		  <td>${booking.guide.fullName}</td>
 		  <td>
 		    <span class="badge ${getStatusBadgeClass(booking.status)}">
 		      ${booking.status}
@@ -162,6 +190,12 @@ async function fetchGuidesBookings(page = 1) {
 			` : `
 			  <button class="btn btn-sm btn-success disabled-btn" disabled>Confirm</button>
 			`}
+			
+			${booking.status === "CONFIRMED" ? `
+		      <button class="btn btn-sm btn-warning" onclick="handleBookingAction('${booking.id}', 'complete')">Complete</button>
+		    ` : `
+		      <button class="btn btn-sm btn-warning disabled-btn" disabled>Complete</button>
+		    `}
 	        </div>
 	      </td>
 	    `;
@@ -213,6 +247,7 @@ function getStatusBadgeClass(status) {
     case "confirmed": return "bg-success";
     case "pending": return "bg-warning text-dark";
     case "cancled": return "bg-danger";
+	case "completed": return "bg-info text-white";
     default: return "bg-secondary";
   }
 }
@@ -284,16 +319,11 @@ async function fetchBookings(page = 1) {
 		const row = document.createElement("tr");
 
 		row.innerHTML = `
-		<td>
-		  <img src="${booking.tour.images[0].url}" alt="Tour Image" style="width: 80px; height: auto; border-radius: 6px;">
-		</td>
-
-
-	      <td>${booking.tour.title}</td>
-	      <td>${formatDate(booking.tour.startDate)}</td>
-		  <td>${formatDate(booking.tour.endDate)}</td>
+	      <td>${booking.destination}</td>
+	      <td>${formatDate(booking.startDate)}</td>
+		  <td>${formatDate(booking.endDate)}</td>
 		  <td>${formatDate(booking.createdAt)}</td>
-		  <td>${booking.tour.creator.fullName}</td>
+		  <td>${booking.guide.fullName}</td>
 		  <td>
 		    <span class="badge ${getStatusBadgeClass(booking.status)}">
 		      ${booking.status}
@@ -446,103 +476,13 @@ function submitGuideRegister() {
 	}
 }
 
-/*manage tours*/
-function fetchTours() {
-    fetch("/api/tours") // Đổi đường dẫn API nếu cần
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.querySelector("tbody");
-            tbody.innerHTML = ""; // Xóa nội dung cũ (nếu có)
-
-            data.forEach(tour => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${tour.title}</td>
-                    <td>${tour.city}</td>
-                    <td>${formatDate(tour.startDate)}</td>
-                    <td>${formatDate(tour.endDate)}</td>
-					
-                    <td>${tour.creator.fullName}</td>
-					<td>
-					    ${(tour.status !== "PENDING" && tour.status !== "REJECTED") 
-					        ? getStatusDropdown(tour.id, tour.status) 
-					        : `${tour.status}${tour.status === "REJECTED" ? `<br><small>(Lý do: ${tour.rejectedReason || "Không có lý do" })</small>` : ""}`
-					    }
-					</td>
-
-                    <td>
-                        <a href="/tours/${tour.id}" class="btn btn-info btn-sm">Chi tiết</a>
-                        <a href="/tours/${tour.id}/edit" class="btn btn-primary btn-sm">Sửa</a>
-                        <a href="/tours/${tour.id}/delete" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        })
-        .catch(error => console.error("Lỗi khi lấy danh sách tour:", error));
-}
 
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleString("vi-VN"); // Định dạng ngày tháng theo Việt Nam
-}
-
-// Hàm tạo dropdown cho trạng thái tour
-function getStatusDropdown(tourId, currentStatus) {
-    return `
-        <select onchange="updateTourStatus(${tourId}, this.value)" class="form-select form-select-sm">
-            <option value="OPEN" ${currentStatus === "OPEN" ? "selected" : ""}>OPEN</option>
-            <option value="REGISTRATION_CLOSED">REGISTRATION_CLOSED</option>
-            <option value="ONGOING">ONGOING</option>
-            <option value="COMPLETED">COMPLETED</option>
-            <option value="CANCELED">CANCELED</option>
-        </select>
-    `;
-}
-
-// Hàm cập nhật trạng thái tour
-function updateTourStatus(tourId, newStatus) {
-    fetch(`/api/tours/${tourId}/update-status`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Lỗi cập nhật trạng thái");
-        return response.json();
-    })
-    .then(() => {
-        alert("Cập nhật trạng thái thành công!");
-        fetchTours(); // Reload danh sách tour sau khi cập nhật
-    })
-    .catch(error => console.error("Lỗi khi cập nhật trạng thái tour:", error));
+    return date.toLocaleDateString("vi-VN"); // Định dạng ngày tháng theo Việt Nam
 }
 
 
-
-/*tour approval*/
-async function fetchPendingTours() {
-    console.log("fetchPendingTours....")
-    const response = await fetch('/api/admin/tours/pending');
-    const tours = await response.json();
-    const tableBody = document.getElementById("tourTableBody");
-
-    // Không làm lại innerHTML mà thêm các hàng mới vào
-    tours.forEach(tour => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${tour.title}</td>
-            <td>${tour.description}</td>
-            <td>${tour.price}</td>
-            <td>${tour.status}</td>
-            <td>
-                <button onclick="updateTourStatus(${tour.id}, 'approve')">Approve</button>
-                <button onclick="updateTourStatus(${tour.id}, 'reject')">Reject</button>
-            </td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
 
 async function updateTourStatus(id, action) {
     let url = `/api/admin/tours/${id}/${action}`;
@@ -645,201 +585,3 @@ async function rejectGuide(id) {
 		alert("Có lỗi xảy ra, vui lòng thử lại!");
 	}
 }
-
-
-/*tour-create*/
-function previewImages() {
-	const input = document.getElementById("images");
-	const files = input.files;
-	// Kiểm tra số lượng file chọn vào (tối đa 5 ảnh)				
-
-	// Sử dụng th:with để gán giá trị tour.imageUrls.size() vào biến JavaScript
-	const totalFileCount = files.length;
-	// Kiểm tra số lượng file chọn vào (tối đa 5 ảnh)
-	if (files.length > 5) {
-		alert("Bạn chỉ có thể chọn tối đa 5 ảnh.");
-		// Nếu số file vượt quá 5, reset lại input
-		input.value = '';
-		return;
-	}
-
-
-	const previewContainer = document.getElementById("previewContainer");
-
-	previewContainer.innerHTML = "";  // Xóa preview cũ
-
-	// Render preview mới
-	for (let i = 0; i < input.files.length; i++) {
-		const file = input.files[i];
-		const reader = new FileReader();
-
-		reader.onload = (e) => {
-			const imgWrapper = document.createElement("div");
-			imgWrapper.classList.add("position-relative", "m-2");
-			imgWrapper.style.transition = "opacity 0.3s";
-
-			const img = document.createElement("img");
-			img.src = e.target.result;
-			img.classList.add("rounded", "shadow-sm");
-			img.style.width = "150px";
-			img.style.height = "150px";
-			img.style.objectFit = "cover";
-
-			// Nút xóa
-			const removeBtn = document.createElement("button");
-			removeBtn.textContent = "X";
-			removeBtn.classList.add("btn", "btn-danger", "btn-sm", "position-absolute", "top-0", "end-0");
-			removeBtn.onclick = () => removeImage(i);
-
-			imgWrapper.appendChild(img);
-			imgWrapper.appendChild(removeBtn);
-			previewContainer.appendChild(imgWrapper);
-		};
-
-		reader.readAsDataURL(file);
-	}
-
-}
-
-// Xóa ảnh (giật)
-function removeImage(index) {
-	const input = document.getElementById("images");
-	const imageCount = document.getElementById("imageCount");
-
-	const dataTransfer = new DataTransfer();
-
-	for (let i = 0; i < input.files.length; i++) {
-		if (i !== index) {
-			dataTransfer.items.add(input.files[i]);
-		}
-	}
-
-	input.files = dataTransfer.files;
-
-	previewImages();
-}
-
-function addItinerary() {
-	const itineraryId = `itinerary-${Date.now()}`;
-	const itineraryDiv = document.createElement("div");
-	itineraryDiv.classList.add("itinerary");
-	itineraryDiv.id = itineraryId;
-	itineraryDiv.innerHTML = `
-			                <label>Ngày: <input type="number" min="1" name="dayNo" id="${itineraryId}-day" ></label>
-			                <button onclick="removeElement('${itineraryId}')">Xóa Hành Trình</button>
-			                <button type="button" onclick="addActivity('${itineraryId}')">Thêm Hoạt Động</button>
-			                <div id="${itineraryId}-activities"></div>
-			            `;
-	document.getElementById("itineraryContainer").appendChild(itineraryDiv);
-}
-
-function addActivity(itineraryId) {
-	const activityId = `${itineraryId}-activity-${Date.now()}`;
-	const activityDiv = document.createElement("div");
-	activityDiv.classList.add("activity");
-	activityDiv.id = activityId;
-	activityDiv.innerHTML = `
-			                <label>Tiêu đề: <input type="text" name="title"></label>
-			                <label>Mô tả: <input type="text" name="description"></label>
-			                <button onclick="removeElement('${activityId}')">Xóa</button>
-			            `;
-	document.getElementById(`${itineraryId}-activities`).appendChild(activityDiv);
-}
-
-function removeElement(elementId) {
-	const element = document.getElementById(elementId);
-	if (element) {
-		element.remove();
-	}
-}
-
-// Hàm tạo ra HTML cho input tuổi khi checkbox được chọn
-function toggleAgeInputs() {
-	const ageRestricted = document.getElementById("ageRestricted").checked;
-	const ageInputsContainer = document.getElementById("ageInputs");
-
-	// Nếu checkbox được chọn, tạo HTML cho input tuổi
-	if (ageRestricted) {
-		ageInputsContainer.style.display = "block";
-		// Chỉ tạo ra các input nếu chưa được tạo
-		if (!ageInputsContainer.innerHTML.trim()) {
-			const ageInputsHTML = `
-			                    <div class="row">
-			                        <div class="col">
-			                            <label for="fromAge" class="form-label">Từ tuổi</label>
-			                            <input type="number" id="fromAge" name="fromAge"  class="form-control" min="1" max="100" required>
-			                        </div>
-			                        <div class="col">
-			                            <label for="toAge" class="form-label">Đến tuổi</label>
-			                            <input type="number" id="toAge" name="toAge" class="form-control" min="1" max="100" required>
-			                        </div>
-			                    </div>`;
-			ageInputsContainer.innerHTML = ageInputsHTML;
-		}
-	} else {
-		// Ẩn input nếu checkbox không được chọn
-		ageInputsContainer.style.display = "none";
-		ageInputsContainer.innerHTML = ""; // Xóa HTML khi ẩn
-	}
-}
-
-// Đảm bảo hiển thị đúng trạng thái khi tải lại trang (khi edit tour)
-document.addEventListener("DOMContentLoaded", () => {
-	toggleAgeInputs();
-});
-
-function submitTour() {
-	event.preventDefault(); // Ngăn form gửi theo cách truyền thống
-
-	let formData = new FormData(); // Tạo đối tượng FormData để gửi dữ liệu
-
-	// Thu thập dữ liệu từ form
-	let tour = {
-		title: document.getElementById("title").value,
-		city: document.getElementById("destination").value,
-		category: document.getElementById("category").value,
-		description: CKEDITOR.instances["description"].getData(),
-		price: document.getElementById("price").value,
-		maxParticipants: document.getElementById("maxParticipants").value,
-		startDate: document.getElementById("startDate").value,
-		endDate: document.getElementById("endDate").value,
-		ageRestricted: document.getElementById("ageRestricted").checked,
-		fromAge: document.getElementById("fromAge") ? document.getElementById("fromAge").value : null,
-		toAge: document.getElementById("toAge") ? document.getElementById("toAge").value : null,
-		// Lấy danh sách lịch trình (itineraries)
-		itineraries: Array.from(document.querySelectorAll(".itinerary")).map(itinerary => {
-			let itineraryId = itinerary.id;
-			return {
-				dayNo: parseInt(itinerary.querySelector(`[id="${itineraryId}-day"]`).value) || 1,
-				activities: Array.from(itinerary.querySelectorAll(".activity")).map(activity => ({
-					title: activity.querySelector(`[name="title"]`).value,
-					description: activity.querySelector(`[name="description"]`).value
-				}))
-			};
-		})
-	};
-
-	// Thêm JSON vào FormData
-	formData.append("tour", new Blob([JSON.stringify(tour)], {type: "application/json"}));
-
-	// Lấy các file ảnh và thêm vào FormData
-	let filesInput = document.getElementById("images");
-	for (let i = 0; i < filesInput.files.length; i++) {
-		formData.append("files", filesInput.files[i]);
-	}
-
-	// Gửi request đến API REST "/api/tours/new"
-	fetch("/api/tours", {
-		method: "POST",
-		body: formData
-	})
-		.then(response => response.json())
-		.then(data => {
-			alert("Tour đã được tạo thành công!");
-			window.location.href = "/tours/" + data.tourId; // Điều hướng sau khi thành công
-		})
-		.catch(error => {
-			console.error("Lỗi:", error);
-			alert("Có lỗi xảy ra khi tạo Tour.");
-		});
-};

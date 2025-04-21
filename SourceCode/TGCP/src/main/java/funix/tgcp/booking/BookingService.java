@@ -97,8 +97,8 @@ public class BookingService {
 		bookingRepository.save(booking);
 		
 		
-		LocalDate start = booking.getStartDate().toLocalDate();
-        LocalDate end = booking.getEndDate().toLocalDate();
+		LocalDate start = booking.getStartDate();
+        LocalDate end = booking.getEndDate();
         Long guideId = booking.getGuide().getId();
 
         while (!start.isAfter(end)) {
@@ -139,6 +139,28 @@ public class BookingService {
         bookingRepository.save(booking);
 
         return ResponseEntity.ok("{\"message\": \"Booking canceled successfully\", \"bookingId\": " + bookingId + "}");
+
+	}
+
+	public ResponseEntity<?> completeBooking(Long bookingId) {
+		Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
+
+        if (bookingOpt.isEmpty()) {
+            return ResponseEntity.status(404).body("{\"message\": \"Booking not found\", \"bookingId\": " + bookingId + "}");
+        }
+
+        Booking booking = bookingOpt.get();
+        
+        if (booking.getStatus() == BookingStatus.COMPLETED) {
+            return ResponseEntity.status(400).body("{\"message\": \"Booking is already completed\", \"bookingId\": " + bookingId + "}");
+        }
+        
+        
+        booking.setCanceledReason(null);
+		booking.setStatus(BookingStatus.COMPLETED);
+		bookingRepository.save(booking);
+
+		return ResponseEntity.ok("{\"message\": \"Booking confirmed completed\", \"bookingId\": " + bookingId + "}");
 
 	}
 

@@ -1,4 +1,4 @@
-package funix.tgcp.guide.request;
+package funix.tgcp.guide.income.request;
 
 import java.time.LocalDateTime;
 

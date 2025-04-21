@@ -1,4 +1,4 @@
-package funix.tgcp.guide.request;
+package funix.tgcp.guide.income.request;
 
 public enum GuideRequestStatus {
     PENDING,  // Chờ duyệt

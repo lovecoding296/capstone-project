@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class Booking {
     @Column(nullable = false)
     private int numberOfPeople;    
     
+    private double totalPrice = 0;
+    
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String destination;
     
@@ -48,10 +51,10 @@ public class Booking {
     private String canceledReason;
     
     @Column(nullable = false)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(nullable = false)
-    private LocalDateTime endDate;    
+    private LocalDate endDate;    
     
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     private List<Payment> payments;

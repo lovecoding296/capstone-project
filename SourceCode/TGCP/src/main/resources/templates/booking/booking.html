@@ -16,13 +16,18 @@
                 .then(data => {
 					
 					console.log(data)
+					document.getElementById("destination").innerText = data.destination;
+					document.getElementById("start-date").innerText = data.startDate;
+					document.getElementById("end-date").innerText = data.endDate;
+					document.getElementById("num-people").innerText = data.numberOfPeople;
+					document.getElementById("total-price").innerText = data.totalPrice;
 					
-                    document.getElementById("tour-info").innerText = data.tour.title;
-                    document.getElementById("guide-name").innerText = data.tour.creator.fullName;
-                    document.getElementById("guide-email").innerText = data.tour.creator.email;
-                    document.getElementById("bank-name").innerText = data.tour.creator.bankName;
-                    document.getElementById("account-holder").innerText = data.tour.creator.accountHolder;
-                    document.getElementById("account-number").innerText = data.tour.creator.accountNumber;
+					
+                    document.getElementById("guide-name").innerText = data.guide.fullName;
+                    document.getElementById("guide-email").innerText = data.guide.email;
+                    document.getElementById("bank-name").innerText = data.guide.bankName;
+                    document.getElementById("account-holder").innerText = data.guide.accountHolder;
+                    document.getElementById("account-number").innerText = data.guide.accountNumber;
 					
 					// Lấy danh sách payments từ data.payments
 		            const payments = data.payments;
@@ -30,7 +35,7 @@
 		            paymentList.innerHTML = ""; // Xóa dữ liệu cũ nếu có
 
 		            if (!payments || payments.length === 0) {
-		                paymentList.innerHTML = "<tr><td colspan='5'>No payments found.</td></tr>";
+		                paymentList.innerHTML = "<tr><td colspan='7'>No payments found.</td></tr>";
 		                return;
 		            }
 
@@ -225,8 +230,14 @@
     </script>
 </head>
 <body>
-    <h2>Tour Information</h2>
-    <p id="tour-info">Loading...</p>
+    <h2> Booking information </h2>
+	<p><strong>Destination:</strong> <span id="destination"></span></p>
+	<p><strong>Start date:</strong> <span id="start-date"></span></p>
+	<p><strong>End date:</strong> <span id="end-date"></span></p>
+	<p><strong>Số người tham gia:</strong> <span id="num-people"></span></p>
+	<p><strong>Total price:</strong> <span id="total-price"></span></p>
+		
+	
     
     <h2>Guide Information</h2>
     <p><strong>Name:</strong> <span id="guide-name"></span></p>

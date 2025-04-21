@@ -3,7 +3,7 @@ package funix.tgcp.util;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import funix.tgcp.guide.request.GuideRequestService;
+import funix.tgcp.guide.income.request.GuideRequestService;
 
 import java.io.File;
 import java.io.IOException;

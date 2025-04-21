@@ -6,6 +6,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Dashboard</title>
 	
+	<!-- Chèn thư viện Chart.js -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	
 	<!-- Flatpickr CSS -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -55,6 +59,9 @@
 						</li>
 						<li class="nav-item"><a class="panel-link nav-link" href="#manage-busydate"
 								onclick="navigate(event,'manage-busydate')">Đặt lịch nghỉ</a>
+						</li>
+						<li class="nav-item"><a class="panel-link nav-link" href="#income-summary"
+								onclick="navigate(event,'income-summary')">Thống kê thu nhập</a>
 						</li>
 					</ul>
 				</div>
@@ -128,31 +135,42 @@
 								switch (page) {
 									case "guide-register":
 								        checkGuideRequestStatus();
-								        break;									
+								        break;							
+												
 								    case "guide-approval":
 								        fetchGuideRequests();
 								        break;
+										
 								    case "tour-approval":
 								        fetchPendingTours();
-								        break;								   
+								        break;	
+																	   
 								    case "manage-tours":
 								        fetchTours();
 								        break;
+										
 									case "joined-tours":
 												        
 								        break;								    
 								    case "booking-history":
 								        fetchBookings();
 										break;
+										
 									case "manage-bookings":
 										fetchGuidesBookings();
 										break;
+										
 									case "tour-create":
 									
 								        break;										
 									case "manage-busydate":
-										fetchBusyDate()								
-								        break;										
+										fetchBusyDate();								
+								        break;			
+													
+									case "income-summary":
+										loadIncomeSummary();
+										break;
+												
 								    default:
 								        console.log("No action found for page:", page);
 								        break;

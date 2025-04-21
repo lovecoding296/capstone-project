@@ -242,7 +242,7 @@
 			<div class="buttons">
 				<button class="btn-message">Gửi tin nhắn</button>
 				<button class="btn-hire"
-				        th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}')|">
+				        th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerPersonPerDay})|">
 				    Thuê
 				</button>
 
@@ -270,7 +270,7 @@
 	      <input type="number" id="numPeople" name="numPeople" min="1" value="1" required>
 
 	      <label>Địa điểm cụ thể:</label>
-	      <input type="text" name="locationDetail" required>
+	      <input type="text" id="locationDetail" name="locationDetail" required>
 
 	      <p><strong>Tổng tiền: <span id="totalPrice">0</span> VND</strong></p>
 
@@ -457,7 +457,7 @@
   			    }
   			  });
 
-			  const pricePerPersonPerDay = 200000; // ví dụ: 200.000 VND/người/ngày
+			  let pricePerPersonPerDay = 200000; // ví dụ: 200.000 VND/người/ngày
 			  
 			  function fetchBusyDate(guideId) {
 				console.log("fetchBusyDate guideId " + guideId)
@@ -470,7 +470,9 @@
 						
 			  }
 
-			  function openBookingPopup(guideId, guideName) {
+			  function openBookingPopup(guideId, guideName, price) {
+				flatpickrInstance.clear();
+				
 			    document.getElementById("bookingModal").style.display = "flex";
 			    document.getElementById("guideId").value = guideId;
 			    document.getElementById("guideName").textContent = guideName;
@@ -480,6 +482,7 @@
 			    document.getElementById("numPeople").value = 1;
 			    document.getElementById("totalPrice").textContent = "0";
 				
+				pricePerPersonPerDay = price;
 				
 				fetchBusyDate(guideId)
 			  }
@@ -519,9 +522,49 @@
 
 			  document.getElementById("bookingForm").addEventListener("submit", function (e) {
 			    e.preventDefault();
-			    alert("Đặt lịch thành công! (Demo)");
+			    //alert("Đặt lịch thành công! (Demo)");
+				
+				createBooking()
 			    closeBookingPopup();
 			  });
+			  
+			  
+			  
+			  function createBooking() {
+	  		    
+				console.log("createBooking")
+				
+				let guideId = document.getElementById("guideId").value;
+				let startDate = document.getElementById("startDate").value;
+				let endDate = document.getElementById("endDate").value;
+				let numberOfPeople = document.getElementById("numPeople").value;
+				let destination = document.getElementById("locationDetail").value;
+				let totalPrice = document.getElementById("totalPrice").textContent;
+	  		    
+	  	        const bookingData = {
+	  	            guide: { id: guideId }, 
+	  	            //user: { id: userId }, 
+					startDate: startDate,
+					endDate: endDate,
+	  	            numberOfPeople: parseInt(numberOfPeople),
+					destination: destination,
+					totalPrice: parseFloat(totalPrice.replace(/\./g, "").replace(",", ".")),
+	  	            status: "PENDING" // Status mặc định
+	  	        };
+
+	  	        fetch("/api/bookings/create", {
+	  	            method: "POST",
+	  	            headers: { "Content-Type": "application/json" },
+	  	            body: JSON.stringify(bookingData) // Gửi toàn bộ bookingData
+	  	        })
+	  	        .then(response => response.json())
+	  	        .then(data => {
+	  	            alert("Đã tham gia tour thành công! Vui lòng thanh toán và gửi phiếu thanh toán");
+	  	            window.location.href = `/users/bookings/${data.id}`;
+	  	        })
+	  	        .catch(error => console.error("Error joining:", error));
+	  	    
+	  		}
 			</script>
 
 
