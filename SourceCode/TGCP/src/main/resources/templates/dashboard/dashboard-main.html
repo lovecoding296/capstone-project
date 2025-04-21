@@ -5,6 +5,12 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Dashboard</title>
+	
+	<!-- Flatpickr CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+	<!-- Flatpickr JS -->
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,25 +46,15 @@
 						<li class="nav-item"><a class="panel-link nav-link" href="#guide-approval"
 								onclick="navigate(event,'guide-approval')">Phê duyệt đơn đăng ký hướng dẫn viên</a>
 						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#tour-approval"
-								onclick="navigate(event,'tour-approval')">Phê duyệt đơn tạo tour</a>
-						</li>
 						
-						<li class="nav-item"><a class="panel-link nav-link" href="#manage-tours"
-								onclick="navigate(event,'manage-tours')">Các tour đã tạo</a>
-						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#joined-tours"
-								onclick="navigate(event,'joined-tours')">Các tour đã tham gia</a>
-						</li>
 						<li class="nav-item"><a class="panel-link nav-link" href="#booking-history"
 								onclick="navigate(event,'booking-history')">Lịch sử đặt chỗ</a>
 						</li>
 						<li class="nav-item"><a class="panel-link nav-link" href="#manage-bookings"
 								onclick="navigate(event,'manage-bookings')">Duyệt đặt chỗ</a>
 						</li>
-								
-						<li class="nav-item"><a class="panel-link nav-link" href="#tour-create"
-								onclick="navigate(event,'tour-create')">Tạo tour</a>
+						<li class="nav-item"><a class="panel-link nav-link" href="#manage-busydate"
+								onclick="navigate(event,'manage-busydate')">Đặt lịch nghỉ</a>
 						</li>
 					</ul>
 				</div>
@@ -127,6 +123,8 @@
 								});
 								
 								
+								
+								
 								switch (page) {
 									case "guide-register":
 								        checkGuideRequestStatus();
@@ -151,9 +149,12 @@
 										break;
 									case "tour-create":
 									
-								        break;
+								        break;										
+									case "manage-busydate":
+										fetchBusyDate()								
+								        break;										
 								    default:
-								        console.error("No action found for page:", page);
+								        console.log("No action found for page:", page);
 								        break;
 								}
 

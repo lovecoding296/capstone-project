@@ -1,6 +1,5 @@
 package funix.tgcp.booking;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,12 +27,12 @@ public class BookingController {
     	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
     	if(userDetails != null ) {
-    		bookingRequest.setUser(userDetails.getUser());
+    		bookingRequest.setCustomer(userDetails.getUser());
     		return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
     	} else {
     		User user = new User();
     		user.setId((long)1);
-    		bookingRequest.setUser(user);
+    		bookingRequest.setCustomer(user);
     	}    	
         return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
     }
@@ -42,27 +41,24 @@ public class BookingController {
 
     // API lấy tất cả booking của người dùng
     @GetMapping("/api/bookings")
-    public ResponseEntity<List<Booking>> getBookings() {
+    public ResponseEntity<?> getBookings() {
     	
     	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
     	
-    	List<Booking> bookings;    	
 		if (userDetails != null) {
 			logger.info("is admin " + userDetails.isAdmin());
 			if(userDetails.isAdmin()) {
-				bookings = bookingService.findAll();
+				return bookingService.findAll();
 			} else {
 				Long userId = userDetails.getId();
-				bookings = bookingService.getBookingsByUser(userId);
+				return bookingService.getBookingsByCustomer(userId);
 			}			
 		}
 		else {
 			logger.info("not logged in -> get all bookings");
-			bookings = bookingService.findAll();
-		}    	
-    	
-        return ResponseEntity.ok(bookings);
+			return bookingService.findAll();
+		}    	    	
     }
 
     @GetMapping("/api/bookings/{bookingId}")
@@ -76,67 +72,26 @@ public class BookingController {
         return ResponseEntity.ok(booking.get());
     }
     
-    
-    
-    @GetMapping("/api/tours/{tourId}/bookings/user")
-    public ResponseEntity<?> getBookingsByUserAndTour(@PathVariable Long tourId) {
-    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
-    	logger.info("userDetails " + userDetails);
-    	
-		if (userDetails != null) {
-			Long userId = userDetails.getId();
-			return ResponseEntity.ok(bookingService.findByUserIdAndTourId(userId, tourId));
-		}
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("UNAUTHORIZED");
-    }
-    
-    // API lấy tất cả booking của tour
-    @GetMapping("/api/tours/{tourId}/bookings")
-    public ResponseEntity<List<Booking>> getBookingsByTour(@PathVariable Long tourId) {
-        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
-    	logger.info("userDetails " + userDetails);
-    	
-    	List<Booking> bookings;    	
-		if (userDetails != null) {
-			logger.info("is admin " + userDetails.isAdmin());
-			if(userDetails.isAdmin()) {
-				bookings = bookingService.findAll();
-			} else {
-				Long userId = userDetails.getId();
-				bookings = bookingService.getBookingsByTour(tourId);
-			}			
-		}
-		else {
-			logger.info("not logged in -> get all bookings");
-			bookings = bookingService.findAll();
-		}    	
-    	
-        return ResponseEntity.ok(bookings);
-    }
-    
     // API lấy tất cả booking nhận được của guide
     @GetMapping("/api/guides/bookings")
-    public ResponseEntity<List<Booking>> getBookingsByGuide() {      
+    public ResponseEntity<?> getBookingsByGuide() {      
         
         CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
     	
-    	List<Booking> bookings;    	
-		if (userDetails != null) {
+    	if (userDetails != null) {
 			logger.info("is admin " + userDetails.isAdmin());
 			if(userDetails.isAdmin()) {
-				bookings = bookingService.findAll();
+				return bookingService.findAll();
 			} else {
 				Long userId = userDetails.getId();
-				bookings = bookingService.getBookingsByTour(userId);
+				return bookingService.getBookingsByGuide(userId);
 			}			
 		}
 		else {
 			logger.info("not logged in -> get all bookings");
-			bookings = bookingService.findAll();
-		}    	
-    	
-        return ResponseEntity.ok(bookings);
+			return bookingService.findAll();
+		}
     }
 
     // API xác nhận booking

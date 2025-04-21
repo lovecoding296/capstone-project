@@ -37,7 +37,6 @@ public class SecurityConfig {
             	.requestMatchers("/admin/**").hasRole("ADMIN")
         		//.requestMatchers("/reviews/**").authenticated()
         		//.requestMatchers("/users/**").authenticated()
-        		//.requestMatchers("/tours/**").authenticated()
         		//.requestMatchers("/posts/**").authenticated()
         		.requestMatchers("/ckeditor/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().permitAll() // Allow all requests

@@ -9,12 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
-import funix.tgcp.tour.Tour;
-import funix.tgcp.tour.TourService;
+
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/reviews")
@@ -22,9 +20,7 @@ public class ReviewController {
 	
 	@Autowired
     private ReviewService reviewService;
-	
-	@Autowired
-    private  TourService tourService;
+
 	
 	@Autowired
     private  UserService userService;
@@ -58,21 +54,17 @@ public class ReviewController {
     
 
     /**
-     * Hiển thị danh sách đánh giá của Tour
+     * Hiển thị danh sách đánh giá của booking
      */
-    @GetMapping("/tour/{tourId}")
-    public String listReviews(@PathVariable Long tourId, Model model, HttpSession session) {
-        List<Review> reviews = reviewService.findByTourId(tourId);
-        Tour tour = tourService.findById(tourId);
+    @GetMapping("/booking/{bookingId}")
+    public String listReviews(@PathVariable Long booking, Model model, HttpSession session) {
+        List<Review> reviews = reviewService.findByBookingId(booking);
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         
-        Set<User> participants = tour.getParticipants();        
-        participants.add(tour.getCreator());
-        participants.remove(loggedInUser);
+
         
         model.addAttribute("reviews", reviews);
-        model.addAttribute("tour", tour);
-        model.addAttribute("participants", participants);
+        model.addAttribute("booking", booking);
         model.addAttribute("review", new Review());
         model.addAttribute("loggedInUser", loggedInUser);
 
@@ -80,19 +72,14 @@ public class ReviewController {
     }
     
 
-    @GetMapping("/tour/{tourId}/new")
-    public String createReview(@PathVariable Long tourId, Model model, HttpSession session) {
-        List<Review> reviews = reviewService.findByTourId(tourId);
-        Tour tour = tourService.findById(tourId);
+    @GetMapping("/booking/{bookingId}/new")
+    public String createReview(@PathVariable Long bookingId, Model model, HttpSession session) {
+        List<Review> reviews = reviewService.findByBookingId(bookingId);
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         
-        Set<User> participants = tour.getParticipants();        
-        participants.add(tour.getCreator());
-        participants.remove(loggedInUser);
+        
         
         model.addAttribute("reviews", reviews);
-        model.addAttribute("tour", tour);
-        model.addAttribute("participants", participants);
         model.addAttribute("review", new Review());
         model.addAttribute("loggedInUser", loggedInUser);
 
@@ -102,20 +89,20 @@ public class ReviewController {
     /**
      * Xử lý thêm đánh giá mới
      */
-    @PostMapping("/tour/{tourId}/new")
-    public String addReview(@PathVariable Long tourId, @ModelAttribute Review review, HttpSession session) {
+    @PostMapping("/booking/{bookingId}/new")
+    public String addReview(@PathVariable Long bookingId, @ModelAttribute Review review, HttpSession session) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
-        if (reviewService.hasUserReviewed(tourId, loggedInUser.getId(), review.getReviewedUser().getId())) {
+        if (reviewService.hasUserReviewed(bookingId, loggedInUser.getId(), review.getReviewedUser().getId())) {
         	System.out.println("bạn đã đánh giá người này rồi");
         	
-            return "redirect:/reviews/tour/{tourId}/new";
+            return "redirect:/reviews/booking/{bookingId}/new";
         }
 
-        reviewService.addReview(tourId, loggedInUser.getId(), review.getReviewedUser().getId(),
+        reviewService.addReview(bookingId, loggedInUser.getId(), review.getReviewedUser().getId(),
                 review.getRating(), review.getFeedback());
         
-        return "redirect:/reviews/tour/" + tourId;
+        return "redirect:/reviews/booking/" + bookingId;
     }
 
     /**
@@ -125,14 +112,14 @@ public class ReviewController {
     public String editReviewForm(@PathVariable Long reviewId, Model model, HttpSession session) {
         Optional<Review> reviewOpt = reviewService.getReviewById(reviewId);
         if (reviewOpt.isEmpty()) {
-            return "redirect:/reviews/tour?error=Không tìm thấy đánh giá!";
+            return "redirect:/reviews/booking?error=Không tìm thấy đánh giá!";
         }
 
         Review review = reviewOpt.get();
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (!review.getReviewer().getId().equals(loggedInUser.getId())) {
-            return "redirect:/reviews/tour/" + review.getTour().getId() + "?error=Bạn không thể chỉnh sửa đánh giá của người khác!";
+            return "redirect:/reviews/bookingId/" + review.getBooking().getId() + "?error=Bạn không thể chỉnh sửa đánh giá của người khác!";
         }
 
         model.addAttribute("review", review);
@@ -148,11 +135,11 @@ public class ReviewController {
         Optional<Review> existingReview = reviewService.getReviewById(reviewId);
 
         if (existingReview.isEmpty() || !existingReview.get().getReviewer().getId().equals(loggedInUser.getId())) {
-            return "redirect:/reviews/tour/" + existingReview.get().getTour().getId() + "?error=Không thể chỉnh sửa!";
+            return "redirect:/reviews/booking/" + existingReview.get().getBooking().getId() + "?error=Không thể chỉnh sửa!";
         }
 
         reviewService.updateReview(reviewId, review.getRating(), review.getFeedback());
-        return "redirect:/reviews/tour/" + existingReview.get().getTour().getId();
+        return "redirect:/reviews/booking/" + existingReview.get().getBooking().getId();
     }
 
     /**
@@ -162,17 +149,17 @@ public class ReviewController {
     public String deleteReview(@PathVariable Long reviewId, HttpSession session) {
         Optional<Review> reviewOpt = reviewService.getReviewById(reviewId);
         if (reviewOpt.isEmpty()) {
-            return "redirect:/reviews/tour?error=Không tìm thấy đánh giá!";
+            return "redirect:/reviews/booking?error=Không tìm thấy đánh giá!";
         }
 
         Review review = reviewOpt.get();
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (!review.getReviewer().getId().equals(loggedInUser.getId())) {
-            return "redirect:/reviews/tour/" + review.getTour().getId() + "?error=Bạn không thể xóa đánh giá của người khác!";
+            return "redirect:/reviews/booking/" + review.getBooking().getId() + "?error=Bạn không thể xóa đánh giá của người khác!";
         }
 
         reviewService.deleteById(reviewId);
-        return "redirect:/reviews/tour/" + review.getTour().getId();
+        return "redirect:/reviews/booking/" + review.getBooking().getId();
     }
 }

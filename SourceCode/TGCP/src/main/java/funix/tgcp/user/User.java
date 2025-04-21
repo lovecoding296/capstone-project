@@ -9,6 +9,8 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import funix.tgcp.busydate.BusyDate;
+import funix.tgcp.comment.Comment;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -70,7 +72,7 @@ public class User {
 
 
 	@Column(columnDefinition = "NVARCHAR(255)")
-	private String city;
+	private City city;
 
 	private double averageRating;
 
@@ -102,9 +104,7 @@ public class User {
 
     private String accountHolder; // Chủ tài khoản
     
-    
-    
-
+    private int reviewCount = 0; // số người đánh giá
 
 	@Override
 	public boolean equals(Object obj) {

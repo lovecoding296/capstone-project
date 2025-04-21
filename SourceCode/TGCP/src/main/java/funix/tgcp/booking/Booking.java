@@ -12,7 +12,6 @@ import java.util.List;
 import org.springframework.validation.annotation.Validated;
 
 import funix.tgcp.payment.Payment;
-import funix.tgcp.tour.Tour;
 import funix.tgcp.user.User;
 
 @Entity
@@ -26,29 +25,38 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @ManyToOne
+    @JoinColumn(name = "guide_id", nullable = false)
+    private User guide;
 
     @ManyToOne
-    @JoinColumn(name = "tour_id", nullable = false)    
-    private Tour tour;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "customer_id", nullable = false)
+    private User customer;    
 
     @Column(nullable = false)
-    private int numberOfPeople;
-
+    private int numberOfPeople;    
+    
+    @Column(columnDefinition = "NVARCHAR(MAX)")
+    private String destination;
+    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookingStatus status = BookingStatus.PENDING;
     
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String canceledReason;
+    
+    @Column(nullable = false)
+    private LocalDateTime startDate;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime endDate;    
     
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     private List<Payment> payments;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
 

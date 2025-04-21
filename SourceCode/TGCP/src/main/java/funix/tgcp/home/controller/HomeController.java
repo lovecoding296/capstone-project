@@ -1,10 +1,7 @@
 package funix.tgcp.home.controller;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,16 +13,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import funix.tgcp.user.Role;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
+import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.exception.EmailAlreadyExistsException;
 import funix.tgcp.exception.EmailVerificationException;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostCategory;
 import funix.tgcp.post.PostService;
-import funix.tgcp.tour.Tour;
-import funix.tgcp.tour.TourCategory;
-import funix.tgcp.tour.TourService;
 import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
 import jakarta.servlet.http.HttpSession;
@@ -38,9 +34,6 @@ public class HomeController {
 
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private TourService tourService;
 	
 
 	@Autowired
@@ -51,36 +44,13 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String home(Model model, HttpSession session) {
+		
 		logger.info("home");
-		List<Tour> tours = tourService.findAll();
 		List<Post> posts = postService.getLatestPosts();
-
+		List<User> users = userService.getTop8ByRoleOrderByAverageRatingDesc(Role.ROLE_GUIDE);
 		model.addAttribute("postCategories", PostCategory.values());
-		model.addAttribute("tourCategories", TourCategory.values());
-		model.addAttribute("tours", tours);
 		model.addAttribute("posts", posts);
-
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		if (loggedInUser != null) {
-			// Tạo một Map để lưu trạng thái tham gia của người dùng với từng Tour
-			Map<Long, Boolean> participantStatus = new HashMap<>();
-			Map<Long, Boolean> requestStatus = new HashMap<>();
-
-			for (Tour tour : tours) {
-				
-				for(User user : tour.getParticipants()) {
-					System.out.println("user id " + user.getId() + " loggedInUser is " + loggedInUser.getId() + " isParticipant " + tour.getParticipants().contains(loggedInUser) + " name " +user.getFullName() );
-				}
-				
-				boolean isParticipant = tour.getParticipants().contains(loggedInUser);
-				participantStatus.put(tour.getId(), isParticipant);
-				
-			}
-
-			model.addAttribute("participantStatus", participantStatus);
-			model.addAttribute("requestStatus", requestStatus);
-		}
-
+		model.addAttribute("users", users);
 		return "home";
 	}
 	

@@ -1,12 +1,11 @@
 package funix.tgcp.review;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
 import funix.tgcp.user.User;
-import funix.tgcp.tour.Tour;
+import funix.tgcp.booking.Booking;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,10 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-/**
- * Sau mỗi Tour, thành viên có thể đánh giá lẫn nhau.
- * 
- */
+
 
 @Entity
 @Getter
@@ -45,8 +41,8 @@ public class Review {
     private LocalDateTime reviewDate;
     
     @ManyToOne
-    @JoinColumn(name = "tour_id", nullable = false)
-    private Tour tour; // Đánh giá thuộc về Tour nào
+    @JoinColumn(name = "booking_id", nullable = false)
+    private Booking booking;
 
     @ManyToOne
     @JoinColumn(name = "reviewer_id", nullable = false)

@@ -11,6 +11,14 @@
 	<link rel="stylesheet" th:href="@{/style.css}">
 	<script th:src="@{/jquery-3.6.0.min.js}"></script>
 	<script th:src="@{/app-script.js}"></script>
+	
+	<!-- Flatpickr CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+	<!-- Flatpickr JS -->
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+	
 	<style>
 		.post-card {
 			border-radius: 10px;
@@ -113,133 +121,162 @@
 			object-fit: cover;
 			/* Đảm bảo ảnh không bị biến dạng mà vẫn phủ kín không gian */
 		}
+		
+		.user-list {
+		  max-width: 1200px;
+		  margin: 0 auto;
+		  display: grid;
+		  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		  gap: 20px;
+		}
+
+		.user-card {
+		  background-color: #fff;
+		  border-radius: 16px;
+		  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		  padding: 20px;
+		  text-align: center;
+		}
+
+		.user-card img {
+		  width: 96px;
+		  height: 96px;
+		  object-fit: cover;
+		  border-radius: 50%;
+		  margin-bottom: 12px;
+		}
+
+		.user-card h2 {
+		  font-size: 20px;
+		  margin: 0;
+		}
+
+		.user-card .rating {
+		  font-size: 14px;
+		  color: #888;
+		  margin: 4px 0;
+		}
+
+		.user-card .city {
+		  font-size: 14px;
+		  color: #555;
+		  margin-bottom: 12px;
+		}
+
+		.user-card .buttons {
+		  display: flex;
+		  justify-content: center;
+		  gap: 10px;
+		}
+
+		.user-card button {
+		  padding: 8px 14px;
+		  border: none;
+		  border-radius: 8px;
+		  cursor: pointer;
+		  font-size: 14px;
+		  color: #fff;
+		  transition: background-color 0.3s ease;
+		}
+
+		.btn-message {
+		  background-color: #007bff;
+		}
+
+		.btn-message:hover {
+		  background-color: #0056b3;
+		}
+
+		.btn-hire {
+		  background-color: #28a745;
+		}
+
+		.btn-hire:hover {
+		  background-color: #1e7e34;
+		}
+		
+		
+		.modal {
+		    position: fixed;
+		    top: 0; left: 0;
+		    width: 100%; height: 100%;
+		    background-color: rgba(0,0,0,0.5);
+		    justify-content: center;
+		    align-items: center;
+		    display: flex;
+		    z-index: 1000;
+		  }
+		  .modal-content {
+		    background: white;
+		    padding: 24px;
+		    border-radius: 10px;
+		    width: 400px;
+		    position: relative;
+		  }
+		  .close {
+		    position: absolute;
+		    top: 8px; right: 12px;
+		    font-size: 20px;
+		    cursor: pointer;
+		  }
 	</style>
 
 </head>
 
 <body>
 	<nav th:replace="~{page-component :: header}"></nav>
-
-	<div class="container-fluid page-title">
-		<div class="card p-3 shadow">
-			<h4 class="text-start mb-3" th:text="#{label.searchTours}">Tìm kiếm Tour</h4>
-			<form th:action="@{/tours/search}" method="get">
-				<div class="row d-flex align-items-center g-2">
-					<!-- Địa điểm -->
-					<div class="col-md-2">
-						<input type="text" name="destination" class="form-control" th:placeholder="#{label.destination}">
-					</div>
-
-					<!-- Danh mục -->
-					<div class="col-md-2">
-						<select id="category" name="category" class="form-select">
-							<option value="" th:text="#{label.category}">Danh mục</option>
-							<option th:each="cat : ${tourCategories}" th:value="${cat}"
-								th:text="${#messages.msg(cat.name())}"></option>
-						</select>
-					</div>
-
-					<!-- Ngôn ngữ -->
-					<div class="col-md-2">
-						<input type="text" name="language" class="form-control" th:placeholder="#{label.language}">
-					</div>
-
-					<!-- Giới tính -->
-					<div class="col-md-2">
-						<select name="gender" class="form-select">
-							<option value="" th:text="#{label.gender}">Giới tính</option>
-							<option value="MALE" th:text="#{MALE}">Nam</option>
-							<option value="FEMALE" th:text="#{FEMALE}">Nữ</option>
-						</select>
-					</div>
-
-					<!-- Nút tìm kiếm -->
-					<div class="col-md-2 text-end">
-						<button type="submit" class="btn btn-primary w-100" th:text="#{label.search}">🔍 Tìm
-							kiếm</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
-
-
-
-
+	
 	<div class="text-center page-title">
-		<svg th:replace="~{icons :: destination}"></svg>
+		<svg th:replace="~{icons :: person}"></svg>
 	</div>
+	<h3 class="text-center" style="margin-top: 10px;">Hướng dẫn viên nổi bật</h3>
 
-	<h3 class="text-center" style="margin-top: 10px;" th:text="#{label.highlightTours}">Các Tour nổi bật</h3>
+	<div class="user-list">
+		<div class="user-card" th:each="user : ${users}">
+			<img th:src="${user.avatarUrl}" th:alt="${user.fullName}">
+			<h2 th:text="${user.fullName}">Tên người dùng</h2>
+			<div class="rating">
+				⭐ <span th:text="${user.averageRating}">4.5</span> (<span th:text="${user.reviewCount}">100</span> đánh giá)
+			</div>
+			<div class="city" th:text="${user.city}">Thành phố</div>
+			<div class="buttons">
+				<button class="btn-message">Gửi tin nhắn</button>
+				<button class="btn-hire"
+				        th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}')|">
+				    Thuê
+				</button>
 
-	<div class="container mt-4">
-		<div class="row">
-			<!-- Loop through tours and display in cards -->
-			<div th:each="tour : ${tours}" class="col-md-3 mb-4">
-				<div class="card tour-card-home">
-					<a th:href="@{/tours/{id}(id=${tour.id})}">
-						<div class="row g-0">
-							<!-- Column for image -->
-							<div class="col-12">
-								<img th:src="@{${tour.images[0].url} ?: '/uploads/default-tour.jpg'}" class="img-fluid rounded-top">
-							</div>
-							<!-- Column for content -->
-							<div class="col-12">
-								<div class="tour-card-home-body">
-									<h5 class="tour-card-home-title" th:text="${tour.title}">Tiêu đề</h5>
-									<p class="card-text"><strong th:text="#{label.destination}">Địa điểm:</strong> <span
-											th:text="${tour.city}">Địa
-											điểm</span></p>
-									<p class="card-text">
-										<strong th:text="#{label.duration}">Thời gian:</strong>
-										<span th:text="${#temporals.format(tour.startDate, 'dd/MM/yyyy')}">Ngày bắt
-											đầu</span> -
-										<span th:text="${#temporals.format(tour.endDate, 'dd/MM/yyyy')}">Ngày kết
-											thúc</span>
-									</p>
-									<p class="card-text"><strong th:text="#{label.organizer}">Người tổ chức:</strong>
-										<span th:text="${tour.creator.fullName}">adnmin</span>
-									</p>
-									<p class="card-text"><strong th:text="#{label.participants}">Số người tham
-											gia:</strong> <span
-											th:text="${(#lists.size(tour.participants) + 1)   + '/' + tour.maxParticipants}">0</span>
-									</p>
 
-									<!--<div
-										th:if="${session.loggedInUser != null && (tour.creator.id != session.loggedInUser.id)}">
-										 Check if the user has already joined the tour 
-										<p th:if="${participantStatus[tour.id]}" class="alert alert-success"
-											th:text="#{label.alreadyJoined}">
-											✅ Đã tham gia
-										</p>
-
-										 Check if the request is pending 
-										<p th:if="${requestStatus[tour.id]}" class="alert alert-warning"
-											th:text="#{label.pendingApproval}">
-											⏳ Đang chờ duyệt
-										</p>
-
-										 Show the Join button if the user hasn't joined or requested to join 
-										<form th:if="${!(participantStatus[tour.id] || requestStatus[tour.id])}"
-											th:action="@{/tours/{id}/request(id=${tour.id})}" method="post">
-											<button type="submit" class="alert alert-warning w-100"
-												th:text="#{label.joinRequest}">
-												Yêu cầu tham gia
-											</button>
-										</form>
-									</div>-->
-									<!--<p class="alert alert-success"
-										th:if="${session.loggedInUser != null && (tour.creator.id == session.loggedInUser.id)}"
-										th:text="#{label.alreadyJoined}">
-										✅ Đã tham gia
-									</p>-->
-								</div>
-							</div>
-						</div>
-					</a>
-				</div>
 			</div>
 		</div>
+	</div>
+	
+	<!-- Modal -->
+	<div id="bookingModal" class="modal" style="display:none;">
+	  <div class="modal-content">
+	    <span class="close" onclick="closeBookingPopup()">&times;</span>
+	    <h3>Thuê hướng dẫn viên: <span id="guideName"></span></h3>
+
+	    <form id="bookingForm">
+	      <input type="hidden" id="guideId" name="guideId">
+
+		  <label>Chọn ngày:</label>
+		  <input id="dateRange" type="text" placeholder="Chọn ngày" required>
+		  <input type="hidden" id="startDate" name="startDate">
+		  <input type="hidden" id="endDate" name="endDate">
+
+
+	      <label>Số người tham gia:</label>
+	      <input type="number" id="numPeople" name="numPeople" min="1" value="1" required>
+
+	      <label>Địa điểm cụ thể:</label>
+	      <input type="text" name="locationDetail" required>
+
+	      <p><strong>Tổng tiền: <span id="totalPrice">0</span> VND</strong></p>
+
+	      <button type="submit">Xác nhận đặt lịch</button>
+	    </form>
+	  </div>
 	</div>
 
 
@@ -398,6 +435,97 @@
 						.catch(error => console.error("Error loading comments:", error));
 				}
 			</script>
+			
+			<script>
+			  const BusyDates = {
+			    // userId: ["2025-04-25", "2025-04-26", ...]
+			    1: ["2025-04-22", "2025-04-28"],
+			    2: ["2025-04-23", "2025-04-24"]
+			  };
+			  
+			  flatpickrInstance = flatpickr("#dateRange", {
+  			    mode: "range",
+  			    dateFormat: "Y-m-d",
+  			    minDate: "today",
+  			    
+  			    onChange: function(selectedDates) {
+  			      if (selectedDates.length === 2) {
+  			        document.getElementById("startDate").value = selectedDates[0].toISOString().slice(0, 10);
+  			        document.getElementById("endDate").value = selectedDates[1].toISOString().slice(0, 10);
+  			        calculateTotal(); // Tính tiền sau khi chọn ngày
+  			      }
+  			    }
+  			  });
+
+			  const pricePerPersonPerDay = 200000; // ví dụ: 200.000 VND/người/ngày
+			  
+			  function fetchBusyDate(guideId) {
+				console.log("fetchBusyDate guideId " + guideId)
+				fetch(`/api/guides/${guideId}/busy-date`)
+				    .then(response => response.json())
+				    .then(data => {
+						console.log("date  " + data.map(d => d.date))
+						flatpickrInstance.set("disable", data.map(d => d.date));
+						});
+						
+			  }
+
+			  function openBookingPopup(guideId, guideName) {
+			    document.getElementById("bookingModal").style.display = "flex";
+			    document.getElementById("guideId").value = guideId;
+			    document.getElementById("guideName").textContent = guideName;
+
+			    document.getElementById("startDate").value = "";
+			    document.getElementById("endDate").value = "";
+			    document.getElementById("numPeople").value = 1;
+			    document.getElementById("totalPrice").textContent = "0";
+				
+				
+				fetchBusyDate(guideId)
+			  }
+
+			  function closeBookingPopup() {
+			    document.getElementById("bookingModal").style.display = "none";
+			  }
+
+			  function calculateTotal() {
+			    const start = new Date(document.getElementById("startDate").value);
+			    const end = new Date(document.getElementById("endDate").value);
+			    const people = parseInt(document.getElementById("numPeople").value);
+
+			    if (!isNaN(start) && !isNaN(end) && people > 0 && end >= start) {
+			      const days = (end - start) / (1000 * 60 * 60 * 24) + 1;
+			      const total = days * people * pricePerPersonPerDay;
+			      document.getElementById("totalPrice").textContent = total.toLocaleString();
+			    }
+			  }
+
+			  document.getElementById("startDate").addEventListener("change", calculateTotal);
+			  document.getElementById("endDate").addEventListener("change", calculateTotal);
+			  document.getElementById("numPeople").addEventListener("input", calculateTotal);
+
+			  // Optional: Validate unavailable dates
+			  ["startDate", "endDate"].forEach(id => {
+			    document.getElementById(id).addEventListener("change", function () {
+			      const guideId = parseInt(document.getElementById("guideId").value);
+			      const dateVal = this.value;
+			      if (BusyDates[guideId]?.includes(dateVal)) {
+			        alert("Ngày bạn chọn đã bị đặt, vui lòng chọn ngày khác.");
+			        this.value = "";
+			        calculateTotal();
+			      }
+			    });
+			  });
+
+			  document.getElementById("bookingForm").addEventListener("submit", function (e) {
+			    e.preventDefault();
+			    alert("Đặt lịch thành công! (Demo)");
+			    closeBookingPopup();
+			  });
+			</script>
+
+
+
 		</div>
 	</div>
 

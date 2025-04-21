@@ -17,13 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import funix.tgcp.exception.EmailVerificationException;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
 import funix.tgcp.review.Review;
 import funix.tgcp.review.ReviewService;
-import funix.tgcp.tour.Tour;
-import funix.tgcp.tour.TourService;
 import funix.tgcp.util.FileHelper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -33,9 +30,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private TourService tourService;
     
     @Autowired
     private PostService postService;
@@ -64,13 +58,11 @@ public class UserController {
         Optional<User> user = userService.findById(id);
         if (user.isPresent()) {
         	
-        	List<Tour> tours = tourService.findByCreatorId(user.get().getId());
             List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(user.get().getId());            
             List<Review> reviews = reviewService.findTop3ByReviewedUserIdOrderByReviewDateDesc(user.get().getId());
 
         	
             model.addAttribute("user", user.get());
-            model.addAttribute("tours", tours);
             model.addAttribute("posts", posts);
             model.addAttribute("reviews", reviews);
             return "user/user-details"; // Trả về trang chi tiết người dùng

@@ -146,7 +146,7 @@ public class UserService {
 		if (user.getInstagram() != null && !user.getInstagram().isEmpty()) {
 			currentUser.setInstagram(user.getInstagram());
 		}
-		if (user.getCity() != null && !user.getCity().isEmpty()) {
+		if (user.getCity() != null) {
 			currentUser.setCity(user.getCity());
 		}
 		if (user.getBio() != null && !user.getBio().isEmpty()) {
@@ -184,5 +184,9 @@ public class UserService {
 		
 
 		userRepository.save(currentUser);
+	}
+
+	public List<User> getTop8ByRoleOrderByAverageRatingDesc(Role role) {
+		return userRepository.findTop8ByRoleAndKycApprovedTrueAndVerifiedTrueAndIsActiveTrueOrderByAverageRatingDesc(role);
 	}	
 }

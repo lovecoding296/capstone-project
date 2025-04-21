@@ -1,18 +1,12 @@
 package funix.tgcp.booking;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import funix.tgcp.tour.Tour;
-import funix.tgcp.user.User;
-
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    List<Booking> findByUserId(Long userId);  // Truy vấn theo userId
-    List<Booking> findByTourId(Long tourId);  // Truy vấn theo tourId
+    List<Booking> findByCustomerId(Long customerId); 
+    List<Booking> findByGuideId(Long guideId);
     
-    boolean existsByUserAndTour(User user, Tour tour);
-    Booking findByUserIdAndTourId(Long userId, Long tourId);
-	void deleteByTour(Tour tour);
 }
 

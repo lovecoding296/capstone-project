@@ -9,6 +9,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email); // Tìm kiếm theo email
 
 	List<User> findByKycApprovedFalse();
+	List<User> findByRole(Role role);
+	
+	List<User> findTop8ByRoleAndKycApprovedTrueAndVerifiedTrueAndIsActiveTrueOrderByAverageRatingDesc(Role role);
 
 	Optional<User> findByVerificationToken(String token);
 
