@@ -86,7 +86,7 @@ public class BusyDateController {
 	    return ResponseEntity.ok().build();
 	}
 	
-	@PostMapping("/delete")
+	@PostMapping("/api/guides/busy-date/delete")
 	public ResponseEntity<?> deleteUnavailableDates(@RequestBody List<LocalDate> dates) {
 		CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
 		User guide;

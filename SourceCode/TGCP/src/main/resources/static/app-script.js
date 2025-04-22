@@ -10,8 +10,218 @@ function autoResize(textarea) {
     textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
 }
 
+/* chat message */
 
-/*income summary */
+
+let currentReceiverId = null;
+
+updateUnreadMessageCount()
+
+function updateUnreadMessageCount() {
+  fetch('/api/chat/unread-count')
+    .then(response => response.json())
+    .then(count => {
+      const badge = document.getElementById('messageCountBadge');
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    })
+    .catch(err => {
+      console.error("Lỗi khi lấy số tin nhắn chưa đọc:", err);
+    });
+}
+
+
+function sendChatMessage() {
+	console.log("sendChatMessage currentReceiverId " +  currentReceiverId)
+	
+	const chatForm = document.getElementById('chatForm');
+	const chatInput = document.getElementById('chatInput');
+	const chatMessages = document.getElementById('chatMessages');
+	
+	
+	const message = chatInput.value.trim();
+	if (!message) return;
+
+	const payload = {
+		receiver: { id: currentReceiverId },
+		content: message
+	};
+
+	fetch('/api/chat/send', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(payload)
+	})
+		.then(res => res.json())
+		.then(data => {
+			appendMessage(data, true);
+			chatInput.value = '';
+		});
+}
+
+
+  // Hiển thị tin nhắn
+  function appendMessage(msg, isOwn) {
+	console.log("appendMessage")
+    const el = document.createElement('div');
+    el.className = `mb-2 ${isOwn ? 'text-end' : 'text-start'}`;
+    el.innerHTML = `<span class="badge ${isOwn ? 'bg-primary' : 'bg-secondary'}">${msg.content}</span>`;
+    chatMessages.appendChild(el);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // Lấy cuộc hội thoại hiện có
+  function loadConversation(receiverId) {
+	console.log("loadConversation")
+	fetch(`/api/chat/conversation?user2=${receiverId}`)
+	  .then(res => res.json())
+	  .then(data => {
+	    const currentUserId = data.currentUserId;
+	    const messages = data.messages;
+
+	    chatMessages.innerHTML = '';
+	    messages.forEach(msg => {
+	      appendMessage(msg, msg.senderId === currentUserId);
+	    });
+	  });
+
+  }
+
+  function closeChat() {
+	console.log("closeChat")
+    document.getElementById('chatBox').style.display = 'none';
+  }
+  
+  
+function createChatBox() {
+  console.log("createChatBox currentReceiverId " +  currentReceiverId)	
+	
+	
+  if (document.getElementById('chatBox')) return; // Tránh tạo lại
+
+  const chatBox = document.createElement('div');
+  chatBox.id = 'chatBox';
+  chatBox.className = 'shadow border rounded bg-light';
+  chatBox.style = `
+	  width: 350px;
+	  height: 500px;
+	  position: fixed;
+	  bottom: 20px;
+	  right: 20px;
+	  z-index: 9999;
+	  display: none;
+	  flex-direction: column;
+	  padding: 16px;
+	`;
+
+  chatBox.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 id="chatBoxPartnerName" class="mb-0">Chat với </h5>
+      <button class="btn btn-sm btn-outline-danger" onclick="closeChat()">Đóng</button>
+    </div>
+
+    <div id="chatMessages" class="flex-grow-1 overflow-auto mb-3 border p-2 rounded bg-white" style="max-height: 350px;">
+    </div>
+
+    <form id="chatForm" class="d-flex gap-2">
+      <input type="text" id="chatInput" class="form-control" placeholder="Nhập tin nhắn..." required>
+      <button type="button" onclick="sendChatMessage()" class="btn btn-primary">Gửi</button>
+    </form>
+  `;
+
+  document.body.appendChild(chatBox);
+
+}
+
+function openChatWithUser(partnerId, partnerName) {
+  console.log("openChatWithUser")
+  currentReceiverId = partnerId;
+	
+  createChatBox(); // đảm bảo chatBox đã được tạo
+
+  const chatBox = document.getElementById('chatBox');
+  const chatBoxPartnerName = document.getElementById('chatBoxPartnerName');
+  console.log("partnerName " + partnerName)
+  console.log("chatBoxPartnerName " + chatBoxPartnerName.innerText)
+  chatBoxPartnerName.innerText = 'Chat với ' + partnerName;
+  
+  chatBox.dataset.partnerId = partnerId;
+
+  fetch(`/api/chat/conversation/${partnerId}`)
+    .then(res => res.json())
+    .then(data => {
+	  const messages = data.messages;
+	  const currentUserId = data.currentUserId;
+	  
+      console.log("Server trả về:", messages); // 👈 kiểm tra ở đây
+
+      if (!Array.isArray(messages)) {
+        console.error("Dữ liệu không phải là mảng!");
+        return;
+      }
+
+      const chatMessages = document.getElementById('chatMessages');
+      chatMessages.innerHTML = '';
+
+      messages.forEach(msg => {
+        const isOwnMessage = msg.sender.id === currentUserId;
+        appendMessageToChat(msg, isOwnMessage);
+      });
+	  
+      
+
+      chatBox.style.display = 'flex';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+
+	
+	markMessagesAsRead(partnerId);
+}
+
+function markMessagesAsRead(partnerId) {
+
+	const payload = {
+		sender: { id: partnerId },
+	};
+
+	fetch(`/api/chat/mark-read`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(payload)
+	}).then(response => {
+		if (!response.ok) throw new Error("Không thể cập nhật trạng thái đã đọc.");
+		console.log("Đã đánh dấu tin nhắn là đã đọc");
+	}).catch(error => {
+		console.error(error);
+	});
+	
+	updateUnreadMessageCount()
+}
+
+
+function appendMessageToChat(msg, isOwnMessage) {
+  const chatMessages = document.getElementById('chatMessages');
+
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `mb-2 ${isOwnMessage ? 'text-end' : 'text-start'}`;
+  msgDiv.innerHTML = `
+    <div class="d-inline-block p-2 rounded ${isOwnMessage ? 'bg-primary text-white' : 'bg-secondary text-white'}">
+      ${msg.content}
+    </div>
+    <div class="small text-muted">${formatTimestamp(msg.timestamp)}</div>
+  `;
+  chatMessages.appendChild(msgDiv);
+}
+
+
+
+
+
+/* income summary */
 
 function loadIncomeSummary() {
   fetch(`/api/guides/income-summary`)
@@ -67,15 +277,16 @@ function fetchBusyDate() {
 	  console.log("data " + data)
 	  console.log("originalDates " + originalDates)
 
-      if (flatpickrInstance) {
-        flatpickrInstance.destroy();
-      }
+      //if (flatpickrInstance) {
+        //flatpickrInstance.destroy();
+      //}
 
       flatpickrInstance = flatpickr("#manualBusyDates", {
         mode: "multi", // Cho phép chọn nhiều ngày
         dateFormat: "Y-m-d",
         minDate: "today",
 		disable: originalAutoGeneratedDates,
+		inline: true,
         defaultDate: selectedDates, // Khởi tạo các ngày đã chọn
         onDayCreate: function (dObj, dStr, fp, dayElem) {
           const date = fp.formatDate(dayElem.dateObj, "Y-m-d");

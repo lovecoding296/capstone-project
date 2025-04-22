@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email); // Tìm kiếm theo email
+	
+	
+	Optional<User> findById(Long id);
 
 	List<User> findByKycApprovedFalse();
 	List<User> findByRole(Role role);
