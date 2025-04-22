@@ -26,15 +26,16 @@ public class BookingController {
     	
     	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
+    	
+    	User currentUser = new User();
     	if(userDetails != null ) {
-    		bookingRequest.setCustomer(userDetails.getUser());
-    		return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
+    		currentUser.setId(userDetails.getId());
+    		
     	} else {
-    		User user = new User();
-    		user.setId((long)1);
-    		bookingRequest.setCustomer(user);
+    		currentUser.setId((long)1);
     	}    	
-        return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
+    	bookingRequest.setCustomer(currentUser);
+		return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
     }
     
     
@@ -42,7 +43,6 @@ public class BookingController {
     // API lấy tất cả booking của người dùng
     @GetMapping("/api/bookings")
     public ResponseEntity<?> getBookings() {
-    	
     	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
     	

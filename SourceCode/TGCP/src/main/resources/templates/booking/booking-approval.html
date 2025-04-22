@@ -1,91 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Page</title>
-	
-	<style>
-	    #user-profile {
-	        display: flex;
-	        align-items: center;
-	        border: 1px solid #ccc;
-	        padding: 10px;
-	        max-width: 300px;
-	    }
-	    #user-image {
-	        width: 60px;
-	        height: 60px;
-	        border-radius: 50%;
-	        background-color: #ccc;
-	        margin-right: 15px;
-	    }
-	    #user-info {
-	        display: flex;
-	        flex-direction: column;
-	    }
-	    #user-name {
-	        font-weight: bold;
-	        font-size: 16px;
-	    }
-	    #user-rating, #user-participants {
-	        font-size: 14px;
-	        color: #666;
-	    }
-	</style>
-	
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Payment Page</title>
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-			
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
+
+	<!-- Flatpickr CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+	<!-- Flatpickr JS -->
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<style>
+		#user-profile {
+			display: flex;
+			align-items: center;
+			border: 1px solid #ccc;
+			padding: 10px;
+			max-width: 300px;
+		}
+
+		#user-image {
+			width: 60px;
+			height: 60px;
+			border-radius: 50%;
+			background-color: #ccc;
+			margin-right: 15px;
+		}
+
+		#user-info {
+			display: flex;
+			flex-direction: column;
+		}
+
+		#user-name {
+			font-weight: bold;
+			font-size: 16px;
+		}
+
+		#user-rating,
+		#user-participants {
+			font-size: 14px;
+			color: #666;
+		}
+	</style>
+
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+
 			const urlParts = window.location.pathname.split('/');
-            const bookingId = urlParts[urlParts.length - 1];
-						
-            fetch(`/api/bookings/${bookingId}`)
-                .then(response => response.json())
-                .then(data => {
-					
+			const bookingId = urlParts[urlParts.length - 1];
+
+			fetch(`/api/bookings/${bookingId}`)
+				.then(response => response.json())
+				.then(data => {
+
 					console.log(data)
-					
-					
-					
+
+
+
 					document.getElementById("destination").innerText = data.destination;
 					document.getElementById("start-date").innerText = data.startDate;
 					document.getElementById("end-date").innerText = data.endDate;
 					document.getElementById("num-people").innerText = data.numberOfPeople;
-					
-					
+
+
 					document.getElementById("user-image").src = data.customer.avatarUrl;
 					document.getElementById("user-name").innerText = data.customer.fullName;
 					document.getElementById("user-rating").innerText = `⭐ ${data.customer.averageRating}/5`;
-					
-					// Lấy danh sách payments từ data.payments
-		            const payments = data.payments;
-		            const paymentList = document.getElementById("payment-list");
-		            paymentList.innerHTML = ""; // Xóa dữ liệu cũ nếu có
 
-		            if (!payments || payments.length === 0) {
-		                paymentList.innerHTML = "<tr><td colspan='5'>No payments found.</td></tr>";
-		                return;
-		            }
+					// Lấy danh sách payments từ data.payments
+					const payments = data.payments;
+					const paymentList = document.getElementById("payment-list");
+					paymentList.innerHTML = ""; // Xóa dữ liệu cũ nếu có
+
+					if (!payments || payments.length === 0) {
+						paymentList.innerHTML = "<tr><td colspan='5'>No payments found.</td></tr>";
+						return;
+					}
 
 					payments.forEach(payment => {
-					    const row = document.createElement("tr");
-					    row.id = `payment-row-${payment.id}`; // Đặt ID cho từng dòng
-						
+						const row = document.createElement("tr");
+						row.id = `payment-row-${payment.id}`; // Đặt ID cho từng dòng
+
 						// Thêm dropdown để chọn trạng thái
-					    const statusSelect = `
-					        <select class="status-select" onchange="updateStatus(${payment.id}, this.value)">
-					            <option value="PENDING" ${payment.status === "PENDING" ? "selected" : ""}>PENDING</option>
-					            <option value="RECEIVED" ${payment.status === "RECEIVED" ? "selected" : ""}>RECEIVED</option>
-					        </select>
+						const statusSelect = `
+							<select class="form-select form-select-sm status-select" onchange="updateStatus(${payment.id}, this.value)">
+							  <option value="PENDING" ${payment.status === "PENDING" ? "selected" : ""}>PENDING</option>
+							  <option value="RECEIVED" ${payment.status === "RECEIVED" ? "selected" : ""}>RECEIVED</option>
+							</select>
+
 					    `;
 
-					    row.innerHTML = `
+						row.innerHTML = `
 							<td>
-					            ${payment.transactionImageUrl ? 
-					                `<img src="${payment.transactionImageUrl}" alt="Payment Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="viewFullImage('${payment.transactionImageUrl}')">` 
-					                : "No Image"}
+					            ${payment.transactionImageUrl ?
+								`<img src="${payment.transactionImageUrl}" alt="Payment Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="viewFullImage('${payment.transactionImageUrl}')">`
+								: "No Image"}
 					        </td>
 					        <td class="sender-name">${payment.senderAccountName}</td>
 					        <td class="amount">${payment.amount}</td>
@@ -93,97 +113,95 @@
 					        <td class="sender-account-number">${payment.senderAccountNumber}</td>
 							<td>${statusSelect}</td>
 					    `;
-					    paymentList.appendChild(row);
+						paymentList.appendChild(row);
 					});
 
-                });
-        });
-		
+				});
+		});
+
 		function updateStatus(paymentId, newStatus) {
 
 			console.log(JSON.stringify({['status']: newStatus}))
-			
+
 
 			fetch(`/api/payments/${paymentId}`, {
-		        method: "PATCH",
+				method: "PATCH",
 				headers: {'Content-Type': 'application/json'},
-		        body: JSON.stringify({['status']: newStatus})
-		    })
-		    .then(response => {
-		        if (response.ok) {
-		            alert("Payment updated successfully!");
-		            //location.reload(); // Tải lại danh sách payment
-		        } else {
-		            alert("Failed to update payment.");
-		        }
-		    })
-		    .catch(error => console.error("Error updating payment:", error));
+				body: JSON.stringify({['status']: newStatus})
+			})
+				.then(response => {
+					if (response.ok) {
+						alert("Payment updated successfully!");
+						//location.reload(); // Tải lại danh sách payment
+					} else {
+						alert("Failed to update payment.");
+					}
+				})
+				.catch(error => console.error("Error updating payment:", error));
 		}
 
 
-    </script>
+	</script>
 </head>
+
 <body>
-	<h2> Booking information </h2>
-	<p><strong>Destination:</strong> <span id="destination"></span></p>
-	<p><strong>Start date:</strong> <span id="start-date"></span></p>
-	<p><strong>End date:</strong> <span id="end-date"></span></p>
-	<p><strong>Số người tham gia:</strong> <span id="num-people"></span></p>
-	
-	<div id="user-profile">
-	    <img id="user-image" src="" alt="Avatar">
-	    <div id="user-info">
-	        <div id="user-name">Tên Người Dùng</div>
-	        <div id="user-rating">⭐ 4.5/5</div>
-	    </div>
-	</div>
-	
-	<br>
-	
-	<table border="1">
-	    <thead>
-	        <tr>
-				<th>Ảnh chuyển tiền</th>
-	            <th>Tên chủ tài khoản</th>
-	            <th>Số tiền</th>
-	            <th>Nội dung chuyển khoản</th>	            
-				<th>Số tài khoản</th>
-				<th>Thay đổi Status</th>
-				
-	        </tr>
-	    </thead>
-	    <tbody id="payment-list">
-	        <tr><td colspan="7">Loading...</td></tr>
-	    </tbody>
-	</table>
-	
-	<!-- Form Popup để chỉnh sửa Payment -->
-	<div id="edit-payment-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid black;">
-	    <h2>Edit Payment</h2>
-	    
-	    <input type="hidden" id="edit-payment-id">
-	    
-	    <label>Amount:</label>
-	    <input type="number" id="edit-amount" required><br>
-	    
-	    <label>Sender Account Number:</label>
-	    <input type="text" id="edit-sender-account-number" required><br>
-	    
-	    <label>Sender Name:</label>
-	    <input type="text" id="edit-sender-name" required><br>
-	    
-	    <label>Transaction Note:</label>
-	    <input type="text" id="edit-transaction-note"><br>
+	<nav th:replace="~{page-component :: header}"></nav>
+	<div class="container mt-4">
+		<h2 class="page-title">Booking Information</h2>
+		<div class="row">
+			<!-- Booking Info (Bên trái) -->
+			<div class="col-md-6">
 
-	    <label>Transaction Image:</label>
-	    <input type="file" id="edit-payment-image" accept="image/*" onchange="previewImage(event)"><br>
-	    
-	    <!-- Hiển thị ảnh preview -->
-	    <img id="edit-image-preview" src="" alt="No Image" style="max-width: 200px; display: none;"><br>
+				<p><strong>Destination:</strong> <span id="destination"></span></p>
+				<p><strong>Start date:</strong> <span id="start-date"></span></p>
+				<p><strong>End date:</strong> <span id="end-date"></span></p>
+				<p><strong>Số người tham gia:</strong> <span id="num-people"></span></p>
+				<p><strong>Total price:</strong> <span id="total-price"></span></p>
+			</div>
 
-	    <br>
-	    <button onclick="submitEditPayment()">Save Changes</button>
-	    <button onclick="closeEditPaymentPopup()">Cancel</button>
+			<!-- User Card (Bên phải) -->
+			<div class="col-md-6 d-flex justify-content-center">
+
+
+				<div id="user-profile" class="card" style="width: 18rem; border-radius: 12px;">
+					<img id="user-image" class="card-img-top rounded-circle mx-auto" alt="Guide Avatar"
+						style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
+					<div class="card-body">
+						<div id="user-info">
+							<div id="user-name">Tên Người Dùng</div>
+							<div id="user-rating">⭐ 4.5/5</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped align-middle text-center">
+					<thead class="table-dark">
+						<tr>
+							<th>Ảnh chuyển tiền</th>
+							<th>Tên chủ tài khoản</th>
+							<th>Số tiền</th>
+							<th>Nội dung chuyển khoản</th>
+							<th>Số tài khoản</th>
+							<th>Thay đổi Status</th>
+
+						</tr>
+					</thead>
+					<tbody id="payment-list">
+						<tr>
+							<td colspan="7">Loading...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
+	<footer th:replace="~{page-component :: footer}"></footer>
+
 </body>
+
 </html>

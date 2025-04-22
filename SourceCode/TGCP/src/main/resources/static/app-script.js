@@ -6,43 +6,89 @@ function changeLanguage(lang) {
 
 
 function autoResize(textarea) {
-    textarea.style.height = 'auto';  // Đặt lại chiều cao về mặc định
-    textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
+	textarea.style.height = 'auto';  // Đặt lại chiều cao về mặc định
+	textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
 }
 
+
+
+function createBookingPopup() {
+    if (document.getElementById("bookingModal")) return; // Đã tồn tại thì không tạo lại
+
+    const modalHtml = `
+        <div id="bookingModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeBookingPopup()">&times;</span>
+                <h3>Thuê hướng dẫn viên: <span id="guideName"></span></h3>
+
+                <form id="bookingForm">
+                    <input type="hidden" id="guideId" name="guideId">
+
+                    <div class="mb-3">
+                        <label for="dateRange" class="form-label">Chọn ngày:</label>
+                        <input id="dateRange" type="text" class="form-control" placeholder="Chọn ngày" required>
+                        <input type="hidden" id="startDate" name="startDate">
+                        <input type="hidden" id="endDate" name="endDate">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="numPeople" class="form-label">Số người tham gia:</label>
+                        <input type="number" class="form-control" id="numPeople" name="numPeople" min="1" value="1" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="locationDetail" class="form-label">Địa điểm cụ thể:</label>
+                        <input type="text" class="form-control" id="locationDetail" name="locationDetail" required>
+                    </div>
+
+                    <p class="fw-bold">Tổng tiền: <span id="totalPrice" class="text-danger">0</span> VND</p>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-success">Xác nhận đặt lịch</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeBookingPopup()">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = modalHtml.trim();
+    document.body.appendChild(wrapper.firstChild);
+}
+
+
 /* chat message */
-
-
 let currentReceiverId = null;
 
 updateUnreadMessageCount()
 
 function updateUnreadMessageCount() {
-  fetch('/api/chat/unread-count')
-    .then(response => response.json())
-    .then(count => {
-      const badge = document.getElementById('messageCountBadge');
-      if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = 'inline-block';
-      } else {
-        badge.style.display = 'none';
-      }
-    })
-    .catch(err => {
-      console.error("Lỗi khi lấy số tin nhắn chưa đọc:", err);
-    });
+	fetch('/api/chat/unread-count')
+		.then(response => response.json())
+		.then(count => {
+			const badge = document.getElementById('messageCountBadge');
+			if (count > 0) {
+				badge.textContent = count;
+				badge.style.display = 'inline-block';
+			} else {
+				badge.style.display = 'none';
+			}
+		})
+		.catch(err => {
+			console.error("Lỗi khi lấy số tin nhắn chưa đọc:", err);
+		});
 }
 
 
 function sendChatMessage() {
-	console.log("sendChatMessage currentReceiverId " +  currentReceiverId)
-	
+	console.log("sendChatMessage currentReceiverId " + currentReceiverId)
+
 	const chatForm = document.getElementById('chatForm');
 	const chatInput = document.getElementById('chatInput');
 	const chatMessages = document.getElementById('chatMessages');
-	
-	
+
+
 	const message = chatInput.value.trim();
 	if (!message) return;
 
@@ -64,49 +110,49 @@ function sendChatMessage() {
 }
 
 
-  // Hiển thị tin nhắn
-  function appendMessage(msg, isOwn) {
+// Hiển thị tin nhắn
+function appendMessage(msg, isOwn) {
 	console.log("appendMessage")
-    const el = document.createElement('div');
-    el.className = `mb-2 ${isOwn ? 'text-end' : 'text-start'}`;
-    el.innerHTML = `<span class="badge ${isOwn ? 'bg-primary' : 'bg-secondary'}">${msg.content}</span>`;
-    chatMessages.appendChild(el);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
+	const el = document.createElement('div');
+	el.className = `mb-2 ${isOwn ? 'text-end' : 'text-start'}`;
+	el.innerHTML = `<span class="badge ${isOwn ? 'bg-primary' : 'bg-secondary'}">${msg.content}</span>`;
+	chatMessages.appendChild(el);
+	chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-  // Lấy cuộc hội thoại hiện có
-  function loadConversation(receiverId) {
+// Lấy cuộc hội thoại hiện có
+function loadConversation(receiverId) {
 	console.log("loadConversation")
 	fetch(`/api/chat/conversation?user2=${receiverId}`)
-	  .then(res => res.json())
-	  .then(data => {
-	    const currentUserId = data.currentUserId;
-	    const messages = data.messages;
+		.then(res => res.json())
+		.then(data => {
+			const currentUserId = data.currentUserId;
+			const messages = data.messages;
 
-	    chatMessages.innerHTML = '';
-	    messages.forEach(msg => {
-	      appendMessage(msg, msg.senderId === currentUserId);
-	    });
-	  });
+			chatMessages.innerHTML = '';
+			messages.forEach(msg => {
+				appendMessage(msg, msg.senderId === currentUserId);
+			});
+		});
 
-  }
+}
 
-  function closeChat() {
+function closeChat() {
 	console.log("closeChat")
-    document.getElementById('chatBox').style.display = 'none';
-  }
-  
-  
-function createChatBox() {
-  console.log("createChatBox currentReceiverId " +  currentReceiverId)	
-	
-	
-  if (document.getElementById('chatBox')) return; // Tránh tạo lại
+	document.getElementById('chatBox').style.display = 'none';
+}
 
-  const chatBox = document.createElement('div');
-  chatBox.id = 'chatBox';
-  chatBox.className = 'shadow border rounded bg-light';
-  chatBox.style = `
+
+function createChatBox() {
+	console.log("createChatBox currentReceiverId " + currentReceiverId)
+
+
+	if (document.getElementById('chatBox')) return; // Tránh tạo lại
+
+	const chatBox = document.createElement('div');
+	chatBox.id = 'chatBox';
+	chatBox.className = 'shadow border rounded bg-light';
+	chatBox.style = `
 	  width: 350px;
 	  height: 500px;
 	  position: fixed;
@@ -118,9 +164,9 @@ function createChatBox() {
 	  padding: 16px;
 	`;
 
-  chatBox.innerHTML = `
+	chatBox.innerHTML = `
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <h5 id="chatBoxPartnerName" class="mb-0">Chat với </h5>
+      <a href="/users/${currentReceiverId}"><h5 id="chatBoxPartnerName" class="mb-0">Chat với </h5></a>
       <button class="btn btn-sm btn-outline-danger" onclick="closeChat()">Đóng</button>
     </div>
 
@@ -133,52 +179,52 @@ function createChatBox() {
     </form>
   `;
 
-  document.body.appendChild(chatBox);
+	document.body.appendChild(chatBox);
 
 }
 
 function openChatWithUser(partnerId, partnerName) {
-  console.log("openChatWithUser")
-  currentReceiverId = partnerId;
-	
-  createChatBox(); // đảm bảo chatBox đã được tạo
+	console.log("openChatWithUser")
+	currentReceiverId = partnerId;
 
-  const chatBox = document.getElementById('chatBox');
-  const chatBoxPartnerName = document.getElementById('chatBoxPartnerName');
-  console.log("partnerName " + partnerName)
-  console.log("chatBoxPartnerName " + chatBoxPartnerName.innerText)
-  chatBoxPartnerName.innerText = 'Chat với ' + partnerName;
-  
-  chatBox.dataset.partnerId = partnerId;
+	createChatBox(); // đảm bảo chatBox đã được tạo
 
-  fetch(`/api/chat/conversation/${partnerId}`)
-    .then(res => res.json())
-    .then(data => {
-	  const messages = data.messages;
-	  const currentUserId = data.currentUserId;
-	  
-      console.log("Server trả về:", messages); // 👈 kiểm tra ở đây
+	const chatBox = document.getElementById('chatBox');
+	const chatBoxPartnerName = document.getElementById('chatBoxPartnerName');
+	console.log("partnerName " + partnerName)
+	console.log("chatBoxPartnerName " + chatBoxPartnerName.innerText)
+	chatBoxPartnerName.innerText = 'Chat với ' + partnerName;
 
-      if (!Array.isArray(messages)) {
-        console.error("Dữ liệu không phải là mảng!");
-        return;
-      }
+	chatBox.dataset.partnerId = partnerId;
 
-      const chatMessages = document.getElementById('chatMessages');
-      chatMessages.innerHTML = '';
+	fetch(`/api/chat/conversation/${partnerId}`)
+		.then(res => res.json())
+		.then(data => {
+			const messages = data.messages;
+			const currentUserId = data.currentUserId;
 
-      messages.forEach(msg => {
-        const isOwnMessage = msg.sender.id === currentUserId;
-        appendMessageToChat(msg, isOwnMessage);
-      });
-	  
-      
+			console.log("Server trả về:", messages); // 👈 kiểm tra ở đây
 
-      chatBox.style.display = 'flex';
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
+			if (!Array.isArray(messages)) {
+				console.error("Dữ liệu không phải là mảng!");
+				return;
+			}
 
-	
+			const chatMessages = document.getElementById('chatMessages');
+			chatMessages.innerHTML = '';
+
+			messages.forEach(msg => {
+				const isOwnMessage = msg.sender.id === currentUserId;
+				appendMessageToChat(msg, isOwnMessage);
+			});
+
+
+
+			chatBox.style.display = 'flex';
+			chatMessages.scrollTop = chatMessages.scrollHeight;
+		});
+
+
 	markMessagesAsRead(partnerId);
 }
 
@@ -198,23 +244,23 @@ function markMessagesAsRead(partnerId) {
 	}).catch(error => {
 		console.error(error);
 	});
-	
+
 	updateUnreadMessageCount()
 }
 
 
 function appendMessageToChat(msg, isOwnMessage) {
-  const chatMessages = document.getElementById('chatMessages');
+	const chatMessages = document.getElementById('chatMessages');
 
-  const msgDiv = document.createElement('div');
-  msgDiv.className = `mb-2 ${isOwnMessage ? 'text-end' : 'text-start'}`;
-  msgDiv.innerHTML = `
+	const msgDiv = document.createElement('div');
+	msgDiv.className = `mb-2 ${isOwnMessage ? 'text-end' : 'text-start'}`;
+	msgDiv.innerHTML = `
     <div class="d-inline-block p-2 rounded ${isOwnMessage ? 'bg-primary text-white' : 'bg-secondary text-white'}">
       ${msg.content}
     </div>
     <div class="small text-muted">${formatTimestamp(msg.timestamp)}</div>
   `;
-  chatMessages.appendChild(msgDiv);
+	chatMessages.appendChild(msgDiv);
 }
 
 
@@ -224,33 +270,33 @@ function appendMessageToChat(msg, isOwnMessage) {
 /* income summary */
 
 function loadIncomeSummary() {
-  fetch(`/api/guides/income-summary`)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("totalIncome").textContent = data.totalIncome.toLocaleString("vi-VN");
+	fetch(`/api/guides/income-summary`)
+		.then(res => res.json())
+		.then(data => {
+			document.getElementById("totalIncome").textContent = data.totalIncome.toLocaleString("vi-VN");
 
-      // Vẽ biểu đồ
-      const ctx = document.getElementById("incomeChart").getContext("2d");
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(data.monthlyIncome),
-          datasets: [{
-            label: 'Thu nhập theo tháng',
-            data: Object.values(data.monthlyIncome),
-            backgroundColor: 'rgba(75, 192, 192, 0.5)'
-          }]
-        }
-      });
+			// Vẽ biểu đồ
+			const ctx = document.getElementById("incomeChart").getContext("2d");
+			new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: Object.keys(data.monthlyIncome),
+					datasets: [{
+						label: 'Thu nhập theo tháng',
+						data: Object.values(data.monthlyIncome),
+						backgroundColor: 'rgba(75, 192, 192, 0.5)'
+					}]
+				}
+			});
 
-      // Hiển thị danh sách đơn
-      const list = document.getElementById("completedBookingsList");
-      data.bookings.forEach(b => {
-        const item = document.createElement("li");
-        item.textContent = `Khách: ${b.customer.fullName} | Số tiền: ${b.totalPrice} | Ngày: ${b.endDate}`;
-        list.appendChild(item);
-      });
-    });
+			// Hiển thị danh sách đơn
+			const list = document.getElementById("completedBookingsList");
+			data.bookings.forEach(b => {
+				const item = document.createElement("li");
+				item.textContent = `Khách: ${b.customer.fullName} | Số tiền: ${b.totalPrice} | Ngày: ${b.endDate}`;
+				list.appendChild(item);
+			});
+		});
 }
 
 
@@ -261,120 +307,120 @@ let originalAutoGeneratedDates = [];
 let selectedDates = [];   // ngày người dùng chọn hiện tại
 
 function fetchBusyDate() {
-  fetch('/api/guides/busy-date')
-    .then(response => response.json())
-    .then(data => {
-      originalDates = data
-	    .filter(d => !d.autoGenerated)
-        .map(d => d.date);
-	  
-	  originalAutoGeneratedDates = data
-		.filter(d => d.autoGenerated)
-		.map(d => d.date);
+	fetch('/api/guides/busy-date')
+		.then(response => response.json())
+		.then(data => {
+			originalDates = data
+				.filter(d => !d.autoGenerated)
+				.map(d => d.date);
 
-      selectedDates = [...originalDates];
-	  
-	  console.log("data " + data)
-	  console.log("originalDates " + originalDates)
+			originalAutoGeneratedDates = data
+				.filter(d => d.autoGenerated)
+				.map(d => d.date);
 
-      //if (flatpickrInstance) {
-        //flatpickrInstance.destroy();
-      //}
+			selectedDates = [...originalDates];
 
-      flatpickrInstance = flatpickr("#manualBusyDates", {
-        mode: "multi", // Cho phép chọn nhiều ngày
-        dateFormat: "Y-m-d",
-        minDate: "today",
-		disable: originalAutoGeneratedDates,
-		inline: true,
-        defaultDate: selectedDates, // Khởi tạo các ngày đã chọn
-        onDayCreate: function (dObj, dStr, fp, dayElem) {
-          const date = fp.formatDate(dayElem.dateObj, "Y-m-d");
-          if (selectedDates.includes(date)) {
-			console.log("add busy-date " + date)
-            dayElem.classList.add("busy-date");
-          }
+			console.log("data " + data)
+			console.log("originalDates " + originalDates)
 
-          // Toggle chọn ngày
-          dayElem.addEventListener("click", function () {
-            if (selectedDates.includes(date)) {
-              selectedDates = selectedDates.filter(d => d !== date);
-            } else {
-              selectedDates.push(date);
-            }
-            fp.setDate(selectedDates, false); // Cập nhật lại các ngày chọn
-            fp.redraw(); // Cập nhật giao diện
-          });
-        },
-        onReady: function () {
-          if (flatpickrInstance) {
-            flatpickrInstance.setDate(selectedDates, false); // Cập nhật lại các ngày đã chọn
-            flatpickrInstance.redraw(); // Vẽ lại giao diện với màu đã chọn
-          }
-        }
-      });
-    });
+			//if (flatpickrInstance) {
+			//flatpickrInstance.destroy();
+			//}
+
+			flatpickrInstance = flatpickr("#manualBusyDates", {
+				mode: "multi", // Cho phép chọn nhiều ngày
+				dateFormat: "Y-m-d",
+				minDate: "today",
+				disable: originalAutoGeneratedDates,
+				inline: true,
+				defaultDate: selectedDates, // Khởi tạo các ngày đã chọn
+				onDayCreate: function(dObj, dStr, fp, dayElem) {
+					const date = fp.formatDate(dayElem.dateObj, "Y-m-d");
+					if (selectedDates.includes(date)) {
+						console.log("add busy-date " + date)
+						dayElem.classList.add("busy-date");
+					}
+
+					// Toggle chọn ngày
+					dayElem.addEventListener("click", function() {
+						if (selectedDates.includes(date)) {
+							selectedDates = selectedDates.filter(d => d !== date);
+						} else {
+							selectedDates.push(date);
+						}
+						fp.setDate(selectedDates, false); // Cập nhật lại các ngày chọn
+						fp.redraw(); // Cập nhật giao diện
+					});
+				},
+				onReady: function() {
+					if (flatpickrInstance) {
+						flatpickrInstance.setDate(selectedDates, false); // Cập nhật lại các ngày đã chọn
+						flatpickrInstance.redraw(); // Vẽ lại giao diện với màu đã chọn
+					}
+				}
+			});
+		});
 }
 
 function deleteBusyDates(datesToDelete) {
-  if (datesToDelete.length === 0) return Promise.resolve();
-  return fetch('/api/guides/busy-date/delete', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(datesToDelete)
-  });
+	if (datesToDelete.length === 0) return Promise.resolve();
+	return fetch('/api/guides/busy-date/delete', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(datesToDelete)
+	});
 }
 
 function addBusyDates(datesToAdd) {
-  if (datesToAdd.length === 0) return Promise.resolve();
-  return fetch('/api/guides/busy-date', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(datesToAdd)
-  });
+	if (datesToAdd.length === 0) return Promise.resolve();
+	return fetch('/api/guides/busy-date', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(datesToAdd)
+	});
 }
 
 function submitBusyDate() {
-  const toAdd = selectedDates.filter(date => !originalDates.includes(date));
-  const toDelete = originalDates.filter(date => !selectedDates.includes(date));
+	const toAdd = selectedDates.filter(date => !originalDates.includes(date));
+	const toDelete = originalDates.filter(date => !selectedDates.includes(date));
 
-  deleteBusyDates(toDelete)
-    .then(() => addBusyDates(toAdd))
-    .then(() => {
-      alert("Đã cập nhật lịch bận!");
-      fetchBusyDate(); // reload lại từ server
-    })
-    .catch(err => {
-      console.error("Lỗi cập nhật:", err);
-      alert("Đã xảy ra lỗi, vui lòng thử lại.");
-    });
+	deleteBusyDates(toDelete)
+		.then(() => addBusyDates(toAdd))
+		.then(() => {
+			alert("Đã cập nhật lịch bận!");
+			fetchBusyDate(); // reload lại từ server
+		})
+		.catch(err => {
+			console.error("Lỗi cập nhật:", err);
+			alert("Đã xảy ra lỗi, vui lòng thử lại.");
+		});
 }
 
 
 /*manage bookings*/
 
 let guideBooking = {
-  currentPage: 1,
-  itemsPerPage: 10
+	currentPage: 1,
+	itemsPerPage: 10
 };
 
 
 async function fetchGuidesBookings(page = 1) {
 	guideBooking.currentPage = page;
-    const response = await fetch('/api/bookings');
-    const bookings = await response.json();
-    
-    // Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-    const startIdx = (page - 1) * guideBooking.itemsPerPage;
-    const endIdx = startIdx + guideBooking.itemsPerPage;
-    
-    // Lấy dữ liệu bookings cho trang hiện tại
-    const bookingsToShow = bookings.slice(startIdx, endIdx);
-    
-	
+	const response = await fetch('/api/bookings');
+	const bookings = await response.json();
+
+	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
+	const startIdx = (page - 1) * guideBooking.itemsPerPage;
+	const endIdx = startIdx + guideBooking.itemsPerPage;
+
+	// Lấy dữ liệu bookings cho trang hiện tại
+	const bookingsToShow = bookings.slice(startIdx, endIdx);
+
+
 	const tbody = document.getElementById("bookingTableBody");
 	tbody.innerHTML = "";
-	
+
 	bookingsToShow.forEach((booking) => {
 		const row = document.createElement("tr");
 
@@ -413,119 +459,119 @@ async function fetchGuidesBookings(page = 1) {
 
 		tbody.appendChild(row);
 	});
-    
-    // Cập nhật trạng thái các nút pagination
-    updatePaginationButtons(page, bookings.length, guideBooking.itemsPerPage);
+
+	// Cập nhật trạng thái các nút pagination
+	updatePaginationButtons(page, bookings.length, guideBooking.itemsPerPage);
 }
 
 function updatePaginationButtons(page, totalItems, itemsPerPage) {
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    
+	const totalPages = Math.ceil(totalItems / itemsPerPage);
+
 	const prevBtn = document.getElementById('prev-btn');
 	const nextBtn = document.getElementById('next-btn');
 
 	// Nếu là trang đầu tiên, disable nút "Previous"
 	if (page === 1) {
-	    prevBtn.disabled = true;
-	    prevBtn.classList.add('disabled-btn');
+		prevBtn.disabled = true;
+		prevBtn.classList.add('disabled-btn');
 	} else {
-	    prevBtn.disabled = false;
-	    prevBtn.classList.remove('disabled-btn');
+		prevBtn.disabled = false;
+		prevBtn.classList.remove('disabled-btn');
 	}
 
 	// Nếu là trang cuối cùng, disable nút "Next"
 	if (page === totalPages) {
-	    nextBtn.disabled = true;
-	    nextBtn.classList.add('disabled-btn');
+		nextBtn.disabled = true;
+		nextBtn.classList.add('disabled-btn');
 	} else {
-	    nextBtn.disabled = false;
-	    nextBtn.classList.remove('disabled-btn');
+		nextBtn.disabled = false;
+		nextBtn.classList.remove('disabled-btn');
 	}
 }
 
 function changePage(direction) {
-    if (direction === 'prev') {
-        userBooking.currentPage -= 1;
-    } else if (direction === 'next') {
-        userBooking.currentPage += 1;
-    }
-    
-    fetchBookings(userBooking.currentPage); // Fetch lại bookings cho trang mới
+	if (direction === 'prev') {
+		userBooking.currentPage -= 1;
+	} else if (direction === 'next') {
+		userBooking.currentPage += 1;
+	}
+
+	fetchBookings(userBooking.currentPage); // Fetch lại bookings cho trang mới
 }
 
 function getStatusBadgeClass(status) {
-  switch (status.toLowerCase()) {
-    case "confirmed": return "bg-success";
-    case "pending": return "bg-warning text-dark";
-    case "cancled": return "bg-danger";
-	case "completed": return "bg-info text-white";
-    default: return "bg-secondary";
-  }
+	switch (status.toLowerCase()) {
+		case "confirmed": return "bg-success";
+		case "pending": return "bg-warning text-dark";
+		case "cancled": return "bg-danger";
+		case "completed": return "bg-info text-white";
+		default: return "bg-secondary";
+	}
 }
 
 function handleBookingAction(bookingId, action) {
-  console.log("handleBookingAction " + bookingId + " " + action);
-  let reason = null;
+	console.log("handleBookingAction " + bookingId + " " + action);
+	let reason = null;
 
-  if (action === 'cancel') {
-    reason = prompt("Nhập lý do:");
-    if (!reason) {
-      alert("Bạn cần nhập lý do hủy!");
-      return;
-    }
-  }
+	if (action === 'cancel') {
+		reason = prompt("Nhập lý do:");
+		if (!reason) {
+			alert("Bạn cần nhập lý do hủy!");
+			return;
+		}
+	}
 
-  fetch(`/api/bookings/${bookingId}/${action}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      reason
-    })
-  })
-    .then(async (res) => {
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Đã xảy ra lỗi");
-      }
-      return data;
-    })
-    .then((result) => {
-      alert(result.message || `${action} thành công`);
-      fetchGuidesBookings(); // hoặc update riêng dòng nếu bạn muốn tối ưu
-    })
-    .catch((err) => {
-      console.error(err);
-      alert(err.message || "Đã xảy ra lỗi");
-    });
+	fetch(`/api/bookings/${bookingId}/${action}`, {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			reason
+		})
+	})
+		.then(async (res) => {
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.message || "Đã xảy ra lỗi");
+			}
+			return data;
+		})
+		.then((result) => {
+			alert(result.message || `${action} thành công`);
+			fetchGuidesBookings(); // hoặc update riêng dòng nếu bạn muốn tối ưu
+		})
+		.catch((err) => {
+			console.error(err);
+			alert(err.message || "Đã xảy ra lỗi");
+		});
 }
 
 
 
 /*booking history*/
 let userBooking = {
-  currentPage: 1,
-  itemsPerPage: 10
+	currentPage: 1,
+	itemsPerPage: 10
 };
 
 
 async function fetchBookings(page = 1) {
 	userBooking.currentPage = page;
-    const response = await fetch('/api/bookings');
-    const bookings = await response.json();
-    
-    // Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-    const startIdx = (page - 1) * userBooking.itemsPerPage;
-    const endIdx = startIdx + userBooking.itemsPerPage;
-    
-    // Lấy dữ liệu bookings cho trang hiện tại
-    const bookingsToShow = bookings.slice(startIdx, endIdx);
-    
-	
+	const response = await fetch('/api/bookings');
+	const bookings = await response.json();
+
+	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
+	const startIdx = (page - 1) * userBooking.itemsPerPage;
+	const endIdx = startIdx + userBooking.itemsPerPage;
+
+	// Lấy dữ liệu bookings cho trang hiện tại
+	const bookingsToShow = bookings.slice(startIdx, endIdx);
+
+
 	const tbody = document.getElementById("bookingTableBody");
 	tbody.innerHTML = "";
-	
+
 	bookingsToShow.forEach((booking) => {
 		const row = document.createElement("tr");
 
@@ -560,33 +606,33 @@ async function fetchBookings(page = 1) {
 
 		tbody.appendChild(row);
 	});
-    
-    // Cập nhật trạng thái các nút pagination
-    updatePaginationButtons(page, bookings.length, userBooking.itemsPerPage);
+
+	// Cập nhật trạng thái các nút pagination
+	updatePaginationButtons(page, bookings.length, userBooking.itemsPerPage);
 }
 
 function changePage(direction) {
-    if (direction === 'prev') {
-        userBooking.currentPage -= 1;
-    } else if (direction === 'next') {
-        userBooking.currentPage += 1;
-    }
-    
-    fetchBookings(userBooking.currentPage); // Fetch lại bookings cho trang mới
+	if (direction === 'prev') {
+		userBooking.currentPage -= 1;
+	} else if (direction === 'next') {
+		userBooking.currentPage += 1;
+	}
+
+	fetchBookings(userBooking.currentPage); // Fetch lại bookings cho trang mới
 }
 
 
 
 async function cancelBooking(bookingId) {
 	if (confirm("Bạn có chắc chắn muốn hủy đặt chỗ?")) {
-	    let canceledReason = prompt("Nhập lý do hủy:");
-		if(canceledReason) {
+		let canceledReason = prompt("Nhập lý do hủy:");
+		if (canceledReason) {
 			await fetch(`/api/bookings/${bookingId}/cancel`, {
-		        method: 'PUT',
-		        headers: { 'Content-Type': 'application/json' },
-		        body: JSON.stringify({ reason: canceledReason })
-		    });
-		    fetchBookings(currentPage);
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ reason: canceledReason })
+			});
+			fetchBookings(currentPage);
 		}
 	}
 }
@@ -594,25 +640,25 @@ async function cancelBooking(bookingId) {
 /*guide register */
 function previewImage(event) {
 	console.log("previewImage...")
-    const file = event.target.files[0];  // Lấy file người dùng chọn
-    const previewDiv = document.getElementById('guideLicensePreview');  // Nơi hiển thị ảnh preview
-    previewDiv.innerHTML = '';  // Xóa mọi ảnh preview trước đó (nếu có)
-    
-    if (file) {
-        const reader = new FileReader();  // Đọc file ảnh
-        
+	const file = event.target.files[0];  // Lấy file người dùng chọn
+	const previewDiv = document.getElementById('guideLicensePreview');  // Nơi hiển thị ảnh preview
+	previewDiv.innerHTML = '';  // Xóa mọi ảnh preview trước đó (nếu có)
+
+	if (file) {
+		const reader = new FileReader();  // Đọc file ảnh
+
 		reader.onload = function(e) {
-	        previewDiv.innerHTML = `<img src="${e.target.result}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`;
-	    };
-        
-        reader.readAsDataURL(file);  // Đọc file ảnh dưới dạng base64
-    }
+			previewDiv.innerHTML = `<img src="${e.target.result}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`;
+		};
+
+		reader.readAsDataURL(file);  // Đọc file ảnh dưới dạng base64
+	}
 }
 
 function checkGuideRequestStatus() {
-    fetch('/api/guide-requests/status')  // Giả sử có API để lấy trạng thái đăng ký
-        .then(response => response.json())
-        .then(data => {
+	fetch('/api/guide-requests/status')  // Giả sử có API để lấy trạng thái đăng ký
+		.then(response => response.json())
+		.then(data => {
 			const statusMessage = document.getElementById('statusMessage');
 			const guideForm = document.getElementById('guideForm');
 			const guideLicenseInput = document.getElementById('guideLicense');
@@ -621,58 +667,58 @@ function checkGuideRequestStatus() {
 
 			// Xử lý các trạng thái khác nhau
 			if (data.status === 'REJECTED') {
-			    statusMessage.innerHTML = `<div class="alert alert-danger">Bị từ chối: ${data.reason}</div>`;
-			    guideForm.style.display = 'block';  // Hiển thị form đăng ký
-			    statusMessage.dataset.status = 'REJECTED';
-				
+				statusMessage.innerHTML = `<div class="alert alert-danger">Bị từ chối: ${data.reason}</div>`;
+				guideForm.style.display = 'block';  // Hiển thị form đăng ký
+				statusMessage.dataset.status = 'REJECTED';
+
 				console.log("data " + data + " guideLicense " + data.guideLicense + " experience " + data.experience)
 
-			    // Điền sẵn thông tin đã nhập trước đó
-			    guideLicenseInput.value = data.guideLicense || ''; 
-			    experienceInput.value = data.experience || '';
+				// Điền sẵn thông tin đã nhập trước đó
+				guideLicenseInput.value = data.guideLicense || '';
+				experienceInput.value = data.experience || '';
 
-			    // Hiển thị ảnh nếu có
-			    if (data.guideLicenseUrl) {
-			        guideLicensePreview.innerHTML = `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`;
-			    } else {
-			        guideLicensePreview.innerHTML = ''; // Xóa nếu không có ảnh
-			    }
+				// Hiển thị ảnh nếu có
+				if (data.guideLicenseUrl) {
+					guideLicensePreview.innerHTML = `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`;
+				} else {
+					guideLicensePreview.innerHTML = ''; // Xóa nếu không có ảnh
+				}
 			} else if (data.status === 'PENDING') {
-                statusMessage.innerHTML = `<div class="alert alert-info">Yêu cầu của bạn đang chờ duyệt.</div>`;
-                guideForm.style.display = 'none';  // Ẩn form đăng ký
+				statusMessage.innerHTML = `<div class="alert alert-info">Yêu cầu của bạn đang chờ duyệt.</div>`;
+				guideForm.style.display = 'none';  // Ẩn form đăng ký
 				statusMessage.dataset.status = 'PENDING';
-            } else if (data.status === 'APPROVED') {
-                statusMessage.innerHTML = `<div class="alert alert-info">Yêu cầu của bạn đã được duyệt.</div>`;
-                guideForm.style.display = 'none';  // Ẩn form đăng ký
+			} else if (data.status === 'APPROVED') {
+				statusMessage.innerHTML = `<div class="alert alert-info">Yêu cầu của bạn đã được duyệt.</div>`;
+				guideForm.style.display = 'none';  // Ẩn form đăng ký
 				statusMessage.dataset.status = 'APPROVED';
-            } else {
-                // Nếu không có trạng thái hoặc không có yêu cầu nào, hiển thị form
-                statusMessage.innerHTML = 'Bạn chưa đăng ký làm hướng dẫn viên.';
-                guideForm.style.display = 'block';  // Hiển thị form đăng ký
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.innerHTML = 'Có lỗi xảy ra. Vui lòng thử lại sau.';
-        });
+			} else {
+				// Nếu không có trạng thái hoặc không có yêu cầu nào, hiển thị form
+				statusMessage.innerHTML = 'Bạn chưa đăng ký làm hướng dẫn viên.';
+				guideForm.style.display = 'block';  // Hiển thị form đăng ký
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			const statusMessage = document.getElementById('statusMessage');
+			statusMessage.innerHTML = 'Có lỗi xảy ra. Vui lòng thử lại sau.';
+		});
 }
 
 function submitGuideRegister() {
-	
-	console.log("submitGuideRegister...")	
+
+	console.log("submitGuideRegister...")
 
 	const formData = new FormData();
 	formData.append("guideLicenseFile", document.getElementById("guideLicenseFile").files[0]);
 	formData.append("guideLicense", document.getElementById("guideLicense").value);
 	formData.append("experience", CKEDITOR.instances["experience"].getData());
-	
+
 	const statusMessage = document.getElementById('statusMessage');
 	let requestMethod = 'POST';
-	if (statusMessage.dataset.status === 'REJECTED')  {
+	if (statusMessage.dataset.status === 'REJECTED') {
 		requestMethod = 'PUT'
 	}
-	
+
 	try {
 		const response = fetch("/api/guide-requests/register", {
 			method: requestMethod,
@@ -689,40 +735,40 @@ function submitGuideRegister() {
 
 
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("vi-VN"); // Định dạng ngày tháng theo Việt Nam
+	const date = new Date(dateString);
+	return date.toLocaleDateString("vi-VN"); // Định dạng ngày tháng theo Việt Nam
 }
 
 
 
 async function updateTourStatus(id, action) {
-    let url = `/api/admin/tours/${id}/${action}`;
-    let options = { method: 'PUT' };
+	let url = `/api/admin/tours/${id}/${action}`;
+	let options = { method: 'PUT' };
 
-    // Nếu action là "reject", yêu cầu nhập lý do từ chối
-    if (action === "reject") {
-        let reason = prompt("Nhập lý do từ chối:");
-        if (!reason) {
-            alert("Bạn cần nhập lý do từ chối!");
-            return;
-        }
+	// Nếu action là "reject", yêu cầu nhập lý do từ chối
+	if (action === "reject") {
+		let reason = prompt("Nhập lý do từ chối:");
+		if (!reason) {
+			alert("Bạn cần nhập lý do từ chối!");
+			return;
+		}
 
-        // Gửi request với lý do từ chối
-        options = {
-            method: 'PUT',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reason }) 
-        };
-    }
+		// Gửi request với lý do từ chối
+		options = {
+			method: 'PUT',
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ reason })
+		};
+	}
 
-    const response = await fetch(url, options);
+	const response = await fetch(url, options);
 
-    if (response.ok) {
-        alert(`Tour ${action}d successfully!`);
-        fetchPendingTours(); // Refresh danh sách mà không làm lại toàn bộ bảng
-    } else {
-        alert(`Failed to ${action} tour.`);
-    }
+	if (response.ok) {
+		alert(`Tour ${action}d successfully!`);
+		fetchPendingTours(); // Refresh danh sách mà không làm lại toàn bộ bảng
+	} else {
+		alert(`Failed to ${action} tour.`);
+	}
 }
 
 
@@ -764,7 +810,7 @@ async function approveGuide(id) {
 	if (!confirm("Bạn có chắc chắn muốn duyệt đơn này?")) return;
 
 	try {
-		const response = await fetch(`/api/admin/guide-requests/${id}/approve`, {method: "PUT"});
+		const response = await fetch(`/api/admin/guide-requests/${id}/approve`, { method: "PUT" });
 		if (!response.ok) throw new Error("Duyệt đơn thất bại");
 		alert("Đã duyệt đơn thành công!");
 		fetchGuideRequests(); // Cập nhật danh sách mà không tải lại trang
@@ -783,8 +829,8 @@ async function rejectGuide(id) {
 	try {
 		const response = await fetch(`/api/admin/guide-requests/${id}/reject`, {
 			method: "PUT",
-			headers: {"Content-Type": "application/json"},
-			body: JSON.stringify({reason: reason})
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ reason: reason })
 		});
 
 		if (!response.ok) throw new Error("Từ chối đơn thất bại");

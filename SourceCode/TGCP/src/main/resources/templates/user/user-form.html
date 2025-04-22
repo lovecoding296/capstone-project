@@ -72,22 +72,13 @@
 							<option value="OTHER">Khác</option>
 						</select>
 					</div>
-					<div class="mb-3">
-						<label>Tuổi:</label>
-						<input type="number" class="form-control" th:field="*{age}" min="1" required>
-					</div>
+					
 					<div class="mb-3">
 						<label>Số điện thoại:</label>
 						<input type="text" class="form-control" th:field="*{phone}" required>
 					</div>
-					<div class="mb-3">
-						<label>Điện thoại gia đình:</label>
-						<input type="text" class="form-control" th:field="*{familyPhone}">
-					</div>
-					<div class="mb-3">
-						<label>Địa chỉ:</label>
-						<input type="text" class="form-control" th:field="*{homeAddress}">
-					</div>
+					
+					
 					<div class="mb-3">
 						<label>Thành phố:</label>
 						<input type="text" class="form-control" th:field="*{city}">
@@ -108,10 +99,32 @@
 						<label>Tiktok:</label>
 						<input type="text" class="form-control" th:field="*{tiktok}">
 					</div>
+					
 					<div class="mb-3">
 						<label>Instagram:</label>
 						<input type="text" class="form-control" th:field="*{instagram}">
 					</div>
+					
+					<div th:if="${user.isGuide()}">
+						<div class="mb-3">
+							<label>Tên ngân hàng:</label>
+							<input type="text" class="form-control" th:field="*{bankName}">
+						</div>
+						<div class="mb-3">
+							<label>Số tài khoản:</label>
+							<input type="text" class="form-control" th:field="*{accountNumber}">
+						</div>
+						<div class="mb-3">
+							<label>Tên chủ tài khoản:</label>
+							<input type="text" class="form-control" th:field="*{accountHolder}">
+						</div>
+						<div class="mb-3">
+							<label>Giá tiền thuê/người/ngày:</label>
+							<input type="text" class="form-control" th:field="*{pricePerPersonPerDay}">
+						</div>
+					</div>
+
+					
 					<button type="submit" class="btn btn-success">Lưu Thay Đổi</button>
 					<a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-secondary">Hủy</a>
 				</div>

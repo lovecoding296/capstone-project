@@ -89,6 +89,12 @@ public class User {
 		return this.role == Role.ROLE_ADMIN;
 	}
 	
+	public boolean isGuide() {
+		return this.role == Role.ROLE_GUIDE;
+	}
+	
+	
+	
 	@Column(columnDefinition = "NVARCHAR(255)")
 	private String guideLicenseUrl;
 	

@@ -33,7 +33,7 @@ public class PaymentController {
 
     // API tạo payment
     @PostMapping("/create")
-    public ResponseEntity<Payment> createPayment(@RequestParam("bookingId") Long bookingId, @RequestPart("payment") Payment paymentRequest,
+    public ResponseEntity<Payment> createPayment(@RequestParam Long bookingId, @RequestPart("payment") Payment paymentRequest,
     		@RequestPart("transactionImage") MultipartFile file
     ) {
     	
