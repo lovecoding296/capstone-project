@@ -3,8 +3,11 @@ package funix.tgcp.user;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -186,7 +189,22 @@ public class UserService {
 		userRepository.save(currentUser);
 	}
 
-	public List<User> getTop8ByRoleOrderByAverageRatingDesc(Role role) {
-		return userRepository.findTop8ByRoleAndKycApprovedTrueAndVerifiedTrueAndIsActiveTrueOrderByAverageRatingDesc(role);
-	}	
+	public List<User> getTopByRoleOrderByAverageRatingDesc(Role role) {
+		return userRepository.findTop6ByRoleAndKycApprovedTrueAndVerifiedTrueAndIsActiveTrueOrderByAverageRatingDesc(role);
+	}
+
+	public List<User> searchGuides(City city, Integer maxPrice, Gender gender, Language language, int page, int size) {
+        List<User> allGuides = userRepository.findByRole(Role.ROLE_GUIDE); // giả sử bạn có method này
+
+        return allGuides.stream()
+                .filter(user -> city == null || user.getCity() == city)
+                .filter(user -> maxPrice == null || user.getPricePerDay() <= maxPrice)
+                .filter(user -> gender == null || user.getGender() == gender)
+                .filter(user -> language == null || user.getLanguages().contains(language))
+                .collect(Collectors.toList());
+    }
+
+	public Page<User> searchGuides(City city, Integer maxPrice, Gender gender, Language language, Pageable pageable) {
+		return userRepository.findByFilter(city, maxPrice, gender, language, pageable);
+	}
 }

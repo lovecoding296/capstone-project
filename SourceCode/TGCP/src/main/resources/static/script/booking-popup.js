@@ -1,4 +1,4 @@
-let pricePerPersonPerDay = 200000; // ví dụ: 200.000 VND/người/ngày
+let pricePerDay = 200000; // ví dụ: 200.000 VND/ngày
 
 
 
@@ -42,7 +42,7 @@ function openBookingPopup(guideId, guideName, price) {
 	document.getElementById("numPeople").value = 1;
 	document.getElementById("totalPrice").textContent = "0";
 
-	pricePerPersonPerDay = price;
+	pricePerDay = price;
 
 	fetchBusyDate(guideId)
 }
@@ -55,18 +55,13 @@ function closeBookingPopup() {
 function calculateTotal() {
 	const start = new Date(document.getElementById("startDate").value);
 	const end = new Date(document.getElementById("endDate").value);
-	const people = parseInt(document.getElementById("numPeople").value);
 
 	if (!isNaN(start) && !isNaN(end) && people > 0 && end >= start) {
 		const days = (end - start) / (1000 * 60 * 60 * 24) + 1;
-		const total = days * people * pricePerPersonPerDay;
+		const total = days * pricePerDay;
 		document.getElementById("totalPrice").textContent = total.toLocaleString();
 	}
 }
-
-//document.getElementById("startDate").addEventListener("change", calculateTotal);
-//document.getElementById("endDate").addEventListener("change", calculateTotal);
-//document.getElementById("numPeople").addEventListener("input", calculateTotal);
 
 
 function submitBooking(){
@@ -74,14 +69,6 @@ function submitBooking(){
 	createBooking()
 	closeBookingPopup();
 }
-
-/*document.getElementById("bookingForm").addEventListener("submit", function(e) {
-	e.preventDefault();
-	//alert("Đặt lịch thành công! (Demo)");
-
-	createBooking()
-	closeBookingPopup();
-});*/
 
 function createBookingPopup() {
     if (document.getElementById("bookingModal")) return; // Đã tồn tại thì không tạo lại

@@ -112,7 +112,7 @@ public class User {
     
     private int reviewCount = 0; // số người đánh giá
     
-    private double pricePerPersonPerDay = 250000;
+    private double pricePerDay = 250000;
     
 	@Override
 	public boolean equals(Object obj) {

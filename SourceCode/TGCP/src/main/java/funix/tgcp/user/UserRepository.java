@@ -3,7 +3,11 @@ package funix.tgcp.user;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email); // Tìm kiếm theo email
@@ -14,10 +18,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findByKycApprovedFalse();
 	List<User> findByRole(Role role);
 	
-	List<User> findTop8ByRoleAndKycApprovedTrueAndVerifiedTrueAndIsActiveTrueOrderByAverageRatingDesc(Role role);
+	List<User> findTop6ByRoleAndKycApprovedTrueAndVerifiedTrueAndIsActiveTrueOrderByAverageRatingDesc(Role role);
 
 	Optional<User> findByVerificationToken(String token);
 
 	boolean existsByEmail(String email);
+
+
+	
+	    
+    @Query("SELECT u FROM User u WHERE (:city IS NULL OR u.city = :city) " +
+           "AND (:maxPrice IS NULL OR u.pricePerDay <= :maxPrice) " +
+           "AND (:gender IS NULL OR u.gender = :gender) " +
+           "AND (:language IS NULL OR :language MEMBER OF u.languages)")
+    Page<User> findByFilter(@Param("city") City city,
+                            @Param("maxPrice") Integer maxPrice,
+                            @Param("gender") Gender gender,
+                            @Param("language") Language language,
+                            Pageable pageable);
+	
 }
 

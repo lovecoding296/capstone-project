@@ -1,4 +1,4 @@
-package funix.tgcp.guide.income.request;
+package funix.tgcp.guide.request;
 
 import java.util.List;
 import java.util.Map;

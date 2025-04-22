@@ -1,4 +1,4 @@
-package funix.tgcp.guide.income.request;
+package funix.tgcp.guide.request;
 
 import java.io.IOException;
 import java.util.List;

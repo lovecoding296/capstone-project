@@ -46,7 +46,7 @@
 			    <!-- Nếu KHÔNG phải chính chủ -->
 			    <button th:unless="${session.loggedInUser != null and session.loggedInUser.id == user.id}"
 			            class="btn btn-success"
-			            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerPersonPerDay})|">
+			            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">
 			        Thuê
 			    </button>
 			</div>

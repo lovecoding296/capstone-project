@@ -47,7 +47,7 @@ public class HomeController {
 		
 		logger.info("home");
 		List<Post> posts = postService.getLatestPosts();
-		List<User> users = userService.getTop8ByRoleOrderByAverageRatingDesc(Role.ROLE_GUIDE);
+		List<User> users = userService.getTopByRoleOrderByAverageRatingDesc(Role.ROLE_GUIDE);
 		model.addAttribute("postCategories", PostCategory.values());
 		model.addAttribute("posts", posts);
 		model.addAttribute("users", users);
@@ -80,26 +80,6 @@ public class HomeController {
 		return "payment/payment"; 
 	}
 
-	
-	@GetMapping("/tours")
-	public String getAllTours() {
-		return "tour/tour-list"; 
-	}
-
-	@GetMapping("/tours/new")
-	public String showCreateForm() {
-		return "tour/tour-new"; 
-	}
-	
-	@GetMapping("/tours/{id}")
-	public String findById(@PathVariable Long id) {
-		return "tour/tour-details"; 
-	}
-
-	@GetMapping("/tours/{id}/edit")
-	public String showEditForm(@PathVariable Long id) {
-		return "tour/tour-edit"; 
-	}
 	
 	@GetMapping("/dashboard")
 	public String dashboard() {

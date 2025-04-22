@@ -16,9 +16,9 @@
 	<link rel="stylesheet" th:href="@{/style.css}">
 	<script th:src="@{/jquery-3.6.0.min.js}"></script>
 	<script th:src="@{/app-script.js}"></script>
-	
-	
-	
+
+
+
 	<style>
 		.post-card {
 			border-radius: 10px;
@@ -100,156 +100,125 @@
 			margin-top: 10px;
 		}
 
+
+
 		
 		
-		.user-list {
-		  max-width: 1200px;
-		  margin: 0 auto;
-		  display: grid;
-		  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-		  gap: 20px;
-		}
 
 		.user-card {
-		  background-color: #fff;
-		  border-radius: 16px;
-		  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-		  padding: 20px;
+			background-color: #fff;
+			border-radius: 16px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+			padding: 20px;
 		}
 
 		.user-avatar img {
 			width: 100%;
-		    height: 200px;
+			height: 200px;
 			border-radius: 12px;
-		    object-fit: cover;
+			object-fit: cover;
 			display: block;
-		    margin-bottom: 10px;
+			margin-bottom: 10px;
 		}
 
 		.user-card h2 {
-		  font-size: 20px;
-		  margin: 0;
+			font-size: 20px;
+			margin: 0;
 		}
 
 		.user-card .rating {
-		  font-size: 14px;
-		  color: #888;
-		  margin: 4px 0;
+			font-size: 14px;
+			color: #888;
+			margin: 4px 0;
 		}
 
 		.user-card .city {
-		  font-size: 14px;
-		  color: #555;
+			font-size: 14px;
+			color: #555;
 		}
 
 		.user-card .buttons {
-		  display: flex;
-		  justify-content: center;
-		  gap: 10px;
+			display: flex;
+			justify-content: center;
+			gap: 10px;
 		}
 
 		.user-card button {
-		  padding: 8px 14px;
-		  border: none;
-		  border-radius: 8px;
-		  cursor: pointer;
-		  font-size: 14px;
-		  color: #fff;
-		  transition: background-color 0.3s ease;
+			padding: 8px 14px;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 14px;
+			color: #fff;
+			transition: background-color 0.3s ease;
 		}
 
 		.btn-message {
-		  background-color: #007bff;
+			background-color: #007bff;
 		}
 
 		.btn-message:hover {
-		  background-color: #0056b3;
+			background-color: #0056b3;
 		}
 
 		.btn-hire {
-		  background-color: #28a745;
+			background-color: #28a745;
 		}
 
 		.btn-hire:hover {
-		  background-color: #1e7e34;
+			background-color: #1e7e34;
 		}
-		
-		
-		
 	</style>
 
 </head>
 
 <body>
 	<nav th:replace="~{page-component :: header}"></nav>
-	
+
 	<div class="text-center page-title">
 		<svg th:replace="~{icons :: person}"></svg>
 	</div>
 	<h3 class="text-center" style="margin-top: 10px;">Hướng dẫn viên nổi bật</h3>
 
-	<div class="user-list">
-		<div class="user-card" th:each="user : ${users}">
-			<div class="user-avatar">
-	            <a th:href="@{/users/{id}(id=${user.id})}"><img th:src="${user.avatarUrl}" th:alt="${user.fullName}"></a>
+	<div class="container">
+	    <div class="row">
+	        <div class="col-md-4 mb-4" th:each="user : ${users}">
+	            <div class="user-card p-3 border rounded shadow-sm">
+	                <div class="user-avatar text-center mb-3">
+	                    <a th:href="@{/users/{id}(id=${user.id})}">
+	                        <img th:src="${user.avatarUrl}" th:alt="${user.fullName}" class="img-fluid rounded" style="height: 200px; object-fit: cover;">
+	                    </a>
+	                </div>
+	                <h5 th:text="${user.fullName}" class="text-center">Tên người dùng</h5>
+
+	                <div class="rating text-center mb-2">
+	                    ⭐ <span th:text="${user.averageRating}">4.5</span> (<span th:text="${user.reviewCount}">100</span> đánh giá)
+	                </div>
+
+	                <div class="city mb-2 d-flex align-items-center">
+	                    <img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;" class="me-2">
+	                    <span th:text="${user.city}"></span>
+	                </div>
+
+	                <div class="languages mb-2 d-flex align-items-center">
+	                    <img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;" class="me-2">
+	                    <span th:text="${user.languages}"></span>
+	                </div>
+
+	                <div class="buttons d-flex justify-content-between mt-3">
+	                    <button class="btn btn-primary btn-sm"
+	                            th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Gửi tin nhắn</button>
+
+	                    <button class="btn btn-success btn-sm"
+	                            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Thuê</button>
+	                </div>
+	            </div>
 	        </div>
-			<h2 th:text="${user.fullName}">Tên người dùng</h2>
-			<div class="rating">
-				⭐ <span th:text="${user.averageRating}">4.5</span> (<span th:text="${user.reviewCount}">100</span> đánh giá)
-			</div>
-			<div class="city">
-				<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px; ">
-				<span th:text="*{user.city}"></span>
-			</div>
-			<div class="languages">
-				<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px; ">
-				<span th:text="*{user.languages}"></span>
-			</div>
-			<div class="buttons">
-				<button class="btn-message" th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|" >Gửi tin nhắn</button>
-				
-				<button class="btn-hire"
-				        th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerPersonPerDay})|">
-				    Thuê
-				</button>
+	    </div>
 
-			</div>
-		</div>
-	</div>
-	
-
-	<div class="container-fluid page-title">
-		<div class="card p-3 shadow">
-			<h4 class="text-start mb-3" th:text="#{label.searchTours}">Tìm kiếm bài viết</h4>
-			<form th:action="@{/posts/search}" method="get">
-				<div class="row d-flex align-items-center g-2">
-
-					<!-- Địa điểm -->
-					<div class="col-md-2">
-						<input type="text" name="title" class="form-control" th:placeholder="#{label.title}">
-					</div>
-					<!-- Địa điểm -->
-					<div class="col-md-2">
-						<input type="text" name="author" class="form-control" th:placeholder="#{label.author}">
-					</div>
-
-					<!-- Danh mục -->
-					<div class="col-md-2">
-						<select id="category" name="category" class="form-select">
-							<option value="" th:text="#{label.category}">Danh mục</option>
-							<option th:each="cat : ${postCategories}" th:value="${cat}"
-								th:text="${#messages.msg(cat.name())}"></option>
-						</select>
-					</div>
-
-					<!-- Nút tìm kiếm -->
-					<div class="col-md-2 text-end">
-						<button type="submit" class="btn btn-primary w-100" th:text="#{label.search}">🔍 Tìm
-							kiếm</button>
-					</div>
-				</div>
-			</form>
-		</div>
+	    <div class="text-end mt-4">
+	        <a href="/guides" class="btn btn-primary">Xem tất cả</a>
+	    </div>
 	</div>
 
 
@@ -309,7 +278,9 @@
 					</div>
 				</div>
 			</div>
-
+			<div class="text-end mt-4">
+				        <a href="/posts" class="btn btn-primary">Xem tất cả</a>
+				    </div>
 			<script>
 				function toggleLike(postId) {
 					fetch(`/api/likes/${postId}`, {method: 'POST'})
@@ -373,10 +344,10 @@
 						.catch(error => console.error("Error loading comments:", error));
 				}
 			</script>
-			
-			
+
+
 			<script th:src="@{/script/booking-popup.js}"></script>
-			
+
 		</div>
 	</div>
 
