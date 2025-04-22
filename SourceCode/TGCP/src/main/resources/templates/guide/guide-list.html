@@ -166,6 +166,24 @@
 							</select>
 						</div>
 
+						<div class="mb-3">
+						    <label class="form-label">Loại giấy phép</label>
+						    <div class="form-check">
+						        <input class="form-check-input" type="checkbox" id="filterLocalGuide" name="localGuide"
+						               th:checked="${param.localGuide != null}">
+						        <label class="form-check-label" for="filterLocalGuide">
+						            Hướng dẫn viên nội địa
+						        </label>
+						    </div>
+						    <div class="form-check">
+						        <input class="form-check-input" type="checkbox" id="filterInternationalGuide" name="internationalGuide"
+						               th:checked="${param.internationalGuide != null}">
+						        <label class="form-check-label" for="filterInternationalGuide">
+						            Hướng dẫn viên quốc tế
+						        </label>
+						    </div>
+						</div>
+
 
 
 						<button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
@@ -191,6 +209,13 @@
 								⭐ <span th:text="${user.averageRating}">4.5</span> (<span
 									th:text="${user.reviewCount}">100</span> đánh giá)
 							</div>
+							
+							<div class="mb-2" style="height: 50px;">
+								<span class="badge bg-info me-1" th:if="${user.isLocalGuide}">Hướng dẫn viên nội địa</span>
+								<br th:if="${user.isLocalGuide and user.isInternationalGuide}" />
+								<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Hướng dẫn viên quốc tế</span>
+							</div>
+
 
 							<div class="city mb-2 d-flex align-items-center">
 								<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;"

@@ -27,15 +27,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	
 	    
-    @Query("SELECT u FROM User u WHERE (:city IS NULL OR u.city = :city) " +
-           "AND (:maxPrice IS NULL OR u.pricePerDay <= :maxPrice) " +
-           "AND (:gender IS NULL OR u.gender = :gender) " +
-           "AND (:language IS NULL OR :language MEMBER OF u.languages)")
-    Page<User> findByFilter(@Param("city") City city,
-                            @Param("maxPrice") Integer maxPrice,
-                            @Param("gender") Gender gender,
-                            @Param("language") Language language,
-                            Pageable pageable);
+	@Query("SELECT u FROM User u WHERE u.role = 'ROLE_GUIDE' " +
+	       "AND (:city IS NULL OR u.city = :city) " +
+	       "AND (:maxPrice IS NULL OR u.pricePerDay <= :maxPrice) " +
+	       "AND (:gender IS NULL OR u.gender = :gender) " +
+	       "AND (:language IS NULL OR :language MEMBER OF u.languages)")
+	Page<User> findGuideByFilter(@Param("city") City city,
+	                        @Param("maxPrice") Integer maxPrice,
+	                        @Param("gender") Gender gender,
+	                        @Param("language") Language language,
+	                        Pageable pageable);
+
 	
 }
 

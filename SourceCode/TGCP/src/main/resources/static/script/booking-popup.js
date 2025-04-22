@@ -56,7 +56,7 @@ function calculateTotal() {
 	const start = new Date(document.getElementById("startDate").value);
 	const end = new Date(document.getElementById("endDate").value);
 
-	if (!isNaN(start) && !isNaN(end) && people > 0 && end >= start) {
+	if (!isNaN(start) && !isNaN(end) && end >= start) {
 		const days = (end - start) / (1000 * 60 * 60 * 24) + 1;
 		const total = days * pricePerDay;
 		document.getElementById("totalPrice").textContent = total.toLocaleString();

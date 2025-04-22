@@ -75,9 +75,11 @@ public class GuideRequestController {
     
     @PutMapping("/api/guide-requests/register")
     public ResponseEntity<String> updateGuideRequest(
-            @RequestParam(value = "guideLicenseFile" , required = false) MultipartFile guideLicenseFile,
-            @RequestParam("guideLicense") String guideLicense,
-            @RequestParam("experience") String experience) {
+            @RequestParam(required = false) MultipartFile guideLicenseFile,
+            @RequestParam String guideLicense, 
+            @RequestParam boolean isLocalGuide,
+            @RequestParam boolean isInternationalGuide,
+            @RequestParam String experience) {
         
     	logger.info("");
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -87,7 +89,7 @@ public class GuideRequestController {
             
             try {
                 logger.info("Cập nhật đăng ký hướng dẫn viên cho userId: " + userId);
-                guideRequestService.updateGuideRequest(userId, guideLicenseFile, guideLicense, experience);
+                guideRequestService.updateGuideRequest(userId, guideLicenseFile, guideLicense, isLocalGuide, isInternationalGuide, experience);
                 return ResponseEntity.ok("Cập nhật đăng ký hướng dẫn viên thành công!");
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật thất bại: " + e.getMessage());

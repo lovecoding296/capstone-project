@@ -205,6 +205,6 @@ public class UserService {
     }
 
 	public Page<User> searchGuides(City city, Integer maxPrice, Gender gender, Language language, Pageable pageable) {
-		return userRepository.findByFilter(city, maxPrice, gender, language, pageable);
+		return userRepository.findGuideByFilter(city, maxPrice, gender, language, pageable);
 	}
 }

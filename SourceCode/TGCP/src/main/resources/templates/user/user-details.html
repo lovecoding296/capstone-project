@@ -47,7 +47,7 @@
 			    <button th:unless="${session.loggedInUser != null and session.loggedInUser.id == user.id}"
 			            class="btn btn-success"
 			            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">
-			        Thuê
+			        Đặt lịch thuê
 			    </button>
 			</div>
 

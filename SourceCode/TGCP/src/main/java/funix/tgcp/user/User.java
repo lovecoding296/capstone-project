@@ -114,8 +114,13 @@ public class User {
     
     private double pricePerDay = 250000;
     
+    
+    private boolean isLocalGuide;
+    private boolean isInternationalGuide;
+    
 	@Override
 	public boolean equals(Object obj) {
+			
 		if (this == obj) {
 			return true;
 		}

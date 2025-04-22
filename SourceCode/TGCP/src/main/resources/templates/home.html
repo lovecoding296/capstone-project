@@ -96,7 +96,6 @@
 		}
 
 		.post-card .comment-form button {
-			border-radius: 20px;
 			margin-top: 10px;
 		}
 
@@ -195,6 +194,14 @@
 	                    ⭐ <span th:text="${user.averageRating}">4.5</span> (<span th:text="${user.reviewCount}">100</span> đánh giá)
 	                </div>
 
+					<div class="mb-2" style="height: 50px;">
+						<span class="badge bg-info me-1" th:if="${user.isLocalGuide}">Hướng dẫn viên nội địa</span>
+						<br th:if="${user.isLocalGuide and user.isInternationalGuide}" />
+						<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Hướng dẫn viên quốc tế</span>
+					</div>
+
+
+
 	                <div class="city mb-2 d-flex align-items-center">
 	                    <img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;" class="me-2">
 	                    <span th:text="${user.city}"></span>
@@ -210,7 +217,7 @@
 	                            th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Gửi tin nhắn</button>
 
 	                    <button class="btn btn-success btn-sm"
-	                            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Thuê</button>
+	                            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Đặt lịch thuê</button>
 	                </div>
 	            </div>
 	        </div>
@@ -234,13 +241,20 @@
 			<div th:each="post : ${posts}" class="col-md-12">
 				<div class="post-card mb-4">
 					<div class="post-card-body">
+						<a th:href="@{'/users/' + ${post.author.id}}">
+							<img th:src="${post.author.avatarUrl != null ? post.author.avatarUrl : 'https://i.pravatar.cc/40?u=' + post.author.id}"
+								alt="Avatar" class="rounded-circle me-2" width="100" height="100">
+							<span th:text="${post.author.fullName}" style="font-size: x-large;"></span>
+						</a>
+						
+						
 						<h5 class="post-card-title" th:text="${post.title}"></h5>
 						<p class="text-muted">
 							<strong th:text="#{label.postedOn}"></strong>
 							<span th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
 						</p>
-						<p><strong th:text="#{label.author}"></strong> <span th:text="${post.author.fullName}"></span>
-						</p>
+						
+
 						<p><strong th:text="#{label.category}"></strong> <span
 								th:text="${#messages.msg(post.category.name)}"></span>
 						</p>
@@ -267,15 +281,17 @@
 
 					<div class="post-card-body comment-section">
 						<h6 class="post-card-title" th:text="#{label.comments}"></h6>
-						<div th:id="'comment-section-' + ${post.id}" class="mt-3"></div>
+						<div th:id="'comment-section-' + ${post.id}" class="mt-3" style="max-height: 400px; overflow-y: auto;">
 
-						<!-- Form thêm bình luận -->
-						<form th:attr="onsubmit='addComment(event, ' + ${post.id} + ')'" class="comment-form">
-							<input type="text" th:id="'comment-content-' + ${post.id}"
-								class="form-control comment-input" th:placeholder="#{label.enterComment}" required>
-							<button type="submit" class="btn btn-success btn-sm" th:text="#{label.send}"></button>
-						</form>
+						
 					</div>
+					
+					<!-- Form thêm bình luận -->
+					<form th:attr="onsubmit='addComment(event, ' + ${post.id} + ')'" class="comment-form">
+						<input type="text" th:id="'comment-content-' + ${post.id}"
+							class="form-control comment-input" th:placeholder="#{label.enterComment}" required>
+						<button type="submit" class="btn btn-success btn-sm" th:text="#{label.send}"></button>
+					</form>
 				</div>
 			</div>
 			<div class="text-end mt-4">
@@ -328,30 +344,148 @@
 							commentSection.innerHTML = ""; // Xóa nội dung cũ
 
 							comments.forEach(comment => {
-								let commentHtml = `
-				                        <div class="mb-2">
-				                            <p><strong>${comment.commenter.fullName}</strong></p>
-				                            <p>${comment.content}</p>
-				                            <p class="text-muted">
-				                                <small>${new Date(comment.createdAt).toLocaleString()}</small>
-				                            </p>
-				                            <hr>
-				                        </div>
-				                    `;
-								commentSection.innerHTML += commentHtml;
+							  let repliesHtml = '';
+
+							  if (comment.replies && comment.replies.length > 0) {
+							    comment.replies.forEach(reply => {
+							      repliesHtml += `
+							        <div class="mt-2 ms-4 d-flex gap-2 align-items-start" id="comment-${reply.id}">
+							          <img src="${reply.commenter.avatarUrl || 'https://i.pravatar.cc/40?u=' + reply.commenter.id}" 
+							               alt="${reply.commenter.fullName}" 
+							               class="rounded-circle" 
+							               width="35" 
+							               height="35">
+							          <div>
+							            <p><strong>${reply.commenter.fullName}</strong></p>
+							            <p>${reply.content}</p>
+							            <p class="text-muted">
+							              <small>${new Date(reply.createdAt).toLocaleString()}</small>
+							            </p>
+							            <button class="btn btn-link p-0 text-primary reply-btn" 
+							                    data-comment-id="${reply.id}" 
+							                    data-commenter-name="${reply.commenter.fullName}">
+							              Trả lời
+							            </button>
+							            
+							            <!-- Vùng nhập trả lời cho comment con -->
+							            <div class="reply-form" id="reply-form-${reply.id}" style="display: none;">
+							              <textarea class="form-control" placeholder="Nhập trả lời..." id="reply-content-${reply.id}" style="min-width: 300px"></textarea>
+							              <button class="btn btn-success btn-sm" onclick="submitReply(${reply.id}, ${postId})">Gửi</button>
+							            </div>
+							          </div>
+							        </div>
+							      `;
+							    });
+							  }
+
+							  let commentHtml = `
+							    <div class="mb-2 d-flex gap-2 align-items-start" id="comment-${comment.id}">
+							      <img src="${comment.commenter.avatarUrl || 'https://i.pravatar.cc/40?u=' + comment.commenter.id}" 
+							           alt="${comment.commenter.fullName}" 
+							           class="rounded-circle" 
+							           width="40" 
+							           height="40">
+							      <div>
+							        <p><strong>${comment.commenter.fullName}</strong></p>
+							        <p>${comment.content}</p>
+							        <p class="text-muted">
+							          <small>${new Date(comment.createdAt).toLocaleString()}</small>
+							        </p>
+							        <button class="btn btn-link p-0 text-primary reply-btn" 
+							                data-comment-id="${comment.id}" 
+							                data-commenter-name="${comment.commenter.fullName}">
+							          Trả lời
+							        </button>
+							        <hr>
+
+							        <!-- Vùng nhập trả lời -->
+							        <div class="reply-form" id="reply-form-${comment.id}" style="display: none;">
+							          <textarea class="form-control" placeholder="Nhập trả lời..." id="reply-content-${comment.id}" style="min-width: 300px"></textarea>
+							          <button class="btn btn-success btn-sm" onclick="submitReply(${comment.id}, ${postId})">Gửi</button>
+							        </div>
+
+							        <!-- Hiển thị các comment con -->
+							        <div class="replies">${repliesHtml}</div>
+							      </div>
+							    </div>
+							  `;
+
+							  commentSection.innerHTML += commentHtml;
 							});
+
+							
+							
+							attachReplyButtonEvents()
+
+
 						})
 						.catch(error => console.error("Error loading comments:", error));
 				}
+				
+				
+				function attachReplyButtonEvents() {
+				  document.querySelectorAll('.reply-btn').forEach(btn => {
+				    btn.addEventListener('click', function () {
+				      const commentId = this.dataset.commentId;
+
+				      // Hiển thị hộp nhập trả lời dưới comment
+				      const replyForm = document.getElementById('reply-form-' + commentId);
+				      if (replyForm) {
+				        replyForm.style.display = 'block';
+				      }
+				    });
+				  });
+				}
+				
+				
+				function submitReply(commentId, postId) {
+					
+				  console.log("submitReply postId " + postId + " commentId " + commentId)	
+					
+				  const replyContent = document.getElementById('reply-content-' + commentId).value;
+
+				  if (replyContent.trim() === "") {
+				    alert("Vui lòng nhập trả lời.");
+				    return;
+				  }
+
+				  // Gửi dữ liệu trả lời (ví dụ: gửi lên server hoặc lưu trong mảng)
+				  console.log("Trả lời cho comment id: " + commentId + " nội dung: " + replyContent);
+				  
+				  fetch(`/api/comments/reply/${commentId}`, {
+				  	method: "POST",
+				  	headers: {"Content-Type": "application/json"},
+				  	body: JSON.stringify({content: replyContent, parent:{id: commentId}})
+				  })
+				  	.then(response => response.json())
+				  	.then(data => {
+						
+				  		loadComments(postId)
+				  	})
+				  	.catch(error => console.error("Lỗi:", error));
+					
+				  // Sau khi gửi, có thể ẩn hộp nhập trả lời đi
+				  const replyForm = document.getElementById('reply-form-' + commentId);
+				  replyForm.style.display = 'none';
+
+				  // Thêm phản hồi vào giao diện người dùng (tuỳ chỉnh thêm)
+				  // Bạn có thể thêm phản hồi vào một danh sách trả lời dưới mỗi bình luận, v.v.
+				}
+				
+				
 			</script>
+			
+			
 
 
-			<script th:src="@{/script/booking-popup.js}"></script>
+			
 
 		</div>
 	</div>
 
 	<footer th:replace="~{page-component :: footer}"></footer>
+	
+	<script th:src="@{/script/booking-popup.js}"></script>
 
 </body>
 

@@ -33,6 +33,10 @@ public class CustomUserDetails implements UserDetails {
 	public User getUser() {
 		return user;
 	}
+	
+	public String getFullName() {
+		return user.getFullName();
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,9 +1,9 @@
-<div  id="guide-register" class="content-section">	
+<div id="guide-register" class="content-section">
 	<h2>Đăng ký làm hướng dẫn viên</h2>
 	<div id="statusMessage"></div>
 	<form id="guideForm" class="mt-3" enctype="multipart/form-data">
 		<div class="mb-3">
-			<label for="guideLicenseFile" class="form-label" >Tải ảnh giấy phép:</label>
+			<label for="guideLicenseFile" class="form-label">Tải ảnh giấy phép:</label>
 			<input type="file" id="guideLicenseFile" class="form-control" onchange="previewImage(event)">
 		</div>
 		<div id="guideLicensePreview"></div>
@@ -12,6 +12,22 @@
 			<label for="guideLicense" class="form-label">Giấy phép:</label>
 			<input type="text" id="guideLicense" class="form-control" required>
 		</div>
+		<div class="mb-3">
+		  
+		  <div class="form-check">
+		    <input class="form-check-input" type="checkbox" id="isLocalGuide" name="license">
+		    <label class="form-check-label" for="isLocalGuide">
+		      Hướng dẫn viên nội địa
+		    </label>
+		  </div>
+		  <div class="form-check">
+		    <input class="form-check-input" type="checkbox" id="isInternationalGuide" name="license">
+		    <label class="form-check-label" for="isInternationalGuide">
+		      Hướng dẫn viên quốc tế
+		    </label>
+		  </div>
+		</div>
+
 		<div class="mb-3">
 			<label for="experience" class="form-label">Kinh nghiệm:</label>
 			<textarea id="experience" class="form-control" required></textarea>

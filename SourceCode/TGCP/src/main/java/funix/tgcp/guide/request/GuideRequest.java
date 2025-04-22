@@ -46,6 +46,9 @@ public class GuideRequest {
     @Column(columnDefinition = "NVARCHAR(255)")
     private String reason;
     
+    private boolean isLocalGuide;
+    private boolean isInternationalGuide;
+    
     @Enumerated(EnumType.STRING)
     private GuideRequestStatus status = GuideRequestStatus.PENDING; // Trạng thái yêu cầu
 

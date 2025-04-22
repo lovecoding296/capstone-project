@@ -60,16 +60,27 @@ public class GuideRequestService {
         return false;
     }
     
-    public void updateGuideRequest(Long userId, MultipartFile guideLicenseFile, String guideLicense,
-			String experience) {
+    public void updateGuideRequest(Long userId, MultipartFile guideLicenseFile, 
+    		String guideLicense, boolean isLocalGuide, 
+    		boolean isInternationalGuide, String experience) {
+    	
     	logger.info(" experience " + experience);
         GuideRequest existingRequest = guideRequestRepository.findByUserId(userId);
+        
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setInternationalGuide(isInternationalGuide);
+            user.setLocalGuide(isLocalGuide);
+            userRepository.save(user);
+        });
+
                
     	if(existingRequest != null) {
             existingRequest.setGuideLicense(guideLicense);
             existingRequest.setExperience(experience);
             
 			existingRequest.setStatus(GuideRequestStatus.PENDING);
+			existingRequest.setLocalGuide(isLocalGuide);
+			existingRequest.setInternationalGuide(isInternationalGuide);
 			
 			try {
 				String filePath = fileHelper.uploadFile(guideLicenseFile);
@@ -129,7 +140,6 @@ public class GuideRequestService {
     }
 
 	
-
 
 
 }

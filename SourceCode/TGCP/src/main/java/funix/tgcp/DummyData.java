@@ -38,23 +38,23 @@ public class DummyData implements ApplicationRunner {
         createUser("giang@tgcp.com", "giang", "123", Role.ROLE_USER);
         createUser("duc@tgcp.com", "duc", "123", Role.ROLE_USER);
         
-        createUser("phi1@tgcp.com", "phi1", "123", Role.ROLE_GUIDE, City.HAI_PHONG, 100, 5);
-        createUser("phi2@tgcp.com", "phi2", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi3@tgcp.com", "phi3", "123", Role.ROLE_GUIDE, City.HA_NOI, 100, 5);
-        createUser("phi4@tgcp.com", "phi4", "123", Role.ROLE_GUIDE, City.BAC_GIANG, 100, 5);
-        createUser("phi5@tgcp.com", "phi5", "123", Role.ROLE_GUIDE, City.BAC_NINH, 100, 5);
-        createUser("phi6@tgcp.com", "phi6", "123", Role.ROLE_GUIDE, City.BINH_PHUOC, 100, 5);
-        createUser("phi7@tgcp.com", "phi7", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi8@tgcp.com", "phi8", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi9@tgcp.com", "phi9", "123", Role.ROLE_GUIDE, City.BINH_THUAN, 100, 5);
-        createUser("phi10@tgcp.com", "ph10i", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi11@tgcp.com", "phi11", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi12@tgcp.com", "phi12", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi13@tgcp.com", "phi13", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi14@tgcp.com", "phi14", "123", Role.ROLE_GUIDE, City.DIEN_BIEN, 100, 5);
-        createUser("phi15@tgcp.com", "phi15", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi16@tgcp.com", "phi16", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
-        createUser("phi17@tgcp.com", "phi17", "123", Role.ROLE_GUIDE, City.HAI_DUONG, 100, 5);
+        createUser("phi1@tgcp.com",  "phi1",  "123", Role.ROLE_GUIDE, City.HAI_PHONG,  100, 5, true,  false);
+        createUser("phi2@tgcp.com",  "phi2",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  false);
+        createUser("phi3@tgcp.com",  "phi3",  "123", Role.ROLE_GUIDE, City.HA_NOI,     100, 5, true,  false);
+        createUser("phi4@tgcp.com",  "phi4",  "123", Role.ROLE_GUIDE, City.BAC_GIANG,  100, 5, true,  true);
+        createUser("phi5@tgcp.com",  "phi5",  "123", Role.ROLE_GUIDE, City.BAC_NINH,   100, 5, true,  true);
+        createUser("phi6@tgcp.com",  "phi6",  "123", Role.ROLE_GUIDE, City.BINH_PHUOC, 100, 5, true,  false);
+        createUser("phi7@tgcp.com",  "phi7",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
+        createUser("phi8@tgcp.com",  "phi8",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true);
+        createUser("phi9@tgcp.com",  "phi9",  "123", Role.ROLE_GUIDE, City.BINH_THUAN, 100, 5, true,  false);
+        createUser("phi10@tgcp.com", "ph10i", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true);
+        createUser("phi11@tgcp.com", "phi11", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
+        createUser("phi12@tgcp.com", "phi12", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true);
+        createUser("phi13@tgcp.com", "phi13", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
+        createUser("phi14@tgcp.com", "phi14", "123", Role.ROLE_GUIDE, City.DIEN_BIEN,  100, 5, true,  true);
+        createUser("phi15@tgcp.com", "phi15", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
+        createUser("phi16@tgcp.com", "phi16", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
+        createUser("phi17@tgcp.com", "phi17", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
 	}
 	
 	private void createUser(String email, String fullName, String rawPassword, Role role) {
@@ -85,6 +85,8 @@ public class DummyData implements ApplicationRunner {
 			, City city
 			, int reviewCount
 			, double rating
+			, boolean isLocalGuide
+			, boolean isInternationalGuidem
 			
 			) {
         Optional<User> userOp = userRepository.findByEmail(email);
@@ -107,6 +109,8 @@ public class DummyData implements ApplicationRunner {
             user.setActive(true);
             user.setVerified(true);
             user.setKycApproved(true);
+            user.setInternationalGuide(isInternationalGuidem);
+            user.setLocalGuide(isLocalGuide);
             
             userRepository.save(user);
             System.out.println("account created successfully!");
