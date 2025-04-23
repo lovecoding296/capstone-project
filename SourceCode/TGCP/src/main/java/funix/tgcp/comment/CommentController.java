@@ -70,11 +70,11 @@ public class CommentController {
 
 		if (!post.getAuthor().equals(currentUser)) {
 
-			logger.info(userDetails.getFullName() + " đã comment vào bài viết của bạn!");
+			logger.info(userDetails.getFullName() + " commented on your blog!");
 						
 			notificationService.sendNotification(
 					post.getAuthor(),
-					userDetails.getFullName() + " đã comment vào bài viết của bạn!",
+					userDetails.getFullName() + " commented on your blog (" + post.getTitle() + ")!",
 					"/posts/" + postId
 					);
 			

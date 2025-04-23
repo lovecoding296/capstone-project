@@ -216,7 +216,7 @@
 							<div class="city mb-2 d-flex align-items-center">
 								<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;"
 									class="me-2">
-								<span th:text="${user.city}"></span>
+								<span th:text="${user.city.getDisplayName()}"></span>
 							</div>
 
 							<div class="languages mb-2 d-flex align-items-center">

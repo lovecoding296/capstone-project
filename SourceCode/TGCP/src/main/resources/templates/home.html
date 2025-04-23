@@ -332,7 +332,8 @@
 
 					function addComment(event, postId) {
 						event.preventDefault();
-						const content = document.getElementById(`comment-content-${postId}`).value;
+						const input = document.getElementById(`comment-content-${postId}`)
+						const content = input.value;
 
 						fetch(`/api/comments/post/${postId}`, {
 							method: "POST",
@@ -341,6 +342,7 @@
 						})
 							.then(response => response.json())
 							.then(data => {
+								input.value = ''
 								loadComments(postId)
 							})
 							.catch(error => console.error("Lỗi:", error));
@@ -459,7 +461,7 @@
 							return;
 						}
 
-						// Gửi dữ liệu trả lời (ví dụ: gửi lên server hoặc lưu trong mảng)
+						// Gửi dữ liệu trả lời
 						console.log("Trả lời cho comment id: " + commentId + " nội dung: " + replyContent);
 
 						fetch(`/api/comments/reply/${commentId}`, {
@@ -474,7 +476,7 @@
 							})
 							.catch(error => console.error("Lỗi:", error));
 
-						// Sau khi gửi, có thể ẩn hộp nhập trả lời đi
+						// Sau khi gửi, ẩn hộp nhập trả lời đi
 						const replyForm = document.getElementById('reply-form-' + commentId);
 						replyForm.style.display = 'none';
 					}
