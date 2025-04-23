@@ -18,5 +18,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 	Optional<Notification> findByUserAndSourceLinkAndMessageAndIsRead(User user, String sourceLink, String message,
 			boolean b);
 
-	List<Notification> findByUserId(Long currentUserId);    
+	List<Notification> findByUserId(Long currentUserId);
+
+	List<Notification> findByUserIdOrderByCreatedAtDesc(Long currentUserId);    
 }

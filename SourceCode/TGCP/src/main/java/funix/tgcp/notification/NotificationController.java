@@ -37,7 +37,7 @@ public class NotificationController {
     		
     	} 
     	    	
-	    List<Notification> list = notificationService.findByUserId(currentUserId);
+	    List<Notification> list = notificationService.findByUserIdOrderByCreatedAtDesc(currentUserId);
 	    return ResponseEntity.ok(list);
 	}
 	

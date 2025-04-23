@@ -154,4 +154,8 @@ public class ReviewService {
 	public Optional<Review> findByBookingIdAndReviewedUserId(Long bookingId, Long reviewedUserId) {		
 		return reviewRepository.findByBookingIdAndReviewedUserId(bookingId, reviewedUserId);
 	}
+
+	public boolean existsByReviewerIdAndBookingId(Long reviewerId, Long bookingId) {
+		return reviewRepository.existsByReviewerIdAndBookingId(reviewerId, bookingId);
+	}
 }

@@ -48,8 +48,8 @@ public class NotificationService {
 	    }
 	}
 
-	public List<Notification> findByUserId(Long currentUserId) {
-		return notificationRepository.findByUserId(currentUserId);
+	public List<Notification> findByUserIdOrderByCreatedAtDesc(Long currentUserId) {
+		return notificationRepository.findByUserIdOrderByCreatedAtDesc(currentUserId);
 	}
 	
 	

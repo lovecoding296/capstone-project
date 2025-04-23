@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,17 +49,16 @@ public class ReviewController {
 		
 	}
 	
-	
-	@GetMapping("/check")
-	public ResponseEntity<Review> getReviewByBookingAndUser(
-	        @RequestParam Long bookingId,
-	        @RequestParam Long reviewedUserId) {
-	    
-	    Optional<Review> reviewOpt = reviewService.findByBookingIdAndReviewedUserId(bookingId, reviewedUserId);
-	    return reviewOpt.map(ResponseEntity::ok)
-	                    .orElseGet(() -> ResponseEntity.noContent().build());
+	@GetMapping("/exists")
+	public ResponseEntity<Boolean> hasReviewed(@RequestParam Long bookingId) {
+		CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+		if(userDetails != null) {
+			boolean exists = reviewService.existsByReviewerIdAndBookingId(userDetails.getUser().getId(), bookingId);
+			return ResponseEntity.ok(exists);
+		}
+		
+		return ResponseEntity.ok(false);
 	}
-
 	
 	
 

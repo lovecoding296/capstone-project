@@ -30,5 +30,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Tính điểm trung bình của user
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reviewedUser = :user")
     Double findAverageRatingByReviewedUser(@Param("user") User user);
+    
+    
+    boolean existsByReviewerIdAndBookingId(Long reviewerId, Long bookingId);
+    
 	
 }

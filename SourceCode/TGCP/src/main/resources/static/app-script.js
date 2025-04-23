@@ -13,12 +13,42 @@ function autoResize(textarea) {
 /* Submit review */
 
 function openReviewModal(bookingId, reviewedUserId, reviewedUserName) {
-	createReviewModal(bookingId, reviewedUserId)
-	
-	document.getElementById("reviewModal").style.display = "flex";
-	document.getElementById("guideName").innerText = reviewedUserName;
-	
+    checkReviewStatus(bookingId).then(function(hasReviewed) {
+        if (hasReviewed) {
+            alert("You have already submitted a review.");
+            return;
+        }
+
+        createReviewModal(bookingId, reviewedUserId);
+        document.getElementById("reviewModal").style.display = "flex";
+        document.getElementById("guideName").innerText = reviewedUserName;
+    });
 }
+
+function checkReviewStatus(bookingId) {
+    return fetch(`/api/reviews/exists?bookingId=${bookingId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error("HTTP error! status: " + response.status);
+        }
+        return response.json();
+    })
+    .then(function(hasReviewed) {
+        console.log("bookingId hasReviewed: " + hasReviewed);
+        return hasReviewed;
+    })
+    .catch(function(error) {
+        console.error("Lỗi khi kiểm tra đánh giá:", error);
+        return false;
+    });
+}
+
+
 
 function submitReview(bookingId, reviewedUserId) {
     // Lấy số sao đã chọn
