@@ -151,6 +151,15 @@
 			color: #fff;
 			transition: background-color 0.3s ease;
 		}
+		
+		.user-card {
+		  transition: transform 0.3s ease; /* Cho hiệu ứng mượt */
+		}
+
+		.user-card:hover {
+		  transform: scale(1.05);
+		}
+
 
 		.btn-message {
 			background-color: #007bff;
@@ -351,13 +360,13 @@
 										comment.replies.forEach(reply => {
 											repliesHtml += `
 							        <div class="mt-2 ms-4 d-flex gap-2 align-items-start" id="comment-${reply.id}">
-							          <img src="${reply.commenter.avatarUrl || 'https://i.pravatar.cc/40?u=' + reply.commenter.id}" 
+							          <a href="/users/${reply.commenter.id}"><img src="${reply.commenter.avatarUrl || 'https://i.pravatar.cc/40?u=' + reply.commenter.id}" 
 							               alt="${reply.commenter.fullName}" 
 							               class="rounded-circle" 
 							               width="35" 
-							               height="35">
+							               height="35"></a>
 							          <div>
-							            <p><strong>${reply.commenter.fullName}</strong></p>
+							            <a href="/users/${reply.commenter.id}"><p><strong>${reply.commenter.fullName}</strong></p></a>
 							            <p>${reply.content}</p>
 							            <p class="text-muted">
 							              <small>${new Date(reply.createdAt).toLocaleString()}</small>
@@ -381,13 +390,13 @@
 
 									let commentHtml = `
 							    <div class="mb-2 d-flex gap-2 align-items-start" id="comment-${comment.id}">
-							      <img src="${comment.commenter.avatarUrl || 'https://i.pravatar.cc/40?u=' + comment.commenter.id}" 
+							      <a href="/users/${comment.commenter.id}"><img src="${comment.commenter.avatarUrl || 'https://i.pravatar.cc/40?u=' + comment.commenter.id}" 
 							           alt="${comment.commenter.fullName}" 
 							           class="rounded-circle" 
 							           width="40" 
-							           height="40">
+							           height="40"></a>
 							      <div>
-							        <p><strong>${comment.commenter.fullName}</strong></p>
+							        <a href="/users/${comment.commenter.id}"><p><strong>${comment.commenter.fullName}</strong></p></a>
 							        <p>${comment.content}</p>
 							        <p class="text-muted">
 							          <small>${new Date(comment.createdAt).toLocaleString()}</small>

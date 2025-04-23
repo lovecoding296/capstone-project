@@ -47,7 +47,7 @@
 			    <button th:unless="${session.loggedInUser != null and session.loggedInUser.id == user.id}"
 			            class="btn btn-warning"
 			            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">
-			        Booking Now
+			        Book Now
 			    </button>
 			</div>
 
