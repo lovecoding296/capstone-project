@@ -24,6 +24,9 @@ body {
     cursor: not-allowed !important; /* Giữ con trỏ không cho phép */
 }
 
+img {
+	object-fit: cover;
+}
 
 #main-nav {
 	background-color: #002147;

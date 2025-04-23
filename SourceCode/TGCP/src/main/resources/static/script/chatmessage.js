@@ -252,7 +252,7 @@ function setupMessageClickHandler(messageLinkId = 'messageLink', userListId = 'u
                  class="rounded-circle" width="40" height="40">
             <div>
               <div><strong>${user.fullName || 'Không rõ tên'}</strong></div>
-              <div class="text-muted small text-truncate" style="max-width: 220px;">
+              <div class="text-muted small text-truncate" style="max-width: 220px; width:200px">
                 ${user.lastMessage}
               </div>
               <div class="text-muted small">${formatTimestamp(user.timestamp)}</div>

@@ -94,7 +94,7 @@ function setupNotificationClickHandler(messageLinkId = 'notificationLink', notif
 	        data-message="${noti.message}">
 	        
 	        <div>
-	          <div class="text-muted small text-truncate" style="max-width: 220px;">
+	          <div class="text-muted small text-truncate" style=" max-width: 220px; width: 200px; white-space: normal; word-wrap: break-word; line-height: 1.4;">
 	            ${noti.message}
 	          </div>
 	          <div class="text-muted small">${formatTimestamp(noti.createdAt)}</div>
