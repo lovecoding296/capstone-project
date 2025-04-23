@@ -75,6 +75,7 @@
 
 
 					document.getElementById("user-image").src = data.customer.avatarUrl;
+					document.getElementById("user-link").href = "/users/" + data.customer.id;
 					document.getElementById("user-name").innerText = data.customer.fullName;
 					document.getElementById("user-rating").innerText = `⭐ ${data.customer.averageRating}/5`;
 
@@ -168,7 +169,7 @@
 						style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
 					<div class="card-body">
 						<div id="user-info">
-							<div id="user-name">Tên Người Dùng</div>
+							<a id="user-link" href="#"><div id="user-name">Tên Người Dùng</div></a>
 							<div id="user-rating">⭐ 4.5/5</div>
 						</div>
 					</div>

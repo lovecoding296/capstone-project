@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import funix.tgcp.booking.Booking;
+import funix.tgcp.notification.NotificationService;
 import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
 
@@ -21,6 +23,9 @@ public class PaymentController {
 
 
     private final PaymentService paymentService;
+    
+    @Autowired
+    NotificationService notificationService;
     
     @Autowired
     private FileHelper fileHelper;
@@ -106,6 +111,18 @@ public class PaymentController {
 				case "status":
 					logger.info("update status " + value.toString());
 					existingPayment.setStatus(PaymentStatus.valueOf(value.toString()));
+					
+					if(PaymentStatus.valueOf(value.toString()) == PaymentStatus.RECEIVED) {
+						Booking booking = existingPayment.getBooking();
+						notificationService.sendNotification(
+				        		booking.getCustomer(), 
+				        		booking.getGuide().getFullName() + " confirmed your payment receipt #" + existingPayment.getId() + "!",
+				        		"/users/bookings/" + booking.getId());
+						
+						logger.info(booking.getGuide().getFullName() + " confirmed your payment receipt #" + existingPayment.getId() + "!", 
+				        		"/users/bookings/" + booking.getId());
+					}					
+					
 					break;
 				
 				default:

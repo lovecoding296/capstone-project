@@ -4,21 +4,28 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import funix.tgcp.booking.Booking;
+import funix.tgcp.booking.BookingController;
 import funix.tgcp.booking.BookingRepository;
 import funix.tgcp.booking.BookingService;
+import funix.tgcp.notification.NotificationService;
 import funix.tgcp.util.FileHelper;
+import funix.tgcp.util.LogHelper;
 
 @Service
 public class PaymentService {
+	
+	private static final LogHelper logger = new LogHelper(PaymentService.class);
+
 
 	@Autowired
     private PaymentRepository paymentRepository;
 	
-	@Autowired
-    private BookingRepository bookingRepository;
+	@Autowired 
+	NotificationService notificationService;
     
 	@Autowired
 	private FileHelper fileHelper;
@@ -28,14 +35,26 @@ public class PaymentService {
 
 
     // Tạo payment mới
+	@Transactional
     public Payment createPayment(Long bookingId, Payment paymentRequest, MultipartFile file) throws IOException {
     	
-    	Optional<Booking> booking = bookingService.findById(bookingId);
-    	paymentRequest.setBooking(booking.get());
+    	Optional<Booking> bookingOp = bookingService.findById(bookingId);
+    	Booking booking = bookingOp.get();
+    	
+    	
+    	paymentRequest.setBooking(booking);
+    	
         
         String imageUrl = fileHelper.uploadFile(file);
         paymentRequest.setTransactionImageUrl(imageUrl);
-
+        
+        notificationService.sendNotification(
+        		booking.getGuide(), 
+        		booking.getCustomer().getFullName() + " created a payment receipt, please confirm!", 
+        		"/guides/bookings/" + booking.getId());
+        
+        logger.info(booking.getGuide().getFullName() + " created a payment receipt, please confirm!");
+        
         return paymentRepository.save(paymentRequest);
         
     }
@@ -46,6 +65,15 @@ public class PaymentService {
 
         // Cập nhật status thành RECEIVED khi thanh toán được xác nhận
         payment.setStatus(PaymentStatus.RECEIVED);
+        Booking booking = payment.getBooking();
+        
+        notificationService.sendNotification(
+        		booking.getCustomer(), 
+        		booking.getGuide().getFullName() + " confirmed your payment receipt!", 
+        		"/users/bookings/" + booking.getId());
+        
+        logger.info(booking.getGuide().getFullName() + " confirmed your payment receipt!");
+        
         return paymentRepository.save(payment);
     }
 

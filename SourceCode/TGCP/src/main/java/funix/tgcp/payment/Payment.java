@@ -39,18 +39,18 @@ public class Payment {
     private PaymentStatus status = PaymentStatus.PENDING;
 
     // Thông tin tài khoản người gửi
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String senderAccountNumber;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String senderAccountName;
 
     // Nội dung chuyển khoản
-    @Column(length = 255)
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String transactionNote;
 
     // Lưu ảnh xác nhận giao dịch (URL)
-    @Column(length = 255)
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String transactionImageUrl;
 
     @Column(nullable = false)

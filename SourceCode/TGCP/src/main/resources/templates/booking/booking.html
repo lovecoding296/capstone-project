@@ -74,6 +74,7 @@
 					document.getElementById("total-price").innerText = data.totalPrice;
 
 					document.getElementById("guide-avatar").src = data.guide.avatarUrl;
+					document.getElementById("guide-link").href = "/users/" + data.guide.id;
 					document.getElementById("averageRating").innerText = data.guide.averageRating;
 					document.getElementById("guide-name").innerText = data.guide.fullName;
 					document.getElementById("guide-email").innerText = data.guide.email;
@@ -300,10 +301,13 @@
 			<!-- Guide Card (Bên phải) -->
 			<div class="col-md-6 d-flex justify-content-center">
 				<div class="card" style="width: 18rem; border-radius: 12px;">
-					<img id="guide-avatar" src="default-avatar.jpg" class="card-img-top rounded-circle mx-auto"
-						alt="Guide Avatar" style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
+						<img id="guide-avatar" src="default-avatar.jpg" class="card-img-top rounded-circle mx-auto"
+							alt="Guide Avatar"
+							style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
 					<div class="card-body">
-						<h4 id="guide-name" class="text-center"></h4>
+						<a id="guide-link" href="#">
+							<h4 id="guide-name" class="text-center"></h4>
+						</a>
 						<p class="text-center"><span id="averageRating"></span>⭐</p>
 						<p><span id="guide-email"></span></p>
 						<p><strong>Bank:</strong> <span id="bank-name"></span></p>
@@ -397,7 +401,7 @@
 
 						<div class="mb-3">
 							<label>Ảnh xác nhận giao dịch chuyển tiền</label>
-							<input type="file" id="payment-image" class="form-control" required><br>
+							<input type="file" id="payment-image" accept="image/*" class="form-control" required><br>
 						</div>
 						<div class="mb-3">
 							<label>Số tiền:</label>
