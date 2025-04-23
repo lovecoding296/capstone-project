@@ -29,6 +29,8 @@ public class PostLike {
     private User user;
 
     private LocalDateTime createdAt;
+    
+    private boolean isLiked = true;
 
     @PrePersist
     protected void onCreate() {

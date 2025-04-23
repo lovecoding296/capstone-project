@@ -33,12 +33,14 @@ public class GuideController {
             @RequestParam(required = false) Integer maxPrice,
             @RequestParam(required = false) Gender gender,
             @RequestParam(required = false) Language language,
+            @RequestParam(required = false) Boolean isLocalGuide,
+            @RequestParam(required = false) Boolean isInternationalGuide,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
             Model model) {
 
     	Pageable pageable = PageRequest.of(page, size); // Tạo Pageable    	
-    	Page<User> userPage = userService.searchGuides(city, maxPrice, gender, language, pageable);
+    	Page<User> userPage = userService.searchGuides(city, maxPrice, gender, language,isLocalGuide, isInternationalGuide, pageable);
 
         model.addAttribute("users", userPage.getContent()); // Lấy nội dung trang
         model.addAttribute("totalPages", userPage.getTotalPages()); // Số trang

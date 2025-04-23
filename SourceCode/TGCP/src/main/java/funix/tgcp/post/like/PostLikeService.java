@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import funix.tgcp.user.User;
+import funix.tgcp.notification.NotificationService;
 import funix.tgcp.post.Post;
 import funix.tgcp.review.ReviewController;
 import jakarta.transaction.Transactional;
@@ -20,27 +21,39 @@ public class PostLikeService {
 	
     @Autowired
     private PostLikeRepository likeRepository;
+    
+    @Autowired
+    private NotificationService notificationService;
 
     @Transactional
     public boolean toggleLike(Post post, User user) {
     	
     	logger.info("toggleLike " + post.toString() + " " + user.toString());
     	
-        Optional<PostLike> existingLike = likeRepository.findByPostAndUser(post, user);
-        if (existingLike.isPresent()) {
-            likeRepository.deleteByPostAndUser(post, user);
+        Optional<PostLike> existingLikeOp = likeRepository.findByPostAndUser(post, user);
+        if (existingLikeOp.isPresent()) {
+        	PostLike existingLike = existingLikeOp.get();
+        	existingLike.setLiked(!existingLike.isLiked());
+            likeRepository.save(existingLike);
             return false; // Đã bỏ thích
         } else {
         	PostLike like = new PostLike();
             like.setPost(post);
             like.setUser(user);
             likeRepository.save(like);
+            
+            
+            notificationService.sendNotification(
+            		post.getAuthor(), 
+            		user.getFullName() + " likded your blog (" + post.getTitle() + ")!",
+            		"/posts/" + post.getId());
+            
             return true; // Đã thích
         }
     }
 
     public long countLikes(Post post) {
-        return likeRepository.countByPost(post);
+        return likeRepository.countByPostAndIsLikedTrue(post);
     }
 
 	public List<PostLike> findByPostId(Long postId) {

@@ -20,7 +20,7 @@
 		<footer th:replace="~{page-component :: footer}"></footer>-->
 
 	<nav th:replace="~{page-component :: header}"></nav>
-	<h3 class="page-title text-center">Chỉnh sửa thông tin người dùng</h3>
+	<h3 class="page-title text-center">Edit user profile</h3>
 	<div class="container">
 		<form th:action="@{/users/{id}/edit(id=${user.id})}" method="post" th:object="${user}"
 			enctype="multipart/form-data">
@@ -43,7 +43,7 @@
 						<img th:src="@{${user.cccd} ?: '/uploads/default.jpg'}" width="170" height="108">
 						<br>
 						<br>
-						<label>Add/change căn cước công dân (Không hiển thị với tất cả mọi người):</label>
+						<label>Add/change Citizen ID photo (Only visible to you or admin):</label>
 						<br>
 
 						<div class="file-upload">
@@ -57,7 +57,7 @@
 
 				<div class="col-md-8">
 					<div class="mb-3">
-						<label>Họ và tên:</label>
+						<label>Fullname:</label>
 						<input type="text" class="form-control" th:field="*{fullName}" required>
 					</div>
 					<div class="mb-3">
@@ -65,7 +65,7 @@
 						<input type="email" class="form-control" th:field="*{email}" required>
 					</div>
 					<div class="mb-3">
-						<label>Giới tính:</label>
+						<label>Gender:</label>
 						<select class="form-control" th:field="*{gender}">
 							<option value="MALE">Nam</option>
 							<option value="FEMALE">Nữ</option>
@@ -74,21 +74,21 @@
 					</div>
 					
 					<div class="mb-3">
-						<label>Số điện thoại:</label>
+						<label>Phone number:</label>
 						<input type="text" class="form-control" th:field="*{phone}" required>
 					</div>
 					
 					
 					<div class="mb-3">
-						<label>Thành phố:</label>
+						<label>City:</label>
 						<input type="text" class="form-control" th:field="*{city}">
 					</div>
 					<div class="mb-3">
-						<label>Giới thiệu bản thân:</label>
+						<label>Bio:</label>
 						<textarea class="form-control" th:field="*{bio}"></textarea>
 					</div>
 					<div class="mb-3">
-						<label>Sở thích du lịch:</label>
+						<label>Interests:</label>
 						<textarea class="form-control" th:field="*{interests}"></textarea>
 					</div>
 					<div class="mb-3">
@@ -107,26 +107,26 @@
 					
 					<div th:if="${user.isGuide()}">
 						<div class="mb-3">
-							<label>Tên ngân hàng:</label>
+							<label>Bank name:</label>
 							<input type="text" class="form-control" th:field="*{bankName}">
 						</div>
 						<div class="mb-3">
-							<label>Số tài khoản:</label>
+							<label>Account number:</label>
 							<input type="text" class="form-control" th:field="*{accountNumber}">
 						</div>
 						<div class="mb-3">
-							<label>Tên chủ tài khoản:</label>
+							<label>Account holder:</label>
 							<input type="text" class="form-control" th:field="*{accountHolder}">
 						</div>
 						<div class="mb-3">
-							<label>Giá tiền thuê/người/ngày:</label>
+							<label>Price/day (USD):</label>
 							<input type="text" class="form-control" th:field="*{pricePerDay}">
 						</div>
 					</div>
 
 					
-					<button type="submit" class="btn btn-success">Lưu Thay Đổi</button>
-					<a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-secondary">Hủy</a>
+					<button type="submit" class="btn btn-success">Save</button>
+					<a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-secondary">Cancel</a>
 				</div>
 			</div>
 		</form>

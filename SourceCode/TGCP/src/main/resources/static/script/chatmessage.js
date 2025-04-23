@@ -108,16 +108,16 @@ function createChatBox() {
 
 	chatBox.innerHTML = `
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <a href="/users/${currentReceiverId}"><h5 id="chatBoxPartnerName" class="mb-0">Chat với </h5></a>
-      <button class="btn btn-sm btn-outline-danger" onclick="closeChat()">Đóng</button>
+      <a href="/users/${currentReceiverId}"><h5 id="chatBoxPartnerName" class="mb-0"></h5></a>
+      <button class="btn btn-sm btn-outline-danger" onclick="closeChat()">Close</button>
     </div>
 
     <div id="chatMessages" class="flex-grow-1 overflow-auto mb-3 border p-2 rounded bg-white" style="max-height: 350px;">
     </div>
 
     <form id="chatForm" class="d-flex gap-2">
-      <input type="text" id="chatInput" class="form-control" placeholder="Nhập tin nhắn..." required>
-      <button type="button" onclick="sendChatMessage()" class="btn btn-primary">Gửi</button>
+      <input type="text" id="chatInput" class="form-control" placeholder="Send a message..." required>
+      <button type="button" onclick="sendChatMessage()" class="btn btn-primary">Send</button>
     </form>
   `;
 
@@ -135,7 +135,7 @@ function openChatWithUser(partnerId, partnerName) {
 	const chatBoxPartnerName = document.getElementById('chatBoxPartnerName');
 	console.log("partnerName " + partnerName)
 	console.log("chatBoxPartnerName " + chatBoxPartnerName.innerText)
-	chatBoxPartnerName.innerText = 'Chat với ' + partnerName;
+	chatBoxPartnerName.innerText = partnerName;
 
 	chatBox.dataset.partnerId = partnerId;
 
@@ -236,7 +236,7 @@ function setupMessageClickHandler(messageLinkId = 'messageLink', userListId = 'u
         const li = document.createElement('li');
         li.innerHTML = `
           <div class="dropdown-item text-muted text-center">
-            Không có tin nhắn nào
+            No messages
           </div>
         `;
         userList.appendChild(li);

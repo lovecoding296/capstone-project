@@ -1,6 +1,10 @@
 package funix.tgcp.review;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import funix.tgcp.user.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +19,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 	void deleteByBookingId(Long id);
 	
 	List<Review> findTop3ByReviewedUserIdOrderByReviewDateDesc(Long reviewedUserId);
+	Optional<Review> findByBookingIdAndReviewedUserId(Long bookingId, Long reviewedUserId);
+	List<Review> findByReviewedUserIdOrderByReviewDateDesc(Long reviewedUserId);
+	List<Review> findByReviewedUserIdOrderByRatingDesc(Long reviewedUserId);
+	
+	
+	// Đếm số review của một user
+    long countByReviewedUser(User reviewedUser);
+	
+    // Tính điểm trung bình của user
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reviewedUser = :user")
+    Double findAverageRatingByReviewedUser(@Param("user") User user);
+	
 }

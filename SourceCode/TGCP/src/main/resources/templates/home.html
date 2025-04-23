@@ -177,7 +177,7 @@
 	<div class="text-center page-title">
 		<svg th:replace="~{icons :: person}"></svg>
 	</div>
-	<h3 class="text-center" style="margin-top: 10px;">Hướng dẫn viên nổi bật</h3>
+	<h3 class="text-center" style="margin-top: 10px;">Top guides</h3>
 
 	<div class="container">
 		<div class="row">
@@ -192,22 +192,21 @@
 					<h5 th:text="${user.fullName}" class="text-center">Tên người dùng</h5>
 
 					<div class="rating text-center mb-2">
-						⭐ <span th:text="${user.averageRating}">4.5</span> (<span
-							th:text="${user.reviewCount}">100</span> đánh giá)
+						⭐ <span th:text="${#numbers.formatDecimal(user.averageRating, 1, 1)}"></span> (<span
+							th:text="${user.reviewCount}">100</span> reviews)
 					</div>
 
 					<div class="mb-2" style="height: 50px;">
-						<span class="badge bg-info me-1" th:if="${user.isLocalGuide}">Hướng dẫn viên nội địa</span>
+						<span class="badge bg-info me-1" th:if="${user.isLocalGuide}">Local guide</span>
 						<br th:if="${user.isLocalGuide and user.isInternationalGuide}" />
-						<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Hướng dẫn viên
-							quốc tế</span>
+						<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Internaltion guide</span>
 					</div>
 
 
 
 					<div class="city mb-2 d-flex align-items-center">
 						<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;" class="me-2">
-						<span th:text="${user.city}"></span>
+						<span th:text="${user.city.getDisplayName()}"></span>
 					</div>
 
 					<div class="languages mb-2 d-flex align-items-center">
@@ -217,18 +216,17 @@
 
 					<div class="buttons d-flex justify-content-between mt-3">
 						<button class="btn btn-primary btn-sm"
-							th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Gửi tin nhắn</button>
+							th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Message</button>
 
-						<button class="btn btn-success btn-sm"
-							th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Đặt
-							lịch thuê</button>
+						<button class="btn btn-warning btn-sm"
+							th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Book Now</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="text-end mt-4">
-			<a href="/guides" class="btn btn-primary">Xem tất cả</a>
+			<a href="/guides" class="btn btn-primary">See all</a>
 		</div>
 	</div>
 
@@ -238,7 +236,7 @@
 	<div class="text-center page-title">
 		<svg th:replace="~{icons :: blog}"></svg>
 	</div>
-	<h3 class="text-center" style="margin-top: 10px;">Các bài viết nổi bật</h3>
+	<h3 class="text-center" style="margin-top: 10px;">Top blogs</h3>
 
 	<div class="container mt-4">
 		<div class="row">
@@ -254,15 +252,15 @@
 
 						<h5 class="post-card-title" th:text="${post.title}"></h5>
 						<p class="text-muted">
-							<strong th:text="#{label.postedOn}"></strong>
+							<strong >Posted date:</strong>
 							<span th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
 						</p>
 
 
-						<p><strong th:text="#{label.category}"></strong> <span
-								th:text="${#messages.msg(post.category.name)}"></span>
+						<p><strong>Category:</strong> <span
+								th:text="${post.category.getDisplayName()}"></span>
 						</p>
-						<p><strong th:text="#{label.content}"></strong> <span th:utext="${post.content}"></span></p>
+						<p><strong>Content:</strong> <span th:utext="${post.content}"></span></p>
 
 						<p>
 							<span class="like-comment-count">
@@ -479,7 +477,7 @@
 			</div>
 
 			<div class="text-end mt-4">
-				<a href="/posts" class="btn btn-primary">Xem tất cả</a>
+				<a href="/posts" class="btn btn-primary">See all</a>
 			</div>
 		</div>
 	</div>

@@ -185,6 +185,19 @@ public class UserService {
 			currentUser.setCccd(user.getCccd());
 		}
 		
+		if (user.getBankName() != null && !user.getBankName().isEmpty()) {
+			currentUser.setBankName(user.getBankName());
+		}
+		
+		if (user.getAccountNumber() != null && !user.getAccountNumber().isEmpty()) {
+			currentUser.setAccountNumber(user.getAccountNumber());
+		}
+		
+		if (user.getAccountHolder() != null && !user.getAccountHolder().isEmpty()) {
+			currentUser.setAccountHolder(user.getAccountHolder());
+		}
+		
+		currentUser.setPricePerDay(user.getPricePerDay());
 
 		userRepository.save(currentUser);
 	}
@@ -204,7 +217,21 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-	public Page<User> searchGuides(City city, Integer maxPrice, Gender gender, Language language, Pageable pageable) {
-		return userRepository.findGuideByFilter(city, maxPrice, gender, language, pageable);
+	public Page<User> searchGuides(City city, Integer maxPrice, Gender gender, Language language, Boolean isLocalGuide, Boolean isInternationalGuide, Pageable pageable) {
+		return userRepository.findGuideByFilter(city, maxPrice, gender, language,isLocalGuide, isInternationalGuide, pageable);
+	}
+	
+	
+	public void updateRating(User user, int newRating) {
+		int currentCount = user.getReviewCount();
+		double currentAverage = user.getAverageRating();
+		
+		int newCount = currentCount + 1;
+		double newAverage = (currentAverage * currentCount + newRating) / newCount;
+
+		user.setReviewCount(newCount);
+		user.setAverageRating(newAverage);
+		
+		save(user);
 	}
 }

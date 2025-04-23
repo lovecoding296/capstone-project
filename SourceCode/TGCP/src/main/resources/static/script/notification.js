@@ -72,7 +72,7 @@ function setupNotificationClickHandler(messageLinkId = 'notificationLink', notif
         const li = document.createElement('li');
         li.innerHTML = `
           <div class="dropdown-item text-muted text-center">
-            Không có thông báo nào
+            No notifications
           </div>
         `;
         notificationList.appendChild(li);

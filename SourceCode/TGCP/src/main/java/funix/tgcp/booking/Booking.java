@@ -48,7 +48,7 @@ public class Booking {
     private BookingStatus status = BookingStatus.PENDING;
     
     @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String canceledReason;
+    private String reason;
     
     @Column(nullable = false)
     private LocalDate startDate;

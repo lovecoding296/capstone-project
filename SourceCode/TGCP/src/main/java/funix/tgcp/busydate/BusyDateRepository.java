@@ -10,5 +10,7 @@ public interface BusyDateRepository extends JpaRepository<BusyDate, Long> {
     List<BusyDate> findByGuideId(Long guideId);
 
     boolean existsByGuideIdAndDate(Long guideId, LocalDate date);
+    
+    void deleteByBookingId(Long bookingId);
 }
 

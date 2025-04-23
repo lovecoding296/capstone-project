@@ -27,14 +27,14 @@ public class BookingController {
     	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
     	
-    	User currentUser = new User();
-    	if(userDetails != null ) {
-    		currentUser.setId(userDetails.getId());
-    		
-    	} else {
-    		currentUser.setId((long)1);
-    	}    	
-    	bookingRequest.setCustomer(currentUser);
+//    	User currentUser = new User();
+//    	if(userDetails != null ) {
+//    		currentUser.setId(userDetails.getId());
+//    		
+//    	} else {
+//    		currentUser.setId((long)1);
+//    	}    	
+    	bookingRequest.setCustomer(userDetails.getUser());
 		return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
     }
     
@@ -106,10 +106,22 @@ public class BookingController {
     	return bookingService.completeBooking(bookingId);
     }
     
-    @PutMapping("/api/bookings/{bookingId}/cancel")
-    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
+    @PutMapping("/api/bookings/{bookingId}/cancel-by-user")
+    public ResponseEntity<?> cancelBookingByUser(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
         logger.info(requestBody.get("reason"));
-    	return bookingService.cancelBooking(bookingId, requestBody.get("reason"));
+    	return bookingService.cancelBookingByUser(bookingId, requestBody.get("reason"));
+    }
+    
+    @PutMapping("/api/bookings/{bookingId}/cancel-by-guide")
+    public ResponseEntity<?> cancelBookingByGuide(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
+        logger.info(requestBody.get("reason"));
+    	return bookingService.cancelBookingByGuide(bookingId, requestBody.get("reason"));
+    }
+    
+    @PutMapping("/api/bookings/{bookingId}/reject")
+    public ResponseEntity<?> rejectBooking(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
+        logger.info(requestBody.get("reason"));
+    	return bookingService.rejectBooking(bookingId, requestBody.get("reason"));
     }
     
 

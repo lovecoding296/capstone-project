@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
 import funix.tgcp.config.CustomUserDetails;
+import funix.tgcp.notification.NotificationService;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
 import funix.tgcp.review.ReviewController;
@@ -37,6 +38,9 @@ public class PostLikeController {
 
     @Autowired
     private UserService userService;
+    
+    
+
 
     @PostMapping("/{postId}")
     public ResponseEntity<Map<String, Object>> likePost(@PathVariable Long postId, HttpSession session) {
@@ -55,12 +59,14 @@ public class PostLikeController {
         Post post = optionalPost.get();
 
         boolean liked = postLikeService.toggleLike(post, user);
-        List<PostLike> likes =  postLikeService.findByPostId(postId);
+        long likeCount =  postLikeService.countLikes(post);
         
         
-     // Trả về số lượt thích và trạng thái thích của user
+        
+        
+        // Trả về số lượt thích và trạng thái thích của user
         Map<String, Object> response = new HashMap<>();
-        response.put("likeCount", likes.size()); // Số lượt thích
+        response.put("likeCount", likeCount); // Số lượt thích
         response.put("liked", liked); // Trạng thái user đã thích hay chưa
 
         return ResponseEntity.ok(response);

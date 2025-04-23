@@ -64,9 +64,9 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private Role role = Role.ROLE_USER;
 
-	@ElementCollection(targetClass = Language.class)
+	@ElementCollection(targetClass = Language.class, fetch = FetchType.EAGER)
 	@CollectionTable(name = "user_languages", joinColumns = @JoinColumn(name = "user_id"))
-	@Enumerated(EnumType.STRING) // Lưu Enum dưới dạng String
+	@Enumerated(EnumType.STRING)
 	@Column(name = "language", nullable = false)
 	private Set<Language> languages;
 

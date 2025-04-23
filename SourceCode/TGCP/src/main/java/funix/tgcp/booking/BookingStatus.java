@@ -1,5 +1,5 @@
 package funix.tgcp.booking;
 
 public enum BookingStatus {
-    PENDING, CONFIRMED, CANCELED, COMPLETED
+    PENDING, REJECTED, CONFIRMED, CANCELED_BY_USER, CANCELED_BY_GUIDE, COMPLETED
 }

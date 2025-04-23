@@ -3,11 +3,12 @@ package funix.tgcp.config;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
+import org.springframework.security.core.userdetails.UserDetails;import funix.tgcp.user.Language;
 import funix.tgcp.user.User;
 
 import java.util.Collections;
+import java.util.Set;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -36,6 +37,10 @@ public class CustomUserDetails implements UserDetails {
 	
 	public String getFullName() {
 		return user.getFullName();
+	}
+	
+	public Set<Language> getLanguages() {
+		return user.getLanguages();
 	}
 
 	@Override

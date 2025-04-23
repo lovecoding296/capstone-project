@@ -35,19 +35,19 @@
 	<nav th:replace="~{page-component :: header}"></nav>
 
 	<div class="container">
-		<h3 class="page-title text-center">Thông tin người dùng</h3>
+		<h3 class="page-title text-center">Profile information</h3>
 		<div class=row>
 			<div class="text-end">
 			    <!-- Nếu là chính chủ -->
 			    <a th:if="${session.loggedInUser != null and session.loggedInUser.id == user.id}"
 			       th:href="@{/users/{id}/edit(id=${user.id})}"
-			       class="btn btn-primary">Chỉnh sửa thông tin</a>
+			       class="btn btn-primary">Edit</a>
 
 			    <!-- Nếu KHÔNG phải chính chủ -->
 			    <button th:unless="${session.loggedInUser != null and session.loggedInUser.id == user.id}"
-			            class="btn btn-success"
+			            class="btn btn-warning"
 			            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">
-			        Đặt lịch thuê
+			        Booking Now
 			    </button>
 			</div>
 
@@ -60,74 +60,75 @@
 				<br><br><br>
 				<div th:if="${(session.loggedInUser != null) and (session.loggedInUser.id == user.id || session.loggedInUser.isAdmin())}">
 					<img th:src="@{${user.cccd} ?: '/uploads/default.jpg'}" width="170" height="108">
-					<label>Ảnh căn cước công dân (Không hiển thị với tất cả mọi người):</label>
+					<label>Citizen ID photo (Only visible to you or admin):</label>
 				</div>
 			</div>
 
 			<div class="col-md-8">
 				<h3 th:text="${user.fullName}"></h3>
 				<!--<p><strong>Email:</strong> <span th:text="${user.email}"></span></p>-->
-				<p><strong>Giới tính:</strong> <span th:if="${user.gender != null}" th:text="${#messages.msg(user.gender)}"></span></p>
-				<p><strong>Năm sinh:</strong> <span th:text="${user.dateOfBirth}"></span></p>
+				<p th:if="${user.dateOfBirth}"><strong>Date of birth:</strong> <span th:text="${user.dateOfBirth}"></span></p>
 				<!--<p><strong>Số điện thoại:</strong> <span th:text="${user.phone}"></span></p>
 				<p><strong>Điện thoại gia đình:</strong> <span th:text="${user.familyPhone}"></span></p>
 				<p><strong>Địa chỉ:</strong> <span th:text="${user.homeAddress}"></span></p>-->
-				<p><strong>Thành phố:</strong> <span th:text="${user.city}"></span></p>
-				<p><strong>Giới thiệu bản thân:</strong> <span th:text="${user.bio}"></span></p>
-				<p><strong>Sở thích du lịch:</strong> <span th:text="${user.interests}"></span></p>
-				<p><strong>Facebook:</strong> <a th:href="${user.facebook}" th:text="${user.facebook}"></a></p>
-				<p><strong>Tiktok:</strong> <a th:href="${user.tiktok}" th:text="${user.tiktok}"></a></p>
-				<p><strong>Instagram:</strong> <a th:href="${user.instagram}" th:text="${user.instagram}"></a></p>
-				<p><strong>Điểm uy tín:</strong> <span th:text="${user.averageRating}"></span></p>
+				<p th:if="${user.city}"><strong>City:</strong> <span th:text="${user.city}"></span></p>
+				<p th:if="${user.bio}"><strong>Bio:</strong> <span th:text="${user.bio}"></span></p>
+				<p th:if="${user.interests}"><strong>Interests:</strong> <span th:text="${user.interests}"></span></p>
+				<p th:if="${user.facebook}"><strong>Facebook:</strong> <a th:href="${user.facebook}" th:text="${user.facebook}"></a></p>
+				<p th:if="${user.tiktok}"><strong>Tiktok:</strong> <a th:href="${user.tiktok}" th:text="${user.tiktok}"></a></p>
+				<p th:if="${user.instagram}"><strong>Instagram:</strong> <a th:href="${user.instagram}" th:text="${user.instagram}"></a></p>
+				<p>⭐<span th:text="${#numbers.formatDecimal(user.averageRating, 1, 1)}"></span> (<span th:text="${user.reviewCount}">100</span> reviews)</p>
 				<!--<p><strong>Đã xác thực email:</strong> <span th:text="${user.verified ? 'Có' : 'Chưa'}"></span></p>
 				<p><strong>Được phê duyệt KYC:</strong> <span th:text="${user.kycApproved ? 'Có' : 'Chưa'}"></span>-->
 				</p>
-
 
 			</div>
 		</div>
 
 		<div class="section-title">
-			<h5><strong>Các đánh giá nổi bật về <span th:text="${user.fullName}"></span></strong></h5>
+			<h5><strong>Top reviews about <span th:text="${user.fullName}"></span></strong></h5>
 		</div>
 
 
 		<div class="container mt-5">
 
-			<div th:if="${reviews.isEmpty()}" class="text-center text-muted mt-4">
-				Không có dữ liệu
-			</div>
+		    <div th:if="${reviews.isEmpty()}" class="text-center text-muted mt-4">
+		        No data
+		    </div>
 
-			<div th:each="review : ${reviews}" class="border-bottom py-3">
-				<div class="d-flex align-items-start">
-					<!-- Avatar of the reviewer -->
-					<img th:src="@{${review.reviewer.avatarUrl} ?: '/uploads/default-avatar.png'}"
-						class="rounded-circle me-3" width="50" height="50" alt="Avatar">
+		    <div class="reviews-container" style="max-height: 400px; overflow-y: auto;">
+		        <div th:each="review : ${reviews}" class="border-bottom py-3">
+		            <div class="d-flex align-items-start">
+		                <!-- Avatar of the reviewer -->
+		                <img th:src="@{${review.reviewer.avatarUrl} ?: '/uploads/default-avatar.png'}"
+		                    class="rounded-circle me-3" width="50" height="50" alt="Avatar">
 
-					<!-- Review details -->
-					<div>
-						<div class="d-flex align-items-center">
-							<!-- Reviewer name -->
-							<h5 th:text="${review.reviewer.fullName}" class="fw-bold mb-0"></h5>
+		                <!-- Review details -->
+		                <div>
+		                    <div class="d-flex align-items-center">
+		                        <!-- Reviewer name -->
+		                        <h5 th:text="${review.reviewer.fullName}" class="fw-bold mb-0"></h5>
 
-							<!-- Star rating -->
-							<div class="ms-2">
-								<span th:each="i : ${#numbers.sequence(1, 5)}" th:text="'★'"
-									th:classappend="${i <= review.rating} ? 'text-warning' : 'text-muted'">
-								</span>
-							</div>
-						</div>
+		                        <!-- Star rating -->
+		                        <div class="ms-2">
+		                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="'★'"
+		                                th:classappend="${i <= review.rating} ? 'text-warning' : 'text-muted'">
+		                            </span>
+		                        </div>
+		                    </div>
 
-						<!-- Review feedback -->
-						<p th:text="${review.feedback}" class="mt-2"></p>
+		                    <!-- Review feedback -->
+		                    <p th:text="${review.feedback}" class="mt-2"></p>
 
-						<!-- Review date -->
-						<small
-							th:text="${review.booking.destination} + ' - ' + ${#temporals.format(review.reviewDate, 'dd/MM/yyyy')}"></small>
-					</div>
-				</div>
-			</div>
+		                    <!-- Review date -->
+		                    <small
+		                        th:text="${review.booking.destination} + ' - ' + ${#temporals.format(review.reviewDate, 'dd/MM/yyyy')}"></small>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
 		</div>
+
 
 		<br><br>
 
@@ -137,24 +138,24 @@
 		<br><br>
 		<!-- Section: Danh sách bài viết đã viết -->
 		<div class="section-title">
-			<h5><strong>Bài viết nổi bật của <span th:text="${user.fullName}"></span></strong></h5>
+			<h5><strong>Top blogs by <span th:text="${user.fullName}"></span></strong></h5>
 		</div>
 		<table class="table table-stoured table-bordered mt-4">
 			<thead class="table-success">
 				<tr>
-					<th>Tiêu đề</th>
-					<th>Chủ đề</th>
-					<th>Tương tác</th>
-					<th>Ngày đăng</th>
+					<th>Title</th>
+					<th>Category</th>
+					<th>Interactions</th>
+					<th>Posted date</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:if="${posts.isEmpty()}">
-					<td colspan="4" class="text-center text-muted">Không có dữ liệu</td>
+					<td colspan="4" class="text-center text-muted">No data</td>
 				</tr>
 				<tr th:each="post : ${posts}">
-					<td th:text="${post.title}">Tiêu đề bài viết</td>
-					<td th:text="${#messages.msg(post.category.name)}"></td>
+					<td th:text="${post.title}"></td>
+					<td th:text="${post.category.getDisplayName()}"></td>
 					<td th:text="'👍' + ${post.likes.size()} + ' 💬' + ${post.comments.size()}"></td>
 					<td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}"></td>
 				</tr>

@@ -34,27 +34,27 @@ public class DummyData implements ApplicationRunner {
 
         
         createUser("admin@tgcp.com", "admin", "123", Role.ROLE_ADMIN);
-        createUser("phi@tgcp.com", "phi", "123", Role.ROLE_GUIDE);
         createUser("giang@tgcp.com", "giang", "123", Role.ROLE_USER);
-        createUser("duc@tgcp.com", "duc", "123", Role.ROLE_USER);
+        createUser("duc@tgcp.com",   "duc",   "123", Role.ROLE_USER);
         
-        createUser("phi1@tgcp.com",  "phi1",  "123", Role.ROLE_GUIDE, City.HAI_PHONG,  100, 5, true,  false);
-        createUser("phi2@tgcp.com",  "phi2",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  false);
-        createUser("phi3@tgcp.com",  "phi3",  "123", Role.ROLE_GUIDE, City.HA_NOI,     100, 5, true,  false);
-        createUser("phi4@tgcp.com",  "phi4",  "123", Role.ROLE_GUIDE, City.BAC_GIANG,  100, 5, true,  true);
-        createUser("phi5@tgcp.com",  "phi5",  "123", Role.ROLE_GUIDE, City.BAC_NINH,   100, 5, true,  true);
-        createUser("phi6@tgcp.com",  "phi6",  "123", Role.ROLE_GUIDE, City.BINH_PHUOC, 100, 5, true,  false);
-        createUser("phi7@tgcp.com",  "phi7",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
-        createUser("phi8@tgcp.com",  "phi8",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true);
-        createUser("phi9@tgcp.com",  "phi9",  "123", Role.ROLE_GUIDE, City.BINH_THUAN, 100, 5, true,  false);
-        createUser("phi10@tgcp.com", "ph10i", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true);
-        createUser("phi11@tgcp.com", "phi11", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
-        createUser("phi12@tgcp.com", "phi12", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true);
-        createUser("phi13@tgcp.com", "phi13", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
-        createUser("phi14@tgcp.com", "phi14", "123", Role.ROLE_GUIDE, City.DIEN_BIEN,  100, 5, true,  true);
-        createUser("phi15@tgcp.com", "phi15", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
-        createUser("phi16@tgcp.com", "phi16", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
-        createUser("phi17@tgcp.com", "phi17", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true);
+        createUser("phi@tgcp.com",   "phi",   "123", Role.ROLE_GUIDE, City.HAI_PHONG,  100, 5, true,  false, "/uploads/guide1.jpg");
+        createUser("phi1@tgcp.com",  "phi1",  "123", Role.ROLE_GUIDE, City.HAI_PHONG,  100, 5, true,  false, "/uploads/guide2.jpg");
+        createUser("phi2@tgcp.com",  "phi2",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  false, "/uploads/guide3.jpg");
+        createUser("phi3@tgcp.com",  "phi3",  "123", Role.ROLE_GUIDE, City.HA_NOI,     100, 5, true,  false, "/uploads/guide4.jpg");
+        createUser("phi4@tgcp.com",  "phi4",  "123", Role.ROLE_GUIDE, City.BAC_GIANG,  100, 5, true,  true,  "/uploads/guide5.webp");
+        createUser("phi5@tgcp.com",  "phi5",  "123", Role.ROLE_GUIDE, City.BAC_NINH,   100, 5, true,  true,  "/uploads/guide6.jpg");
+        createUser("phi6@tgcp.com",  "phi6",  "123", Role.ROLE_GUIDE, City.BINH_PHUOC, 100, 5, true,  false, "/uploads/guide1.jpg");
+        createUser("phi7@tgcp.com",  "phi7",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true,  "/uploads/guide2.jpg");
+        createUser("phi8@tgcp.com",  "phi8",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true,  "/uploads/guide3.jpg");
+        createUser("phi9@tgcp.com",  "phi9",  "123", Role.ROLE_GUIDE, City.BINH_THUAN, 100, 5, true,  false, "/uploads/guide4.jpg");
+        createUser("phi10@tgcp.com", "ph10i", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true,  "/uploads/guide5.webp");
+        createUser("phi11@tgcp.com", "phi11", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true,  "/uploads/guide6.jpg");
+        createUser("phi12@tgcp.com", "phi12", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, false, true,  "/uploads/guide1.jpg");
+        createUser("phi13@tgcp.com", "phi13", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true,  "/uploads/guide2.jpg");
+        createUser("phi14@tgcp.com", "phi14", "123", Role.ROLE_GUIDE, City.DIEN_BIEN,  100, 5, true,  true,  "/uploads/guide3.jpg");
+        createUser("phi15@tgcp.com", "phi15", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true,  "/uploads/guide4.jpg");
+        createUser("phi16@tgcp.com", "phi16", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true,  "/uploads/guide5.webp");
+        createUser("phi17@tgcp.com", "phi17", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 5, true,  true,  "/uploads/guide6.jpg");
 	}
 	
 	private void createUser(String email, String fullName, String rawPassword, Role role) {
@@ -87,7 +87,7 @@ public class DummyData implements ApplicationRunner {
 			, double rating
 			, boolean isLocalGuide
 			, boolean isInternationalGuidem
-			
+			, String avtarUrl
 			) {
         Optional<User> userOp = userRepository.findByEmail(email);
 
@@ -111,6 +111,7 @@ public class DummyData implements ApplicationRunner {
             user.setKycApproved(true);
             user.setInternationalGuide(isInternationalGuidem);
             user.setLocalGuide(isLocalGuide);
+            user.setAvatarUrl(avtarUrl);
             
             userRepository.save(user);
             System.out.println("account created successfully!");

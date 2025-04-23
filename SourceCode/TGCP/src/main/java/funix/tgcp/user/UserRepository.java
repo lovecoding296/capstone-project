@@ -31,12 +31,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	       "AND (:city IS NULL OR u.city = :city) " +
 	       "AND (:maxPrice IS NULL OR u.pricePerDay <= :maxPrice) " +
 	       "AND (:gender IS NULL OR u.gender = :gender) " +
-	       "AND (:language IS NULL OR :language MEMBER OF u.languages)")
+	       "AND (:language IS NULL OR :language MEMBER OF u.languages) " +
+	       "AND (:isLocalGuide IS NULL OR u.isLocalGuide = :isLocalGuide) " +
+	       "AND (:isInternationalGuide IS NULL OR u.isInternationalGuide = :isInternationalGuide)")
 	Page<User> findGuideByFilter(@Param("city") City city,
-	                        @Param("maxPrice") Integer maxPrice,
-	                        @Param("gender") Gender gender,
-	                        @Param("language") Language language,
-	                        Pageable pageable);
+	                             @Param("maxPrice") Integer maxPrice,
+	                             @Param("gender") Gender gender,
+	                             @Param("language") Language language,
+	                             @Param("isLocalGuide") Boolean isLocalGuide,
+	                             @Param("isInternationalGuide") Boolean isInternationalGuide,
+	                             Pageable pageable);
+
 
 	
 }

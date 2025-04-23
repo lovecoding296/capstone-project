@@ -77,33 +77,33 @@ function createBookingPopup() {
         <div id="bookingModal" class="modal" style="display:none;">
             <div class="modal-content">
                 <span class="close" onclick="closeBookingPopup()">&times;</span>
-                <h3>Thuê hướng dẫn viên: <span id="guideName"></span></h3>
+                <h3>Booking a guide: <span id="guideName"></span></h3>
 
                 <form id="bookingForm">
                     <input type="hidden" id="guideId" name="guideId">
 
                     <div class="mb-3">
-                        <label for="dateRange" class="form-label">Chọn ngày:</label>
-                        <input id="dateRange" type="text" class="form-control" placeholder="Chọn ngày" required>
+                        <label for="dateRange" class="form-label">Booking Period:</label>
+                        <input id="dateRange" type="text" class="form-control" placeholder="Booking Period" required>
                         <input type="hidden" id="startDate" name="startDate" onchange="calculateTotal()">
                         <input type="hidden" id="endDate" name="endDate" onchange="calculateTotal()">
                     </div>
 
                     <div class="mb-3">
-                        <label for="numPeople" class="form-label">Số người tham gia:</label>
+                        <label for="numPeople" class="form-label">Number of participants:</label>
                         <input type="number" class="form-control" id="numPeople" name="numPeople" oninput="calculateTotal()" min="1" value="1" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="locationDetail" class="form-label">Địa điểm cụ thể:</label>
+                        <label for="locationDetail" class="form-label">Areas you want to visit / desired itinerary:</label>
                         <input type="text" class="form-control" id="locationDetail" name="locationDetail" required>
                     </div>
 
-                    <p class="fw-bold">Tổng tiền: <span id="totalPrice" class="text-danger">0</span> VND</p>
+                    <p class="fw-bold">Total price: <span id="totalPrice" class="text-danger">0</span> USD</p>
 
                     <div class="d-flex justify-content-between">
-                        <button type="button" onclick="submitBooking()" class="btn btn-success">Xác nhận đặt lịch</button>
-                        <button type="button" class="btn btn-secondary" onclick="closeBookingPopup()">Hủy</button>
+                        <button type="button" onclick="submitBooking()" class="btn btn-success">Confirm</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeBookingPopup()">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -145,7 +145,7 @@ function createBooking() {
 	})
 		.then(response => response.json())
 		.then(data => {
-			alert("Đã tham gia tour thành công! Vui lòng thanh toán và gửi phiếu thanh toán");
+			alert("Booking successful! Please pay and send payment receipt");
 			window.location.href = `/users/bookings/${data.id}`;
 		})
 		.catch(error => console.error("Error joining:", error));

@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
 import funix.tgcp.util.LogHelper;
-import funix.tgcp.booking.BookingController;
 import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.notification.Notification;
-import funix.tgcp.notification.NotificationRepository;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
@@ -19,9 +17,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -76,7 +72,7 @@ public class CommentController {
 
 			logger.info(userDetails.getFullName() + " đã comment vào bài viết của bạn!");
 						
-			sendNotification(
+			notificationService.sendNotification(
 					post.getAuthor(),
 					userDetails.getFullName() + " đã comment vào bài viết của bạn!",
 					"/posts/" + postId
@@ -126,9 +122,9 @@ public class CommentController {
 	    // Gửi thông báo cho người được trả lời (nếu không phải chính mình)
 	    User parentAuthor = parentComment.getCommenter();
 	    if (!parentAuthor.getId().equals(currentUserId)) {
-	        sendNotification(
+	    	notificationService.sendNotification(
 	            parentAuthor,
-	            currentUserName + " đã trả lời comment của bạn!",
+	            currentUserName + " replied to your comment!",
 	            "/posts/" + post.getId()
 	        );
 	    }
@@ -136,9 +132,9 @@ public class CommentController {
 	    // Gửi thông báo cho tác giả bài viết (nếu không phải chính mình hoặc người được trả lời)
 	    User postAuthor = post.getAuthor();
 	    if (!postAuthor.getId().equals(currentUserId) && !postAuthor.getId().equals(parentAuthor.getId())) {
-	        sendNotification(
+	    	notificationService.sendNotification(
 	            postAuthor,
-	            currentUserName + " đã comment vào bài viết của bạn!",
+	            currentUserName + " commented on your blog!",
 	            "/posts/" + post.getId()
 	        );
 	    }
@@ -148,16 +144,7 @@ public class CommentController {
 	}
 
 
-	// Tạo mới bình luận
-	private void sendNotification(User receiver, String message, String sourceLink) {
-	    Notification notify = new Notification();
-	    notify.setUser(receiver);
-	    notify.setMessage(message);
-	    notify.setSourceLink(sourceLink);
-	    notificationService.save(notify);
-
-	    logger.info("Notification: {}", message);
-	}
+	
 
 
 	// Xóa bình luận
@@ -186,5 +173,9 @@ public class CommentController {
 	    }
 
 	    return roots;
+	}
+	
+	public void sendNotification() {
+		
 	}
 }

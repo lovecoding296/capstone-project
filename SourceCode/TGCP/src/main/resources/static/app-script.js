@@ -10,42 +10,102 @@ function autoResize(textarea) {
 	textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
 }
 
+/* Submit review */
 
+function openReviewModal(bookingId, reviewedUserId, reviewedUserName) {
+	createReviewModal(bookingId, reviewedUserId)
+	
+	document.getElementById("reviewModal").style.display = "flex";
+	document.getElementById("guideName").innerText = reviewedUserName;
+	
+}
 
-function createBookingPopup() {
-    if (document.getElementById("bookingModal")) return; // Đã tồn tại thì không tạo lại
+function submitReview(bookingId, reviewedUserId) {
+    // Lấy số sao đã chọn
+	const rating = document.getElementById("rating").value;
+    
+    // Lấy nội dung feedback
+    const feedback = document.getElementById("feedback").value.trim();
+		
+	console.log("rating " + rating)
+
+    // Kiểm tra hợp lệ
+    if (!rating) {
+        alert("Please select a rating.");
+        return;
+    }
+    if (feedback === "") {
+        alert("Please enter your feedback.");
+        return;
+    }
+
+    // Tạo object dữ liệu
+    const reviewData = {
+		reviewedUser: {id: reviewedUserId},
+		booking: {id: bookingId},
+        rating: parseInt(rating),
+        feedback: feedback
+    };
+
+	fetch('/api/reviews', {
+	    method: 'POST',
+	    headers: { 'Content-Type': 'application/json' },
+	    body: JSON.stringify(reviewData)
+	})
+	.then(res => {
+	    if (!res.ok) throw new Error("Failed to submit review");
+	    return res.text();
+	})
+	.then(msg => {
+	    alert(msg); // hoặc hiển thị ra giao diện
+	    closeReviewPopup();
+	    document.getElementById("reviewForm").reset();
+	})
+	.catch(err => {
+	    console.error("Submit failed", err);
+	    alert("Failed to submit review.");
+	});
+
+    // Đóng popup và reset form
+    closeReviewPopup();
+    document.getElementById("reviewForm").reset();
+}
+
+function closeReviewPopup () {
+	document.getElementById("reviewModal").style.display = "none";
+}
+
+function createReviewModal(bookingId, reviewedUserId) {
+    if (document.getElementById("reviewModal")) return;
 
     const modalHtml = `
-        <div id="bookingModal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <span class="close" onclick="closeBookingPopup()">&times;</span>
-                <h3>Thuê hướng dẫn viên: <span id="guideName"></span></h3>
+        <div id="reviewModal" class="modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;">
+            <div class="modal-content" style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; margin: 100px auto; position: relative;">
+                <span class="close" onclick="closeReviewPopup()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
+                <h3 style="margin-bottom: 20px;">Feedback: <span id="guideName"></span></h3>
 
-                <form id="bookingForm">
-                    <input type="hidden" id="guideId" name="guideId">
-
-                    <div class="mb-3">
-                        <label for="dateRange" class="form-label">Chọn ngày:</label>
-                        <input id="dateRange" type="text" class="form-control" placeholder="Chọn ngày" required>
-                        <input type="hidden" id="startDate" name="startDate">
-                        <input type="hidden" id="endDate" name="endDate">
+                <form id="reviewForm">
+                    <!-- Rating -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Rating:</label>
+                        <div id="starContainer" style="display: flex; justify-content: start; gap: 5px; font-size: 28px;">
+                            ${[1, 2, 3, 4, 5].map(i => `
+                                <label style="color: #ccc; cursor: pointer; transition: color 0.2s;" onmouseover="highlightStars(${i})" onmouseout="resetStars()" onclick="selectStar(${i})" id="star-${i}">★</label>
+                            `).join('')}
+                        </div>
+                        <input type="hidden" id="rating" name="rating">
                     </div>
 
-                    <div class="mb-3">
-                        <label for="numPeople" class="form-label">Số người tham gia:</label>
-                        <input type="number" class="form-control" id="numPeople" name="numPeople" min="1" value="1" required>
+                    <!-- Feedback -->
+                    <div style="margin-bottom: 15px;">
+                        <label for="feedback" style="display: block; margin-bottom: 5px;">Your Feedback:</label>
+                        <input type=text id="feedback" name="feedback" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" rows="4" placeholder="Write your review here..."></textarea>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="locationDetail" class="form-label">Địa điểm cụ thể:</label>
-                        <input type="text" class="form-control" id="locationDetail" name="locationDetail" required>
-                    </div>
-
-                    <p class="fw-bold">Tổng tiền: <span id="totalPrice" class="text-danger">0</span> VND</p>
-
-                    <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-success">Xác nhận đặt lịch</button>
-                        <button type="button" class="btn btn-secondary" onclick="closeBookingPopup()">Hủy</button>
+                    <!-- Buttons -->
+                    <div style="display: flex; justify-content: space-between;">
+                        <button type="button" onclick="submitReview(${bookingId}, ${reviewedUserId})" style="background-color: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 4px;">Submit</button>
+                        <button type="button" onclick="closeReviewPopup()" style="background-color: #6c757d; color: white; padding: 8px 16px; border: none; border-radius: 4px;">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -57,16 +117,26 @@ function createBookingPopup() {
     document.body.appendChild(wrapper.firstChild);
 }
 
+function highlightStars(starCount) {
+    for (let i = 1; i <= 5; i++) {
+        document.getElementById(`star-${i}`).style.color = i <= starCount ? 'gold' : '#ccc';
+    }
+}
 
-/* chat message */
+function resetStars() {
+    const selected = parseInt(document.getElementById("rating").value || 0);
+    for (let i = 1; i <= 5; i++) {
+        document.getElementById(`star-${i}`).style.color = i <= selected ? 'gold' : '#ccc';
+    }
+}
 
-
-
-
+function selectStar(starCount) {
+    document.getElementById("rating").value = starCount;
+    highlightStars(starCount);
+}
 
 
 /* income summary */
-
 function loadIncomeSummary() {
 	fetch(`/api/guides/income-summary`)
 		.then(res => res.json())
@@ -91,7 +161,7 @@ function loadIncomeSummary() {
 			const list = document.getElementById("completedBookingsList");
 			data.bookings.forEach(b => {
 				const item = document.createElement("li");
-				item.textContent = `Khách: ${b.customer.fullName} | Số tiền: ${b.totalPrice} | Ngày: ${b.endDate}`;
+				item.textContent = `Customer: ${b.customer.fullName} | amount: ${b.totalPrice} | date: ${b.endDate}`;
 				list.appendChild(item);
 			});
 		});
@@ -205,7 +275,7 @@ let guideBooking = {
 
 async function fetchGuidesBookings(page = 1) {
 	guideBooking.currentPage = page;
-	const response = await fetch('/api/bookings');
+	const response = await fetch('/api/guides/bookings');
 	const bookings = await response.json();
 
 	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
@@ -227,32 +297,36 @@ async function fetchGuidesBookings(page = 1) {
 	      <td>${formatDate(booking.startDate)}</td>
 		  <td>${formatDate(booking.endDate)}</td>
 		  <td>${formatDate(booking.createdAt)}</td>
-		  <td>${booking.guide.fullName}</td>
+		  <td>${booking.customer.fullName}</td>
 		  <td>
 		    <span class="badge ${getStatusBadgeClass(booking.status)}">
 		      ${booking.status}
 		    </span>
-		    ${booking.status === "CANCELED"
-				? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.canceledReason || "Không có lý do"}</div>`
+			${booking.status === "CANCELED_BY_USER" || booking.status === "CANCELED_BY_GUIDE" || booking.status === "REJECTED"
+				? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.reason || "Không có lý do"}</div>`
 				: ""
 			}
 		  </td>
-	      <td>
-	        <div class="d-flex gap-2">
-			<a class="btn btn-sm btn-primary" href="/guides/bookings/${booking.id}" data-id="${booking.id}" >View</a>
-			${booking.status === "PENDING" ? `
-			  <button class="btn btn-sm btn-success" onclick="handleBookingAction('${booking.id}', 'confirm')">Confirm</button>
-			` : `
-			  <button class="btn btn-sm btn-success disabled-btn" disabled>Confirm</button>
-			`}
-			
-			${booking.status === "CONFIRMED" ? `
-		      <button class="btn btn-sm btn-warning" onclick="handleBookingAction('${booking.id}', 'complete')">Complete</button>
-		    ` : `
-		      <button class="btn btn-sm btn-warning disabled-btn" disabled>Complete</button>
-		    `}
-	        </div>
-	      </td>
+		  <td>
+		    <div class="d-flex gap-2">
+		      <a class="btn btn-sm btn-primary" href="/guides/bookings/${booking.id}" data-id="${booking.id}">View</a>
+
+		      ${booking.status === "PENDING" ? `
+		        <button class="btn btn-sm btn-success" onclick="handleBookingAction('${booking.id}', 'confirm')">Confirm</button>
+		        <button class="btn btn-sm btn-danger" onclick="handleBookingAction('${booking.id}', 'reject')">Reject</button>
+		      ` : ""}
+
+		      ${booking.status === "CONFIRMED" ? `
+		        <button class="btn btn-sm btn-warning" onclick="handleBookingAction('${booking.id}', 'complete')">Complete</button>
+		        <button class="btn btn-sm btn-danger" onclick="handleBookingAction('${booking.id}', 'cancel-by-guide')">Cancel</button>
+		      ` : ""}
+
+		      ${booking.status === "COMPLETED" ? `
+		        <button class="btn btn-sm btn-success" onclick="openReviewModal(${booking.id}, ${booking.customer.id},'${booking.customer.fullName}')">Submit Review</button>
+		      ` : ""}
+		    </div>
+		  </td>
+
 	    `;
 
 		tbody.appendChild(row);
@@ -301,7 +375,9 @@ function getStatusBadgeClass(status) {
 	switch (status.toLowerCase()) {
 		case "confirmed": return "bg-success";
 		case "pending": return "bg-warning text-dark";
-		case "cancled": return "bg-danger";
+		case "cancled_by_user": return "bg-danger";
+		case "cancled_by_guide": return "bg-danger";
+		case "rejected": return "bg-danger";
 		case "completed": return "bg-info text-white";
 		default: return "bg-secondary";
 	}
@@ -311,7 +387,7 @@ function handleBookingAction(bookingId, action) {
 	console.log("handleBookingAction " + bookingId + " " + action);
 	let reason = null;
 
-	if (action === 'cancel') {
+	if (action === 'cancel-by-user' || action === 'cancel-by-guide' || action === 'reject') {
 		reason = prompt("Nhập lý do:");
 		if (!reason) {
 			alert("Bạn cần nhập lý do hủy!");
@@ -383,23 +459,24 @@ async function fetchBookings(page = 1) {
 		    <span class="badge ${getStatusBadgeClass(booking.status)}">
 		      ${booking.status}
 		    </span>
-		    ${booking.status === "CANCELED"
-				? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.canceledReason || "Không có lý do"}</div>`
+		    ${booking.status === "CANCELED_BY_USER" || booking.status === "CANCELED_BY_GUIDE" || booking.status === "REJECTED"
+				? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.reason || "Không có lý do"}</div>`
 				: ""
 			}
 		  </td>
-	      <td>
-	        <div class="d-flex gap-2">
-				<a class="btn btn-sm btn-primary" href="/users/bookings/${booking.id}" data-id="${booking.id}" >View</a>
-				${booking.status === "PENDING" ? `
-				  <button class="btn btn-sm btn-success" onclick="handleBookingAction('${booking.id}', 'cancel')">Cancel</button>
-				` : `
-				  <button class="btn btn-sm btn-success disabled-btn" disabled>Cancel</button>
-				`}
-	
-	        	
-	        </div>
-	      </td>
+		  <td>
+		    <div class="d-flex gap-2">
+		      <a class="btn btn-sm btn-primary" href="/users/bookings/${booking.id}" data-id="${booking.id}">View</a>
+		      
+		      ${booking.status === "PENDING" ? `
+		        <button class="btn btn-sm btn-danger" onclick="handleBookingAction('${booking.id}', 'cancel-by-user')">Cancel</button>
+		      ` : booking.status === "COMPLETED" ? `
+		        <button class="btn btn-sm btn-success" onclick="openReviewModal(${booking.id}, ${booking.guide.id},'${booking.guide.fullName}')">Submit Review</button>
+		      ` : ''}
+		      
+		    </div>
+		  </td>
+
 	    `;
 
 		tbody.appendChild(row);
@@ -408,6 +485,7 @@ async function fetchBookings(page = 1) {
 	// Cập nhật trạng thái các nút pagination
 	updatePaginationButtons(page, bookings.length, userBooking.itemsPerPage);
 }
+
 
 function changePage(direction) {
 	if (direction === 'prev') {

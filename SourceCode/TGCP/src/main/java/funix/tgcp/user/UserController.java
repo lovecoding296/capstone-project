@@ -59,12 +59,14 @@ public class UserController {
         if (user.isPresent()) {
         	
             List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(user.get().getId());            
-            List<Review> reviews = reviewService.findTop3ByReviewedUserIdOrderByReviewDateDesc(user.get().getId());
+            List<Review> reviews = reviewService.findByReviewedUserIdOrderByRatingDesc(user.get().getId());
 
         	
             model.addAttribute("user", user.get());
             model.addAttribute("posts", posts);
             model.addAttribute("reviews", reviews);
+            
+            
             return "user/user-details"; // Trả về trang chi tiết người dùng
         }
         return "redirect:/users"; // Nếu không tìm thấy, chuyển hướng về trang danh sách

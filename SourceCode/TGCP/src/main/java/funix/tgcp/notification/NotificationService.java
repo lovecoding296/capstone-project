@@ -5,10 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import funix.tgcp.booking.BookingService;
 import funix.tgcp.user.User;
+import funix.tgcp.util.LogHelper;
 
 @Service
 public class NotificationService {
+
+	private static final LogHelper logger = new LogHelper(NotificationService.class);
 
 	@Autowired
 	NotificationRepository notificationRepository;
@@ -47,6 +51,16 @@ public class NotificationService {
 	public List<Notification> findByUserId(Long currentUserId) {
 		return notificationRepository.findByUserId(currentUserId);
 	}
+	
+	
+	public void sendNotification(User receiver, String message, String sourceLink) {
+	    Notification notify = new Notification();
+	    notify.setUser(receiver);
+	    notify.setMessage(message);
+	    notify.setSourceLink(sourceLink);
+	    save(notify);
 
+	    logger.info("Notification: {}", message);
+	}
 
 }

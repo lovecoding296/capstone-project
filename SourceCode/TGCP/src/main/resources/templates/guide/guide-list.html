@@ -22,10 +22,6 @@
 	<script th:src="@{/jquery-3.6.0.min.js}"></script>
 	<script th:src="@{/app-script.js}"></script>
 
-
-
-
-
 	<style>
 		.pagination {
 		    display: flex;
@@ -111,7 +107,7 @@
 	<nav th:replace="~{page-component :: header}"></nav>
 
 	<div class="text-center page-title">
-		<h4>Tìm kiếm hướng dẫn viên</h4>
+		<h4>Find a guide</h4>
 	</div>
 
 	<div class="container mt-4">
@@ -121,14 +117,14 @@
 			<div class="col-md-3 mb-4">
 				<form method="get" action="/guides">
 					<div class="p-3 border rounded shadow-sm">
-						<h5 class="mb-3">Bộ lọc</h5>
+						<h5 class="mb-3">Filter</h5>
 
 						<!-- Thành phố -->
 						<div class="mb-3">
-							<label for="filterCity" class="form-label">Thành phố</label>
+							<label for="filterCity" class="form-label">City</label>
 							<select id="filterCity" name="city" class="form-select">
-								<option value="">Tất cả</option>
-								<option th:each="c : ${cities}" th:value="${c}" th:text="${c.name()}"
+								<option value="">All</option>
+								<option th:each="c : ${cities}" th:value="${c}" th:text="${c.getDisplayName()}"
 									th:selected="${param.city != null && c.name() == param.city[0]}">
 								</option>
 							</select>
@@ -139,9 +135,9 @@
 
 						<!-- Ngôn ngữ -->
 						<div class="mb-3">
-							<label for="filterLanguage" class="form-label">Ngôn ngữ</label>
+							<label for="filterLanguage" class="form-label">Language</label>
 							<select id="filterLanguage" name="language" class="form-select">
-								<option value="">Tất cả</option>
+								<option value="">All</option>
 								<option th:each="lang : ${languages}" th:value="${lang.name()}" th:text="${lang}"
 									th:selected="${param.language != null && lang.name() == param.language[0]}">
 								</option>
@@ -150,43 +146,43 @@
 
 
 						<div class="mb-3">
-							<label for="filterPrice" class="form-label">Giá tối đa (VND/ngày)</label>
+							<label for="filterPrice" class="form-label">Max price (USD/day)</label>
 							<input type="number" id="filterPrice" name="maxPrice" class="form-control" min="0"
-								placeholder="VD: 500000" th:value="${param.maxPrice}">
+								placeholder="VD: 100" th:value="${param.maxPrice}">
 						</div>
 
 						<div class="mb-3">
-							<label for="filterGender" class="form-label">Giới tính</label>
+							<label for="filterGender" class="form-label">Gender</label>
 							<select id="filterGender" name="gender" class="form-select">
-								<option value="">Tất cả</option>
+								<option value="">All</option>
 								<option value="MALE" th:selected="${param.gender != null && param.gender[0] == 'MALE'}">
-									Nam</option>
+									male</option>
 								<option value="FEMALE"
-									th:selected="${param.gender != null && param.gender[0] == 'FEMALE'}">Nữ</option>
+									th:selected="${param.gender != null && param.gender[0] == 'FEMALE'}">female</option>
 							</select>
 						</div>
 
 						<div class="mb-3">
-						    <label class="form-label">Loại giấy phép</label>
+						    <label class="form-label">Cerificate</label>
 						    <div class="form-check">
-						        <input class="form-check-input" type="checkbox" id="filterLocalGuide" name="localGuide"
-						               th:checked="${param.localGuide != null}">
+						        <input class="form-check-input" type="checkbox" id="filterLocalGuide" name="isLocalGuide"
+						               th:checked="${param.isLocalGuide != null}">
 						        <label class="form-check-label" for="filterLocalGuide">
-						            Hướng dẫn viên nội địa
+						            Local guide
 						        </label>
 						    </div>
 						    <div class="form-check">
-						        <input class="form-check-input" type="checkbox" id="filterInternationalGuide" name="internationalGuide"
-						               th:checked="${param.internationalGuide != null}">
+						        <input class="form-check-input" type="checkbox" id="filterInternationalGuide" name="isInternationalGuide"
+						               th:checked="${param.isInternationalGuide != null}">
 						        <label class="form-check-label" for="filterInternationalGuide">
-						            Hướng dẫn viên quốc tế
+						            Internaltion guide
 						        </label>
 						    </div>
 						</div>
 
 
 
-						<button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+						<button type="submit" class="btn btn-primary w-100">Search</button>
 					</div>
 				</form>
 			</div>
@@ -206,14 +202,14 @@
 							<h5 th:text="${user.fullName}" class="text-center">Tên người dùng</h5>
 
 							<div class="rating text-center mb-2">
-								⭐ <span th:text="${user.averageRating}">4.5</span> (<span
+								⭐ <span th:text="${#numbers.formatDecimal(user.averageRating, 1, 1)}"></span> (<span
 									th:text="${user.reviewCount}">100</span> đánh giá)
 							</div>
 							
 							<div class="mb-2" style="height: 50px;">
-								<span class="badge bg-info me-1" th:if="${user.isLocalGuide}">Hướng dẫn viên nội địa</span>
+								<span class="badge bg-info me-1" th:if="${user.isLocalGuide}">Local guide</span>
 								<br th:if="${user.isLocalGuide and user.isInternationalGuide}" />
-								<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Hướng dẫn viên quốc tế</span>
+								<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Internaltion guide</span>
 							</div>
 
 
@@ -231,11 +227,10 @@
 
 							<div class="buttons d-flex justify-content-between mt-3">
 								<button class="btn btn-primary btn-sm"
-									th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Gửi tin
-									nhắn</button>
+									th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Message</button>
 
-								<button class="btn btn-success btn-sm"
-									th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Thuê</button>
+								<button class="btn btn-warning btn-sm"
+									th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Book Now</button>
 							</div>
 						</div>
 					</div>
@@ -243,10 +238,10 @@
 					<div class="pagination">
 						<ul class="pagination justify-content-center">
 							<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
-								<a class="page-link" th:href="@{/guides(page=0)}">Đầu</a>
+								<a class="page-link" th:href="@{/guides(page=0)}">First</a>
 							</li>
 							<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
-								<a class="page-link" th:href="@{/guides(page=${currentPage - 1})}">Trước</a>
+								<a class="page-link" th:href="@{/guides(page=${currentPage - 1})}">Previous</a>
 							</li>
 
 							<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
@@ -255,23 +250,16 @@
 							</li>
 
 							<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-								<a class="page-link" th:href="@{/guides(page=${currentPage + 1})}">Sau</a>
+								<a class="page-link" th:href="@{/guides(page=${currentPage + 1})}">Next</a>
 							</li>
 							<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-								<a class="page-link" th:href="@{/guides(page=${totalPages - 1})}">Cuối</a>
+								<a class="page-link" th:href="@{/guides(page=${totalPages - 1})}">Last</a>
 							</li>
 						</ul>
 					</div>
-
 			</div>
 		</div>
 	</div>
-
-
-
-
-
-
 
 
 
