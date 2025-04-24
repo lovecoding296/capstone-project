@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Payment Page</title>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
+
+	<!-- Flatpickr CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+	<!-- Flatpickr JS -->
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<style>
+		#user-profile {
+			display: flex;
+			align-items: center;
+			border: 1px solid #ccc;
+			padding: 10px;
+			max-width: 300px;
+		}
+
+		#user-image {
+			width: 60px;
+			height: 60px;
+			border-radius: 50%;
+			background-color: #ccc;
+			margin-right: 15px;
+		}
+
+		#user-info {
+			display: flex;
+			flex-direction: column;
+		}
+
+		#user-name {
+			font-weight: bold;
+			font-size: 16px;
+		}
+
+		#user-rating,
+		#user-participants {
+			font-size: 14px;
+			color: #666;
+		}
+	</style>
+
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+
+			const urlParts = window.location.pathname.split('/');
+			const bookingId = urlParts[urlParts.length - 1];
+
+			fetch(`/api/bookings/${bookingId}`)
+				.then(response => response.json())
+				.then(data => {
+
+					console.log(data)
+
+
+
+
+					// Xử lý thông tin booking
+					const bookingInfoContainer = document.getElementById('booking-info-container');
+					bookingInfoContainer.innerHTML = ""; // Clear nội dung cũ nếu có
+
+					// Booking Info (Bên trái)
+					const leftColumn = document.createElement('div');
+					leftColumn.classList.add('col-md-6');
+					leftColumn.innerHTML = `
+						<span class="badge ${getStatusBadgeClass(data.status)}">${data.status} </span>
+						<p><strong>Destination:</strong> ${data.destination}</p>
+						<p><strong>Start date:</strong> ${data.startDate}</p>
+						<p><strong>End date:</strong> ${data.endDate}</p>
+						<p><strong>Số người tham gia:</strong> ${data.numberOfPeople}</p>
+						<p><strong>Total price:</strong> ${data.totalPrice}</p>
+					`;
+
+					// Guide Card (Bên phải)
+					const rightColumn = document.createElement('div');
+					rightColumn.classList.add('col-md-6', 'd-flex', 'justify-content-center');
+					rightColumn.innerHTML = `
+						<div class="card" style="width: 18rem; border-radius: 12px;">
+							<img src="${data.customer.avatarUrl || 'default-avatar.jpg'}" class="card-img-top rounded-circle mx-auto" alt="Guide Avatar" style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
+							<div class="card-body">
+								<a href="/users/${data.customer.id}">
+									<h4 class="text-center">${data.customer.fullName}</h4>
+								</a>
+								<p><span>${data.customer.email || 'No email available'}</span></p>
+							</div>
+						</div>
+					`;
+
+					// Thêm các cột vào container
+					bookingInfoContainer.appendChild(leftColumn);
+					bookingInfoContainer.appendChild(rightColumn);
+
+
+
+					const payments = data.payments || [];
+					const paymentTableContainer = document.getElementById("payment-table-container");
+					const refundTableContainer = document.getElementById("refund-payment-container");
+
+					paymentTableContainer.innerHTML = "";
+					refundTableContainer.innerHTML = "";
+
+					const paymentList = payments.filter(p => p.type === "PAYMENT");
+					const refundList = payments.filter(p => p.type === "REFUND");
+
+					// ======== TABLE: PAYMENT ========
+					if (paymentList.length > 0) {
+						const paymentTable = document.createElement("table");
+						paymentTable.className = "table table-bordered table-hover text-center align-middle shadow";
+						paymentTable.innerHTML = `
+							<thead class="table-light" >
+								<tr><th class="text-center" colspan="7">Booking Payments</th></tr>
+							</thead>
+							<thead class="table-light">
+								<tr>
+									<th>Transaction Image</th>
+									<th>Sender Name</th>
+									<th>Amount</th>
+									<th>Note</th>
+									<th>Sender Account Number</th>
+									<th>Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody id="payment-list"></tbody>
+						`;
+						paymentTableContainer.appendChild(paymentTable);
+
+						const paymentListTbody = document.getElementById("payment-list");
+
+						paymentList.forEach(payment => {
+							const row = document.createElement("tr");
+							row.innerHTML = `
+								<td>
+									${payment.transactionImageUrl ?
+									`<img src="${payment.transactionImageUrl}" alt="Payment Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="viewFullImage('${payment.transactionImageUrl}')">`
+									: "No Image"}
+								</td>
+								<td>${payment.senderAccountName}</td>
+								<td>${payment.amount}</td>
+								<td>${payment.transactionNote || "N/A"}</td>
+								<td>${payment.senderAccountNumber}</td>
+								<td>${payment.status}</td>
+								<td>
+									${payment.status === "PENDING" ? `
+										<button class="btn btn-sm btn-success mt-1" onclick="updateStatus(${payment.id}, 'RECEIVED')">Confirm Received</button>
+									` : `
+										<button class="btn btn-sm btn-success mt-1 disabled-btn" disabled>Confirm Received</button>
+									`}
+								</td>
+							`;
+							paymentListTbody.appendChild(row);
+						});
+					} else {
+						paymentTableContainer.innerHTML = "<p>No PAYMENT entries found.</p>";
+					}
+
+					// ======== TABLE: REFUND ========
+					if (refundList.length > 0) {
+						const refundTable = document.createElement("table");
+						refundTable.className = "table table-bordered table-hover text-center align-middle shadow mt-4";
+						refundTable.innerHTML = `
+							<thead class="table-light">
+								<tr><th class="text-center" colspan="7">Refunds Payments</th></tr>
+							</thead>
+							<thead class="table-light">
+								<tr>
+									<th>Transaction Image</th>
+									<th>Sender Name</th>
+									<th>Amount</th>
+									<th>Note</th>
+									<th>Sender Account Number</th>
+									<th>Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody id="refund-payment-list"></tbody>
+						`;
+						refundTableContainer.appendChild(refundTable);
+
+						const refundListTbody = document.getElementById("refund-payment-list");
+
+						refundList.forEach(refund => {
+							const row = document.createElement("tr");
+							row.id = `refund-row-${refund.id}`;
+							row.innerHTML = `
+								<td>
+									${refund.transactionImageUrl ?
+									`<img src="${refund.transactionImageUrl}" alt="Refund Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="viewFullImage('${refund.transactionImageUrl}')">`
+									: "No Image"}
+								</td>
+								<td class="sender-name">${refund.senderAccountName}</td>
+								<td class="amount">${refund.amount}</td>
+								<td class="transaction-note">${refund.transactionNote || "N/A"}</td>
+								<td class="sender-account-number">${refund.senderAccountNumber}</td>
+								<td>
+									<span class="refund-status">${refund.status}</span>
+								</td>
+								<td>
+								    ${refund.status === "PENDING" ? `
+									<button class="btn btn-sm btn-primary me-1" onclick="editPayment(${refund.id})">Edit</button>
+									<button class="btn btn-sm btn-danger" onclick="deletePayment(${refund.id})">Delete</button>
+
+								    ` : `
+									<button disabled class="btn btn-sm disabled-btn btn-primary me-1" >Edit</button>
+									<button disabled class="btn btn-sm disabled-btn btn-danger">Delete</button>
+
+									`}
+								</td>
+								
+							`;
+							refundListTbody.appendChild(row);
+						});
+
+					} else {
+						refundTableContainer.innerHTML = "<p>No REFUND entries found.</p>";
+					}
+
+				});
+		});
+
+		function updateStatus(paymentId, newStatus) {
+
+			console.log(JSON.stringify({['status']: newStatus}))
+
+			fetch(`/api/payments/${paymentId}`, {
+				method: "PATCH",
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({['status']: newStatus})
+			})
+				.then(response => {
+					if (response.ok) {
+						alert("Payment updated successfully!");
+						//location.reload(); // Tải lại danh sách payment
+					} else {
+						alert("Failed to update payment.");
+					}
+				})
+				.catch(error => console.error("Error updating payment:", error));
+		}
+
+
+	</script>
+</head>
+
+<body>
+	<nav th:replace="~{page-component :: header}"></nav>
+	<div class="container mt-4">
+		<h2 class="page-title">Booking Information</h2>
+		<div class="row" id="booking-info-container">
+			<!-- Booking Info (Bên trái) sẽ được render động ở đây -->
+		</div>
+		<br>
+
+
+		<br><br>
+		<div class="row">
+			<div class="table-responsive">
+				<div id="payment-table-container" class="mb-4"></div>
+			</div>
+		</div>
+		<button onclick="openNewPaymentPopup()" class="btn btn-success">Add a new refund payment</button>
+		<div class="row">
+			<div class="table-responsive">
+				<div id="refund-payment-container"></div>
+			</div>
+
+		</div>
+
+		<!-- Form Popup để chỉnh sửa Payment -->
+		<div id="edit-payment-popup" class="modal" style="display:none;">
+			<div class="modal-content">
+				<h2>Edit Payment</h2>
+
+				<input type="hidden" id="edit-payment-id">
+
+				<div class="mb-3">
+					<label>Amount:</label>
+					<input type="number" id="edit-amount" class="form-control" required><br>
+				</div>
+
+				<div class="mb-3">
+					<label>Sender Account Number:</label>
+					<input type="text" id="edit-sender-account-number" class="form-control" required><br>
+				</div>
+
+				<div class="mb-3">
+					<label>Sender Name:</label>
+					<input type="text" id="edit-sender-name" class="form-control" required><br>
+				</div>
+
+				<div class="mb-3">
+					<label>Transaction Note:</label>
+					<input type="text" id="edit-transaction-note" class="form-control"><br>
+				</div>
+
+				<div class="mb-3">
+					<label>Transaction Image:</label>
+					<input type="file" id="edit-payment-image" accept="image/*" class="form-control"
+						onchange="previewImage(event)"><br>
+				</div>
+
+				<!-- Hiển thị ảnh preview -->
+				<img id="edit-image-preview" src="" alt="No Image" style="max-width: 200px; display: none;"><br>
+
+				<br>
+				<div class="row mt-3">
+					<div class="col-6">
+						<button onclick="submitEditPayment()" class="btn btn-success w-100">Save Changes</button>
+					</div>
+					<div class="col-6">
+						<button onclick="closeEditPaymentPopup()" class="btn btn-danger w-100">Cancel</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+		<div id="newPaymentModal" class="modal" style="display:none;">
+			<div class="modal-content">
+				<span class="close" onclick="closeNewPaymentPopup()">&times;</span>
+
+				<form id="payment-form" enctype="multipart/form-data">
+
+					<div class="mb-3">
+						<label>Ảnh xác nhận giao dịch chuyển tiền</label>
+						<input type="file" id="payment-image" accept="image/*" class="form-control" required><br>
+					</div>
+					<div class="mb-3">
+						<label>Số tiền:</label>
+						<input type="number" id="amount" class="form-control" required><br>
+					</div>
+					<div class="mb-3">
+						<label>Sender Account Number:</label>
+						<input type="text" id="sender-account-number" class="form-control" required><br>
+					</div>
+					<label>Sender Name:</label>
+					<div class="mb-3">
+						<input type="text" id="sender-name" class="form-control" required><br>
+						<label>Transaction Note:</label>
+						<input type="text" id="transaction-note" class="form-control"><br>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-6">
+							<button type="button" class="btn btn-success" onclick="submitPayment()">Submit
+								Payment</button>
+						</div>
+						<div class="col-6">
+							<button onclick="closeNewPaymentPopup()" class="btn btn-danger w-100">Cancel</button>
+						</div>
+					</div>
+
+				</form>
+
+			</div>
+		</div>
+	</div>
+	</div>
+	<footer th:replace="~{page-component :: footer}"></footer>
+
+	<script>
+		function openNewPaymentPopup() {
+			document.getElementById("newPaymentModal").style.display = "flex";
+		}
+		function closeNewPaymentPopup() {
+			document.getElementById("newPaymentModal").style.display = "none";
+		}
+
+		// Hiển thị ảnh preview khi chọn file
+		function previewImage(event) {
+			const file = event.target.files[0];
+			if (file) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					document.getElementById("edit-image-preview").src = e.target.result;
+					document.getElementById("edit-image-preview").style.display = "flex";
+				};
+				reader.readAsDataURL(file);
+			}
+		}
+
+		// Gửi dữ liệu chỉnh sửa payment lên server
+		function submitEditPayment() {
+			const paymentId = document.getElementById("edit-payment-id").value;
+
+			let formData = new FormData();
+
+			const updatedPayment = {
+				amount: parseFloat(document.getElementById("edit-amount").value),
+				senderAccountNumber: document.getElementById("edit-sender-account-number").value,
+				senderAccountName: document.getElementById("edit-sender-name").value,
+				transactionNote: document.getElementById("edit-transaction-note").value
+			};
+
+			formData.append("payment", new Blob([JSON.stringify(updatedPayment)], {type: "application/json"}));
+
+			// Kiểm tra và thêm file ảnh nếu có
+			const fileInput = document.getElementById("edit-payment-image");
+			if (fileInput.files.length > 0) {
+				formData.append("transactionImage", fileInput.files[0]);
+			}
+
+			fetch(`/api/payments/${paymentId}`, {
+				method: "PUT",
+				body: formData
+			})
+				.then(response => {
+					if (response.ok) {
+						alert("Payment updated successfully!");
+						location.reload(); // Tải lại danh sách payment
+					} else {
+						alert("Failed to update payment.");
+					}
+				})
+				.catch(error => console.error("Error updating payment:", error));
+		}
+
+		// Hiển thị form popup khi bấm "Edit"
+		function editPayment(paymentId) {
+			document.getElementById("edit-payment-popup").style.display = "flex";
+			// Lấy hàng (row) chứa payment cần chỉnh sửa
+			const row = document.getElementById(`refund-row-${paymentId}`);
+
+			// Lấy thông tin từ HTML
+			const senderName = row.querySelector(".sender-name").innerText;
+			const amount = row.querySelector(".amount").innerText;
+			const transactionNote = row.querySelector(".transaction-note").innerText;
+			const senderAccountNumber = row.querySelector(".sender-account-number").innerText;
+
+			// Đổ dữ liệu vào form popup
+			document.getElementById("edit-payment-id").value = paymentId;
+			document.getElementById("edit-amount").value = amount;
+			document.getElementById("edit-sender-account-number").value = senderAccountNumber;
+			document.getElementById("edit-sender-name").value = senderName;
+			document.getElementById("edit-transaction-note").value = transactionNote === "N/A" ? "" : transactionNote;
+
+			// Lấy ảnh hiện tại (nếu có)
+			const imgElement = row.querySelector("td img");
+			const imageUrl = imgElement ? imgElement.src : null;
+
+			const imagePreview = document.getElementById("edit-image-preview");
+			if (imageUrl) {
+				imagePreview.src = imageUrl;
+				imagePreview.style.display = "block";
+			} else {
+				imagePreview.style.display = "none";
+			}
+
+			// Hiển thị form popup
+			document.getElementById("edit-payment-popup").style.display = "flex";
+		}
+
+		function closeEditPaymentPopup() {
+			document.getElementById("edit-payment-popup").style.display = "none";
+		}
+
+
+		// Hàm xử lý xóa payment
+		function deletePayment(paymentId) {
+			if (confirm("Are you sure you want to delete this payment?")) {
+				fetch(`/api/payments/${paymentId}`, {
+					method: "DELETE"
+				})
+					.then(response => {
+						if (response.ok) {
+							alert("Payment deleted successfully!");
+							location.reload(); // Reload trang sau khi xóa
+						} else {
+							alert("Failed to delete payment.");
+						}
+					})
+					.catch(error => console.error("Error deleting payment:", error));
+			}
+		}
+
+		async function submitPayment() {
+			const bookingId = window.location.pathname.split('/').pop();
+			console.log("bookingId:", bookingId);
+
+			let formData = new FormData();
+
+			// Tạo đối tượng paymentData
+			let paymentData = {
+				amount: parseFloat(document.getElementById("amount").value),
+				senderAccountNumber: document.getElementById("sender-account-number").value,
+				senderAccountName: document.getElementById("sender-name").value,
+				transactionNote: document.getElementById("transaction-note").value,
+				transactionImageUrl: "", // Cần xử lý upload ảnh riêng
+				type: "REFUND"
+			};
+			formData.append("bookingId", bookingId)
+			// Thêm JSON payment vào FormData
+			formData.append("payment", new Blob([JSON.stringify(paymentData)], {type: "application/json"}));
+
+			// Kiểm tra và thêm file ảnh nếu có
+			const fileInput = document.getElementById("payment-image");
+			if (fileInput.files.length > 0) {
+				formData.append("transactionImage", fileInput.files[0]);
+			}
+
+			try {
+				// Gửi dữ liệu bằng Axios
+				const response = await axios.post("/api/payments/create", formData, {
+					headers: {
+						"Content-Type": "multipart/form-data"
+					}
+				});
+
+				if (response.status === 200) {
+					alert("Payment submitted successfully!");
+					location.reload();
+				}
+				console.log("Server response:", response.data);
+			} catch (error) {
+				console.error("Error submitting payment:", error);
+				alert("Failed to submit payment. Please try again.");
+			}
+		}
+	</script>
+
+</body>
+
+</html>

@@ -48,18 +48,30 @@ public class PaymentService {
         String imageUrl = fileHelper.uploadFile(file);
         paymentRequest.setTransactionImageUrl(imageUrl);
         
-        notificationService.sendNotification(
-        		booking.getGuide(), 
-        		booking.getCustomer().getFullName() + " created a payment receipt, please confirm!", 
-        		"/guides/bookings/" + booking.getId());
-        
-        logger.info(booking.getGuide().getFullName() + " created a payment receipt, please confirm!");
+        if(paymentRequest.getType() == PaymentType.PAYMENT) {
+            notificationService.sendNotification(
+            		booking.getGuide(), 
+            		booking.getCustomer().getFullName() + " created a payment receipt, please confirm!", 
+            		"/guides/bookings/" + booking.getId());
+            
+            logger.info(booking.getCustomer().getFullName() + " created a payment receipt, please confirm!");
+        }
+        else {
+            notificationService.sendNotification(
+            		booking.getCustomer(), 
+            		booking.getGuide().getFullName() + " created a refund receipt, please confirm!", 
+            		"/users/bookings/" + booking.getId());
+            
+            logger.info(booking.getGuide().getFullName() + " created a refund receipt, please confirm!");
+        }
+
         
         return paymentRepository.save(paymentRequest);
         
     }
 
     // Guide xác nhận payment
+	@Transactional
     public Payment confirmPayment(Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId).orElseThrow();
 
@@ -67,12 +79,22 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.RECEIVED);
         Booking booking = payment.getBooking();
         
-        notificationService.sendNotification(
-        		booking.getCustomer(), 
-        		booking.getGuide().getFullName() + " confirmed your payment receipt!", 
-        		"/users/bookings/" + booking.getId());
-        
-        logger.info(booking.getGuide().getFullName() + " confirmed your payment receipt!");
+        if(payment.getType() == PaymentType.PAYMENT) {
+        	notificationService.sendNotification(
+            		booking.getCustomer(), 
+            		booking.getGuide().getFullName() + " confirmed your payment receipt!", 
+            		"/users/bookings/" + booking.getId());
+            
+            logger.info(booking.getGuide().getFullName() + " confirmed your payment receipt!");
+        }
+        else {
+        	notificationService.sendNotification(
+            		booking.getGuide(), 
+            		booking.getCustomer().getFullName() + " confirmed your refund receipt!", 
+            		"/users/bookings/" + booking.getId());
+            
+            logger.info(booking.getCustomer().getFullName() + " confirmed refund payment receipt!");
+        }
         
         return paymentRepository.save(payment);
     }
@@ -83,5 +105,17 @@ public class PaymentService {
 
 	public Payment save(Payment existingPayment) {
 		return paymentRepository.save(existingPayment);
+	}
+
+	public void delete(Long paymentId) {
+		Payment payment = paymentRepository.findById(paymentId).orElseThrow();
+		if(payment.getTransactionImageUrl() != null) {
+			try {
+				fileHelper.deleteFile(payment.getTransactionImageUrl());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		paymentRepository.delete(payment);
 	}
 }

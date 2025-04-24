@@ -51,7 +51,11 @@ public class Payment {
 
     // Lưu ảnh xác nhận giao dịch (URL)
     @Column(columnDefinition = "NVARCHAR(255)")
-    private String transactionImageUrl;
+    private String transactionImageUrl;   
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentType type = PaymentType.PAYMENT;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

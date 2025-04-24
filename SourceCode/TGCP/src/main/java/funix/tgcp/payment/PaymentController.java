@@ -30,6 +30,11 @@ public class PaymentController {
     @Autowired
     private FileHelper fileHelper;
     
+	@DeleteMapping("/{paymentId}")
+	public ResponseEntity<String> deletePayment(@PathVariable Long paymentId) {
+		paymentService.delete(paymentId);
+		return ResponseEntity.ok("Deleted successfully!");
+	}
     
 
     public PaymentController(PaymentService paymentService) {

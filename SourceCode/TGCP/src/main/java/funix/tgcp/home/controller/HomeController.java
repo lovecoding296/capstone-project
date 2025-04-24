@@ -67,12 +67,12 @@ public class HomeController {
 	
 	@GetMapping("/users/bookings/{bookingId}")
 	public String showBooking() {
-		return "booking/booking";
+		return "booking/user-booking";
 	}
 	
 	@GetMapping("/guides/bookings/{bookingId}")
 	public String showBookingForGuide() {
-		return "booking/booking-approval";
+		return "booking/guide-booking";
 	}
 	
 	@GetMapping("/tours/{id}/payments")
