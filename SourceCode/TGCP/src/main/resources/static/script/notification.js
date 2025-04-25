@@ -82,7 +82,6 @@ function setupNotificationClickHandler(messageLinkId = 'notificationLink', notif
 	  notifications.forEach(noti => {
 	    const li = document.createElement('li');
 
-		// Tùy chọn class bổ sung nếu chưa đọc
 	    const highlightClass = !noti.read ? 'bg-light fw-bold' : '';
 
 	    li.innerHTML = `
@@ -94,10 +93,10 @@ function setupNotificationClickHandler(messageLinkId = 'notificationLink', notif
 	        data-message="${noti.message}">
 	        
 	        <div>
-	          <div class="text-muted small text-truncate" style=" max-width: 220px; width: 200px; white-space: normal; word-wrap: break-word; line-height: 1.4;">
+	          <div class="small text-truncate" style=" max-width: 220px; width: 200px; white-space: normal; word-wrap: break-word; line-height: 1.4;">
 	            ${noti.message}
 	          </div>
-	          <div class="text-muted small">${formatTimestamp(noti.createdAt)}</div>
+	          <div class="small">${formatTimestamp(noti.createdAt)}</div>
 	        </div>
 	      </a>
 	    `;

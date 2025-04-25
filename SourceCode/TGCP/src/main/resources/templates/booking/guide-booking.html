@@ -81,7 +81,7 @@
 						<p><strong>Destination:</strong> ${data.destination}</p>
 						<p><strong>Start date:</strong> ${data.startDate}</p>
 						<p><strong>End date:</strong> ${data.endDate}</p>
-						<p><strong>Số người tham gia:</strong> ${data.numberOfPeople}</p>
+						<p><strong>Number of participants:</strong> ${data.numberOfPeople}</p>
 						<p><strong>Total price:</strong> ${data.totalPrice}</p>
 					`;
 
@@ -156,7 +156,7 @@
 								<td>${payment.status}</td>
 								<td>
 									${payment.status === "PENDING" ? `
-										<button class="btn btn-sm btn-success mt-1" onclick="updateStatus(${payment.id}, 'RECEIVED')">Confirm Received</button>
+										<button class="btn btn-sm btn-success mt-1" onclick="confirmPayment(${payment.id})">Confirm Received</button>
 									` : `
 										<button class="btn btn-sm btn-success mt-1 disabled-btn" disabled>Confirm Received</button>
 									`}
@@ -165,7 +165,7 @@
 							paymentListTbody.appendChild(row);
 						});
 					} else {
-						paymentTableContainer.innerHTML = "<p>No PAYMENT entries found.</p>";
+						//paymentTableContainer.innerHTML = "<p>No PAYMENT entries found.</p>";
 					}
 
 					// ======== TABLE: REFUND ========
@@ -226,25 +226,27 @@
 						});
 
 					} else {
-						refundTableContainer.innerHTML = "<p>No REFUND entries found.</p>";
+						//refundTableContainer.innerHTML = "<p>No REFUND entries found.</p>";
 					}
 
 				});
 		});
 
-		function updateStatus(paymentId, newStatus) {
+		function confirmPayment(paymentId) {
+			
+			const paymentData = {
+				id: paymentId
+			}
 
-			console.log(JSON.stringify({['status']: newStatus}))
-
-			fetch(`/api/payments/${paymentId}`, {
-				method: "PATCH",
+			fetch(`/api/payments/${paymentId}/confirm`, {
+				method: "PUT",
 				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({['status']: newStatus})
+				body: JSON.stringify(paymentData)
 			})
 				.then(response => {
 					if (response.ok) {
 						alert("Payment updated successfully!");
-						//location.reload(); // Tải lại danh sách payment
+						location.reload(); // Tải lại danh sách payment
 					} else {
 						alert("Failed to update payment.");
 					}

@@ -146,6 +146,9 @@
 						<li class="nav-item"><a class="panel-link nav-link" href="#income-summary"
 								onclick="navigate(event,'income-summary')">Income summary</a>
 						</li>
+						<li class="nav-item"><a class="panel-link nav-link" href="#manage-reports"
+								onclick="navigate(event,'manage-reports')">Manage reports</a>
+						</li>
 					</ul>
 				</div>
 			</nav>
@@ -253,7 +256,10 @@
 									case "income-summary":
 										loadIncomeSummary();
 										break;
-												
+										
+									case "manage-reports":
+										fetchReports();
+									
 								    default:
 								        console.log("No action found for page:", page);
 								        break;

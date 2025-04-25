@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import funix.tgcp.booking.BookingService;
+import funix.tgcp.user.Role;
 import funix.tgcp.user.User;
+import funix.tgcp.user.UserRepository;
 import funix.tgcp.util.LogHelper;
 
 @Service
@@ -15,41 +17,34 @@ public class NotificationService {
 	private static final LogHelper logger = new LogHelper(NotificationService.class);
 
 	@Autowired
-	NotificationRepository notificationRepository;
+	NotificationRepository notiRepo;
+	
+	@Autowired
+	UserRepository userRepo;
 
 	public List<Notification> findByUserIdAndIsReadFalse(Long currentUser) {
-		return notificationRepository.findByUserIdAndIsReadFalse(currentUser);
+		return notiRepo.findByUserIdAndIsReadFalse(currentUser);
 	}
 
 	public void markNotificationsAsRead(Long notiId) {
 
-		notificationRepository.findById(notiId).ifPresent(noti -> {
+		notiRepo.findById(notiId).ifPresent(noti -> {
 			noti.setRead(true);
-			notificationRepository.save(noti);
+			notiRepo.save(noti);
 		});	
 
 	}
 
 	public int countUnreadNotifications(Long currentUserId) {
-		return notificationRepository.countByUserIdAndIsReadFalse(currentUserId);
+		return notiRepo.countByUserIdAndIsReadFalse(currentUserId);
 	}
 
 	public void save(Notification notify) {
-	    boolean exists = notificationRepository
-	        .findByUserAndSourceLinkAndMessageAndIsRead(
-	            notify.getUser(),
-	            notify.getSourceLink(),
-	            notify.getMessage(),
-	            false
-	        ).isPresent();
-
-	    if (!exists) {
-	        notificationRepository.save(notify);
-	    }
+		notiRepo.save(notify);
 	}
 
 	public List<Notification> findByUserIdOrderByCreatedAtDesc(Long currentUserId) {
-		return notificationRepository.findByUserIdOrderByCreatedAtDesc(currentUserId);
+		return notiRepo.findByUserIdOrderByCreatedAtDesc(currentUserId);
 	}
 	
 	
@@ -61,6 +56,15 @@ public class NotificationService {
 	    save(notify);
 
 	    logger.info("Notification: {}", message);
+	}
+
+	public void sendNotificationToAdmin(String message, String sourceLink) {
+		logger.info("");
+		List<User> admins = userRepo.findByRole(Role.ROLE_ADMIN);
+		
+		for(User admin : admins) {
+			sendNotification( admin, message, sourceLink);
+		}		
 	}
 
 }

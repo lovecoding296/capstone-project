@@ -79,7 +79,7 @@
 						<p><strong>Destination:</strong> ${data.destination}</p>
 						<p><strong>Start date:</strong> ${data.startDate}</p>
 						<p><strong>End date:</strong> ${data.endDate}</p>
-						<p><strong>Số người tham gia:</strong> ${data.numberOfPeople}</p>
+						<p><strong>Number of participants:</strong> ${data.numberOfPeople}</p>
 						<p><strong>Total price:</strong> ${data.totalPrice}</p>
 					`;
 
@@ -119,7 +119,7 @@
 					// ======== TABLE: PAYMENT ========
 					if (paymentList.length > 0) {
 						const paymentTable = document.createElement("table");
-						paymentTable.className = "table table-bordered";
+						paymentTable.className = "table table-bordered table-hover text-center align-middle shadow";
 						paymentTable.innerHTML = `
 							<thead class="table-light">
 								<tr><th class="text-center" colspan="7">Booking Payments</th></tr>
@@ -169,7 +169,7 @@
 							paymentListTbody.appendChild(row);
 						});
 					} else {
-						paymentTableContainer.innerHTML = "<p>No PAYMENT entries found.</p>";
+						//paymentTableContainer.innerHTML = "<p>No PAYMENT entries found.</p>";
 					}
 
 					// ======== TABLE: REFUND ========
@@ -216,7 +216,7 @@
 								</td>
 								<td>
 									${refund.status === "PENDING" ? `
-										<button class="btn btn-sm btn-success mt-1" onclick="updateStatus(${refund.id}, 'RECEIVED')">Confirm Received</button>
+										<button class="btn btn-sm btn-success mt-1" onclick="confirmPayment(${refund.id}">Confirm Received</button>
 									` : `
 										<button class="btn btn-sm btn-success mt-1 disabled-btn" disabled>Confirm Received</button>
 									`}
@@ -226,20 +226,22 @@
 						});
 
 					} else {
-						refundTableContainer.innerHTML = "<p>No REFUND entries found.</p>";
+						//refundTableContainer.innerHTML = "<p>No REFUND entries found.</p>";
 					}
 
 				});
 		});
 
-		function updateStatus(paymentId, newStatus) {
+		function confirmPayment(paymentId) {
+			
+			const paymentData = {
+				id: paymentId
+			}
 
-			console.log(JSON.stringify({['status']: newStatus}))
-
-			fetch(`/api/payments/${paymentId}`, {
-				method: "PATCH",
+			fetch(`/api/payments/${paymentId}/confirm`, {
+				method: "PUT",
 				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({['status']: newStatus})
+				body: JSON.stringify(paymentData)
 			})
 				.then(response => {
 					if (response.ok) {
@@ -490,11 +492,11 @@
 				<form id="payment-form" enctype="multipart/form-data">
 
 					<div class="mb-3">
-						<label>Ảnh xác nhận giao dịch chuyển tiền</label>
+						<label>Transaction image:</label>
 						<input type="file" id="payment-image" accept="image/*" class="form-control" required><br>
 					</div>
 					<div class="mb-3">
-						<label>Số tiền:</label>
+						<label>Amount:</label>
 						<input type="number" id="amount" class="form-control" required><br>
 					</div>
 					<div class="mb-3">

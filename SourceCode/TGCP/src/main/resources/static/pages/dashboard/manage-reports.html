@@ -1,0 +1,37 @@
+<style>
+
+	
+	.btn-pagination {
+		text-align: center;
+		margin: 0 5px;
+		width: 100px;
+		
+	}
+
+</style>
+
+<div id="manage-reports" class="content-section">
+	<h2>Manage reports</h2>
+	<table class="table table-bordered table-hover align-middle bg-white">
+		<thead class="table-light">
+			<tr>
+				<th scope="col">Report Time</th>
+				<th scope="col">Reporter</th>
+				<th scope="col">Target</th>
+				<th scope="col">Reason</th>
+				<th scope="col">Status</th>
+				<th scope="col">Actions</th>
+			</tr>
+		</thead>
+		<tbody id="reportTableBody">
+
+		</tbody>
+	</table>
+
+	<div id="pagination" class="d-flex justify-content-center mt-4">
+		<button id="prev-btn" class="btn btn-primary d-flex justify-content-center btn-pagination"
+			onclick="changeReportPage('prev')">Previous</button>
+		<button id="next-btn" class="btn btn-primary d-flex justify-content-center btn-pagination"
+			onclick="changeReportPage('next')">Next</button>
+	</div>
+</div>

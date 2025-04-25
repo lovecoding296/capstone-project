@@ -50,15 +50,41 @@
 			       th:href="@{/users/{id}/edit(id=${user.id})}"
 			       class="btn btn-primary">Edit</a>
 
-			    <!-- Nếu KHÔNG phải chính chủ -->
-				<button  th:unless="${session.loggedInUser != null and session.loggedInUser.id == user.id}" class="btn btn-primary"
-									th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Message</button>
-			    <button th:if="${user.isGuide()}" th:unless="${session.loggedInUser != null and session.loggedInUser.id == user.id}"
-			            class="btn btn-warning"
-			            th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">
-			        Book Now
-			    </button>
-				
+				   <!-- Message -->
+				   <button class="btn btn-primary"
+				           th:if="${session.loggedInUser == null}"
+				           onclick="window.location.href='/login'">
+				       Message
+				   </button>
+				   <button class="btn btn-primary"
+				           th:if="${session.loggedInUser != null and session.loggedInUser.id != user.id}"
+				           th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">
+				       Message
+				   </button>
+
+				   <!-- Book Now -->
+				   <button class="btn btn-warning"
+				           th:if="${user.isGuide() and session.loggedInUser == null}"
+				           onclick="window.location.href='/login'">
+				       Book Now
+				   </button>
+				   <button class="btn btn-warning"
+				           th:if="${user.isGuide() and session.loggedInUser != null and session.loggedInUser.id != user.id}"
+				           th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">
+				       Book Now
+				   </button>
+
+				   <!-- Report -->
+				   <button class="btn btn-danger"
+				           th:if="${session.loggedInUser == null}"
+				           onclick="window.location.href='/login'">
+				       Report
+				   </button>
+				   <button class="btn btn-danger"
+				           th:if="${session.loggedInUser != null and session.loggedInUser.id != user.id}"
+				           th:attr="onclick=|openReportPopup(${user.id}, '${user.fullName}', 'USER')|">
+				       Report
+				   </button>			
 
 			</div>
 
@@ -175,6 +201,7 @@
 	
 	
 	<script th:src="@{/script/booking-popup.js}"></script>
+	<script th:src="@{/script/report-popup.js}"></script>
 
 	<footer th:replace="~{page-component :: footer}"></footer>
 

@@ -245,17 +245,21 @@ function setupMessageClickHandler(messageLinkId = 'messageLink', userListId = 'u
 
       users.forEach(user => {
         const li = document.createElement('li');
+		
+		const highlightClass = !user.read ? 'bg-light fw-bold' : '';
+		
+		
         li.innerHTML = `
-          <a class="dropdown-item d-flex align-items-start gap-2" href="#" data-userid="${user.partnerId}" data-username="${user.fullName}">
+          <a class="dropdown-item d-flex align-items-start ${highlightClass} gap-2" href="#" data-userid="${user.partnerId}" data-username="${user.fullName}">
             <img src="${user.avatarUrl || 'https://i.pravatar.cc/40?u=' + user.partnerId}" 
                  alt="${user.fullName || 'Người dùng'}" 
                  class="rounded-circle" width="40" height="40">
             <div>
               <div><strong>${user.fullName || 'Không rõ tên'}</strong></div>
-              <div class="text-muted small text-truncate" style="max-width: 220px; width:200px">
+              <div class="small text-truncate" style="max-width: 220px; width:200px">
                 ${user.lastMessage}
               </div>
-              <div class="text-muted small">${formatTimestamp(user.timestamp)}</div>
+              <div class="small">${formatTimestamp(user.timestamp)}</div>
             </div>
           </a>
         `;

@@ -250,13 +250,19 @@
 	<div class="container mt-4">
 		<div class="row">
 			<div th:each="post : ${posts}" class="col-md-12">
-				<div class="post-card mb-4">
+				<div class="post-card mb-4" style="position: relative;">
 					<div class="post-card-body">
 						<a th:href="@{'/users/' + ${post.author.id}}">
 							<img th:src="${post.author.avatarUrl != null ? post.author.avatarUrl : 'https://i.pravatar.cc/40?u=' + post.author.id}"
 								alt="Avatar" class="rounded-circle me-2" width="100" height="100">
 							<span th:text="${post.author.fullName}" style="font-size: x-large;"></span>
-						</a>
+						</a>						
+						
+						<button class="btn btn-danger" style="position: absolute; right: 20px;"
+								th:if="${session.loggedInUser != null and session.loggedInUser.id != post.author.id}"
+				                th:attr="onclick=|openReportPopup(${post.author.id}, '${post.title}', 'POST')|">
+				            Report
+				        </button>
 
 
 						<h5 class="post-card-title" th:text="${post.title}"></h5>
@@ -495,6 +501,7 @@
 	<footer th:replace="~{page-component :: footer}"></footer>
 
 	<script th:src="@{/script/booking-popup.js}"></script>
+	<script th:src="@{/script/report-popup.js}"></script>
 
 </body>
 

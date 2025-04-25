@@ -115,7 +115,7 @@ public class ChatMessageController {
             item.put("fullName", partner.getFullName());
             item.put("avatarUrl", partner.getAvatarUrl());
             item.put("lastMessage", msg.getContent());
-            item.put("isRead", msg.isRead());
+            item.put("read", msg.getSender().getId().equals(currentUserId) || msg.isRead());
             item.put("timestamp", msg.getTimestamp());
 
             result.add(item);
@@ -128,6 +128,9 @@ public class ChatMessageController {
     
     @PostMapping("/mark-read")
     public ResponseEntity<?> markMessagesAsRead(@RequestBody ChatMessage request) {
+    	
+    	logger.info("request " + request.getSender());
+    	
     	Long currentUserId = 1L;
         CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
         if (userDetails != null) {

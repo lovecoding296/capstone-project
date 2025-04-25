@@ -10,6 +10,112 @@ function autoResize(textarea) {
 	textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
 }
 
+/* Manage reports */
+
+
+let reportPage = {
+	currentPage: 1,
+	itemsPerPage: 10
+}
+
+function changeReportPage(direction) {
+	if (direction === 'prev') {
+		reportPage.currentPage -= 1;
+	} else if (direction === 'next') {
+		reportPage.currentPage += 1;
+	}
+
+	fetchReports(reportPage.currentPage);
+}
+
+async function fetchReports(page = 1) {
+	reportPage.currentPage = page;
+	const response = await fetch('/api/reports');
+	const reports = await response.json();
+
+	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
+	const startIdx = (page - 1) * reportPage.itemsPerPage;
+	const endIdx = startIdx + reportPage.itemsPerPage;
+
+	// Lấy dữ liệu bookings cho trang hiện tại
+	const reportsToShow = reports.slice(startIdx, endIdx);
+
+
+	const tbody = document.getElementById("reportTableBody");
+	tbody.innerHTML = "";
+
+	reportsToShow.forEach((report) => {
+		const row = document.createElement("tr");
+
+		row.innerHTML = `
+		  <td>${formatDate(report.reportTime)}</td>
+		  <td><a href="/users/${report.reporter.id}">${report.reporter.fullName}</td>
+		  <td>
+		      <a href="${report.reportType === 'USER' ? `/users/${report.targetId}` : `/posts/${report.targetId}`}">
+		        ${report.reportType} ${report.targetName}
+		      </a>
+		  </td>
+
+		  <td>${report.reason}</td>
+		  <td>
+		  	<div>${report.resolved ? `<span class="badge bg-success text-white"> Resolved` :  `<span class="badge bg-warning text-dark"> Unresolved`}</div>
+		  	${report.resolved ? `<div style="font-size: 0.9em; color: #555;">Admin Feedback: ${report.adminFeedBack || "(No feedback)"}</div>` : ""}
+		  </td>
+		  <td>${!report.resolved ? `
+	        <button class="btn btn-sm btn-primary" onclick="resolveReport(${report.id})">Resolve</button>
+	      ` : `<button class="btn btn-sm btn-warning disabled-btn" disabled>Resolve</button>`}
+		  </td>
+	    `;
+
+		tbody.appendChild(row);
+	});
+
+	// Cập nhật trạng thái các nút pagination
+	updatePaginationButtons(page, reports.length, reportPage.itemsPerPage);
+}
+
+function resolveReport(reportId) {
+	
+	let adminFeedBack = prompt("Enter feedback:");
+	
+	if (!adminFeedBack) {
+		alert("You need to enter a feedback!");
+		return;
+	}
+	
+	let reportData = {
+			id: reportId,
+			adminFeedBack: adminFeedBack,
+		}
+
+	fetch(`/api/reports/${reportData.id}`, {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(reportData)
+	})
+		.then(async (res) => {
+			const text = await res.text(); // nhận dữ liệu dưới dạng chuỗi
+
+			if (!res.ok) {
+				throw new Error(text || "Đã xảy ra lỗi");
+			}
+
+			return text; // trả về chuỗi phản hồi
+		})
+		.then((result) => {
+			alert(result || `${action} thành công`);
+			fetchReports(reportPage.currentPage);
+		})
+		.catch((err) => {
+			console.error(err);
+			alert(err.message || "Đã xảy ra lỗi");
+		});
+
+}
+
+
 /* Submit review */
 
 function openReviewModal(bookingId, reviewedUserId, reviewedUserName) {
@@ -180,7 +286,7 @@ function loadIncomeSummary() {
 				data: {
 					labels: Object.keys(data.monthlyIncome),
 					datasets: [{
-						label: 'Thu nhập theo tháng',
+						label: 'Monthly income',
 						data: Object.values(data.monthlyIncome),
 						backgroundColor: 'rgba(75, 192, 192, 0.5)'
 					}]
@@ -188,14 +294,54 @@ function loadIncomeSummary() {
 			});
 
 			// Hiển thị danh sách đơn
-			const list = document.getElementById("completedBookingsList");
+/*			const list = document.getElementById("completedBookingsList");
 			data.bookings.forEach(b => {
 				const item = document.createElement("li");
+				item.className = "booking-item";
 				item.textContent = `Customer: ${b.customer.fullName} | amount: ${b.totalPrice} | date: ${b.endDate}`;
 				list.appendChild(item);
-			});
+			});*/
+			
+			
+			const ctx2 = document.getElementById('bookingsChart').getContext('2d');
+
+				const labels = data.bookings.map(b => b.endDate);
+				const revenues = data.bookings.map(b => b.totalPrice);
+
+				new Chart(ctx2, {
+					type: 'bar',
+					data: {
+						labels: labels,
+						datasets: [{
+							label: 'Total Price',
+							data: revenues,
+							backgroundColor: 'rgba(54, 162, 235, 0.6)',
+							borderColor: 'rgba(54, 162, 235, 1)',
+							borderWidth: 1
+						}]
+					},
+					options: {
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									display: true,
+									text: 'Amount (VND)'
+								}
+							},
+							x: {
+								title: {
+									display: true,
+									text: 'Date'
+								}
+							}
+						}
+					}
+				});
 		});
 }
+
+
 
 
 /* manage BusyDate */
