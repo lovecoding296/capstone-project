@@ -77,8 +77,12 @@ public class User {
 	private double averageRating;
 
 	private String verificationToken;
+	
 	private boolean verified = false; // verify email
-	private boolean kycApproved = false; //verify cccd
+	
+	private boolean kycApproved = false; // verify cccd
+	
+	private boolean enabled = true; // report
 	
 	@Column(columnDefinition = "NVARCHAR(255)")
 	private String cccd;//cccd url

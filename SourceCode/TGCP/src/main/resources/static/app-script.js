@@ -10,32 +10,191 @@ function autoResize(textarea) {
 	textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
 }
 
-/* Manage reports */
+
+/* manage users */
+
+let usersPage = {
+	currentPage: 1,
+	itemsPerPage: 10
+}
+
+function changeUsersPage(direction) {
+	if (direction === 'prev') {
+		usersPage.currentPage -= 1;
+	} else if (direction === 'next') {
+		usersPage.currentPage += 1;
+	}
+
+	fetchUsers(usersPage.currentPage);
+}
+
+function fetchUsers(page = 1) {
+	
+	usersPage.currentPage = page;
+	
+	const email = document.getElementById('email').value;
+    const fullName = document.getElementById('fullName').value;
+    const role = document.getElementById('role').value;
+    const kycApproved = document.getElementById('kycApproved').value;
+    const verified = document.getElementById('verified').value;
+	const enabled = document.getElementById('enabled').value;
+
+    // Tạo URL với các tham số tìm kiếm
+    let url = '/api/users?';
+    if (email) url += `email=${email}&`;
+    if (fullName) url += `fullName=${fullName}&`;
+    if (role) url += `role=${role}&`;
+    if (kycApproved !== "") url += `kycApproved=${kycApproved}&`;
+    if (verified !== "") url += `verified=${verified}&`;
+	if (enabled !== "") url += `enabled=${enabled}&`;
+
+    // Xóa dấu "&" thừa ở cuối URL nếu có
+    url = url.slice(0, -1);
+	
+	fetch(url)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			return response.json();
+		})
+		.then(users => {
+			const tableBody = document.getElementById('usersTable');
+			tableBody.innerHTML = ''; // Xóa dữ liệu cũ
+			
+			// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
+			const startIdx = (page - 1) * usersPage.itemsPerPage;
+			const endIdx = startIdx + usersPage.itemsPerPage;
+
+			// Lấy dữ liệu bookings cho trang hiện tại
+			const usersToShow = users.slice(startIdx, endIdx);	
+
+			usersToShow.forEach(user => {
+				
+				// Tạo nút hành động
+				const actions = [];
+				
+				if (user.enabled) {
+					actions.push(`<button class="btn btn-sm btn-danger" onclick="performUserAction(${user.id}, 'disable')">Disable</button>`);
+				} else {
+					actions.push(`<button class="btn btn-sm btn-success" onclick="performUserAction(${user.id}, 'enable')">Enable</button>`);
+				}
+
+				if (!user.kycApproved) {
+					actions.push(`<button class="btn btn-sm btn-primary" onclick="performUserAction(${user.id}, 'approve-kyc')">Approve KYC</button>`);
+				}
+
+				
+				const row = document.createElement('tr');
+				row.innerHTML = `
+					<td>${user.fullName}</td>
+					<td>${user.email}</td>
+					<td>${user.role}</td>
+					<td><b>KYC: </b>${user.kycApproved}</td>
+					<td><b>Email Verified: </b>${user.verified}</td>
+					<td><b>Enabled: </b>${user.enabled}</td>
+					<td>${actions.join(' ')}</td>
+				`;
+				tableBody.appendChild(row);
+			});
+			
+			updatePaginationButtons(page, users.length, usersPage.itemsPerPage);
+		})
+		.catch(error => {
+			console.error('Lỗi khi tải danh sách người dùng:', error);
+			const tableBody = document.querySelector('#usersTable tbody');
+			tableBody.innerHTML = `<tr><td colspan="3">Không thể tải danh sách người dùng.</td></tr>`;
+		});
+}
 
 
-let reportPage = {
+function performUserAction(userId, action) {
+	let url = '';
+	let confirmMessage = '';
+	let successMessage = '';
+	
+	url = `/api/users/${userId}/${action}`;
+
+	switch (action) {
+		case 'enable':
+			confirmMessage = 'Bạn có chắc chắn muốn ENABLE người dùng này?';
+			successMessage = 'Đã enable người dùng.';
+			break;
+		case 'disable':
+			confirmMessage = 'Bạn có chắc chắn muốn DISABLE người dùng này?';
+			successMessage = 'Đã disable người dùng.';
+			break;
+		case 'approve-kyc':
+			confirmMessage = 'Bạn có chắc chắn muốn duyệt KYC cho người dùng này?';
+			successMessage = 'Đã duyệt KYC.';
+			break;
+		default:
+			console.error('Hành động không hợp lệ:', action);
+			return;
+	}
+
+	if (!confirm(confirmMessage)) return;
+
+	fetch(url, { method: 'PUT' })
+		.then(response => {
+			if (!response.ok) throw new Error(`${action} failed`);
+			return response.text();
+		})
+		.then(() => {
+			alert(successMessage);
+			fetchUsers(usersPage.currentPage);
+		})
+		.catch(error => {
+			console.error(error);
+			alert(`Có lỗi khi thực hiện hành động: ${action}`);
+		});
+}
+
+
+
+/* manage reports */
+
+let reportsPage = {
 	currentPage: 1,
 	itemsPerPage: 10
 }
 
 function changeReportPage(direction) {
 	if (direction === 'prev') {
-		reportPage.currentPage -= 1;
+		reportsPage.currentPage -= 1;
 	} else if (direction === 'next') {
-		reportPage.currentPage += 1;
+		reportsPage.currentPage += 1;
 	}
 
-	fetchReports(reportPage.currentPage);
+	fetchReports(reportsPage.currentPage);
 }
 
 async function fetchReports(page = 1) {
-	reportPage.currentPage = page;
-	const response = await fetch('/api/reports');
+	
+	reportsPage.currentPage = page;
+	
+	const reporter = document.getElementById('reporter').value;
+	const reason = document.getElementById('reason').value;
+	const resolved = document.getElementById('resolved').value;
+	const reportType = document.getElementById('reportType').value;
+
+
+	// Tạo URL với các tham số tìm kiếm
+	let url = '/api/reports?';
+	if (reporter) url += `reporter=${reporter}&`;
+	if (reason) url += `reason=${reason}&`;
+	if (resolved) url += `resolved=${resolved}&`;
+	if (reportType) url += `reportType=${reportType}&`;
+
+	// Xóa dấu "&" thừa ở cuối URL nếu có
+    url = url.slice(0, -1);	
+	
+	const response = await fetch(url);
 	const reports = await response.json();
 
 	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-	const startIdx = (page - 1) * reportPage.itemsPerPage;
-	const endIdx = startIdx + reportPage.itemsPerPage;
+	const startIdx = (page - 1) * reportsPage.itemsPerPage;
+	const endIdx = startIdx + reportsPage.itemsPerPage;
 
 	// Lấy dữ liệu bookings cho trang hiện tại
 	const reportsToShow = reports.slice(startIdx, endIdx);
@@ -71,7 +230,7 @@ async function fetchReports(page = 1) {
 	});
 
 	// Cập nhật trạng thái các nút pagination
-	updatePaginationButtons(page, reports.length, reportPage.itemsPerPage);
+	updatePaginationButtons(page, reports.length, reportsPage.itemsPerPage);
 }
 
 function resolveReport(reportId) {
@@ -106,7 +265,7 @@ function resolveReport(reportId) {
 		})
 		.then((result) => {
 			alert(result || `${action} thành công`);
-			fetchReports(reportPage.currentPage);
+			fetchReports(reportsPage.currentPage);
 		})
 		.catch((err) => {
 			console.error(err);
@@ -443,20 +602,38 @@ function submitBusyDate() {
 
 /*manage bookings*/
 
-let guideBooking = {
+let guideBookingsPage = {
 	currentPage: 1,
 	itemsPerPage: 10
 };
 
 
-async function fetchGuidesBookings(page = 1) {
-	guideBooking.currentPage = page;
-	const response = await fetch('/api/guides/bookings');
+async function fetchGuideBookings(page = 1) {
+	guideBookingsPage.currentPage = page;
+	
+	const destination = document.getElementById('destination').value;
+	const startDate = document.getElementById('startDate').value;
+	const endDate = document.getElementById('endDate').value;
+	const user = document.getElementById('user').value;
+	const bookingStatus = document.getElementById('bookingStatus').value;
+
+	// Tạo URL với các tham số tìm kiếm
+	let url = '/api/guides/bookings?';
+	if (destination) url += `destination=${destination}&`;
+	if (startDate) url += `startDate=${startDate}&`;
+	if (endDate) url += `endDate=${endDate}&`;
+	if (user) url += `user=${user}&`;
+	if (bookingStatus) url += `status=${bookingStatus}&`;
+
+	// Xóa dấu "&" thừa ở cuối URL nếu có
+    url = url.slice(0, -1);		
+	
+	const response = await fetch(url);
 	const bookings = await response.json();
 
 	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-	const startIdx = (page - 1) * guideBooking.itemsPerPage;
-	const endIdx = startIdx + guideBooking.itemsPerPage;
+	const startIdx = (page - 1) * guideBookingsPage.itemsPerPage;
+	const endIdx = startIdx + guideBookingsPage.itemsPerPage;
 
 	// Lấy dữ liệu bookings cho trang hiện tại
 	const bookingsToShow = bookings.slice(startIdx, endIdx);
@@ -509,15 +686,32 @@ async function fetchGuidesBookings(page = 1) {
 	});
 
 	// Cập nhật trạng thái các nút pagination
-	updatePaginationButtons(page, bookings.length, guideBooking.itemsPerPage);
+	updatePaginationButtons(page, bookings.length, guideBookingsPage.itemsPerPage);
 }
 
 function updatePaginationButtons(page, totalItems, itemsPerPage) {
+	
+	
+	
 	const totalPages = Math.ceil(totalItems / itemsPerPage);
 
 	const prevBtn = document.getElementById('prev-btn');
 	const nextBtn = document.getElementById('next-btn');
-
+	
+	const paginationDiv = document.getElementById('pagination');
+	
+	
+	
+	
+	if (totalPages <= 0) {
+		prevBtn.disabled = true;
+		prevBtn.disabled = false;
+		prevBtn.classList.add('disabled-btn');
+		nextBtn.classList.add('disabled-btn');
+		paginationDiv.style.display = 'flex';
+		return;
+	}
+	
 	// Nếu là trang đầu tiên, disable nút "Previous"
 	if (page === 1) {
 		prevBtn.disabled = true;
@@ -535,16 +729,19 @@ function updatePaginationButtons(page, totalItems, itemsPerPage) {
 		nextBtn.disabled = false;
 		nextBtn.classList.remove('disabled-btn');
 	}
+	
+	paginationDiv.style.display = 'flex';
+	
 }
 
-function changePage(direction) {
+function changeGuideBookingsPage(direction) {
 	if (direction === 'prev') {
-		userBooking.currentPage -= 1;
+		guideBookingsPage.currentPage -= 1;
 	} else if (direction === 'next') {
-		userBooking.currentPage += 1;
+		guideBookingsPage.currentPage += 1;
 	}
 
-	fetchBookings(userBooking.currentPage); // Fetch lại bookings cho trang mới
+	fetchGuideBookings(guideBookingsPage.currentPage); // Fetch lại bookings cho trang mới
 }
 
 function getStatusBadgeClass(status) {
@@ -589,7 +786,7 @@ function handleBookingAction(bookingId, action) {
 		})
 		.then((result) => {
 			alert(result.message || `${action} thành công`);
-			fetchGuidesBookings(); // hoặc update riêng dòng nếu bạn muốn tối ưu
+			fetchGuideBookings(); // hoặc update riêng dòng nếu bạn muốn tối ưu
 		})
 		.catch((err) => {
 			console.error(err);
@@ -600,20 +797,40 @@ function handleBookingAction(bookingId, action) {
 
 
 /*booking history*/
-let userBooking = {
+let historyBookingsPage = {
 	currentPage: 1,
 	itemsPerPage: 10
 };
 
 
 async function fetchBookings(page = 1) {
-	userBooking.currentPage = page;
-	const response = await fetch('/api/bookings');
+	
+	historyBookingsPage.currentPage = page;
+	console.log("historyBookingsPage")
+	
+	const destination = document.getElementById('destination').value;
+	const startDate = document.getElementById('startDate').value;
+	const endDate = document.getElementById('endDate').value;
+	const guide = document.getElementById('guide').value;
+	const bookingStatus = document.getElementById('bookingStatus').value;
+
+	// Tạo URL với các tham số tìm kiếm
+	let url = '/api/bookings?';
+	if (destination) url += `destination=${destination}&`;
+	if (startDate) url += `startDate=${startDate}&`;
+	if (endDate) url += `endDate=${endDate}&`;
+	if (guide) url += `guide=${guide}&`;
+	if (bookingStatus) url += `status=${bookingStatus}&`;
+
+	// Xóa dấu "&" thừa ở cuối URL nếu có
+    url = url.slice(0, -1);		
+	
+	const response = await fetch(url);
 	const bookings = await response.json();
 
 	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-	const startIdx = (page - 1) * userBooking.itemsPerPage;
-	const endIdx = startIdx + userBooking.itemsPerPage;
+	const startIdx = (page - 1) * historyBookingsPage.itemsPerPage;
+	const endIdx = startIdx + historyBookingsPage.itemsPerPage;
 
 	// Lấy dữ liệu bookings cho trang hiện tại
 	const bookingsToShow = bookings.slice(startIdx, endIdx);
@@ -659,18 +876,18 @@ async function fetchBookings(page = 1) {
 	});
 
 	// Cập nhật trạng thái các nút pagination
-	updatePaginationButtons(page, bookings.length, userBooking.itemsPerPage);
+	updatePaginationButtons(page, bookings.length, historyBookingsPage.itemsPerPage);
 }
 
 
-function changePage(direction) {
+function changeHistoryBookingPage(direction) {
 	if (direction === 'prev') {
-		userBooking.currentPage -= 1;
+		historyBookingsPage.currentPage -= 1;
 	} else if (direction === 'next') {
-		userBooking.currentPage += 1;
+		historyBookingsPage.currentPage += 1;
 	}
 
-	fetchBookings(userBooking.currentPage); // Fetch lại bookings cho trang mới
+	fetchBookings(historyBookingsPage.currentPage); // Fetch lại bookings cho trang mới
 }
 
 
@@ -684,7 +901,7 @@ async function cancelBooking(bookingId) {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ reason: canceledReason })
 			});
-			fetchBookings(currentPage);
+			fetchBookings(historyBookingsPage.currentPage);
 		}
 	}
 }
@@ -708,45 +925,48 @@ function previewImage(event) {
 }
 
 function checkGuideRequestStatus() {
-	fetch('/api/guide-requests/status')  // Giả sử có API để lấy trạng thái đăng ký
-		.then(response => response.json())
+	fetch('/api/guide-requests/status')
+		.then(response => {
+			if (!response.ok) {
+				if (response.status === 404) {
+					// Trường hợp không có yêu cầu nào (coi như là chưa đăng ký)
+					return { status: 'NONE' };
+				}
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			return response.json();
+		})
 		.then(data => {
 			const statusMessage = document.getElementById('statusMessage');
 			const guideForm = document.getElementById('guideForm');
 			const guideLicenseInput = document.getElementById('guideLicense');
 			const experienceInput = document.getElementById('experience');
-			const guideLicensePreview = document.getElementById('guideLicensePreview'); // Thẻ hiển thị ảnh
+			const guideLicensePreview = document.getElementById('guideLicensePreview');
 
-			// Xử lý các trạng thái khác nhau
 			if (data.status === 'REJECTED') {
 				statusMessage.innerHTML = `<div class="alert alert-danger">Bị từ chối: ${data.reason}</div>`;
-				guideForm.style.display = 'block';  // Hiển thị form đăng ký
+				guideForm.style.display = 'block';
 				statusMessage.dataset.status = 'REJECTED';
 
-				console.log("data " + data + " guideLicense " + data.guideLicense + " experience " + data.experience)
-
-				// Điền sẵn thông tin đã nhập trước đó
 				guideLicenseInput.value = data.guideLicense || '';
 				experienceInput.value = data.experience || '';
 
-				// Hiển thị ảnh nếu có
 				if (data.guideLicenseUrl) {
 					guideLicensePreview.innerHTML = `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`;
 				} else {
-					guideLicensePreview.innerHTML = ''; // Xóa nếu không có ảnh
+					guideLicensePreview.innerHTML = '';
 				}
 			} else if (data.status === 'PENDING') {
 				statusMessage.innerHTML = `<div class="alert alert-info">Yêu cầu của bạn đang chờ duyệt.</div>`;
-				guideForm.style.display = 'none';  // Ẩn form đăng ký
+				guideForm.style.display = 'none';
 				statusMessage.dataset.status = 'PENDING';
 			} else if (data.status === 'APPROVED') {
 				statusMessage.innerHTML = `<div class="alert alert-info">Yêu cầu của bạn đã được duyệt.</div>`;
-				guideForm.style.display = 'none';  // Ẩn form đăng ký
+				guideForm.style.display = 'none';
 				statusMessage.dataset.status = 'APPROVED';
 			} else {
-				// Nếu không có trạng thái hoặc không có yêu cầu nào, hiển thị form
-				statusMessage.innerHTML = 'Bạn chưa đăng ký làm hướng dẫn viên.';
-				guideForm.style.display = 'block';  // Hiển thị form đăng ký
+				statusMessage.innerHTML = 'You are not registered as a guide.';
+				guideForm.style.display = 'block';
 			}
 		})
 		.catch(error => {
@@ -756,7 +976,7 @@ function checkGuideRequestStatus() {
 		});
 }
 
-function submitGuideRegister() {
+async function submitGuideRegister() {
 
 	console.log("submitGuideRegister...")
 
@@ -774,16 +994,24 @@ function submitGuideRegister() {
 	}
 
 	try {
-		const response = fetch("/api/guide-requests/register", {
+		// Đợi kết quả của fetch
+		const response = await fetch("/api/guide-requests/register", {
 			method: requestMethod,
 			body: formData
 		});
-		if (!response.ok) throw new Error("Gửi yêu cầu thất bại");
+
+		// Kiểm tra response status
+		if (!response.ok) {
+			// Nếu có lỗi từ server, lấy message chi tiết từ response
+			const errorData = await response.json();  // giả sử API trả về lỗi dưới dạng JSON
+			throw new Error(errorData.message || "Gửi yêu cầu thất bại");
+		}
+
 		alert("Đăng ký thành công!");
 		document.getElementById("guideForm").reset();
 	} catch (error) {
 		console.error(error);
-		alert("Có lỗi xảy ra, vui lòng thử lại!");
+		alert(`Có lỗi xảy ra: ${error.message}`);
 	}
 }
 
@@ -825,38 +1053,62 @@ async function updateTourStatus(id, action) {
 	}
 }
 
+let guideRequestsPage = {
+	currentPage: 1,
+	itemsPerPage: 10
+}
 
-/* guide approval */
-async function fetchGuideRequests() {
+
+/* manage guide requests */
+async function fetchGuideRequests(page = 1) {
 	console.log("fetchGuideRequests....")
 	try {
 		const response = await fetch("/api/admin/guide-requests");
 		if (!response.ok) throw new Error("Không thể tải danh sách đơn đăng ký");
 		const guideRequests = await response.json();
+		
+		// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
+		const startIdx = (page - 1) * guideRequestsPage.itemsPerPage;
+		const endIdx = startIdx + guideRequestsPage.itemsPerPage;
+
+		// Lấy dữ liệu bookings cho trang hiện tại
+		const guideRequestsToShow = guideRequests.slice(startIdx, endIdx);
 
 		const tableBody = document.getElementById("guideRequestsTable");
 		tableBody.innerHTML = ""; // Xóa nội dung cũ trước khi cập nhật
 
-		guideRequests.forEach(request => {
+		guideRequestsToShow.forEach(request => {
 			const row = document.createElement("tr");
-
 			row.innerHTML = `
 				                <td>${request.user.fullName}</td>
 				                <td><img src="${request.guideLicenseUrl}" alt="Guide License" width="100" height="60" style="object-fit: cover; border-radius: 5px;"></td>
 				                <td>${request.guideLicense}</td>
 				                <td>${request.experience}</td>
 				                <td>
-				                    <a href="/users/${request.user.id}" class="btn btn-info btn-sm">Xem</a>
-				                    <button class="btn btn-success btn-sm" onclick="approveGuide(${request.id})">Duyệt</button>
-				                    <button class="btn btn-danger btn-sm" onclick="rejectGuide(${request.id})">Từ chối</button>
+				                    <a href="/users/${request.user.id}" class="btn btn-info btn-sm">View</a>
+				                    <button class="btn btn-success btn-sm" onclick="approveGuide(${request.id})">Approve</button>
+				                    <button class="btn btn-danger btn-sm" onclick="rejectGuide(${request.id})">Reject</button>
 				                </td>
 				            `;
 
 			tableBody.appendChild(row);
 		});
+		
+		updatePaginationButtons(page, guideRequests.length, guideRequestsPage.itemsPerPage);
+
 	} catch (error) {
 		console.error("Lỗi:", error);
 	}
+}
+
+function changeGuideRequestsPage(direction) {
+	if (direction === 'prev') {
+		guideRequestsPage.currentPage -= 1;
+	} else if (direction === 'next') {
+		guideRequestsPage.currentPage += 1;
+	}
+
+	fetchGuideRequests(guideRequestsPage.currentPage); // Fetch lại bookings cho trang mới
 }
 
 
@@ -867,7 +1119,7 @@ async function approveGuide(id) {
 		const response = await fetch(`/api/admin/guide-requests/${id}/approve`, { method: "PUT" });
 		if (!response.ok) throw new Error("Duyệt đơn thất bại");
 		alert("Đã duyệt đơn thành công!");
-		fetchGuideRequests(); // Cập nhật danh sách mà không tải lại trang
+		fetchGuideRequests(guideRequestsPage.currentPage); // Cập nhật danh sách mà không tải lại trang
 	} catch (error) {
 		console.error(error);
 		alert("Có lỗi xảy ra, vui lòng thử lại!");
@@ -890,7 +1142,7 @@ async function rejectGuide(id) {
 		if (!response.ok) throw new Error("Từ chối đơn thất bại");
 
 		alert("Đã từ chối đơn thành công!");
-		location.reload(); // Refresh danh sách
+		fetchGuideRequests(guideRequestsPage.currentPage);
 	} catch (error) {
 		console.error(error);
 		alert("Có lỗi xảy ra, vui lòng thử lại!");

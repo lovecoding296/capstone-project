@@ -30,7 +30,7 @@ public class ReportService {
 	public void createReport(Report reportRequest) {
 		      
         notiService.sendNotificationToAdmin(
-        		reportRequest.getReporter().getFullName() + " created a report, plz check it!",
+        		reportRequest.getReporter().getFullName() + " reported a " + reportRequest.getReportType() + ", plz check it!",
         		"/dashboard#manage-reports");		
         
 		reportRepo.save(reportRequest);		
@@ -58,5 +58,9 @@ public class ReportService {
 	    } else {
 	    	return "Failed to resolve report, try again later!";
 	    }
+	}
+
+	public List<Report> findReportByFilter(String reporter, String reason, Boolean resolved, ReportType reportType) {
+		return reportRepo.findReportByFilter(reporter, reason, resolved, reportType);
 	}
 }

@@ -79,15 +79,6 @@ public class UserController {
         return "user/form"; // Trả về trang Thymeleaf để tạo người dùng mới
     }
 
-    @PostMapping("/users/new")
-    public String createuser(@Valid @ModelAttribute User user, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "user/user-form"; // Trả về lại trang tạo nếu có lỗi
-        }
-        userService.save(user);
-        return "redirect:/users"; // Chuyển hướng đến danh sách người dùng sau khi lưu
-    }
-
     // Cập nhật thông tin người dùng
     @GetMapping("/users/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model, HttpSession session) {
@@ -130,8 +121,9 @@ public class UserController {
         user.setId(id);
         try {
         	String avatarFileUrl = fileHelper.uploadFile(avatarFile);
-        	if(avatarFileUrl != null) {
-        		user.setAvatarUrl(avatarFileUrl); 
+        	if(avatarFileUrl != null) {        		
+        		fileHelper.deleteFile(user.getAvatarUrl());        		
+        		user.setAvatarUrl(avatarFileUrl);
         	}
         	
         	String cccd = fileHelper.uploadFile(cccdFile);

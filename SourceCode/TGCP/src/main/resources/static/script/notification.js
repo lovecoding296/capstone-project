@@ -7,7 +7,7 @@ function updateUnreadNotificationCount() {
 	fetch('/api/notifications/unread-count')
 		.then(response => response.json())
 		.then(count => {
-			console.log("updateUnreadMessageCount " + count)
+			console.log("updateUnreadNotificationCount " + count)
 			const badge = document.getElementById('notificationCountBadge');
 			if (count > 0) {
 				badge.textContent = count;

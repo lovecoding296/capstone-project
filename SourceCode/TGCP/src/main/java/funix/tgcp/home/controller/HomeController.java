@@ -38,9 +38,7 @@ public class HomeController {
 
 	@Autowired
 	private PostService postService;
-	
-	@Autowired
-	private FileHelper fileHelper;
+
 
 	@GetMapping("/")
 	public String home(Model model, HttpSession session) {
@@ -92,17 +90,13 @@ public class HomeController {
 	}
 	
 	@PostMapping("/signup")
-    public String createuser(@Valid @ModelAttribute User user, BindingResult result, @RequestParam("cccdFile") MultipartFile cccdFile,  Model model) {
+    public String createuser(@Valid @ModelAttribute User user, BindingResult result, @RequestParam MultipartFile cccdFile,  Model model) {
         if (result.hasErrors()) {
         	model.addAttribute("user", user);
             return "signup";
         }
-		try {
-			String cccd = fileHelper.uploadFile(cccdFile);			
-			if(cccd != null) {
-	    		user.setCccd(cccd);
-	    	}
-			userService.registerUser(user);
+		try {		
+			userService.registerUser(cccdFile, user);
 			System.out.println("Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
 			model.addAttribute("successMessage", "Đăng ký thành công, hãy kiểm tra email và chờ quản trị viên phê duyệt tài khoản.");
 			model.addAttribute("user", new User());

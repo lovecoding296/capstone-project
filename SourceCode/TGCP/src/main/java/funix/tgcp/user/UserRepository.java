@@ -23,8 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByVerificationToken(String token);
 
 	boolean existsByEmail(String email);
-
-
 	
 	    
 	@Query("SELECT u FROM User u WHERE u.role = 'ROLE_GUIDE' " +
@@ -41,8 +39,23 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	                             @Param("isLocalGuide") Boolean isLocalGuide,
 	                             @Param("isInternationalGuide") Boolean isInternationalGuide,
 	                             Pageable pageable);
-
-
 	
+	
+	@Query("SELECT u FROM User u WHERE (:email IS NULL OR u.email LIKE %:email%) "
+	       + "AND (:fullName IS NULL OR u.fullName LIKE %:fullName%) "
+	       + "AND (:role IS NULL OR u.role = :role) "
+	       + "AND (:kycApproved IS NULL OR u.kycApproved = :kycApproved) "
+	       + "AND (:enabled IS NULL OR u.enabled = :enabled) "
+	       + "AND (:verified IS NULL OR u.verified = :verified) "
+	       + "ORDER BY u.id ASC")
+	List<User> findUserByFilter(
+	        @Param("email") String email,
+	        @Param("fullName") String fullName,
+	        @Param("role") Role role,
+	        @Param("kycApproved") Boolean kycApproved,
+	        @Param("enabled") Boolean enabled,
+	        @Param("verified") Boolean verified);
+
+
 }
 

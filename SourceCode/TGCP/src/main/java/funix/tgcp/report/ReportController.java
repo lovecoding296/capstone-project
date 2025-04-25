@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import funix.tgcp.config.CustomUserDetails;
+import funix.tgcp.user.Role;
 import funix.tgcp.util.LogHelper;
 
 @RestController
@@ -26,9 +28,19 @@ public class ReportController {
 
 
     @GetMapping()
-    public ResponseEntity<List<Report>> getAll() {    	
+    public List<Report> findReportByFilter(
+    		@RequestParam(required = false) String reporter,
+	        @RequestParam(required = false) String reason,
+	        @RequestParam(required = false) Boolean resolved, 
+	        @RequestParam(required = false) ReportType reportType
+	        ) {    	
     	
-    	return ResponseEntity.ok(reportService.getAll());
+    	return reportService.findReportByFilter(
+    			reporter,
+    			reason,
+    			resolved,
+    			reportType
+    			);
     }
 
     @PostMapping("/create")

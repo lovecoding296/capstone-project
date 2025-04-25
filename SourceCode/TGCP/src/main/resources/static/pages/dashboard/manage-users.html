@@ -1,0 +1,60 @@
+<div id="manage-users" class="content-section">
+	<h2>Manage users</h2>
+	
+	<form id="filterForm" class="form-inline">
+		<input type="text" id="fullName" name="fullName" placeholder="Enter full name">	
+		<input type="text" id="email" name="email" placeholder="Enter email">
+			
+		<select id="role" name="role">
+			<option value="">Role: All</option>
+			<option value="ROLE_USER">User</option>
+			<option value="ROLE_GUIDE">Guide</option>
+			<option value="ROLE_ADMIN">Admin</option>
+		</select>
+	
+		<select id="kycApproved" name="kycApproved">
+			<option value="">Kyc Approved: All</option>
+			<option value="true">Approved</option>
+			<option value="false">Not Approved</option>
+		</select>
+	
+		<select id="verified" name="verified">
+			<option value="">Verified: All</option>
+			<option value="true">Verified</option>
+			<option value="false">Not Verified</option>
+		</select>
+		<select id="enabled" name="enabled">
+			<option value="">Enalbed: All</option>
+			<option value="true">Enalbed</option>
+			<option value="false">Not Enalbed</option>
+		</select>
+		<button type="button" onclick="fetchUsers()" class="btn btn-primary">Filter</button>
+	</form>
+	<br>
+
+	<table class="table table-bordered table-striped">
+		<thead class="table-dark">
+			<tr>
+				<th>Fullname</th>
+				<th>Email</th>
+				<th>Role</th>
+				<th>KYCApproved</th>
+				<th>Email Verified</th>
+				<th>Enabled</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody id="usersTable">
+			<!-- Dữ liệu sẽ được tải vào đây bằng JavaScript -->
+		</tbody>
+	</table>
+	
+	
+	<div id="pagination" class="justify-content-center mt-4" style="display: none;">
+		<button id="prev-btn" class="btn btn-primary justify-content-center btn-pagination"
+			onclick="changeUsersPage('prev')">Previous</button>
+		<button id="next-btn" class="btn btn-primary justify-content-center btn-pagination"
+			onclick="changeUsersPage('next')">Next</button>
+	</div>
+
+</div>

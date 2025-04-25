@@ -1,20 +1,31 @@
-<style>
-
-	
-	.btn-pagination {
-		text-align: center;
-		margin: 0 5px;
-		width: 100px;
-		
-	}
-
-</style>
-
-
-
-
 <div id="booking-history" class="content-section">
 	<h2>Booking history</h2>
+	
+	<form id="filterForm" class="form-inline">
+	    <input type="text" id="destination" name="destination" placeholder="Enter destination">
+
+	    <input type="date" id="startDate" name="startDate" placeholder="Enter start date">
+
+	    <input type="date" id="endDate" name="endDate" placeholder="Enter end date">
+
+	    <input type="text" id="guide" name="guide" placeholder="Enter guide name">
+
+	    <select id="bookingStatus" name="bookingStatus">
+	        <option value="">Booking Status: All</option>
+	        <option value="PENDING">Pending</option>
+	        <option value="REJECTED">Rejected</option>
+	        <option value="CONFIRMED">Confirmed</option>
+			<option value="CANCELED_BY_USER">Cancled by user</option>
+			<option value="CANCELED_BY_GUIDE">Cancled by guide</option>
+			<option value="COMPLETED">Completed</option>
+			
+	    </select>
+
+	    <button type="button" onclick="fetchBookings()" class="btn btn-primary">Filter</button>
+	</form>
+	<br>
+
+	
 	<table class="table table-bordered table-hover align-middle bg-white">
 		<thead class="table-light">
 			<tr>
@@ -22,7 +33,7 @@
 				<th scope="col">Start Date</th>
 				<th scope="col">End Date</th>
 				<th scope="col">Created at</th>
-				<th scope="col">Creator</th>
+				<th scope="col">Guide</th>
 				<th scope="col">Booking Status</th>
 				<th scope="col">Actions</th>
 			</tr>
@@ -32,10 +43,10 @@
 		</tbody>
 	</table>
 	
-	<div id="pagination" class="d-flex justify-content-center mt-4">
-		<button id="prev-btn" class="btn btn-primary d-flex justify-content-center btn-pagination"
-			onclick="changePage('prev')">Previous</button>
-		<button id="next-btn" class="btn btn-primary d-flex justify-content-center btn-pagination"
-			onclick="changePage('next')">Next</button>
+	<div id="pagination" class="justify-content-center mt-4" style="display: none;">
+		<button id="prev-btn" class="btn btn-primary justify-content-center btn-pagination"
+			onclick="changeHistoryBookingPage('prev')">Previous</button>
+		<button id="next-btn" class="btn btn-primary justify-content-center btn-pagination"
+			onclick="changeHistoryBookingPage('next')">Next</button>
 	</div>
 </div>

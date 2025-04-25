@@ -69,7 +69,7 @@
 
 		/* Các mục trong sidebar */
 		.sidebar .nav-item {
-		    margin-bottom: 10px;
+		    margin-bottom: 1px;
 		}
 
 		/* Các liên kết trong sidebar */
@@ -97,6 +97,13 @@
 		/* Khi có nội dung dài trong sidebar, dùng overflow để cuộn */
 		.sidebar .nav {
 		    margin-bottom: 50px;
+		}
+		
+		.btn-pagination {
+			text-align: center;
+			margin: 0 5px;
+			width: 100px;
+			
 		}
 		
 		
@@ -127,28 +134,33 @@
 				<div class="position-sticky">
 					<h4>Dashboard Panel</h4>
 					<ul class="nav flex-column">
-						<li class="nav-item"><a class="panel-link nav-link" href="#guide-register"
-								onclick="navigate(event,'guide-register')">Guide register</a>
+						
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isAdmin()}" class="nav-item"><a class="panel-link nav-link" href="#manage-users"
+								onclick="navigate(event,'manage-users')">Manage users</a>
 						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#guide-approval"
-								onclick="navigate(event,'guide-approval')">Guide approval</a>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isAdmin()}" class="nav-item"><a class="panel-link nav-link" href="#magage-guide-requests"
+								onclick="navigate(event,'magage-guide-requests')">Manage guide requests</a>
+						</li>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isAdmin()}" class="nav-item"><a class="panel-link nav-link" href="#manage-reports"
+								onclick="navigate(event,'manage-reports')">Manage reports</a>
 						</li>
 						
+						<li class="nav-item"><a class="panel-link nav-link" href="#guide-register"
+								onclick="navigate(event,'guide-register')">Guide register</a>
+						</li>						
 						<li class="nav-item"><a class="panel-link nav-link" href="#booking-history"
 								onclick="navigate(event,'booking-history')">Booking history</a>
 						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#manage-bookings"
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-bookings"
 								onclick="navigate(event,'manage-bookings')">Manage bookings</a>
 						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#manage-busydate"
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-busydate"
 								onclick="navigate(event,'manage-busydate')">Manage days off</a>
 						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#income-summary"
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#income-summary"
 								onclick="navigate(event,'income-summary')">Income summary</a>
-						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#manage-reports"
-								onclick="navigate(event,'manage-reports')">Manage reports</a>
-						</li>
+						</li>						
+
 					</ul>
 				</div>
 			</nav>
@@ -223,7 +235,7 @@
 								        checkGuideRequestStatus();
 								        break;							
 												
-								    case "guide-approval":
+								    case "magage-guide-requests":
 								        fetchGuideRequests();
 								        break;
 										
@@ -243,7 +255,7 @@
 										break;
 										
 									case "manage-bookings":
-										fetchGuidesBookings();
+										fetchGuideBookings();
 										break;
 										
 									case "tour-create":
@@ -259,6 +271,11 @@
 										
 									case "manage-reports":
 										fetchReports();
+										break;
+										
+									case "manage-users":
+										fetchUsers();
+										break;				
 									
 								    default:
 								        console.log("No action found for page:", page);

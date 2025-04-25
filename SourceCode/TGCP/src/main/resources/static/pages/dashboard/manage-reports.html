@@ -1,17 +1,27 @@
-<style>
-
-	
-	.btn-pagination {
-		text-align: center;
-		margin: 0 5px;
-		width: 100px;
-		
-	}
-
-</style>
-
 <div id="manage-reports" class="content-section">
 	<h2>Manage reports</h2>
+	<form id="filterForm" class="form-inline">
+		<input type="text" id="reporter" name="reporter" placeholder="Enter reporter name">
+		<input type="text" id="reason" name="reason" placeholder="Enter reason">
+
+		<select id="resolved" name="resolved">
+			<option value="">Resolved: All</option>
+			<option value="true">Resolved</option>
+			<option value="false">Unresolved</option>
+		</select>
+
+		<select id="reportType" name="reportType">
+			<option value="">Report Type: All</option>
+			<option value="USER">User</option>
+			<option value="POST">Blog</option>
+		</select>
+
+		<button type="button" onclick="fetchReports()" class="btn btn-primary">Filter</button>
+	</form>
+	<br>
+
+
+
 	<table class="table table-bordered table-hover align-middle bg-white">
 		<thead class="table-light">
 			<tr>
@@ -28,10 +38,10 @@
 		</tbody>
 	</table>
 
-	<div id="pagination" class="d-flex justify-content-center mt-4">
-		<button id="prev-btn" class="btn btn-primary d-flex justify-content-center btn-pagination"
+	<div id="pagination" class="justify-content-center mt-4" style="display: none;">
+		<button id="prev-btn" class="btn btn-primary justify-content-center btn-pagination"
 			onclick="changeReportPage('prev')">Previous</button>
-		<button id="next-btn" class="btn btn-primary d-flex justify-content-center btn-pagination"
+		<button id="next-btn" class="btn btn-primary justify-content-center btn-pagination"
 			onclick="changeReportPage('next')">Next</button>
 	</div>
 </div>

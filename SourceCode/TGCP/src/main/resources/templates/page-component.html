@@ -52,11 +52,6 @@
 						<a class="nav-link" href="/dashboard">
 							Dashboard</a>
 					</li>
-
-					<li class="nav-item" sec:authorize="!isAnonymous()">
-						<a class="nav-link" th:if="${session.loggedInUser.isAdmin()}" href="/manager-user/verify">
-							Manage Verify Account</a>
-					</li>
 					
 					<li class="nav-item dropdown" id="messageDropdown">
 					  <a class="nav-link dropdown-toggle" href="#" id="messageLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -139,13 +134,13 @@
 
 	<footer th:fragment="footer" id="footer" class=".container-fluid">
 		<div class="row">
-			<!--<div class="col-3">
+			<div class="col-3">
 				<h2>Support</h2>
-				<br><a class="text-start" href="#">FAQs</a>
-				<br><a class="text-start" href="#">Contact Us</a>
+				<!--<br><a class="text-start" href="#">FAQs</a>-->
+				<br><a class="text-start" onclick="openChatWithUser(1, 'Admin')">Chat with Admin</a>
 				<br><a class="text-start" href="#">Support Us</a>
 			</div>
-			<div class="col-3">
+			<!--<div class="col-3">
 				<h2></h2>
 				<br><a href="#">Blog</a>
 			</div>-->

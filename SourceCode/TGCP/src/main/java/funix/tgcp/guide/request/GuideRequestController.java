@@ -34,6 +34,13 @@ public class GuideRequestController {
         if (principal instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) principal;
             Long userId = userDetails.getId();
+            
+            if(userDetails.getUser().isGuide()) {
+            	GuideRequest guideRequest = new GuideRequest();   
+            	guideRequest.setStatus(GuideRequestStatus.APPROVED);
+            	return ResponseEntity.ok(guideRequest);
+            }
+            
 
             GuideRequest guideRequest = guideRequestService.findByUserId(userId);            
             if (guideRequest != null) {

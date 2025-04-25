@@ -15,16 +15,19 @@ import funix.tgcp.user.UserRepository;
 import funix.tgcp.user.City;
 import funix.tgcp.user.Language;
 import funix.tgcp.user.Role;
+import funix.tgcp.guide.request.GuideRequest;
+import funix.tgcp.guide.request.GuideRequestRepository;
+import funix.tgcp.guide.request.GuideRequestStatus;
 import funix.tgcp.post.PostRepository;
 
 @Component
 public class DummyData implements ApplicationRunner {
 
 	@Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepo;
 	
 	@Autowired
-    private PostRepository postRepository;
+    private GuideRequestRepository guideRequestRepo;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -47,7 +50,7 @@ public class DummyData implements ApplicationRunner {
         createUser("phi7@tgcp.com",  "phi7",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  60,  5,   true,  true,  "/uploads/guide2.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
         createUser("phi8@tgcp.com",  "phi8",  "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 3.9, false, true,  "/uploads/guide3.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
         createUser("phi9@tgcp.com",  "phi9",  "123", Role.ROLE_GUIDE, City.BINH_THUAN, 70,  4.8, true,  false, "/uploads/guide4.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi10@tgcp.com", "ph10i", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 4.6, false, true,  "/uploads/guide5.webp", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("phi10@tgcp.com", "ph10", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  100, 4.6, false, true,  "/uploads/guide5.webp", "Vietcombank", "Nguyen Van A", "0123456789123");
         createUser("phi11@tgcp.com", "phi11", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  80,  4.7, true,  true,  "/uploads/guide6.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
         createUser("phi12@tgcp.com", "phi12", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  99,  4.9, false, true,  "/uploads/guide1.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
         createUser("phi13@tgcp.com", "phi13", "123", Role.ROLE_GUIDE, City.HAI_DUONG,  32,  4.2, true,  true,  "/uploads/guide2.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
@@ -58,7 +61,7 @@ public class DummyData implements ApplicationRunner {
 	}
 	
 	private void createUser(String email, String fullName, String rawPassword, Role role) {
-        Optional<User> userOp = userRepository.findByEmail(email);
+        Optional<User> userOp = userRepo.findByEmail(email);
 
         if (userOp.isEmpty()) {
             User user = new User();
@@ -72,7 +75,7 @@ public class DummyData implements ApplicationRunner {
             user.setKycApproved(true);
             user.setVerified(true);
             
-            userRepository.save(user);
+            userRepo.save(user);
             System.out.println("account created successfully!");
         } else {
             System.out.println("account already exists.");
@@ -93,7 +96,7 @@ public class DummyData implements ApplicationRunner {
 			, String accountHodler
 			, String accountNumber
 			) {
-        Optional<User> userOp = userRepository.findByEmail(email);
+        Optional<User> userOp = userRepo.findByEmail(email);
 
         if (userOp.isEmpty()) {
             User user = new User();
@@ -121,7 +124,19 @@ public class DummyData implements ApplicationRunner {
             user.setBankName(bankName);
             user.setAccountNumber(accountNumber);
             
-            userRepository.save(user);
+            
+            GuideRequest guideRequest = new GuideRequest();
+            guideRequest.setUser(userRepo.save(user));
+            guideRequest.setInternationalGuide(isInternationalGuidem);
+            guideRequest.setLocalGuide(isLocalGuide);
+            guideRequest.setStatus(GuideRequestStatus.APPROVED);
+            
+            
+            guideRequestRepo.save(guideRequest);
+            
+            
+            
+            
             System.out.println("account created successfully!");
         } else {
             System.out.println("account already exists.");

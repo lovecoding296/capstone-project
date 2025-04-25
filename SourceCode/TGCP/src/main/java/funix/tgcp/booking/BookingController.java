@@ -1,5 +1,7 @@
 package funix.tgcp.booking;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.config.CustomUserDetails;
+import funix.tgcp.user.Role;
 import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;
 
@@ -40,25 +43,45 @@ public class BookingController {
     
     
 
-    // API lấy tất cả booking của người dùng
     @GetMapping("/api/bookings")
-    public ResponseEntity<?> getBookings() {
+    public List<Booking> findBookingByCustomerAndFilter(
+	        @RequestParam(required = false) String destination,
+	        @RequestParam(required = false) LocalDate startDate,
+	        @RequestParam(required = false) LocalDate endDate, 
+	        @RequestParam(required = false) String guide, 
+	        @RequestParam(required = false) BookingStatus status){
     	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
+			
+    	return bookingService.findBookingByCustomerAndFilter(
+				userDetails.getId(),
+				destination,
+				startDate,
+				endDate,
+				guide,
+				status);
+		    	    	
+    }
+    
+    // API lấy tất cả booking nhận được của guide
+    @GetMapping("/api/guides/bookings")
+    public List<Booking> findBookingsByGuideAndFilter(
+    		@RequestParam(required = false) String destination,
+	        @RequestParam(required = false) LocalDate startDate,
+	        @RequestParam(required = false) LocalDate endDate, 
+	        @RequestParam(required = false) String user, 
+	        @RequestParam(required = false) BookingStatus status) {      
+        
+        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+    	logger.info("userDetails " + userDetails);
     	
-		if (userDetails != null) {
-			logger.info("is admin " + userDetails.isAdmin());
-			if(userDetails.isAdmin()) {
-				return bookingService.findAll();
-			} else {
-				Long userId = userDetails.getId();
-				return bookingService.getBookingsByCustomer(userId);
-			}			
-		}
-		else {
-			logger.info("not logged in -> get all bookings");
-			return bookingService.findAll();
-		}    	    	
+    	return bookingService.findBookingByGuideAndFilter(
+				userDetails.getId(),
+				destination,
+				startDate,
+				endDate,
+				user,
+				status);
     }
 
     @GetMapping("/api/bookings/{bookingId}")
@@ -72,27 +95,7 @@ public class BookingController {
         return ResponseEntity.ok(booking.get());
     }
     
-    // API lấy tất cả booking nhận được của guide
-    @GetMapping("/api/guides/bookings")
-    public ResponseEntity<?> getBookingsByGuide() {      
-        
-        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
-    	logger.info("userDetails " + userDetails);
-    	
-    	if (userDetails != null) {
-			logger.info("is admin " + userDetails.isAdmin());
-			if(userDetails.isAdmin()) {
-				return bookingService.findAll();
-			} else {
-				Long userId = userDetails.getId();
-				return bookingService.getBookingsByGuide(userId);
-			}			
-		}
-		else {
-			logger.info("not logged in -> get all bookings");
-			return bookingService.findAll();
-		}
-    }
+
 
     // API xác nhận booking
     @PutMapping("/api/bookings/{bookingId}/confirm")

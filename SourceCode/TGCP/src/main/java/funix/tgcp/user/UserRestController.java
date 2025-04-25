@@ -5,12 +5,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import funix.tgcp.booking.BookingController;
+import funix.tgcp.util.LogHelper;
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserRestController {
 
+	private static final LogHelper logger = new LogHelper(UserRestController.class);
+
+	
 	@Autowired
 	private UserService userService;
 
@@ -32,5 +39,43 @@ public class UserRestController {
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
 	}
-	 
+	
+	@GetMapping()
+	public List<User> findUserByFilter(
+	        @RequestParam(required = false) String email,
+	        @RequestParam(required = false) String fullName,
+	        @RequestParam(required = false) Role role, 
+	        @RequestParam(required = false) Boolean kycApproved, 
+	        @RequestParam(required = false) Boolean enabled,
+	        @RequestParam(required = false) Boolean verified) {	    
+
+	    // Trả về kết quả tìm kiếm từ UserService
+	    return userService.findUserByFilter( 
+	    		email,
+	    		fullName,
+	            role,
+	            kycApproved,
+	            enabled,
+	            verified);
+	}
+
+	
+	
+	@PutMapping("/{id}/enable")
+	public ResponseEntity<?> enableUser(@PathVariable Long id) {
+		userService.setUserEnabled(id, true);
+		return ResponseEntity.ok("User enabled");
+	}
+
+	@PutMapping("/{id}/disable")
+	public ResponseEntity<?> disableUser(@PathVariable Long id) {
+		userService.setUserEnabled(id, false);
+		return ResponseEntity.ok("User disabled");
+	}
+
+	@PutMapping("/{id}/approve-kyc")
+	public ResponseEntity<?> approveKyc(@PathVariable Long id) {
+		userService.approveKyc(id);
+		return ResponseEntity.ok("KYC approved");
+	}
 }
