@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import funix.tgcp.booking.BookingController;
+import funix.tgcp.booking.BookingRestController;
 import funix.tgcp.util.LogHelper;
 
 import java.util.List;

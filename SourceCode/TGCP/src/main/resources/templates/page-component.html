@@ -45,7 +45,7 @@
 
 					<li class="nav-item">
 						<a class="nav-link" href="/posts/new" role="button">
-							<span>Create a new blog</span>
+							<span>Create a new post</span>
 						</a>
 					</li>
 					<li class="nav-item" >
@@ -98,12 +98,11 @@
 							<li>
 								<a class="dropdown-item" th:href="@{/users/{id}(id=${session.loggedInUser.id})}"
 									>Profile</a>
-							</li>
-							
+							</li>							
 							
 							<li>
 								<a class="dropdown-item" th:href="@{/posts/author/{id}(id=${session.loggedInUser.id})}"
-									>My blogs</a>
+									>My posts</a>
 							</li>
 							
 							<li>

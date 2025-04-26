@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import funix.tgcp.booking.BookingController;
+import funix.tgcp.booking.BookingRestController;
 import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;

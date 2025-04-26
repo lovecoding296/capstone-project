@@ -14,9 +14,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 	
 	
 	
-	
-	
-	
+	@Query("SELECT COUNT(b) FROM Booking b WHERE b.status = 'COMPLETED' "
+			+ "AND (b.customer.id = :userId OR b.guide.id = :userId)")
+	long countCompletedByUserIdOrGuideId(@Param("userId") Long userId);
+
 	
 	
     @Query("SELECT b FROM Booking b WHERE b.customer.id = :customerId " +

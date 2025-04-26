@@ -61,32 +61,11 @@ public class HomeController {
 		model.addAttribute("user", new User());
 		return "signup"; // Trả về trang signup.html
 	}
-	
-	
-	@GetMapping("/users/bookings/{bookingId}")
-	public String showBooking() {
-		return "booking/user-booking";
-	}
-	
-	@GetMapping("/guides/bookings/{bookingId}")
-	public String showBookingForGuide() {
-		return "booking/guide-booking";
-	}
-	
-	@GetMapping("/tours/{id}/payments")
-	public String showPayment() {
-		return "payment/payment"; 
-	}
 
 	
 	@GetMapping("/dashboard")
 	public String dashboard() {
 		return "/dashboard/dashboard-main";
-	}
-	
-	@GetMapping("/dashboard/guide-approval")
-	public String dashboardGuideApproval() {
-		return "/dashboard/guide-approval";
 	}
 	
 	@PostMapping("/signup")
@@ -122,7 +101,7 @@ public class HomeController {
 	}
 
 	@GetMapping("/verify")
-	public String verifyEmail(@RequestParam("token") String token, Model model) {
+	public String verifyEmail(@RequestParam String token, Model model) {
 		try {
 			userService.verifyEmail(token);
 			model.addAttribute("successMessage", "Email verified successfully! You can now log in.");

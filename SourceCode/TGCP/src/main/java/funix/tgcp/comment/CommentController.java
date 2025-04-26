@@ -70,11 +70,11 @@ public class CommentController {
 
 		if (!post.getAuthor().equals(currentUser)) {
 
-			logger.info(userDetails.getFullName() + " commented on your blog!");
+			logger.info(userDetails.getFullName() + " commented on your post!");
 						
 			notificationService.sendNotification(
 					post.getAuthor(),
-					userDetails.getFullName() + " commented on your blog (" + post.getTitle() + ")!",
+					userDetails.getFullName() + " commented on your post (" + post.getTitle() + ")!",
 					"/posts/" + postId
 					);
 			
@@ -134,7 +134,7 @@ public class CommentController {
 	    if (!postAuthor.getId().equals(currentUserId) && !postAuthor.getId().equals(parentAuthor.getId())) {
 	    	notificationService.sendNotification(
 	            postAuthor,
-	            currentUserName + " commented on your blog!",
+	            currentUserName + " commented on your post (" + post.getTitle() + ")!",
 	            "/posts/" + post.getId()
 	        );
 	    }

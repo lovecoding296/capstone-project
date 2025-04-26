@@ -16,9 +16,9 @@ import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;
 
 @RestController
-public class BookingController {
+public class BookingRestController {
 	
-	private static final LogHelper logger = new LogHelper(BookingController.class);
+	private static final LogHelper logger = new LogHelper(BookingRestController.class);
 
     @Autowired
     private BookingService bookingService;

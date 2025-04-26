@@ -45,7 +45,7 @@ public class PostLikeService {
             
             notificationService.sendNotification(
             		post.getAuthor(), 
-            		user.getFullName() + " likded your blog (" + post.getTitle() + ")!",
+            		user.getFullName() + " likded your post (" + post.getTitle() + ")!",
             		"/posts/" + post.getId());
             
             return true; // Đã thích

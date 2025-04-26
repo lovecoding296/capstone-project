@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import funix.tgcp.booking.BookingService;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
 import funix.tgcp.review.Review;
@@ -38,46 +42,32 @@ public class UserController {
     private ReviewService reviewService;
 	
 	@Autowired
+    private BookingService bookingService;
+	
+	@Autowired
 	private FileHelper fileHelper;
     
-    
-    
-    // Lấy danh sách tất cả người dùng
-    @GetMapping("/users")
-    public String getAllusers(Model model) {
-        List<User> users = userService.findAll();
-        
-        
-        model.addAttribute("users", users);
-        return "user/user-list"; // Trả về trang Thymeleaf với danh sách người dùng
-    }
-
     // Lấy thông tin người dùng theo ID
-    @GetMapping("/users/{id}")
-    public String getuserById(@PathVariable Long id, Model model) {
-        Optional<User> user = userService.findById(id);
+    @GetMapping("/users/{userId}")
+    public String getuserById(@PathVariable Long userId, Model model) {
+        Optional<User> user = userService.findById(userId);
         if (user.isPresent()) {
         	
-            List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(user.get().getId());            
-            List<Review> reviews = reviewService.findByReviewedUserIdOrderByRatingDesc(user.get().getId());
-
+            List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(userId);            
+            List<Review> reviews = reviewService.findByReviewedUserIdOrderByRatingDesc(userId);
+        	long bookingCount = bookingService.countCompletedByUserIdOrGuideId(userId);
         	
             model.addAttribute("user", user.get());
             model.addAttribute("posts", posts);
             model.addAttribute("reviews", reviews);
+            model.addAttribute("bookingCount", bookingCount);
             
             
             return "user/user-details"; // Trả về trang chi tiết người dùng
         }
-        return "redirect:/users"; // Nếu không tìm thấy, chuyển hướng về trang danh sách
+        return "redirect:/"; // Nếu không tìm thấy, chuyển hướng về trang danh sách
     }
 
-    // Tạo mới người dùng
-    @GetMapping("/users/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("user", new User());
-        return "user/form"; // Trả về trang Thymeleaf để tạo người dùng mới
-    }
 
     // Cập nhật thông tin người dùng
     @GetMapping("/users/{id}/edit")
@@ -89,7 +79,7 @@ public class UserController {
         }
 
         if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
-            return "redirect:/users"; // Không phải chính chủ hoặc admin -> Từ chối truy cập
+            return "redirect:/"; // Không phải chính chủ hoặc admin -> Từ chối truy cập
         }
 
         Optional<User> user = userService.findById(id);
@@ -97,7 +87,7 @@ public class UserController {
             model.addAttribute("user", user.get());
             return "user/user-form"; // Trả về trang chỉnh sửa
         }
-        return "redirect:/users"; // Không tìm thấy người dùng -> Chuyển hướng
+        return "redirect:/"; // Không tìm thấy người dùng -> Chuyển hướng
     }
 
 
@@ -111,7 +101,7 @@ public class UserController {
         }
 
         if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
-            return "redirect:/users"; // Không có quyền chỉnh sửa
+            return "redirect:/"; // Không có quyền chỉnh sửa
         }
 
         if (result.hasErrors()) {
@@ -150,11 +140,37 @@ public class UserController {
         }
 
         if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
-            return "redirect:/users"; // Không có quyền xóa
+            return "redirect:/";
         }
 
         userService.deleteById(id);
-        return "redirect:/users"; // Chuyển hướng sau khi xóa
+        return "redirect:/"; 
+    }
+    
+    
+    @GetMapping("/guides")
+    public String searchGuides(
+            @RequestParam(required = false) City city,
+            @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(required = false) Gender gender,
+            @RequestParam(required = false) Language language,
+            @RequestParam(required = false) Boolean isLocalGuide,
+            @RequestParam(required = false) Boolean isInternationalGuide,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            Model model) {
+
+    	Pageable pageable = PageRequest.of(page, size); // Tạo Pageable    	
+    	Page<User> userPage = userService.searchGuides(city, maxPrice, gender, language,isLocalGuide, isInternationalGuide, pageable);
+
+        model.addAttribute("users", userPage.getContent()); // Lấy nội dung trang
+        model.addAttribute("totalPages", userPage.getTotalPages()); // Số trang
+        model.addAttribute("currentPage", page); // Trang hiện tại
+        
+        model.addAttribute("cities", City.values());
+        model.addAttribute("languages", Language.values());
+
+        return "guide/guide-list"; // Tên view Thymeleaf trả về, ví dụ: templates/guides/list.html
     }
     
     

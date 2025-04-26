@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import funix.tgcp.booking.Booking;
-import funix.tgcp.booking.BookingController;
+import funix.tgcp.booking.BookingRestController;
 import funix.tgcp.booking.BookingRepository;
 import funix.tgcp.booking.BookingService;
 import funix.tgcp.notification.NotificationService;

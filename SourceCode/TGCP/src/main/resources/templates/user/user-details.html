@@ -96,15 +96,15 @@
 					style="border-radius: 15px; border: solid 4px darkseagreen;">
 				<br><br><br>
 				<div th:if="${(session.loggedInUser != null) and (session.loggedInUser.id == user.id || session.loggedInUser.isAdmin())}">
-					<img th:src="@{${user.cccd} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">
-					<label>Citizen ID photo (Only visible to you or admin):</label>
+					<label><i>Citizen ID photo (Only visible to you or admin):</i></label>
+					<img th:src="@{${user.cccd} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">					
 				</div>
 			</div>
 
 			<div class="col-md-8">
 				<h3 th:text="${user.fullName}"></h3>
-				<span th:if="${user.isLocalGuide}" class="badge bg-info me-1">Local guide</span>
-				<span th:if="${user.isInternationalGuide}" class="badge bg-warning text-dark">Internaltion guide</span>
+				<span th:if="${user.isGuide() && user.isLocalGuide}" class="badge bg-info me-1">Local guide</span>
+				<span th:if="${user.isGuide() && user.isInternationalGuide}" class="badge bg-warning text-dark">Internaltion guide</span>
 				<!--<p><strong>Email:</strong> <span th:text="${user.email}"></span></p>-->
 				<p th:if="${user.dateOfBirth}"><strong>Date of birth:</strong> <span th:text="${user.dateOfBirth}"></span></p>
 				<!--<p><strong>Số điện thoại:</strong> <span th:text="${user.phone}"></span></p>
@@ -116,16 +116,18 @@
 				<p th:if="${user.facebook}"><strong>Facebook:</strong> <a th:href="${user.facebook}" th:text="${user.facebook}"></a></p>
 				<p th:if="${user.tiktok}"><strong>Tiktok:</strong> <a th:href="${user.tiktok}" th:text="${user.tiktok}"></a></p>
 				<p th:if="${user.instagram}"><strong>Instagram:</strong> <a th:href="${user.instagram}" th:text="${user.instagram}"></a></p>
-				<p>⭐<span th:text="${#numbers.formatDecimal(user.averageRating, 1, 1)}"></span> (<span th:text="${user.reviewCount}">100</span> reviews)</p>
+				<p th:if="${user.isGuide()}">⭐<span th:text="${#numbers.formatDecimal(user.averageRating, 1, 1)}"></span> (<span th:text="${user.reviewCount}">100</span> reviews)</p>
+				<p th:if="${user.isGuide()}">Completed tours:<span th:text="${bookingCount}"></span></p>
+				<p th:if="${!user.isGuide()}">Joined tours:<span th:text="${bookingCount}"></span></p>
 				<!--<p><strong>Đã xác thực email:</strong> <span th:text="${user.verified ? 'Có' : 'Chưa'}"></span></p>
-				<p><strong>Được phê duyệt KYC:</strong> <span th:text="${user.kycApproved ? 'Có' : 'Chưa'}"></span>-->
-				</p>
+				<p><strong>Được phê duyệt KYC:</strong> <span th:text="${user.kycApproved ? 'Có' : 'Chưa'}"></span></p>-->
+				
 
 			</div>
 		</div>
 
 
-		<div class="review-section position-relative mt-5">
+		<div th:if="${user.isGuide()}" class="review-section position-relative mt-5">
 		    <!-- Section title đè lên khung -->
 		    <div class="review-section-title bg-white position-absolute">
 		        <h5 class="m-0"><strong>Top reviews about <span th:text="${user.fullName}"></span></strong></h5>
@@ -170,7 +172,7 @@
 		<br><br>
 		<!-- Section: Danh sách bài viết đã viết -->
 		<div class="section-title">
-			<h5><strong>Top blogs by <span th:text="${user.fullName}"></span></strong></h5>
+			<h5><strong>Top posts by <span th:text="${user.fullName}"></span></strong></h5>
 		</div>
 		<table class="table table-stoured table-bordered mt-4">
 			<thead class="table-success">

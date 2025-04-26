@@ -61,179 +61,11 @@
 			const urlParts = window.location.pathname.split('/');
 			const bookingId = urlParts[urlParts.length - 1];
 
-			fetch(`/api/bookings/${bookingId}`)
-				.then(response => response.json())
-				.then(data => {
 
-					console.log(data)
-
-					// Xử lý thông tin booking
-					const bookingInfoContainer = document.getElementById('booking-info-container');
-					bookingInfoContainer.innerHTML = ""; // Clear nội dung cũ nếu có
-
-					// Booking Info (Bên trái)
-					const leftColumn = document.createElement('div');
-					leftColumn.classList.add('col-md-6');
-					leftColumn.innerHTML = `
-						<span class="badge ${getStatusBadgeClass(data.status)}">${data.status} </span>
-						<p><strong>Destination:</strong> ${data.destination}</p>
-						<p><strong>Start date:</strong> ${data.startDate}</p>
-						<p><strong>End date:</strong> ${data.endDate}</p>
-						<p><strong>Number of participants:</strong> ${data.numberOfPeople}</p>
-						<p><strong>Total price:</strong> ${data.totalPrice}</p>
-					`;
-
-					// Guide Card (Bên phải)
-					const rightColumn = document.createElement('div');
-					rightColumn.classList.add('col-md-6', 'd-flex', 'justify-content-center');
-					rightColumn.innerHTML = `
-						<div class="card" style="width: 18rem; border-radius: 12px;">
-							<img src="${data.guide.avatarUrl || 'default-avatar.jpg'}" class="card-img-top rounded-circle mx-auto" alt="Guide Avatar" style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
-							<div class="card-body">
-								<a href="/users/${data.guide.id}">
-									<h4 class="text-center">${data.guide.fullName}</h4>
-								</a>
-								<p class="text-center"><span>${data.guide.averageRating || 'N/A'}</span>⭐</p>
-								<p><span>${data.guide.email || 'No email available'}</span></p>
-								<p><strong>Bank:</strong> ${data.guide.bankName || 'N/A'}</p>
-								<p><strong>Account Holder:</strong> ${data.guide.accountHolder || 'N/A'}</p>
-								<p><strong>Account Number:</strong> ${data.guide.accountNumber || 'N/A'}</p>
-							</div>
-						</div>
-					`;
-
-					// Thêm các cột vào container
-					bookingInfoContainer.appendChild(leftColumn);
-					bookingInfoContainer.appendChild(rightColumn);
-
-					const payments = data.payments || [];
-					const paymentTableContainer = document.getElementById("payment-table-container");
-					const refundTableContainer = document.getElementById("refund-payment-container");
-
-					paymentTableContainer.innerHTML = "";
-					refundTableContainer.innerHTML = "";
-
-					const paymentList = payments.filter(p => p.type === "PAYMENT");
-					const refundList = payments.filter(p => p.type === "REFUND");
-
-					// ======== TABLE: PAYMENT ========
-					if (paymentList.length > 0) {
-						const paymentTable = document.createElement("table");
-						paymentTable.className = "table table-bordered table-hover text-center align-middle shadow";
-						paymentTable.innerHTML = `
-							<thead class="table-light">
-								<tr><th class="text-center" colspan="7">Booking Payments</th></tr>
-							</thead>
-							<thead class="table-light">
-								
-								<tr>
-									<th>Transaction Image</th>
-									<th>Sender Name</th>
-									<th>Amount</th>
-									<th>Note</th>
-									<th>Sender Account Number</th>
-									<th>Status</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody id="payment-list"></tbody>
-						`;
-						paymentTableContainer.appendChild(paymentTable);
-
-						const paymentListTbody = document.getElementById("payment-list");
-
-						paymentList.forEach(payment => {
-							const row = document.createElement("tr");
-							row.id = `payment-row-${payment.id}`;
-							row.innerHTML = `
-								<td>
-									${payment.transactionImageUrl ?
-									`<img src="${payment.transactionImageUrl}" alt="Payment Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="viewFullImage('${payment.transactionImageUrl}')">`
-									: "No Image"}
-								</td>
-								<td class="sender-name">${payment.senderAccountName}</td>
-								<td class="amount">${payment.amount}</td>
-								<td class="transaction-note">${payment.transactionNote || "N/A"}</td>
-								<td class="sender-account-number">${payment.senderAccountNumber}</td>
-								<td>${payment.status}</td>
-									<td>
-										${payment.status === "PENDING" ? `
-											<button class="btn btn-sm btn-primary me-1" onclick="editPayment(${payment.id})">Edit</button>
-											<button class="btn btn-sm btn-danger" onclick="deletePayment(${payment.id})">Delete</button>
-										` : `
-											<button class="btn btn-sm btn-primary disabled-btn me-1" disabled>Edit</button>
-											<button class="btn btn-sm btn-danger disabled-btn  " disabled>Delete</button>
-										`}
-									</td>
-							`;
-							paymentListTbody.appendChild(row);
-						});
-					} else {
-						//paymentTableContainer.innerHTML = "<p>No PAYMENT entries found.</p>";
-					}
-
-					// ======== TABLE: REFUND ========
-					if (refundList.length > 0) {
-						const refundTable = document.createElement("table");
-						refundTable.className = "table table-bordered table-hover text-center align-middle shadow mt-4";
-						refundTable.innerHTML = `
-							<thead class="table-light">
-								<tr><th class="text-center" colspan="7">Refund Payments</th></tr>
-							</thead>
-							<thead class="table-light">
-								
-								<tr>
-									<th>Transaction Image</th>
-									<th>Sender Name</th>
-									<th>Amount</th>
-									<th>Note</th>
-									<th>Sender Account Number</th>
-									<th>Status</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody id="refund-payment-list"></tbody>
-						`;
-						refundTableContainer.appendChild(refundTable);
-
-						const refundListTbody = document.getElementById("refund-payment-list");
-
-						refundList.forEach(refund => {
-							const row = document.createElement("tr");
-							row.id = `refund-row-${refund.id}`;
-							row.innerHTML = `
-								<td>
-									${refund.transactionImageUrl ?
-									`<img src="${refund.transactionImageUrl}" alt="Refund Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="viewFullImage('${refund.transactionImageUrl}')">`
-									: "No Image"}
-								</td>
-								<td>${refund.senderAccountName}</td>
-								<td>${refund.amount}</td>
-								<td>${refund.transactionNote || "N/A"}</td>
-								<td>${refund.senderAccountNumber}</td>
-								<td>
-									<span class="refund-status">${refund.status}</span>
-								</td>
-								<td>
-									${refund.status === "PENDING" ? `
-										<button class="btn btn-sm btn-success mt-1" onclick="confirmPayment(${refund.id}">Confirm Received</button>
-									` : `
-										<button class="btn btn-sm btn-success mt-1 disabled-btn" disabled>Confirm Received</button>
-									`}
-								</td>
-							`;
-							refundListTbody.appendChild(row);
-						});
-
-					} else {
-						//refundTableContainer.innerHTML = "<p>No REFUND entries found.</p>";
-					}
-
-				});
 		});
 
 		function confirmPayment(paymentId) {
-			
+
 			const paymentData = {
 				id: paymentId
 			}
@@ -415,25 +247,160 @@
 	<div class="container mt-4">
 		<h2 class="page-title">Booking Information</h2>
 		<div class="row" id="booking-info-container">
-			<!-- Booking Info (Bên trái) sẽ được render động ở đây -->
+			<div class="col-md-6">
+				<span class="badge"
+					th:classappend="${booking.status.name()} == 'COMPLETED' ? 'bg-success' : 'bg-secondary'">
+					<span th:text="${booking.status}">Status</span>
+				</span>
+				<p><strong>Destination:</strong> <span th:text="${booking.destination}">Destination</span></p>
+				<p><strong>Start date:</strong> <span th:text="${booking.startDate}">Start Date</span></p>
+				<p><strong>End date:</strong> <span th:text="${booking.endDate}">End Date</span></p>
+				<p><strong>Number of participants:</strong> <span th:text="${booking.numberOfPeople}">0</span></p>
+				<p><strong>Total price:</strong> <span th:text="${booking.totalPrice}">0</span></p>
+			</div>
+
+			<div class="col-md-6 d-flex justify-content-center">
+				<div class="card" style="width: 18rem; border-radius: 12px;">
+					<img th:src="${booking.guide.avatarUrl != null ? booking.guide.avatarUrl : '/images/default-avatar.jpg'}"
+						class="card-img-top rounded-circle mx-auto" alt="Guide Avatar"
+						style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;" />
+
+					<div class="card-body">
+						<a th:href="@{/users/{id}(id=${booking.guide.id})}">
+							<h4 class="text-center" th:text="${booking.guide.fullName}">Guide Name</h4>
+						</a>
+						<p class="text-center">
+							<span
+								th:text="${booking.guide.averageRating != null ? booking.guide.averageRating : 'N/A'}">N/A</span>⭐
+								<br></bt><span>Completed tours:<span th:text="${bookingCount}"></span></span>
+						</p>
+						<p><strong>Email:</strong><span
+								th:text="${booking.guide.email != null ? booking.guide.email : 'No email available'}">Email</span>
+						</p>
+						<p><strong>Bank:</strong> <span
+								th:text="${booking.guide.bankName != null ? booking.guide.bankName : 'N/A'}">Bank</span>
+						</p>
+						<p><strong>Account Holder:</strong> <span
+								th:text="${booking.guide.accountHolder != null ? booking.guide.accountHolder : 'N/A'}">Holder</span>
+						</p>
+						<p><strong>Account Number:</strong> <span
+								th:text="${booking.guide.accountNumber != null ? booking.guide.accountNumber : 'N/A'}">Number</span>
+						</p>
+					</div>
+				</div>
+			</div>
 		</div>
+
 
 		<button onclick="openNewPaymentPopup()" class="btn btn-success">Add a new payment</button>
 		<br><br>
 		<div class="row">
 			<div class="table-responsive">
-				<div id="payment-table-container" class="mb-4"></div>
+				<div id="payment-table-container">
+					<div th:if="${#lists.size(booking.payments.?[type.name() == 'PAYMENT']) > 0}">
+						<table class="table table-bordered table-hover text-center align-middle shadow">
+							<thead class="table-light">
+								<tr>
+									<th class="text-center" colspan="7">Booking Payments</th>
+								</tr>
+								<tr>
+									<th>Transaction Image</th>
+									<th>Sender Name</th>
+									<th>Amount</th>
+									<th>Note</th>
+									<th>Sender Account Number</th>
+									<th>Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="payment : ${booking.payments.?[type.name() == 'PAYMENT']}" th:id="'payment-row-' + ${payment.id}">
+									<td>
+										<img th:if="${payment.transactionImageUrl != null}"
+											th:src="${payment.transactionImageUrl}" alt="Payment Image"
+											style="max-width: 100px; max-height: 100px; cursor: pointer;"
+											th:onclick="'viewFullImage(\'' + payment.transactionImageUrl + '\')'" />
+										<span th:if="${payment.transactionImageUrl == null}">No Image</span>
+									</td>
+									<td class="sender-name" th:text="${payment.senderAccountName}">Sender Name</td>
+									<td class="amount" th:text="${payment.amount}">0</td>
+									<td class="transaction-note" th:text="${payment.transactionNote ?: 'N/A'}">Note</td>
+									<td class="sender-account-number" th:text="${payment.senderAccountNumber}">Account</td>
+									<td th:text="${payment.status}">Status</td>
+									<td>
+										<button class="btn btn-sm btn-primary me-1"
+											th:if="${payment.status.name() == 'PENDING'}"
+											th:onclick="'editPayment(' + ${payment.id} + ')'">Edit</button>
+										<button class="btn btn-sm btn-danger"
+											th:if="${payment.status.name() == 'PENDING'}"
+											th:onclick="'deletePayment(' + ${payment.id} + ')'">Delete</button>
+
+										<button class="btn btn-sm btn-primary me-1 disabled-btn" disabled
+											th:if="${payment.status.name() != 'PENDING'}">Edit</button>
+										<button class="btn btn-sm btn-danger disabled-btn" disabled
+											th:if="${payment.status.name() != 'PENDING'}">Delete</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<div class="table-responsive">
-				<div id="refund-payment-container"></div>
-			</div>		
+				<div id="refund-payment-container">
+					<div th:if="${#lists.size(booking.payments.?[type.name() == 'REFUND']) > 0}">
+						<table class="table table-bordered table-hover text-center align-middle shadow mt-4">
+							<thead class="table-light">
+								<tr>
+									<th class="text-center" colspan="7">Refund Payments</th>
+								</tr>
+								<tr>
+									<th>Transaction Image</th>
+									<th>Sender Name</th>
+									<th>Amount</th>
+									<th>Note</th>
+									<th>Sender Account Number</th>
+									<th>Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="refund : ${booking.payments.?[type.name() == 'REFUND']}">
+
+									<td>
+										<img th:if="${refund.transactionImageUrl != null}"
+											th:src="${refund.transactionImageUrl}" alt="Refund Image"
+											style="max-width: 100px; max-height: 100px; cursor: pointer;"
+											th:onclick="'viewFullImage(\'' + refund.transactionImageUrl + '\')'" />
+										<span th:if="${refund.transactionImageUrl == null}">No Image</span>
+									</td>
+									<td th:text="${refund.senderAccountName}">Sender Name</td>
+									<td th:text="${refund.amount}">0</td>
+									<td th:text="${refund.transactionNote ?: 'N/A'}">Note</td>
+									<td th:text="${refund.senderAccountNumber}">Account</td>
+									<td><span class="refund-status" th:text="${refund.status}">Status</span></td>
+									<td>
+										<button class="btn btn-sm btn-success mt-1"
+											th:if="${refund.status.name() == 'PENDING'}"
+											th:onclick="'confirmPayment(' + ${refund.id} + ')'">Confirm
+											Received</button>
+
+										<button class="btn btn-sm btn-success mt-1 disabled-btn" disabled
+											th:if="${refund.status.name() != 'PENDING'}">Confirm Received</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</div>
-		
-		
-		
+
+
+
 
 		<!-- Form Popup để chỉnh sửa Payment -->
 		<div id="edit-payment-popup" class="modal" style="display:none;">

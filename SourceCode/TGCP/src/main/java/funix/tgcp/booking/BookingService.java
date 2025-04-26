@@ -248,6 +248,10 @@ public class BookingService {
 			LocalDate endDate, String guide, BookingStatus status) {
 		return null;
 	}
+	
+	public long countCompletedByUserIdOrGuideId(Long userId) {
+		return bookingRepo.countCompletedByUserIdOrGuideId(userId);
+	}
 
 	public List<Booking> findBookingByCustomerAndFilter(
 			Long customerId, 
