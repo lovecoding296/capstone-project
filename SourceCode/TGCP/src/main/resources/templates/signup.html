@@ -32,13 +32,13 @@
 			<span th:text="${successMessage}"></span>
 		</div>
 		<div th:if="${errorMessage}" class="alert alert-danger text-center">
-			<span th:text="${successMessage}"></span>
+			<span th:text="${errorMessage}"></span>
 		</div>
-		<h1 th:text="#{signup}">Đăng ký</h1>
+		<h1>Signup</h1>
 
 		<div class="container">
 			<p th:inline="text">
-				[[#{haveAnAccount}]] <a href="/login">[[#{login}]]</a>
+				Already have an account? <a href="/login">Login</a>
 			</p>
 
 			<!-- Form đăng ký -->
@@ -48,7 +48,7 @@
 					<img th:src="@{${user.cccd} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">
 					<br>
 					<br>
-					<label>Add/change căn cước công dân (Không hiển thị với tất cả mọi người):</label>
+					<label class="text-center">Add Citizen ID photo</label>
 					<br>
 
 					<div class="file-upload">
@@ -56,18 +56,18 @@
 					</div>
 				</div>
 				<div class="col-md-6">
-					<label for="fullName" th:text="#{fullName}">Họ tên:</label>
+					<label for="fullName" >Fullname:</label>
 					<input type="text" name="fullName" id="fullName" class="form-control" required>
 
 					<label for="email">Email</label>
 					<input class="form-control" type="email" id="email" th:field="*{email}" required>
 					<span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 
-					<label for="password" th:text="#{password}">Mật khẩu:</label>
+					<label for="password">Password:</label>
 					<input class="form-control" type="password" id="password" th:field="*{password}" required>
 					<span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
 
-					<label for="repassword" th:text="#{rePassword}">Nhập lại mật khẩu:</label>
+					<label for="repassword" >Repassword:</label>
 					<input class="form-control" type="password" id="repassword" required>
 					<span class="error" id="repassword-error"></span>
 
@@ -77,39 +77,38 @@
 								style="display: none;">
 								<path fill="green"
 									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
-							</svg> <span th:text="#{passwordCondition8chars}"></span>
+							</svg> <span>Must be at least 8 characters long</span>
 						</p>
 						<p id="uppercaseCondition"> <span class="error-icon"> • </span>
 							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
 								style="display: none;">
 								<path fill="green"
 									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
-							</svg> <span th:text="#{passwordConditionUppercase}"></span>
+							</svg> <span>Must contain at least 1 uppercase letter</span>
 						</p>
 						<p id="specialCondition"> <span class="error-icon"> • </span>
 							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
 								style="display: none;">
 								<path fill="green"
 									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
-							</svg> <span th:text="#{passwordConditionSpecial}"></span>
+							</svg> <span>Must include at least 1 special character (!@#$%^&*)</span>
 						</p>
 						<p id="passwordCondition"> <span class="error-icon"> • </span>
 							<svg class="success-icon" width="16" height="16" viewBox="0 0 16 16" fill="green"
 								style="display: none;">
 								<path fill="green"
 									d="M6.173 13.927L1.22 9.08l1.56-1.44 3.393 3.179 7.073-7.073 1.56 1.56z" />
-							</svg> <span th:text="#{passwordConditionMatch}"></span>
+							</svg> <span>Passwords must match</span>
 						</p>
 					</div>
 
 
 					<label>
-						<span th:text="#{register.agreement}">Bằng cách đăng ký, bạn đồng ý với Điều khoản và Chính sách quyền riêng tư của chúng
-							tôi.</span>
+						<span >By signing up, you agree to our Terms and Privacy Policy.</span>
 					</label>
 				</div>
 				<div class="text-center">
-					<button id="signup" type="submit" class="login-btn" disabled th:text="#{signup}">Đăng ký</button>
+					<button id="signup" type="submit" class="login-btn" disabled >Signup</button>
 				</div>
 
 			</form>
@@ -156,9 +155,9 @@
 					}
 				}
 
-				//toggleValidation(isLongEnough, '#8characterCondition');
-				//toggleValidation(hasUpperCase, '#uppercaseCondition');
-				//toggleValidation(hasSpecialChar, '#specialCondition');
+				toggleValidation(isLongEnough, '#8characterCondition');
+				toggleValidation(hasUpperCase, '#uppercaseCondition');
+				toggleValidation(hasSpecialChar, '#specialCondition');
 				toggleValidation(isMatching, '#passwordCondition');
 			}
 

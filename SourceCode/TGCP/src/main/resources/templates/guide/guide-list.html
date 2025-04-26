@@ -227,12 +227,18 @@
 							</div>
 
 							<div class="buttons d-flex justify-content-between mt-3">
-								<button class="btn btn-primary btn-sm"
-									th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Message</button>
+								<button class="btn btn-primary btn-sm" th:data-loggedin="${session.loggedInUser != null}"
+									th:data-userid="${user.id}" th:data-username="${user.fullName}"
+									th:onclick="|if (this.dataset.loggedin === 'true') { openChatWithUser(this.dataset.userid, this.dataset.username); } else { window.location.href='/login'; }|">
+									Message
+								</button>
 
-								<button class="btn btn-warning btn-sm"
-									th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Book
-									Now</button>
+								<button class="btn btn-warning btn-sm" th:data-loggedin="${session.loggedInUser != null}"
+									th:data-userid="${user.id}" th:data-username="${user.fullName}"
+									th:data-price="${user.pricePerDay}"
+									th:onclick="|if (this.dataset.loggedin === 'true') { openBookingPopup(this.dataset.userid, this.dataset.username, this.dataset.price); } else { window.location.href='/login'; }|">
+									Book Now
+								</button>
 							</div>
 						</div>
 					</div>

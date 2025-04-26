@@ -36,4 +36,30 @@ public class EmailHelper {
         	System.out.println("Error sending verification email " + e);
         }
     }
+    
+    
+    @Async
+    public void sendForgotPasswordEmail(String toEmail, String token) {
+        // Tạo link reset password
+        String resetLink = "http://localhost:8080/reset-password?token=" + token;
+
+        // Tạo nội dung email
+        String subject = "Password Reset Request";
+        String message = "Dear user,\n\n"
+                       + "We received a request to reset your password. "
+                       + "Please click the link below to reset it:\n\n"
+                       + resetLink + "\n\n"
+                       + "If you did not request a password reset, please ignore this email.\n\n"
+                       + "Thanks,\n"
+                       + "Your App Team";
+
+        // Tạo mail đơn giản
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(toEmail);
+        email.setSubject(subject);
+        email.setText(message);
+
+        // Gửi email
+        mailSender.send(email);
+    }
 }

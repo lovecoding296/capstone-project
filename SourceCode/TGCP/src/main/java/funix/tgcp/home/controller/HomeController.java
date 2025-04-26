@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import funix.tgcp.user.Role;
 import funix.tgcp.user.User;
@@ -65,7 +66,12 @@ public class HomeController {
 	
 	@GetMapping("/dashboard")
 	public String dashboard() {
-		return "/dashboard/dashboard-main";
+		return "/dashboard/dashboard";
+	}
+	
+	@GetMapping("/admin/dashboard")
+	public String adminDashboard() {
+		return "/dashboard/admin-dashboard";
 	}
 	
 	@PostMapping("/signup")
@@ -74,6 +80,7 @@ public class HomeController {
         	model.addAttribute("user", user);
             return "signup";
         }
+        String errorMessage ="";
 		try {		
 			userService.registerUser(cccdFile, user);
 			System.out.println("Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
@@ -81,14 +88,14 @@ public class HomeController {
 			model.addAttribute("user", new User());
 			return "signup";
 		} catch (EmailAlreadyExistsException e) {
-			System.out.println("EmailAlreadyExistsException error");
+			errorMessage = "Email already exists, please log in!";
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			errorMessage = "Error occurred while uploading file. Plz try again later!";
 			e.printStackTrace();
 		}        
 		model.addAttribute("user", user);
-		model.addAttribute("errorMessage", "Có lỗi khi đăng ký hãy thử lại sau.");
+		model.addAttribute("errorMessage", errorMessage);
         return "signup";
     }
 
@@ -110,5 +117,13 @@ public class HomeController {
 			model.addAttribute("error", "Invalid verification token or the token has expired.");
 		}
 		return "login";
+	}
+	
+	
+	@PostMapping("/forgot-password")
+	public String forgotPassword(@RequestParam String email, RedirectAttributes redirectAttributes) {
+		userService.forgotPassword(email);
+		redirectAttributes.addFlashAttribute("successMessage", "Please check your email for reset instructions!");
+		return "redirect:/login";
 	}
 }

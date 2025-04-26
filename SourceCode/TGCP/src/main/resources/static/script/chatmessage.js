@@ -233,6 +233,7 @@ function setupMessageClickHandler(messageLinkId = 'messageLink', userListId = 'u
       userList.innerHTML = '';
       
       if (!users || users.length === 0) {
+				
         const li = document.createElement('li');
         li.innerHTML = `
           <div class="dropdown-item text-muted text-center">

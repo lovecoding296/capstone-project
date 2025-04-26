@@ -133,8 +133,7 @@
 			<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
 				<div class="position-sticky">
 					<h4>Dashboard Panel</h4>
-					<ul class="nav flex-column">
-						
+					<ul class="nav flex-column">						
 						<li th:if="${session.loggedInUser != null && session.loggedInUser.isAdmin()}" class="nav-item"><a class="panel-link nav-link" href="#manage-users"
 								onclick="navigate(event,'manage-users')">Manage users</a>
 						</li>
@@ -144,26 +143,6 @@
 						<li th:if="${session.loggedInUser != null && session.loggedInUser.isAdmin()}" class="nav-item"><a class="panel-link nav-link" href="#manage-reports"
 								onclick="navigate(event,'manage-reports')">Manage reports</a>
 						</li>
-						
-						<li class="nav-item"><a class="panel-link nav-link" href="#guide-register"
-								onclick="navigate(event,'guide-register')">Guide register</a>
-						</li>						
-						<li class="nav-item"><a class="panel-link nav-link" href="#booking-history"
-								onclick="navigate(event,'booking-history')">Booking history</a>
-						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#manage-posts"
-								onclick="navigate(event,'manage-posts')">Manage posts</a>
-						</li>
-						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-bookings"
-								onclick="navigate(event,'manage-bookings')">Manage bookings</a>
-						</li>
-						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-busydate"
-								onclick="navigate(event,'manage-busydate')">Manage days off</a>
-						</li>
-						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#income-summary"
-								onclick="navigate(event,'income-summary')">Income summary</a>
-						</li>						
-
 					</ul>
 				</div>
 			</nav>
@@ -190,7 +169,7 @@
 					    let page = window.location.hash.substring(1); // Lấy giá trị sau dấu #
 					    
 					    if (!page) {
-					        page = "guide-register"; // Trang mặc định nếu không có hash
+					        page = "manage-users"; // Trang mặc định nếu không có hash
 					    }
 					    
 					    // Cập nhật class active trong menu
@@ -234,44 +213,12 @@
 								
 								
 								switch (page) {
-									case "guide-register":
-								        checkGuideRequestStatus();
-								        break;							
+														
 												
 								    case "magage-guide-requests":
 								        fetchGuideRequests();
-								        break;
-										
-								    case "tour-approval":
-								        fetchPendingTours();
-								        break;	
-																	   
-								    case "manage-tours":
-								        fetchTours();
-								        break;
-										
-									case "joined-tours":
-												        
-								        break;								    
-								    case "booking-history":
-								        fetchBookings();
-										break;
-										
-									case "manage-bookings":
-										fetchGuideBookings();
-										break;
-										
-									case "tour-create":
-									
-								        break;										
-									case "manage-busydate":
-										fetchBusyDate();								
-								        break;			
-													
-									case "income-summary":
-										loadIncomeSummary();
-										break;
-										
+								        break;									
+								
 									case "manage-reports":
 										fetchReports();
 										break;
@@ -280,9 +227,7 @@
 										fetchUsers();
 										break;				
 										
-									case "manage-posts":
-										fetchPosts();
-										break;
+									
 									
 								    default:
 								        console.log("No action found for page:", page);

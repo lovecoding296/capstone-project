@@ -13,13 +13,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import funix.tgcp.booking.BookingController;
 import funix.tgcp.exception.EmailAlreadyExistsException;
 import funix.tgcp.exception.EmailVerificationException;
 import funix.tgcp.util.EmailHelper;
 import funix.tgcp.util.FileHelper;
+import funix.tgcp.util.LogHelper;
 
 @Service
 public class UserService {
+	
+	private static final LogHelper logger = new LogHelper(UserService.class);
+
 
     @Autowired
     private UserRepository userRepo;
@@ -256,5 +261,40 @@ public class UserService {
 	public Page<User> findUserByFilter(String email, String fullName, Role role, Boolean kycApproved, Boolean enabled,
 			Boolean verified, Pageable pageable) {
 		return userRepo.findUserByFilter(email, fullName, role, kycApproved, enabled, verified, pageable);
+	}
+
+	public void forgotPassword(String email) {
+		logger.info("email " + email);
+		Optional<User> userOp = findByEmail(email);
+		
+		if(userOp.isPresent()) {
+			
+			String token = UUID.randomUUID().toString();
+	        System.out.println("Tạo token ngẫu nhiên " + token);	      
+	        
+	        logger.info("create token " + token);
+	        
+	        
+	        userOp.get().setVerificationToken(token);
+	        userRepo.save(userOp.get());
+	        emailHelper.sendForgotPasswordEmail(email, token);
+		}
+	}
+
+	public void handleResetPassword(String token, String newPassword) throws EmailVerificationException {
+		logger.info("token " + token + " newPassword " + newPassword);
+		
+		
+		Optional<User> optionalUser = userRepo.findByVerificationToken(token);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setVerificationToken(null);
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepo.save(user);
+        } else {
+            throw new EmailVerificationException("Invalid verification token or the token has expired.");
+        }
+		
 	}
 }

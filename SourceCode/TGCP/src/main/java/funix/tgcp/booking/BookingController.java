@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import funix.tgcp.util.LogHelper;
 
 @Controller
-public class BookingControllerr {
+public class BookingController {
 
-	private static final LogHelper logger = new LogHelper(BookingControllerr.class);
+	private static final LogHelper logger = new LogHelper(BookingController.class);
 
 	@Autowired
 	private BookingService bookingService;

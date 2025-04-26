@@ -151,13 +151,14 @@
 			color: #fff;
 			transition: background-color 0.3s ease;
 		}
-		
+
 		.user-card {
-		  transition: transform 0.3s ease; /* Cho hiệu ứng mượt */
+			transition: transform 0.3s ease;
+			/* Cho hiệu ứng mượt */
 		}
 
 		.user-card:hover {
-		  transform: scale(1.05);
+			transform: scale(1.05);
 		}
 
 
@@ -208,7 +209,8 @@
 					<div class="mb-2" style="height: 50px;">
 						<span class="badge bg-info me-1" th:if="${user.isLocalGuide}">Local guide</span>
 						<br th:if="${user.isLocalGuide and user.isInternationalGuide}" />
-						<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Internaltion guide</span>
+						<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Internaltion
+							guide</span>
 					</div>
 
 
@@ -224,11 +226,18 @@
 					</div>
 
 					<div class="buttons d-flex justify-content-between mt-3">
-						<button class="btn btn-primary btn-sm"
-							th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Message</button>
+						<button class="btn btn-primary btn-sm" th:data-loggedin="${session.loggedInUser != null}"
+							th:data-userid="${user.id}" th:data-username="${user.fullName}"
+							th:onclick="|if (this.dataset.loggedin === 'true') { openChatWithUser(this.dataset.userid, this.dataset.username); } else { window.location.href='/login'; }|">
+							Message
+						</button>
 
-						<button class="btn btn-warning btn-sm"
-							th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Book Now</button>
+						<button class="btn btn-warning btn-sm" th:data-loggedin="${session.loggedInUser != null}"
+							th:data-userid="${user.id}" th:data-username="${user.fullName}"
+							th:data-price="${user.pricePerDay}"
+							th:onclick="|if (this.dataset.loggedin === 'true') { openBookingPopup(this.dataset.userid, this.dataset.username, this.dataset.price); } else { window.location.href='/login'; }|">
+							Book Now
+						</button>
 					</div>
 				</div>
 			</div>
@@ -256,24 +265,23 @@
 							<img th:src="${post.author.avatarUrl != null ? post.author.avatarUrl : 'https://i.pravatar.cc/40?u=' + post.author.id}"
 								alt="Avatar" class="rounded-circle me-2" width="100" height="100">
 							<span th:text="${post.author.fullName}" style="font-size: x-large;"></span>
-						</a>						
-						
+						</a>
+
 						<button class="btn btn-danger" style="position: absolute; right: 20px;"
-								th:if="${session.loggedInUser != null and session.loggedInUser.id != post.author.id}"
-				                th:attr="onclick=|openReportPopup(${post.author.id}, '${post.title}', 'POST')|">
-				            Report
-				        </button>
+							th:if="${session.loggedInUser != null and session.loggedInUser.id != post.author.id}"
+							th:attr="onclick=|openReportPopup(${post.author.id}, '${post.title}', 'POST')|">
+							Report
+						</button>
 
 
 						<h5 class="post-card-title" th:text="${post.title}"></h5>
 						<p class="text-muted">
-							<strong >Posted date:</strong>
+							<strong>Posted date:</strong>
 							<span th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
 						</p>
 
 
-						<p><strong>Category:</strong> <span
-								th:text="${post.category.getDisplayName()}"></span>
+						<p><strong>Category:</strong> <span th:text="${post.category.getDisplayName()}"></span>
 						</p>
 						<p><strong>Content:</strong> <span th:utext="${post.content}"></span></p>
 
@@ -288,13 +296,17 @@
 
 					<div class="post-card-footer">
 						<button class="btn btn-like btn-sm" th:id="'like-button-' + ${post.id}"
-							th:attr="onclick='toggleLike(' + ${post.id} + ')'" th:text="#{label.like}">
+							th:data-loggedin="${session.loggedInUser != null}"
+							th:onclick="|if(this.dataset.loggedin === 'true') { toggleLike(${post.id}); } else { window.location.href='/login'; }|"
+							th:text="#{label.like}">
 						</button>
 
-						<button class="btn btn-comment btn-sm" th:attr="onclick='loadComments(' + ${post.id} + ')'"
+						<button class="btn btn-comment btn-sm" th:data-loggedin="${session.loggedInUser != null}"
+							th:onclick="|if(this.dataset.loggedin === 'true') { loadComments(${post.id}); } else { window.location.href='/login'; }|"
 							th:text="#{label.viewComments}">
 						</button>
 					</div>
+
 
 					<div class="post-card-body comment-section">
 						<h6 class="post-card-title" th:text="#{label.comments}"></h6>
@@ -308,7 +320,11 @@
 						<form th:attr="onsubmit='addComment(event, ' + ${post.id} + ')'" class="comment-form">
 							<input type="text" th:id="'comment-content-' + ${post.id}"
 								class="form-control comment-input" th:placeholder="#{label.enterComment}" required>
-							<button type="submit" class="btn btn-success btn-sm" th:text="#{label.send}"></button>
+							<button type="submit" class="btn btn-success btn-sm"
+								th:data-loggedin="${session.loggedInUser != null}"
+								th:onclick="|if(this.dataset.loggedin === 'true') { submitForm(); } else { window.location.href='/login'; }|"
+								th:text="#{label.send}">
+							</button>
 						</form>
 					</div>
 				</div>
