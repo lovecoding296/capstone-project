@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +29,7 @@ public class NotificationController {
 	private NotificationService notificationService;
 
 	@GetMapping
-	public ResponseEntity<?> viewNotifications() {
-		CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+	public ResponseEntity<?> viewNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
     	
 		Long currentUserId = (long)1;
 		if(userDetails != null ) {
@@ -52,9 +52,8 @@ public class NotificationController {
     }
     
     @GetMapping("/unread-count")
-    public ResponseEntity<Integer> getUnreadNotificationsCount() {
+    public ResponseEntity<Integer> getUnreadNotificationsCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
     	Long currentUserId = 1L;
-        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
         if (userDetails != null) {
         	currentUserId = userDetails.getId();
         }

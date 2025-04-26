@@ -49,8 +49,6 @@ function markNotificationsAsRead(notiId) {
 function openNotificationLink(notiId, sourceLink) {
 	console.log("openNotificationLink " + notiId + " " + sourceLink)
 	markNotificationsAsRead(notiId)
-	window.location.href = sourceLink;
-
 }
 
 
@@ -87,7 +85,7 @@ function setupNotificationClickHandler(messageLinkId = 'notificationLink', notif
 	    li.innerHTML = `
 	      <a 
 	        class="dropdown-item d-flex align-items-start gap-2 ${highlightClass}" 
-	        href="#"
+	        href="${noti.sourceLink}"
 	        onclick="openNotificationLink(${noti.id}, '${noti.sourceLink}')"
 	        data-userid="${noti.id}" 
 	        data-message="${noti.message}">

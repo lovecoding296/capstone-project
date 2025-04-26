@@ -4,11 +4,15 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import funix.tgcp.user.Language;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
 import jakarta.validation.Valid;
@@ -31,9 +35,21 @@ public class PostController {
 
 	// Lấy danh sách tất cả bài viết
 	@GetMapping()
-	public String getAllPosts(Model model) {
-		model.addAttribute("posts", postService.findAll());
-		return "post/post-list"; // Trả về trang danh sách bài viết
+	public String searchPosts(
+			@RequestParam(required = false) String title,
+			@RequestParam(required = false) String author,
+			@RequestParam(required = false) PostCategory category, 
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+			Model model) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Post> posts = postService.findPostByFilter(title, author, category, pageable);
+		model.addAttribute("posts", posts);
+        model.addAttribute("totalPages", posts.getTotalPages()); // Số trang
+        model.addAttribute("currentPage", page); // Trang hiện tại
+		model.addAttribute("categories", PostCategory.values());
+		
+		return "post/post-list";
 	}
 
 	// Lấy bài viết theo current user ID
@@ -54,16 +70,6 @@ public class PostController {
 			return "post/post-details"; // Trả về trang chi tiết bài viết
 		}
 		return "redirect:/posts"; // Nếu không tìm thấy, chuyển hướng về trang danh sách
-	}
-
-	@GetMapping("/search")
-	public String searchPosts(@RequestParam(name = "title", required = false) String title,
-			@RequestParam(name = "author", required = false) String author,
-			@RequestParam(name = "category", required = false) PostCategory category, Model model) {
-
-		List<Post> searchResults = postService.searchPosts(title, author, category);
-		model.addAttribute("posts", searchResults);
-		return "post/post-search-results"; // Trả về trang danh sách bài viết
 	}
 
 	// Tạo mới bài viết

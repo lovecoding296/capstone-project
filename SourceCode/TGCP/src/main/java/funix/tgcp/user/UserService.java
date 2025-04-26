@@ -253,8 +253,8 @@ public class UserService {
 		});		
 	}
 
-	public List<User> findUserByFilter(String email, String fullName, Role role, Boolean kycApproved, Boolean enabled,
-			Boolean verified) {
-		return userRepo.findUserByFilter(email, fullName, role, kycApproved, enabled, verified);
+	public Page<User> findUserByFilter(String email, String fullName, Role role, Boolean kycApproved, Boolean enabled,
+			Boolean verified, Pageable pageable) {
+		return userRepo.findUserByFilter(email, fullName, role, kycApproved, enabled, verified, pageable);
 	}
 }

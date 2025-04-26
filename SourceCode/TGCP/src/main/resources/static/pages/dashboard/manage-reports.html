@@ -1,23 +1,25 @@
 <div id="manage-reports" class="content-section">
 	<h2>Manage reports</h2>
-	<form id="filterForm" class="form-inline">
-		<input type="text" id="reporter" name="reporter" placeholder="Enter reporter name">
-		<input type="text" id="reason" name="reason" placeholder="Enter reason">
+	<form id="filterForm" class="d-flex flex-wrap align-items-center gap-2">
+	    <input type="text" id="reporter" name="reporter" class="form-control" placeholder="Enter reporter name" style="max-width: 200px;">
 
-		<select id="resolved" name="resolved">
-			<option value="">Resolved: All</option>
-			<option value="true">Resolved</option>
-			<option value="false">Unresolved</option>
-		</select>
+	    <input type="text" id="reason" name="reason" class="form-control" placeholder="Enter reason" style="max-width: 250px;">
 
-		<select id="reportType" name="reportType">
-			<option value="">Report Type: All</option>
-			<option value="USER">User</option>
-			<option value="POST">Blog</option>
-		</select>
+	    <select id="resolved" name="resolved" class="form-select" style="max-width: 180px;">
+	        <option value="">Resolved: All</option>
+	        <option value="true">Resolved</option>
+	        <option value="false">Unresolved</option>
+	    </select>
 
-		<button type="button" onclick="fetchReports()" class="btn btn-primary">Filter</button>
+	    <select id="reportType" name="reportType" class="form-select" style="max-width: 180px;">
+	        <option value="">Report Type: All</option>
+	        <option value="USER">User</option>
+	        <option value="POST">Blog</option>
+	    </select>
+
+	    <button type="button" onclick="fetchReports()" class="btn btn-primary">Filter</button>
 	</form>
+
 	<br>
 
 

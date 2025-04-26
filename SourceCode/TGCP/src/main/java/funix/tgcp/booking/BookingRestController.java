@@ -6,8 +6,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.config.CustomUserDetails;
@@ -25,9 +29,10 @@ public class BookingRestController {
 
     // API tạo booking
     @PostMapping("/api/bookings/create")
-    public ResponseEntity<Booking> createBooking(@RequestBody Booking bookingRequest) {
+    public ResponseEntity<Booking> createBooking(
+    		@RequestBody Booking bookingRequest, 
+    		@AuthenticationPrincipal CustomUserDetails userDetails) {
     	
-    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
     	
 //    	User currentUser = new User();
@@ -44,44 +49,52 @@ public class BookingRestController {
     
 
     @GetMapping("/api/bookings")
-    public List<Booking> findBookingByCustomerAndFilter(
+    public Page<Booking> findBookingByCustomerAndFilter(
 	        @RequestParam(required = false) String destination,
 	        @RequestParam(required = false) LocalDate startDate,
 	        @RequestParam(required = false) LocalDate endDate, 
 	        @RequestParam(required = false) String guide, 
-	        @RequestParam(required = false) BookingStatus status){
-    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+	        @RequestParam(required = false) BookingStatus status,
+	        @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+	        @AuthenticationPrincipal CustomUserDetails userDetails){
     	logger.info("userDetails " + userDetails);
 			
+    	Pageable pageable = PageRequest.of(page, size);
     	return bookingService.findBookingByCustomerAndFilter(
 				userDetails.getId(),
 				destination,
 				startDate,
 				endDate,
 				guide,
-				status);
+				status,
+				pageable);
 		    	    	
     }
     
     // API lấy tất cả booking nhận được của guide
     @GetMapping("/api/guides/bookings")
-    public List<Booking> findBookingsByGuideAndFilter(
+    public Page<Booking> findBookingsByGuideAndFilter(
     		@RequestParam(required = false) String destination,
 	        @RequestParam(required = false) LocalDate startDate,
 	        @RequestParam(required = false) LocalDate endDate, 
 	        @RequestParam(required = false) String user, 
-	        @RequestParam(required = false) BookingStatus status) {      
+	        @RequestParam(required = false) BookingStatus status,
+	        @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+	        @AuthenticationPrincipal CustomUserDetails userDetails) {      
         
-        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
     	
+    	Pageable pageable = PageRequest.of(page, size);
     	return bookingService.findBookingByGuideAndFilter(
 				userDetails.getId(),
 				destination,
 				startDate,
 				endDate,
 				user,
-				status);
+				status,
+				pageable);
     }
 
     @GetMapping("/api/bookings/{bookingId}")

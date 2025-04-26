@@ -14,7 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	
 	Optional<User> findById(Long id);
-
 	List<User> findByKycApprovedFalse();
 	List<User> findByRole(Role role);
 	
@@ -41,20 +40,22 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	                             Pageable pageable);
 	
 	
-	@Query("SELECT u FROM User u WHERE (:email IS NULL OR u.email LIKE %:email%) "
-	       + "AND (:fullName IS NULL OR u.fullName LIKE %:fullName%) "
-	       + "AND (:role IS NULL OR u.role = :role) "
-	       + "AND (:kycApproved IS NULL OR u.kycApproved = :kycApproved) "
-	       + "AND (:enabled IS NULL OR u.enabled = :enabled) "
-	       + "AND (:verified IS NULL OR u.verified = :verified) "
-	       + "ORDER BY u.id ASC")
-	List<User> findUserByFilter(
+	@Query("SELECT u FROM User u WHERE (:email IS NULL OR u.email LIKE CONCAT('%', :email, '%')) "
+	     + "AND (:fullName IS NULL OR u.fullName LIKE CONCAT('%', :fullName, '%')) "
+	     + "AND (:role IS NULL OR u.role = :role) "
+	     + "AND (:kycApproved IS NULL OR u.kycApproved = :kycApproved) "
+	     + "AND (:enabled IS NULL OR u.enabled = :enabled) "
+	     + "AND (:verified IS NULL OR u.verified = :verified) "
+	     + "ORDER BY u.id ASC")
+	Page<User> findUserByFilter(
 	        @Param("email") String email,
 	        @Param("fullName") String fullName,
 	        @Param("role") Role role,
 	        @Param("kycApproved") Boolean kycApproved,
 	        @Param("enabled") Boolean enabled,
-	        @Param("verified") Boolean verified);
+	        @Param("verified") Boolean verified,
+	        Pageable pageable);
+
 
 
 }

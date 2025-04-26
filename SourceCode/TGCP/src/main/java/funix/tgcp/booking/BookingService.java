@@ -1,6 +1,8 @@
 package funix.tgcp.booking;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -253,38 +255,18 @@ public class BookingService {
 		return bookingRepo.countCompletedByUserIdOrGuideId(userId);
 	}
 
-	public List<Booking> findBookingByCustomerAndFilter(
-			Long customerId, 
-			String destination, 
-			LocalDate startDate, 
-			LocalDate endDate,
-			String guide, 
-			BookingStatus status) {
-		
-		return bookingRepo.findBookingByCustomerAndFilter(
-				customerId, 
-				destination,
-				startDate, 
-				endDate, 
-				guide, 
-				status);
+	public Page<Booking> findBookingByCustomerAndFilter(Long customerId, String destination, LocalDate startDate,
+			LocalDate endDate, String guide, BookingStatus status, Pageable pageable) {
+
+		return bookingRepo.findBookingByCustomerAndFilter(customerId, destination, startDate, endDate, guide, status,
+				pageable);
 	}
-	
-	public List<Booking> findBookingByGuideAndFilter(
-			Long guideId, 
-			String destination, 
-			LocalDate startDate, 
-			LocalDate endDate,
-			String user, 
-			BookingStatus status) {
-		
-		return bookingRepo.findBookingByGuideAndFilter(
-				guideId, 
-				destination,
-				startDate, 
-				endDate, 
-				user, 
-				status);
+
+	public Page<Booking> findBookingByGuideAndFilter(Long guideId, String destination, LocalDate startDate,
+			LocalDate endDate, String user, BookingStatus status, Pageable pageable) {
+
+		return bookingRepo.findBookingByGuideAndFilter(guideId, destination, startDate, endDate, user, status,
+				pageable);
 	}
 }
 

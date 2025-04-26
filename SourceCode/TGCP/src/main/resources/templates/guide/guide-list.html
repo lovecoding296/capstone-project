@@ -24,16 +24,16 @@
 
 	<style>
 		.pagination {
-		    display: flex;
-		    justify-content: center;
-		    padding-left: 0;
-		    list-style: none;
-		    margin-top: 20px;
-		    margin-bottom: 20px;
+			display: flex;
+			justify-content: center;
+			padding-left: 0;
+			list-style: none;
+			margin-top: 20px;
+			margin-bottom: 20px;
 		}
 
 		.pagination .page-item {
-		    margin: 0 5px;
+			margin: 0 5px;
 		}
 
 		.user-card {
@@ -163,21 +163,21 @@
 						</div>
 
 						<div class="mb-3">
-						    <label class="form-label">Cerificate</label>
-						    <div class="form-check">
-						        <input class="form-check-input" type="checkbox" id="filterLocalGuide" name="isLocalGuide"
-						               th:checked="${param.isLocalGuide != null}">
-						        <label class="form-check-label" for="filterLocalGuide">
-						            Local guide
-						        </label>
-						    </div>
-						    <div class="form-check">
-						        <input class="form-check-input" type="checkbox" id="filterInternationalGuide" name="isInternationalGuide"
-						               th:checked="${param.isInternationalGuide != null}">
-						        <label class="form-check-label" for="filterInternationalGuide">
-						            Internaltion guide
-						        </label>
-						    </div>
+							<label class="form-label">Cerificate</label>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" id="filterLocalGuide"
+									name="isLocalGuide" th:checked="${param.isLocalGuide != null}">
+								<label class="form-check-label" for="filterLocalGuide">
+									Local guide
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" id="filterInternationalGuide"
+									name="isInternationalGuide" th:checked="${param.isInternationalGuide != null}">
+								<label class="form-check-label" for="filterInternationalGuide">
+									Internaltion guide
+								</label>
+							</div>
 						</div>
 
 
@@ -205,18 +205,19 @@
 								⭐ <span th:text="${#numbers.formatDecimal(user.averageRating, 1, 1)}"></span> (<span
 									th:text="${user.reviewCount}">100</span> đánh giá)
 							</div>
-							
+
 							<div class="mb-2" style="height: 50px;">
 								<span class="badge bg-info me-1" th:if="${user.isLocalGuide}">Local guide</span>
 								<br th:if="${user.isLocalGuide and user.isInternationalGuide}" />
-								<span class="badge bg-warning text-dark" th:if="${user.isInternationalGuide}">Internaltion guide</span>
+								<span class="badge bg-warning text-dark"
+									th:if="${user.isInternationalGuide}">Internaltion guide</span>
 							</div>
 
 
 							<div class="city mb-2 d-flex align-items-center">
 								<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;"
 									class="me-2">
-								<span th:text="${user.city.getDisplayName()}"></span>
+								<span th:if="${user.city}" th:text="${user.city.getDisplayName()}"></span>
 							</div>
 
 							<div class="languages mb-2 d-flex align-items-center">
@@ -230,33 +231,58 @@
 									th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">Message</button>
 
 								<button class="btn btn-warning btn-sm"
-									th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Book Now</button>
+									th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">Book
+									Now</button>
 							</div>
 						</div>
 					</div>
 				</div> <!-- end row user list -->
-					<div class="pagination">
-						<ul class="pagination justify-content-center">
-							<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
-								<a class="page-link" th:href="@{/guides(page=0)}">First</a>
-							</li>
-							<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
-								<a class="page-link" th:href="@{/guides(page=${currentPage - 1})}">Previous</a>
-							</li>
+				<div class="pagination">
+					<ul class="pagination justify-content-center" th:if="${totalPages > 0}">
+						<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+							<a class="page-link" href="#" th:data-page="0">First</a>
+						</li>
+						<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+							<a class="page-link" href="#"  th:data-page="${currentPage - 1}">Previous</a>
+						</li>
 
-							<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-								th:classappend="${i == currentPage} ? 'active' : ''">
-								<a class="page-link" th:href="@{/guides(page=${i})}" th:text="${i + 1}"></a>
-							</li>
+						<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+							th:classappend="${i == currentPage} ? 'active' : ''">
+							<a class="page-link" href="#"  th:data-page="${i}" th:text="${i + 1}"></a>
+						</li>
 
-							<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-								<a class="page-link" th:href="@{/guides(page=${currentPage + 1})}">Next</a>
-							</li>
-							<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-								<a class="page-link" th:href="@{/guides(page=${totalPages - 1})}">Last</a>
-							</li>
-						</ul>
-					</div>
+						<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+							<a class="page-link" href="#"  th:data-page="${currentPage + 1}">Next</a>
+						</li>
+						<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+							<a class="page-link" href="#" th:data-page="${totalPages - 1}">Last</a>
+						</li>
+
+					</ul>
+					<script>
+						document.querySelectorAll('.page-link').forEach(function (link) {
+							link.addEventListener('click', function (event) {
+								event.preventDefault();
+								var page = this.getAttribute('data-page');
+
+								// Nếu bị disabled (ví dụ đang ở trang đầu tiên hoặc cuối cùng), không làm gì
+								if (this.closest('.page-item').classList.contains('disabled')) {
+									return;
+								}
+
+								// Lấy URL hiện tại
+								var url = new URL(window.location.href);
+
+								// Set lại tham số page
+								url.searchParams.set('page', page);
+
+								// Điều hướng đến URL mới
+								window.location.href = url.toString();
+							});
+						});
+					</script>
+
+				</div>
 			</div>
 		</div>
 	</div>

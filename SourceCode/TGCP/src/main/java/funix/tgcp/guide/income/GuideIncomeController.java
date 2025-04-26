@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +36,9 @@ public class GuideIncomeController {
 	}
 
 	@GetMapping("/api/guides/income-summary")
-	public Map<String, Object> getIncomeSummary() {
-	    Long guideId = Optional.ofNullable(CustomUserDetails.getCurrentUserDetails())
+	public Map<String, Object> getIncomeSummary(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		
+	    Long guideId = Optional.ofNullable(userDetails)
 	                           .map(details -> details.getUser().getId())
 	                           .orElse(5L); // fallback ID
 	    return buildIncomeSummary(guideId);

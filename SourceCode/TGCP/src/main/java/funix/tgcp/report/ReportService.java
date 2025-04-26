@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import funix.tgcp.notification.NotificationService;
@@ -60,7 +62,9 @@ public class ReportService {
 	    }
 	}
 
-	public List<Report> findReportByFilter(String reporter, String reason, Boolean resolved, ReportType reportType) {
-		return reportRepo.findReportByFilter(reporter, reason, resolved, reportType);
+
+	public Page<Report> findReportByFilter(String reporter, String reason, Boolean resolved, ReportType reportType,
+			Pageable pageable) {
+		return reportRepo.findReportByFilter(reporter, reason, resolved, reportType, pageable);
 	}
 }

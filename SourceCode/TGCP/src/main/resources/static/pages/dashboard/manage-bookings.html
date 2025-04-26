@@ -1,27 +1,27 @@
 <div id="manage-bookings" class="content-section">
 	<h2>Manage bookings</h2>
-	<form id="filterForm" class="form-inline">
-	    <input type="text" id="destination" name="destination" placeholder="Enter destination">
-
-	    <input type="date" id="startDate" name="startDate" placeholder="Enter start date">
-
-	    <input type="date" id="endDate" name="endDate" placeholder="Enter end date">
-
-	    <input type="text" id="user" name="user" placeholder="Enter user name">
-
-	    <select id="bookingStatus" name="bookingStatus">
+	<form id="filterForm" class="d-flex flex-wrap align-items-center gap-2">
+	    <input type="text" id="destination" name="destination" class="form-control" placeholder="Enter destination" style="max-width: 200px;">
+	    
+	    <input type="date" id="startDate" name="startDate" class="form-control" placeholder="Enter start date" style="max-width: 180px;">
+	    
+	    <input type="date" id="endDate" name="endDate" class="form-control" placeholder="Enter end date" style="max-width: 180px;">
+	    
+	    <input type="text" id="user" name="user" class="form-control" placeholder="Enter user name" style="max-width: 200px;">
+	    
+	    <select id="bookingStatus" name="bookingStatus" class="form-select" style="max-width: 220px;">
 	        <option value="">Booking Status: All</option>
 	        <option value="PENDING">Pending</option>
 	        <option value="REJECTED">Rejected</option>
 	        <option value="CONFIRMED">Confirmed</option>
-			<option value="CANCELED_BY_USER">Cancled by user</option>
-			<option value="CANCELED_BY_GUIDE">Cancled by guide</option>
-			<option value="COMPLETED">Completed</option>
-			
+	        <option value="CANCELED_BY_USER">Canceled by user</option>
+	        <option value="CANCELED_BY_GUIDE">Canceled by guide</option>
+	        <option value="COMPLETED">Completed</option>
 	    </select>
 
 	    <button type="button" onclick="fetchGuideBookings()" class="btn btn-primary">Filter</button>
 	</form>
+
 	<br>
 	
 	<table class="table table-bordered table-hover align-middle bg-white">

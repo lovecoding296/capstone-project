@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import funix.tgcp.user.User;
 import funix.tgcp.post.Post;
 import jakarta.persistence.*;
@@ -22,6 +24,7 @@ public class PostLike {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
+    @JsonIgnore
     private Post post;
 
     @ManyToOne

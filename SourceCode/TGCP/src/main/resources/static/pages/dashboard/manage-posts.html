@@ -1,0 +1,46 @@
+<div id="manage-posts" class="content-section">
+	<h2>Manage posts</h2>
+	<form id="filterForm" class="d-flex flex-wrap align-items-center gap-2">
+	    <input type="text" id="title" name="title" class="form-control" placeholder="Enter title" style="max-width: 200px;">
+	    <input type="text" id="author" name="author" class="form-control" placeholder="Enter author" style="max-width: 200px;">
+	    
+	    <select id="category" name="category" class="form-select" style="max-width: 220px;">
+	        <option value="">Category: All</option>
+	        <option value="EXPERIENCE_SHARING">Experience Sharing</option>
+	        <option value="TRAVEL_QNA">Travel Q&A</option>
+	        <option value="HOT_DESTINATIONS">Hot Destinations</option>
+	        <option value="FOOD_SPECIALTIES">Food Specialties</option>
+	        <option value="CULTURE_AND_PEOPLE">Culture and People</option>
+	        <option value="SERVICE_REVIEWS">Service Reviews</option>
+	        <option value="TICKET_BOOKING_TIPS">Ticket Booking Tips</option>
+	        <option value="TRAVEL_DIARY">Travel Diary</option>
+	    </select>
+
+	    <button type="button" onclick="fetchPosts()" class="btn btn-primary">Filter</button>
+	</form>
+
+	<br>
+
+
+
+	<table class="table table-bordered table-hover align-middle bg-white">
+		<thead class="table-light">
+			<tr>
+				<th scope="col">Title</th>
+				<th scope="col">Category</th>
+				<th scope="col">Author</th>
+				<th scope="col">Actions</th>
+			</tr>
+		</thead>
+		<tbody id="postsTableBody">
+
+		</tbody>
+	</table>
+
+	<div id="pagination" class="justify-content-center mt-4" style="display: none;">
+		<button id="prev-btn" class="btn btn-primary justify-content-center btn-pagination"
+			onclick="changePostsPage('prev')">Previous</button>
+		<button id="next-btn" class="btn btn-primary justify-content-center btn-pagination"
+			onclick="changePostsPage('next')">Next</button>
+	</div>
+</div>

@@ -10,6 +10,113 @@ function autoResize(textarea) {
 	textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
 }
 
+/* manage posts */
+
+const categoryDisplayNames = {
+  EXPERIENCE_SHARING: "Experience Sharing",
+  TRAVEL_QNA: "Travel Q&A",
+  HOT_DESTINATIONS: "Hot Destinations",
+  FOOD_SPECIALTIES: "Food Specialties",
+  CULTURE_AND_PEOPLE: "Culture and People",
+  SERVICE_REVIEWS: "Service Reviews",
+  TICKET_BOOKING_TIPS: "Ticket Booking Tips",
+  TRAVEL_DIARY: "Travel Diary"
+};
+
+
+let postsPage = {
+	currentPage: 1,
+	itemsPerPage: 10
+}
+
+function changePostsPage(direction) {
+	if (direction === 'prev') {
+		postsPage.currentPage -= 1;
+	} else if (direction === 'next') {
+		postsPage.currentPage += 1;
+	}
+
+	fetchPosts(postsPage.currentPage);
+}
+
+function fetchPosts(page = 1) {
+	postsPage.currentPage = page;
+	
+	const title = document.getElementById('title').value;
+    const category = document.getElementById('category').value;
+    const author = document.getElementById('author').value;
+
+
+    // Tạo URL với các tham số tìm kiếm
+    let url = '/api/posts?';
+    if (title) url += `title=${title}&`;
+    if (category) url += `category=${category}&`;
+    if (author) url += `role=${author}&`;
+	url += `page=${postsPage.currentPage - 1}&`;
+	url += `size=${postsPage.itemsPerPage}`
+	
+	fetch(url)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			return response.json(); // dữ liệu từ Page<Post>
+		})
+		.then(data => {
+			const posts = data.content; // danh sách bài viết thực tế
+			const tableBody = document.getElementById('postsTableBody');
+			tableBody.innerHTML = ''; // Xóa dữ liệu cũ
+
+			posts.forEach(post => {
+				let categoryName = categoryDisplayNames[post.category];
+				const row = document.createElement('tr');
+				row.innerHTML = `
+					<td>${post.title}</td>
+					<td>${categoryName}</td>
+					<td>${post.author.fullName}</td>
+					<td>
+						<a class="button btn btn-sm btn-primary" href="/posts/${post.id}">View</a>
+						<a class="button btn btn-sm btn-success" href="/posts/${post.id}/edit">Edit</a>
+						<button class="btn btn-sm btn-danger" onclick="deletePost(${post.id})">Delete</button>
+					</td>
+				`;
+				tableBody.appendChild(row);
+			});
+
+			// Cập nhật phân trang
+			updatePaginationButtons(data.number + 1, data.totalElements, data.size);
+		})
+		.catch(error => {
+			console.error('Lỗi khi tải danh sách bài viết:', error);
+			const tableBody = document.getElementById('postsTableBody');
+			tableBody.innerHTML = `<tr><td colspan="4">Không thể tải danh sách bài viết.</td></tr>`;
+		});
+
+	
+}
+
+function deletePost(id) {
+    if (confirm("Are you sure you want to delete this post?")) {
+      fetch(`/api/posts/${id}/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("Post deleted successfully.");
+          fetchPosts(postsPage.currentPage)
+        } else {
+          return response.text().then(text => { throw new Error(text); });
+        }
+      })
+      .catch(error => {
+        console.error("Error deleting post:", error);
+        alert("Failed to delete post.");
+      });
+    }
+  }
 
 /* manage users */
 
@@ -47,9 +154,9 @@ function fetchUsers(page = 1) {
     if (kycApproved !== "") url += `kycApproved=${kycApproved}&`;
     if (verified !== "") url += `verified=${verified}&`;
 	if (enabled !== "") url += `enabled=${enabled}&`;
+	url += `page=${usersPage.currentPage - 1}&`;
+	url += `size=${usersPage.itemsPerPage}`
 
-    // Xóa dấu "&" thừa ở cuối URL nếu có
-    url = url.slice(0, -1);
 	
 	fetch(url)
 		.then(response => {
@@ -58,18 +165,13 @@ function fetchUsers(page = 1) {
 			}
 			return response.json();
 		})
-		.then(users => {
+		.then(data => {
 			const tableBody = document.getElementById('usersTable');
 			tableBody.innerHTML = ''; // Xóa dữ liệu cũ
-			
-			// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-			const startIdx = (page - 1) * usersPage.itemsPerPage;
-			const endIdx = startIdx + usersPage.itemsPerPage;
 
-			// Lấy dữ liệu bookings cho trang hiện tại
-			const usersToShow = users.slice(startIdx, endIdx);	
+			const users = data.content
 
-			usersToShow.forEach(user => {
+			users.forEach(user => {
 				
 				// Tạo nút hành động
 				const actions = [];
@@ -98,7 +200,7 @@ function fetchUsers(page = 1) {
 				tableBody.appendChild(row);
 			});
 			
-			updatePaginationButtons(page, users.length, usersPage.itemsPerPage);
+			updatePaginationButtons(data.number + 1, data.totalElements, data.size);
 		})
 		.catch(error => {
 			console.error('Lỗi khi tải danh sách người dùng:', error);
@@ -185,25 +287,22 @@ async function fetchReports(page = 1) {
 	if (reason) url += `reason=${reason}&`;
 	if (resolved) url += `resolved=${resolved}&`;
 	if (reportType) url += `reportType=${reportType}&`;
+	
+	url += `page=${reportsPage.currentPage - 1}&`;
+	url += `size=${reportsPage.itemsPerPage}`
 
 	// Xóa dấu "&" thừa ở cuối URL nếu có
-    url = url.slice(0, -1);	
 	
 	const response = await fetch(url);
-	const reports = await response.json();
-
-	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-	const startIdx = (page - 1) * reportsPage.itemsPerPage;
-	const endIdx = startIdx + reportsPage.itemsPerPage;
-
-	// Lấy dữ liệu bookings cho trang hiện tại
-	const reportsToShow = reports.slice(startIdx, endIdx);
+	const data = await response.json();
 
 
 	const tbody = document.getElementById("reportTableBody");
 	tbody.innerHTML = "";
+	
+	const reports = data.content;
 
-	reportsToShow.forEach((report) => {
+	reports.forEach((report) => {
 		const row = document.createElement("tr");
 
 		row.innerHTML = `
@@ -230,7 +329,7 @@ async function fetchReports(page = 1) {
 	});
 
 	// Cập nhật trạng thái các nút pagination
-	updatePaginationButtons(page, reports.length, reportsPage.itemsPerPage);
+	updatePaginationButtons(data.number + 1, data.totalElements, data.size);
 }
 
 function resolveReport(reportId) {
@@ -616,6 +715,9 @@ async function fetchGuideBookings(page = 1) {
 	const endDate = document.getElementById('endDate').value;
 	const user = document.getElementById('user').value;
 	const bookingStatus = document.getElementById('bookingStatus').value;
+	
+	
+		
 
 	// Tạo URL với các tham số tìm kiếm
 	let url = '/api/guides/bookings?';
@@ -624,25 +726,20 @@ async function fetchGuideBookings(page = 1) {
 	if (endDate) url += `endDate=${endDate}&`;
 	if (user) url += `user=${user}&`;
 	if (bookingStatus) url += `status=${bookingStatus}&`;
+	
+	url += `page=${postsPage.currentPage - 1}&`;
+	url += `size=${postsPage.itemsPerPage}`
 
-	// Xóa dấu "&" thừa ở cuối URL nếu có
-    url = url.slice(0, -1);		
 	
 	const response = await fetch(url);
-	const bookings = await response.json();
+	const data = await response.json();
 
-	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-	const startIdx = (page - 1) * guideBookingsPage.itemsPerPage;
-	const endIdx = startIdx + guideBookingsPage.itemsPerPage;
-
-	// Lấy dữ liệu bookings cho trang hiện tại
-	const bookingsToShow = bookings.slice(startIdx, endIdx);
-
+	const bookings = data.content;
 
 	const tbody = document.getElementById("bookingTableBody");
 	tbody.innerHTML = "";
 
-	bookingsToShow.forEach((booking) => {
+	bookings.forEach((booking) => {
 		const row = document.createElement("tr");
 
 		row.innerHTML = `
@@ -686,7 +783,7 @@ async function fetchGuideBookings(page = 1) {
 	});
 
 	// Cập nhật trạng thái các nút pagination
-	updatePaginationButtons(page, bookings.length, guideBookingsPage.itemsPerPage);
+	updatePaginationButtons(data.number + 1, data.totalElements, data.size);
 }
 
 function updatePaginationButtons(page, totalItems, itemsPerPage) {
@@ -821,25 +918,19 @@ async function fetchBookings(page = 1) {
 	if (endDate) url += `endDate=${endDate}&`;
 	if (guide) url += `guide=${guide}&`;
 	if (bookingStatus) url += `status=${bookingStatus}&`;
+	
+	url += `page=${postsPage.currentPage - 1}&`;
+	url += `size=${postsPage.itemsPerPage}`
 
-	// Xóa dấu "&" thừa ở cuối URL nếu có
-    url = url.slice(0, -1);		
 	
 	const response = await fetch(url);
-	const bookings = await response.json();
-
-	// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
-	const startIdx = (page - 1) * historyBookingsPage.itemsPerPage;
-	const endIdx = startIdx + historyBookingsPage.itemsPerPage;
-
-	// Lấy dữ liệu bookings cho trang hiện tại
-	const bookingsToShow = bookings.slice(startIdx, endIdx);
-
+	const data = await response.json();
+	const bookings = data.content;
 
 	const tbody = document.getElementById("bookingTableBody");
 	tbody.innerHTML = "";
 
-	bookingsToShow.forEach((booking) => {
+	bookings.forEach((booking) => {
 		const row = document.createElement("tr");
 
 		row.innerHTML = `
@@ -876,7 +967,7 @@ async function fetchBookings(page = 1) {
 	});
 
 	// Cập nhật trạng thái các nút pagination
-	updatePaginationButtons(page, bookings.length, historyBookingsPage.itemsPerPage);
+	updatePaginationButtons(data.number + 1, data.totalElements, data.size);
 }
 
 

@@ -1,7 +1,11 @@
 package funix.tgcp.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import funix.tgcp.report.Report;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,38 +14,38 @@ import java.util.Optional;
 public class PostService {
 
     @Autowired
-    private PostRepository postRepository;
+    private PostRepository postRepo;
 
     // Lưu bài viết
     public Post save(Post post) {
-        return postRepository.save(post);
+        return postRepo.save(post);
     }
 
     // Lấy bài viết theo ID
     public Optional<Post> findById(Long id) {
-        return postRepository.findById(id);
+        return postRepo.findById(id);
     }
 
     // Lấy tất cả bài viết
     public List<Post> findAll() {
-        return postRepository.findAll();
+        return postRepo.findAll();
     }
 
     // Lấy bài viết của một tác giả (User)
     public List<Post> findByAuthorId(Long authorId) {
-        return postRepository.findByAuthorId(authorId);
+        return postRepo.findByAuthorId(authorId);
     }
 
     // Cập nhật bài viết
     public boolean update(Long id, Post post) {
-        return postRepository.findById(id).map(currentPost -> {
+        return postRepo.findById(id).map(currentPost -> {
         	if (post.getContent() != null && !post.getContent().isBlank()) {
                 currentPost.setContent(post.getContent());
             }
             if (post.getTitle() != null && !post.getTitle().isBlank()) {
                 currentPost.setTitle(post.getTitle());
             }
-            postRepository.save(currentPost);
+            postRepo.save(currentPost);
             return true;
         }).orElseGet(() -> {
             System.out.println("Cannot find post with id: " + id);
@@ -49,20 +53,26 @@ public class PostService {
         });
     }
     
-    public List<Post> getLatestPosts() {
-        return postRepository.findTop4ByOrderByCreatedAtDesc();
+    public List<Post> getTopPosts() {
+        return postRepo.findTop4ByOrderByCreatedAtDesc();
     }
 
     // Xóa bài viết theo ID
     public void deleteById(Long id) {
-        postRepository.deleteById(id);
+    	postRepo.deleteById(id);
     }
 
 	public List<Post> findTop3ByAuthorIdOrderByCreatedAtDesc(Long id) {
-		return postRepository.findTop3ByAuthorIdOrderByCreatedAtDesc(id);
+		return postRepo.findTop3ByAuthorIdOrderByCreatedAtDesc(id);
 	}
 
-	public List<Post> searchPosts(String title, String author, PostCategory category) {
-		return postRepository.findByFilters(title, author, category);
+//	public Page<Post> searchPosts(String title, String author, PostCategory category) {
+//		return postRepo.findPostByFilter(title, author, category);
+//	}
+	
+	public Page<Post> findPostByFilter(String title, String author, PostCategory category, Pageable pageable) {
+		return postRepo.findPostByFilter(title, author, category, pageable);
 	}
+
+
 }

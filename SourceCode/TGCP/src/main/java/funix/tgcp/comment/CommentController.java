@@ -3,6 +3,7 @@ package funix.tgcp.comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.user.User;
@@ -50,10 +51,11 @@ public class CommentController {
 
 	// Tạo mới bình luận
 	@PostMapping("/post/{postId}")
-	public ResponseEntity<Comment> createComment(@PathVariable Long postId, @RequestBody @Valid Comment comment,
-			HttpSession session) {
+	public ResponseEntity<Comment> createComment(
+			@PathVariable Long postId, 
+			@RequestBody @Valid Comment comment,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-		CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
 		logger.info("userDetails " + userDetails);
 
 		User currentUser = new User();
@@ -88,9 +90,8 @@ public class CommentController {
 	public ResponseEntity<Comment> createReplyComment(
 	        @PathVariable Long commentId,
 	        @RequestBody @Valid Comment comment,
-	        HttpSession session) {
+	        @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-	    CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
 	    logger.info("userDetails: {}", userDetails);
 
 	    Long currentUserId = (userDetails != null) ? userDetails.getId() : 1L;

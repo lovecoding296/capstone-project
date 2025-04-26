@@ -1,39 +1,43 @@
 <div id="manage-users" class="content-section">
 	<h2>Manage users</h2>
 	
-	<form id="filterForm" class="form-inline">
-		<input type="text" id="fullName" name="fullName" placeholder="Enter full name">	
-		<input type="text" id="email" name="email" placeholder="Enter email">
-			
-		<select id="role" name="role">
-			<option value="">Role: All</option>
-			<option value="ROLE_USER">User</option>
-			<option value="ROLE_GUIDE">Guide</option>
-			<option value="ROLE_ADMIN">Admin</option>
-		</select>
-	
-		<select id="kycApproved" name="kycApproved">
-			<option value="">Kyc Approved: All</option>
-			<option value="true">Approved</option>
-			<option value="false">Not Approved</option>
-		</select>
-	
-		<select id="verified" name="verified">
-			<option value="">Verified: All</option>
-			<option value="true">Verified</option>
-			<option value="false">Not Verified</option>
-		</select>
-		<select id="enabled" name="enabled">
-			<option value="">Enalbed: All</option>
-			<option value="true">Enalbed</option>
-			<option value="false">Not Enalbed</option>
-		</select>
-		<button type="button" onclick="fetchUsers()" class="btn btn-primary">Filter</button>
+	<form id="filterForm" class="d-flex flex-wrap align-items-center gap-2">
+	    <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Enter full name" style="max-width: 200px;">
+
+	    <input type="text" id="email" name="email" class="form-control" placeholder="Enter email" style="max-width: 250px;">
+
+	    <select id="role" name="role" class="form-select" style="max-width: 180px;">
+	        <option value="">Role: All</option>
+	        <option value="ROLE_USER">User</option>
+	        <option value="ROLE_GUIDE">Guide</option>
+	        <option value="ROLE_ADMIN">Admin</option>
+	    </select>
+
+	    <select id="kycApproved" name="kycApproved" class="form-select" style="max-width: 180px;">
+	        <option value="">Kyc Approved: All</option>
+	        <option value="true">Approved</option>
+	        <option value="false">Not Approved</option>
+	    </select>
+
+	    <select id="verified" name="verified" class="form-select" style="max-width: 180px;">
+	        <option value="">Verified: All</option>
+	        <option value="true">Verified</option>
+	        <option value="false">Not Verified</option>
+	    </select>
+
+	    <select id="enabled" name="enabled" class="form-select" style="max-width: 180px;">
+	        <option value="">Enabled: All</option>
+	        <option value="true">Enabled</option>
+	        <option value="false">Not Enabled</option>
+	    </select>
+
+	    <button type="button" onclick="fetchUsers()" class="btn btn-primary">Filter</button>
 	</form>
+
 	<br>
 
-	<table class="table table-bordered table-striped">
-		<thead class="table-dark">
+	<table class="table table-bordered table-hover align-middle bg-white">
+		<thead class="table-light">
 			<tr>
 				<th>Fullname</th>
 				<th>Email</th>

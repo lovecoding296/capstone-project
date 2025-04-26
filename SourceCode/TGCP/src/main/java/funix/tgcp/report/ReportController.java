@@ -3,7 +3,11 @@ package funix.tgcp.report;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,28 +32,31 @@ public class ReportController {
 
 
     @GetMapping()
-    public List<Report> findReportByFilter(
+    public Page<Report> findReportByFilter(
     		@RequestParam(required = false) String reporter,
 	        @RequestParam(required = false) String reason,
 	        @RequestParam(required = false) Boolean resolved, 
-	        @RequestParam(required = false) ReportType reportType
+	        @RequestParam(required = false) ReportType reportType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size
 	        ) {    	
     	
+    	Pageable pageable = PageRequest.of(page, size);
     	return reportService.findReportByFilter(
     			reporter,
     			reason,
     			resolved,
-    			reportType
+    			reportType,
+    			pageable
     			);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> report(@RequestBody Report reportRequest) {
+    public ResponseEntity<String> report(
+    		@RequestBody Report reportRequest,
+    		@AuthenticationPrincipal CustomUserDetails userDetails) {    	
     	
-    	
-    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	logger.info("userDetails " + userDetails);
-
     	reportRequest.setReporter(userDetails.getUser());  
     	
         reportService.createReport(reportRequest);

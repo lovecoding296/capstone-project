@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +30,8 @@ public class BusyDateController {
 	
     //Lấy danh sách ngày nghỉ của guide hiện tại
     @GetMapping("/api/guides/busy-date")
-    public List<BusyDate> getBusyDates() {
+    public List<BusyDate> getBusyDates(@AuthenticationPrincipal CustomUserDetails userDetails) {
     	
-    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
     	User guide;
     	
     	if(userDetails == null) {
@@ -56,9 +56,10 @@ public class BusyDateController {
     }
 	
 	@PostMapping("/api/guides/busy-date")
-	public ResponseEntity<?> saveBusyDates(@RequestBody List<LocalDate> dates) {
+	public ResponseEntity<?> saveBusyDates(
+			@RequestBody List<LocalDate> dates,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
 		logger.info("");
-		CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
 		User guide;
 		
     	if(userDetails == null) {
@@ -87,8 +88,9 @@ public class BusyDateController {
 	}
 	
 	@PostMapping("/api/guides/busy-date/delete")
-	public ResponseEntity<?> deleteUnavailableDates(@RequestBody List<LocalDate> dates) {
-		CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+	public ResponseEntity<?> deleteUnavailableDates(
+			@RequestBody List<LocalDate> dates,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
 		User guide;
 		
     	if(userDetails == null) {

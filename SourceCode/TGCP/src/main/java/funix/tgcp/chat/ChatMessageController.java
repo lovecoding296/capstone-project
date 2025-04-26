@@ -2,6 +2,7 @@ package funix.tgcp.chat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.booking.BookingRestController;
@@ -10,6 +11,7 @@ import funix.tgcp.user.User;
 import funix.tgcp.user.UserRepository;
 import funix.tgcp.util.LogHelper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -34,12 +36,13 @@ public class ChatMessageController {
 
     // Gửi tin nhắn
     @PostMapping("/send")
-    public ChatMessage sendMessage(@RequestBody ChatMessage message) {
-        message.setTimestamp(java.time.LocalDateTime.now());
+    public ChatMessage sendMessage(
+    		@RequestBody ChatMessage message,
+    		@AuthenticationPrincipal CustomUserDetails userDetails) {
+        message.setTimestamp(LocalDateTime.now());
         
         User sender = new User();
 		
-    	CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
 		if(userDetails != null) {
 			sender.setId(userDetails.getId());
 		} else {
@@ -56,13 +59,14 @@ public class ChatMessageController {
     
     // Lấy danh sách tin nhắn giữa 2 người
     @GetMapping("/conversation/{partnerId}")
-    public Map<String, Object> getConversation2(@PathVariable Long partnerId) {
+    public Map<String, Object> getConversation2(
+    		@PathVariable Long partnerId,
+    		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
     	User sender = new User();
 		sender.setId(1l);
 		
 		
-        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
         if (userDetails != null) {
         	sender.setId(userDetails.getId());
         }
@@ -82,10 +86,9 @@ public class ChatMessageController {
     
     // API: Lấy người đã từng nhắn với user + tin nhắn gần nhất
     @GetMapping("/last-messages")
-    public List<Map<String, Object>> getLastMessages() {
+    public List<Map<String, Object>> getLastMessages(@AuthenticationPrincipal CustomUserDetails userDetails) {
     	
     	Long currentUserId = 1L;
-        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
         if (userDetails != null) {
         	currentUserId = userDetails.getId();
         }
@@ -127,12 +130,14 @@ public class ChatMessageController {
     
     
     @PostMapping("/mark-read")
-    public ResponseEntity<?> markMessagesAsRead(@RequestBody ChatMessage request) {
+    public ResponseEntity<?> markMessagesAsRead(
+    		@RequestBody ChatMessage request,
+    		@AuthenticationPrincipal CustomUserDetails userDetails) {
     	
     	logger.info("request " + request.getSender());
     	
     	Long currentUserId = 1L;
-        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
+
         if (userDetails != null) {
         	currentUserId = userDetails.getId();
         }
@@ -143,9 +148,8 @@ public class ChatMessageController {
     }
     
     @GetMapping("/unread-count")
-    public ResponseEntity<Integer> getUnreadMessageCount() {
+    public ResponseEntity<Integer> getUnreadMessageCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
     	Long currentUserId = 1L;
-        CustomUserDetails userDetails = CustomUserDetails.getCurrentUserDetails();
         if (userDetails != null) {
         	currentUserId = userDetails.getId();
         }

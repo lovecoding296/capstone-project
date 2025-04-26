@@ -44,7 +44,7 @@ public class HomeController {
 	public String home(Model model, HttpSession session) {
 		
 		logger.info("home");
-		List<Post> posts = postService.getLatestPosts();
+		List<Post> posts = postService.getTopPosts();
 		List<User> users = userService.getTopByRoleOrderByAverageRatingDesc(Role.ROLE_GUIDE);
 		model.addAttribute("postCategories", PostCategory.values());
 		model.addAttribute("posts", posts);
