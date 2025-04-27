@@ -53,7 +53,7 @@ public class PostService {
         });
     }
     
-    public List<Post> getTopPosts() {
+    public List<Post> findTop4ByOrderByCreatedAtDesc() {
         return postRepo.findTop4ByOrderByCreatedAtDesc();
     }
 
@@ -69,6 +69,10 @@ public class PostService {
 //	public Page<Post> searchPosts(String title, String author, PostCategory category) {
 //		return postRepo.findPostByFilter(title, author, category);
 //	}
+	
+	public Page<Post> findPostByCurrentUserAndByFilter(Long userId, String title, PostCategory category, Pageable pageable) {
+		return postRepo.findPostByCurrentUserAndByFilter(userId, title, category, pageable);
+	}
 	
 	public Page<Post> findPostByFilter(String title, String author, PostCategory category, Pageable pageable) {
 		return postRepo.findPostByFilter(title, author, category, pageable);

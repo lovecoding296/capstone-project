@@ -99,10 +99,13 @@
 					th:classappend="${booking.status.name()} == 'COMPLETED' ? 'bg-success' : 'bg-secondary'">
 					<span th:text="${booking.status}">Status</span>
 				</span>
+				<p><strong>Service:</strong> <span th:text="${booking.guideService.type}"></span></p>
+				<p><strong>City:</strong> <span th:text="${booking.guideService.city}"></span></p>
+				<p><strong>Language:</strong> <span th:text="${booking.guideService.language}"></span></p>
+				<p><strong>Group Size:</strong> <span th:text="${booking.guideService.groupSizeCategory}"></span></p>
 				<p><strong>Destination:</strong> <span th:text="${booking.destination}">Destination</span></p>
 				<p><strong>Start date:</strong> <span th:text="${booking.startDate}">Start Date</span></p>
 				<p><strong>End date:</strong> <span th:text="${booking.endDate}">End Date</span></p>
-				<p><strong>Number of participants:</strong> <span th:text="${booking.numberOfPeople}">0</span></p>
 				<p><strong>Total price:</strong> <span th:text="${booking.totalPrice}">0</span></p>
 			</div>
 
@@ -119,7 +122,7 @@
 						<p class="text-center">
 							<span
 								th:text="${booking.customer.averageRating != null ? booking.customer.averageRating : 'N/A'}">N/A</span>⭐
-								<br></bt><span>Joined tours:<span th:text="${bookingCount}"></span></span>
+								<br></bt><span>Created services:<span th:text="${bookingCount}"></span></span>
 						</p>
 						<p><span
 								th:text="${booking.customer.email != null ? booking.customer.email : 'No email available'}">Email</span>

@@ -24,6 +24,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                              @Param("author") String author,
                              @Param("category") PostCategory category,
                              Pageable pageable);
+
+    
+    @Query("SELECT p FROM Post p WHERE " +
+            "(:title IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
+            "(:category IS NULL OR p.category = :category) AND " +
+            "(p.author.id = :userId)")
+	Page<Post> findPostByCurrentUserAndByFilter(Long userId, String title, PostCategory category, Pageable pageable);
     
     
     

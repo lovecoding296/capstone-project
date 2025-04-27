@@ -2,8 +2,10 @@ package funix.tgcp.user;
 
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import funix.tgcp.booking.BookingService;
+import funix.tgcp.guide.service.GroupSizeCategory;
+import funix.tgcp.guide.service.GuideService;
+import funix.tgcp.guide.service.ServiceType;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
 import funix.tgcp.review.Review;
@@ -50,14 +55,30 @@ public class UserController {
     // Lấy thông tin người dùng theo ID
     @GetMapping("/users/{userId}")
     public String getuserById(@PathVariable Long userId, Model model) {
-        Optional<User> user = userService.findById(userId);
-        if (user.isPresent()) {
+        Optional<User> userOp = userService.findById(userId);
+        if (userOp.isPresent()) {
+        	User user = userOp.get();
         	
             List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(userId);            
             List<Review> reviews = reviewService.findByReviewedUserIdOrderByRatingDesc(userId);
         	long bookingCount = bookingService.countCompletedByUserIdOrGuideId(userId);
         	
-            model.addAttribute("user", user.get());
+			Set<City> cities = new HashSet<>();
+			Set<ServiceType> types = new HashSet<>();
+			Set<Language> languages = new HashSet<>();
+			Set<GroupSizeCategory> groupSizes = new HashSet<>();
+
+			for (GuideService g : user.getGuideServices()) {
+				cities.add(g.getCity());
+				types.add(g.getType());
+				languages.add(g.getLanguage());
+				groupSizes.add(g.getGroupSizeCategory());
+			}
+			user.setCities(cities);
+			user.setServiceTypes(types);
+			user.setLanguages(languages);
+        	
+            model.addAttribute("user", user);
             model.addAttribute("posts", posts);
             model.addAttribute("reviews", reviews);
             model.addAttribute("bookingCount", bookingCount);
@@ -150,10 +171,11 @@ public class UserController {
     
     @GetMapping("/guides")
     public String searchGuides(
+            @RequestParam(required = false) ServiceType serviceType,
             @RequestParam(required = false) City city,
-            @RequestParam(required = false) Integer maxPrice,
-            @RequestParam(required = false) Gender gender,
             @RequestParam(required = false) Language language,
+            @RequestParam(required = false) GroupSizeCategory groupSize,
+            @RequestParam(required = false) Gender gender,
             @RequestParam(required = false) Boolean isLocalGuide,
             @RequestParam(required = false) Boolean isInternationalGuide,
             @RequestParam(defaultValue = "0") int page,
@@ -161,14 +183,35 @@ public class UserController {
             Model model) {
 
     	Pageable pageable = PageRequest.of(page, size); // Tạo Pageable    	
-    	Page<User> userPage = userService.searchGuides(city, maxPrice, gender, language,isLocalGuide, isInternationalGuide, pageable);
+    	Page<User> userPage = userService.searchGuides(serviceType, city, language, groupSize, gender, isLocalGuide, isInternationalGuide, pageable);
 
+		for (User u : userPage.getContent()) {
+			Set<City> cities = new HashSet<>();
+			Set<ServiceType> types = new HashSet<>();
+			Set<Language> languages = new HashSet<>();
+			Set<GroupSizeCategory> groupSizes = new HashSet<>();
+
+			for (GuideService g : u.getGuideServices()) {
+				cities.add(g.getCity());
+				types.add(g.getType());
+				languages.add(g.getLanguage());
+				groupSizes.add(g.getGroupSizeCategory());
+			}
+			u.setCities(cities);
+			u.setServiceTypes(types);
+			u.setLanguages(languages);
+			u.setGroupSizes(groupSizes);
+		}
+		
         model.addAttribute("users", userPage.getContent()); // Lấy nội dung trang
         model.addAttribute("totalPages", userPage.getTotalPages()); // Số trang
         model.addAttribute("currentPage", page); // Trang hiện tại
         
         model.addAttribute("cities", City.values());
         model.addAttribute("languages", Language.values());
+        model.addAttribute("serviceTypes", ServiceType.values());
+        model.addAttribute("groupSizes", GroupSizeCategory.values());
+        
 
         return "guide/guide-list"; // Tên view Thymeleaf trả về, ví dụ: templates/guides/list.html
     }

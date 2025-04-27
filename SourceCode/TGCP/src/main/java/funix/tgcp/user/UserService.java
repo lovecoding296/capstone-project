@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import funix.tgcp.booking.BookingController;
 import funix.tgcp.exception.EmailAlreadyExistsException;
 import funix.tgcp.exception.EmailVerificationException;
+import funix.tgcp.guide.service.GroupSizeCategory;
+import funix.tgcp.guide.service.ServiceType;
 import funix.tgcp.util.EmailHelper;
 import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
@@ -157,14 +161,8 @@ public class UserService {
 		if (user.getInstagram() != null && !user.getInstagram().isEmpty()) {
 			currentUser.setInstagram(user.getInstagram());
 		}
-		if (user.getCity() != null) {
-			currentUser.setCity(user.getCity());
-		}
 		if (user.getBio() != null && !user.getBio().isEmpty()) {
 			currentUser.setBio(user.getBio());
-		}
-		if (user.getLanguages() != null && !user.getLanguages().isEmpty()) {
-			currentUser.setLanguages(user.getLanguages());
 		}
 		if (user.getBio() != null && !user.getBio().isEmpty()) {
 			currentUser.setBio(user.getBio());
@@ -210,25 +208,11 @@ public class UserService {
 		userRepo.save(currentUser);
 	}
 
-	public List<User> getTopByRoleOrderByAverageRatingDesc(Role role) {
-		return userRepo.findTop6ByRoleAndKycApprovedTrueAndVerifiedTrueAndIsActiveTrueOrderByAverageRatingDesc(role);
+	public List<User> findTop6UsersWithGuideServicesAndRoleGuide() {
+		Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Order.desc("averageRating")));
+		return userRepo.findTopUsersWithGuideServicesAndRoleGuide(pageable);
 	}
 
-	public List<User> searchGuides(City city, Integer maxPrice, Gender gender, Language language, int page, int size) {
-        List<User> allGuides = userRepo.findByRole(Role.ROLE_GUIDE);
-
-        return allGuides.stream()
-                .filter(user -> city == null || user.getCity() == city)
-                .filter(user -> maxPrice == null || user.getPricePerDay() <= maxPrice)
-                .filter(user -> gender == null || user.getGender() == gender)
-                .filter(user -> language == null || user.getLanguages().contains(language))
-                .collect(Collectors.toList());
-    }
-
-	public Page<User> searchGuides(City city, Integer maxPrice, Gender gender, Language language, Boolean isLocalGuide, Boolean isInternationalGuide, Pageable pageable) {
-		return userRepo.findGuideByFilter(city, maxPrice, gender, language,isLocalGuide, isInternationalGuide, pageable);
-	}
-	
 	
 	public void updateRating(User user, int newRating) {
 		int currentCount = user.getReviewCount();
@@ -296,5 +280,12 @@ public class UserService {
             throw new EmailVerificationException("Invalid verification token or the token has expired.");
         }
 		
+	}
+
+	public Page<User> searchGuides(ServiceType serviceType, City city, Language language, GroupSizeCategory groupSize,
+			Gender gender, Boolean isLocalGuide, Boolean isInternationalGuide, Pageable pageable) {
+		
+		return userRepo.findGuideByFilter(serviceType, city, language, groupSize, gender, isLocalGuide, isInternationalGuide, pageable);
+
 	}
 }

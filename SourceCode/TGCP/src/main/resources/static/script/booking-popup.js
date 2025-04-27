@@ -2,6 +2,147 @@ let pricePerDay = 200000; // ví dụ: 200.000 VND/ngày
 
 
 
+function fetchGuideService(guideId) {
+    console.log("fetchGuideService guideId " + guideId);
+
+    fetch(`/api/guide-services/guides/${guideId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Chúng ta sẽ giữ tất cả dữ liệu ban đầu để dễ dàng cập nhật các dropdowns
+            const allData = data;
+
+            // Lắng nghe sự thay đổi trên các dropdown
+            const serviceTypeSelect = document.getElementById('serviceType');
+            const citySelect = document.getElementById('city');
+            const groupSizeCategorySelect = document.getElementById('groupSizeCategory');
+            const languageSelect = document.getElementById('language');
+
+            // Cập nhật các dropdown khi có sự thay đổi
+            serviceTypeSelect.addEventListener('change', function() {
+                updateDropdowns(allData);
+            });
+            citySelect.addEventListener('change', function() {
+                updateDropdowns(allData);
+            });
+            groupSizeCategorySelect.addEventListener('change', function() {
+                updateDropdowns(allData);
+            });
+            languageSelect.addEventListener('change', function() {
+                updateDropdowns(allData);
+            });
+
+            // Cập nhật các dropdowns ban đầu
+            updateDropdowns(allData);
+        })
+        .catch(error => {
+            console.error('Error fetching guide service:', error);
+        });
+}
+
+function updateDropdowns(data) {
+    const serviceTypeSelect = document.getElementById('serviceType');
+    const citySelect = document.getElementById('city');
+    const groupSizeCategorySelect = document.getElementById('groupSizeCategory');
+    const languageSelect = document.getElementById('language');
+
+    const selectedServiceType = serviceTypeSelect.value;
+    const selectedCity = citySelect.value;
+    const selectedGroupSizeCategory = groupSizeCategorySelect.value;
+    const selectedLanguage = languageSelect.value;
+
+    // Populate service type options
+    const serviceTypes = [...new Set(data.map(item => item.type))];
+    updateDropdown('SERVICE_TYPE', serviceTypeSelect, serviceTypes, selectedServiceType);
+
+    // Populate city options
+    const filteredByService = data.filter(item => !serviceTypeSelect.value || item.type === serviceTypeSelect.value);
+    const cities = [...new Set(filteredByService.map(item => item.city))];
+    updateDropdown('CITY', citySelect, cities, selectedCity);
+
+    // Populate group size category options
+    const filteredByServiceAndCity = filteredByService.filter(item => !citySelect.value || item.city === citySelect.value);
+    const groupSizeCategories = [...new Set(filteredByServiceAndCity.map(item => item.groupSizeCategory))];
+    updateDropdown('GROUP_SIZE_CATEGORY',groupSizeCategorySelect, groupSizeCategories, selectedGroupSizeCategory);
+
+    // Populate language options
+    const filteredByServiceCityGroup = filteredByServiceAndCity.filter(item => !groupSizeCategorySelect.value || item.groupSizeCategory === groupSizeCategorySelect.value);
+    const languages = [...new Set(filteredByServiceCityGroup.map(item => item.language))];
+    updateDropdown('LANGUAGE',languageSelect, languages, selectedLanguage);
+
+    // Calculate price
+    calculatePrice(data, serviceTypeSelect.value, citySelect.value, groupSizeCategorySelect.value, languageSelect.value);
+}
+
+function updateDropdown(optionType, selectElement, values, previouslySelectedValue) {
+    // Ghi nhớ giá trị cũ
+    const oldValue = previouslySelectedValue;
+
+    // Xóa tất cả options
+    selectElement.innerHTML = '';
+
+    // Thêm placeholder
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Select an option';
+    selectElement.appendChild(placeholder);
+
+    // Thêm các option mới
+	values.forEach(val => {
+		const option = document.createElement('option');
+		option.value = val;
+
+		if (optionType === 'CITY') {
+			option.textContent = cityDisplayNames[val];
+		} else if (optionType === 'GROUP_SIZE_CATEGORY') {
+			option.textContent = groupSizeCategoryDisplayNames[val];
+		} else if (optionType === 'SERVICE_TYPE') {
+			option.textContent = serviceTypeDisplayNames[val];
+		} else {
+			option.textContent = val;
+		}		
+        selectElement.appendChild(option);
+    });
+
+    // Nếu giá trị cũ còn tồn tại thì chọn lại
+    if (values.includes(oldValue)) {
+        selectElement.value = oldValue;
+    } else {
+        selectElement.value = ''; // Nếu không thì chọn placeholder
+    }
+}
+
+
+function clearDropdown(dropdown) {
+    while (dropdown.options.length) {
+        dropdown.remove(0);
+    }
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Select an option';
+    dropdown.appendChild(placeholder);
+}
+
+function calculatePrice(data, serviceType, city, groupSizeCategory, language) {
+    const price = data.find(item => 
+        (!serviceType || item.type === serviceType) && 
+        (!city || item.city === city) && 
+        (!groupSizeCategory || item.groupSizeCategory === groupSizeCategory) && 
+        (!language || item.language === language)
+    )?.price;
+
+    if (price !== undefined) {
+		pricePerDay = price;
+		calculateTotal();
+    } else {
+        document.getElementById('totalPrice').textContent = 'Price not available';
+    }	
+}
+
+
+
+
+
+
 function fetchBusyDate(guideId) {
 	console.log("fetchBusyDate guideId " + guideId)
 	fetch(`/api/guides/${guideId}/busy-date`)
@@ -39,12 +180,11 @@ function openBookingPopup(guideId, guideName, price) {
 
 	document.getElementById("startDate").value = "";
 	document.getElementById("endDate").value = "";
-	document.getElementById("numPeople").value = 1;
 	document.getElementById("totalPrice").textContent = "0";
 
-	pricePerDay = price;
 
 	fetchBusyDate(guideId)
+	fetchGuideService(guideId)
 }
 
 
@@ -70,6 +210,10 @@ function submitBooking(){
 	closeBookingPopup();
 }
 
+
+
+
+
 function createBookingPopup() {
     if (document.getElementById("bookingModal")) return; // Đã tồn tại thì không tạo lại
 
@@ -88,11 +232,31 @@ function createBookingPopup() {
                         <input type="hidden" id="startDate" name="startDate" onchange="calculateTotal()">
                         <input type="hidden" id="endDate" name="endDate" onchange="calculateTotal()">
                     </div>
+					
+					<label for="serviceType">Service Type:</label>
+					<select id="serviceType" class="form-control" required>
+						
+					</select>
+					<br>
 
-                    <div class="mb-3">
-                        <label for="numPeople" class="form-label">Number of participants:</label>
-                        <input type="number" class="form-control" id="numPeople" name="numPeople" oninput="calculateTotal()" min="1" value="1" required>
-                    </div>
+					<label for="city">City:</label>
+					<select id="city" class="form-control" required>
+						
+					</select>
+					<br>
+
+					<label for="groupSizeCategory">Group Size:</label>
+					<select id="groupSizeCategory" class="form-control" required>
+						
+					</select>
+					<br>
+
+
+					<label for="language">Language:</label>
+					<select id="language" class="form-control" required>
+					<br>
+												
+					</select>
 
                     <div class="mb-3">
                         <label for="locationDetail" class="form-label">Areas you want to visit / desired itinerary:</label>
@@ -123,16 +287,25 @@ function createBooking() {
 	let guideId = document.getElementById("guideId").value;
 	let startDate = document.getElementById("startDate").value;
 	let endDate = document.getElementById("endDate").value;
-	let numberOfPeople = document.getElementById("numPeople").value;
 	let destination = document.getElementById("locationDetail").value;
 	let totalPrice = document.getElementById("totalPrice").textContent;
+	let serviceType = document.getElementById("serviceType").value;
+	let city = document.getElementById("city").value;
+	let groupSizeCategory = document.getElementById("groupSizeCategory").value;
+	let language = document.getElementById("language").value;
 
 	const bookingData = {
 		guide: { id: guideId },
+		guideService: {
+			guide: { id: guideId },
+			type: serviceType,
+			city: city,
+			groupSizeCategory: groupSizeCategory,
+			language: language			
+		},
 		//user: { id: userId }, 
 		startDate: startDate,
 		endDate: endDate,
-		numberOfPeople: parseInt(numberOfPeople),
 		destination: destination,
 		totalPrice: parseFloat(totalPrice.replace(/\./g, "").replace(",", ".")),
 		status: "PENDING" // Status mặc định

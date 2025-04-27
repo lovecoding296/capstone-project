@@ -121,21 +121,28 @@
 
 						<!-- Thành phố -->
 						<div class="mb-3">
-							<label for="filterCity" class="form-label">City</label>
+
+							<label for="filterServiceType" class="form-label">Service:</label>
+							<select id="filterServiceType" name="serviceType" class="form-select">
+								<option value="">All</option>
+								<option th:each="s : ${serviceTypes}" th:value="${s.name()}"
+									th:text="${s.getDisplayName()}"
+									th:selected="${param.serviceType != null && s.name() == param.serviceType[0]}">
+								</option>
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="filterCity" class="form-label">City:</label>
 							<select id="filterCity" name="city" class="form-select">
 								<option value="">All</option>
-								<option th:each="c : ${cities}" th:value="${c}" th:text="${c.getDisplayName()}"
+								<option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.getDisplayName()}"
 									th:selected="${param.city != null && c.name() == param.city[0]}">
 								</option>
 							</select>
-
-
-
 						</div>
-
 						<!-- Ngôn ngữ -->
 						<div class="mb-3">
-							<label for="filterLanguage" class="form-label">Language</label>
+							<label for="filterLanguage" class="form-label">Language:</label>
 							<select id="filterLanguage" name="language" class="form-select">
 								<option value="">All</option>
 								<option th:each="lang : ${languages}" th:value="${lang.name()}" th:text="${lang}"
@@ -143,22 +150,24 @@
 								</option>
 							</select>
 						</div>
-
+						<div class="mb-3">
+							<label for="filterGroupSize" class="form-label">Group size:</label>
+							<select id="filterGroupSize" name="groupSize" class="form-select">
+								<option value="">All</option>
+								<option th:each="g : ${groupSizes}" th:value="${g.name()}" th:text="${g}"
+									th:selected="${param.groupSize != null && g.name() == param.groupSize[0]}">
+								</option>
+							</select>
+						</div>		
 
 						<div class="mb-3">
-							<label for="filterPrice" class="form-label">Max price (USD/day)</label>
-							<input type="number" id="filterPrice" name="maxPrice" class="form-control" min="0"
-								placeholder="VD: 100" th:value="${param.maxPrice}">
-						</div>
-
-						<div class="mb-3">
-							<label for="filterGender" class="form-label">Gender</label>
+							<label for="filterGender" class="form-label">Gender:</label>
 							<select id="filterGender" name="gender" class="form-select">
 								<option value="">All</option>
 								<option value="MALE" th:selected="${param.gender != null && param.gender[0] == 'MALE'}">
-									male</option>
+									Male</option>
 								<option value="FEMALE"
-									th:selected="${param.gender != null && param.gender[0] == 'FEMALE'}">female</option>
+									th:selected="${param.gender != null && param.gender[0] == 'FEMALE'}">Female</option>
 							</select>
 						</div>
 
@@ -217,25 +226,34 @@
 							<div class="city mb-2 d-flex align-items-center">
 								<img src="images/icons/location-icon.webp" style="width: 16px; height: 16px;"
 									class="me-2">
-								<span th:if="${user.city}" th:text="${user.city.getDisplayName()}"></span>
+								<span>
+									<span th:text="${user.cities}"></span>
+								</span>
 							</div>
-
 							<div class="languages mb-2 d-flex align-items-center">
 								<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;"
 									class="me-2">
 								<span th:text="${user.languages}"></span>
 							</div>
 
+							<div class="city mb-2 d-flex align-items-center">
+								<span>Services:</span>
+								<span>
+									<span th:text="${user.serviceTypes}"></span>
+								</span>
+							</div>
+
 							<div class="buttons d-flex justify-content-between mt-3">
-								<button class="btn btn-primary btn-sm" th:data-loggedin="${session.loggedInUser != null}"
-									th:data-userid="${user.id}" th:data-username="${user.fullName}"
+								<button class="btn btn-primary btn-sm"
+									th:data-loggedin="${session.loggedInUser != null}" th:data-userid="${user.id}"
+									th:data-username="${user.fullName}"
 									th:onclick="|if (this.dataset.loggedin === 'true') { openChatWithUser(this.dataset.userid, this.dataset.username); } else { window.location.href='/login'; }|">
 									Message
 								</button>
 
-								<button class="btn btn-warning btn-sm" th:data-loggedin="${session.loggedInUser != null}"
-									th:data-userid="${user.id}" th:data-username="${user.fullName}"
-									th:data-price="${user.pricePerDay}"
+								<button class="btn btn-warning btn-sm"
+									th:data-loggedin="${session.loggedInUser != null}" th:data-userid="${user.id}"
+									th:data-username="${user.fullName}" th:data-price="${user.pricePerDay}"
 									th:onclick="|if (this.dataset.loggedin === 'true') { openBookingPopup(this.dataset.userid, this.dataset.username, this.dataset.price); } else { window.location.href='/login'; }|">
 									Book Now
 								</button>
@@ -249,16 +267,16 @@
 							<a class="page-link" href="#" th:data-page="0">First</a>
 						</li>
 						<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
-							<a class="page-link" href="#"  th:data-page="${currentPage - 1}">Previous</a>
+							<a class="page-link" href="#" th:data-page="${currentPage - 1}">Previous</a>
 						</li>
 
 						<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
 							th:classappend="${i == currentPage} ? 'active' : ''">
-							<a class="page-link" href="#"  th:data-page="${i}" th:text="${i + 1}"></a>
+							<a class="page-link" href="#" th:data-page="${i}" th:text="${i + 1}"></a>
 						</li>
 
 						<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-							<a class="page-link" href="#"  th:data-page="${currentPage + 1}">Next</a>
+							<a class="page-link" href="#" th:data-page="${currentPage + 1}">Next</a>
 						</li>
 						<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
 							<a class="page-link" href="#" th:data-page="${totalPages - 1}">Last</a>

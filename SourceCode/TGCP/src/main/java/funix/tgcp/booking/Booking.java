@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
 
+import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.payment.Payment;
 import funix.tgcp.user.User;
 
@@ -34,9 +35,10 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;    
-
-    @Column(nullable = false)
-    private int numberOfPeople;    
+    
+    @ManyToOne
+    @JoinColumn(name = "guide_service_id")
+    private GuideService guideService;
     
     private double totalPrice = 0;
     

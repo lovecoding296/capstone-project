@@ -11,6 +11,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import funix.tgcp.busydate.BusyDate;
 import funix.tgcp.comment.Comment;
+import funix.tgcp.guide.service.GroupSizeCategory;
+import funix.tgcp.guide.service.GuideService;
+import funix.tgcp.guide.service.ServiceType;
+import funix.tgcp.post.like.PostLike;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -64,16 +68,6 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private Role role = Role.ROLE_USER;
 
-	@ElementCollection(targetClass = Language.class, fetch = FetchType.EAGER)
-	@CollectionTable(name = "user_languages", joinColumns = @JoinColumn(name = "user_id"))
-	@Enumerated(EnumType.STRING)
-	@Column(name = "language", nullable = false)
-	private Set<Language> languages;
-
-
-	@Column(columnDefinition = "NVARCHAR(255)")
-	private City city;
-
 	private double averageRating;
 
 	private String verificationToken;
@@ -95,9 +89,7 @@ public class User {
 	
 	public boolean isGuide() {
 		return this.role == Role.ROLE_GUIDE;
-	}
-	
-	
+	}	
 	
 	@Column(columnDefinition = "NVARCHAR(255)")
 	private String guideLicenseUrl;
@@ -121,6 +113,21 @@ public class User {
     
     private boolean isLocalGuide;
     private boolean isInternationalGuide;
+    
+    @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<GuideService> guideServices = new HashSet<>();  
+    
+    @Transient
+    private Set<City> cities;
+
+    @Transient
+    private Set<Language> languages;
+
+    @Transient
+    private Set<ServiceType> serviceTypes;
+    
+    @Transient
+    private Set<GroupSizeCategory> groupSizes;
     
 	@Override
 	public boolean equals(Object obj) {

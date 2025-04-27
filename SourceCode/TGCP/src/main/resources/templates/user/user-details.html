@@ -64,7 +64,7 @@
 
 				   <!-- Book Now -->
 				   <button class="btn btn-warning"
-				           th:if="${user.isGuide() and session.loggedInUser == null}"
+				           th:if="${user.isGuide() && user.guideServices.size() > 0 && session.loggedInUser == null}"
 				           onclick="window.location.href='/login'">
 				       Book Now
 				   </button>
@@ -110,15 +110,20 @@
 				<!--<p><strong>Số điện thoại:</strong> <span th:text="${user.phone}"></span></p>
 				<p><strong>Điện thoại gia đình:</strong> <span th:text="${user.familyPhone}"></span></p>
 				<p><strong>Địa chỉ:</strong> <span th:text="${user.homeAddress}"></span></p>-->
-				<p th:if="${user.city}"><img th:src="@{/images/icons/location-icon.webp}" style="width: 16px; height: 16px;"> <span th:text="${user.city.getDisplayName()}"></span></p>
 				<p th:if="${user.bio}"><strong>Bio:</strong> <span th:text="${user.bio}"></span></p>
 				<p th:if="${user.interests}"><strong>Interests:</strong> <span th:text="${user.interests}"></span></p>
 				<p th:if="${user.facebook}"><strong>Facebook:</strong> <a th:href="${user.facebook}" th:text="${user.facebook}"></a></p>
 				<p th:if="${user.tiktok}"><strong>Tiktok:</strong> <a th:href="${user.tiktok}" th:text="${user.tiktok}"></a></p>
 				<p th:if="${user.instagram}"><strong>Instagram:</strong> <a th:href="${user.instagram}" th:text="${user.instagram}"></a></p>
 				<p th:if="${user.isGuide()}">⭐<span th:text="${#numbers.formatDecimal(user.averageRating, 1, 1)}"></span> (<span th:text="${user.reviewCount}">100</span> reviews)</p>
-				<p th:if="${user.isGuide()}">Completed tours:<span th:text="${bookingCount}"></span></p>
-				<p th:if="${!user.isGuide()}">Joined tours:<span th:text="${bookingCount}"></span></p>
+				<p th:if="${user.isGuide()}">Completed services:<span th:text="${bookingCount}"></span></p>
+				<p th:if="${!user.isGuide()}">Created services:<span th:text="${bookingCount}"></span></p>				
+				
+				<div th:if="${user.isGuide() && user.guideServices.size() > 0}">
+					<p><img th:src="@{/images/icons/location-icon.webp}" style="width: 16px; height: 16px;"><span th:text="${user.cities}"></span></p>
+					<p><img th:src="@{/images/icons/language-icon.PNG}" style="width: 16px; height: 16px;" class="me-2"><span th:text="${user.languages}"></span></p>
+					<p>Services:<span th:text="${user.serviceTypes}"></span></p>
+				</div>
 				<!--<p><strong>Đã xác thực email:</strong> <span th:text="${user.verified ? 'Có' : 'Chưa'}"></span></p>
 				<p><strong>Được phê duyệt KYC:</strong> <span th:text="${user.kycApproved ? 'Có' : 'Chưa'}"></span></p>-->
 				
@@ -171,7 +176,7 @@
 
 		<br><br>
 		<!-- Section: Danh sách bài viết đã viết -->
-		<div class="section-title">
+		<!--<div class="section-title">
 			<h5><strong>Top posts by <span th:text="${user.fullName}"></span></strong></h5>
 		</div>
 		<table class="table table-stoured table-bordered mt-4">
@@ -194,7 +199,7 @@
 					<td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}"></td>
 				</tr>
 			</tbody>
-		</table>
+		</table>-->
 
 
 

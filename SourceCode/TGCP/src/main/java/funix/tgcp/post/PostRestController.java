@@ -20,7 +20,6 @@ import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.util.LogHelper;
 
 @RestController
-@RequestMapping("/api/posts")
 public class PostRestController {
 
 	private static final LogHelper logger = new LogHelper(PostRestController.class);
@@ -28,8 +27,29 @@ public class PostRestController {
 	@Autowired
 	private PostService postService;
 	
-	@GetMapping()
-    public Page<Post> findReportByFilter(
+	@GetMapping("/api/users/posts")
+    public Page<Post> findPostByCurrentUserAndByFilter(
+    		@RequestParam(required = false) String title,
+	        @RequestParam(required = false) PostCategory category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+	        ) {    	
+    	
+		logger.info("userDetails " + userDetails);
+		
+		Pageable pageable = PageRequest.of(page, size);
+		
+    	return postService.findPostByCurrentUserAndByFilter(
+    			userDetails.getId(),
+    			title,
+    			category,
+    			pageable
+    			);
+    }
+	
+	@GetMapping("/api/admin/posts")
+    public Page<Post> findPosttByFilter(
     		@RequestParam(required = false) String title,
 	        @RequestParam(required = false) String author,
 	        @RequestParam(required = false) PostCategory category,
@@ -47,8 +67,10 @@ public class PostRestController {
     }
 	
 	
-	@DeleteMapping("/{id}/delete")
-	public ResponseEntity<Void> deleteById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	@DeleteMapping("/api/posts/{id}/delete")
+	public ResponseEntity<Void> deleteById(
+			@PathVariable Long id,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
 		Optional<Post> postOpt = postService.findById(id);
 	    if (postOpt.isEmpty()) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 nếu không tìm thấy bài viết
@@ -61,7 +83,7 @@ public class PostRestController {
 	    }
 
 	    // Kiểm tra quyền sở hữu bài viết
-	    if (!post.getAuthor().equals(userDetails.getUser())) {
+	    if (!userDetails.isAdmin() && !post.getAuthor().equals(userDetails.getUser())) {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 nếu người dùng không phải chủ sở hữu bài viết
 	    }
 

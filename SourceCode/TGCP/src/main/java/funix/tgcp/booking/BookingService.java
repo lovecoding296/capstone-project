@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import funix.tgcp.busydate.BusyDate;
 import funix.tgcp.busydate.BusyDateRepository;
+import funix.tgcp.guide.service.GuideService;
+import funix.tgcp.guide.service.GuideServiceService;
 import funix.tgcp.notification.Notification;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.util.LogHelper;
@@ -32,6 +34,9 @@ public class BookingService {
     
     @Autowired
 	private NotificationService notifiService;
+    
+    @Autowired
+	private GuideServiceService guideServiceService;
 
 
 
@@ -40,12 +45,23 @@ public class BookingService {
     public Booking createBooking(Booking bookingRequest) {     
     	logger.info("");
     	
-    	notifiService.sendNotification(
-    			bookingRequest.getGuide(),
-    			bookingRequest.getCustomer().getFullName() + " booked you, please confirm!",
-    			"/dashboard#manage-bookings");
+    	GuideService g = bookingRequest.getGuideService();
+    	Optional<GuideService> gO = guideServiceService.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(
+    			bookingRequest.getGuide().getId(), g.getType(), g.getGroupSizeCategory(), g.getLanguage(), g.getCity());
     	
-    	return bookingRepo.save(bookingRequest);
+    	logger.info("GuideService isPresent " + gO.isPresent());
+    	
+    	if(gO.isPresent()) {    		
+    		notifiService.sendNotification(
+        			bookingRequest.getGuide(),
+        			bookingRequest.getCustomer().getFullName() + " booked you, please confirm!",
+        			"/dashboard#manage-bookings");
+    		
+    		bookingRequest.setGuideService(gO.get());
+    		return bookingRepo.save(bookingRequest);
+    	}
+    	
+    	return null;
     }
 
     // Lấy danh sách bookings của khách hàng

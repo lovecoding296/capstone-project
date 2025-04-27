@@ -12,13 +12,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import funix.tgcp.user.Language;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
 import jakarta.validation.Valid;
 
 import java.util.List;
-import java.util.Locale.Category;
 import java.util.Optional;
 
 @Controller

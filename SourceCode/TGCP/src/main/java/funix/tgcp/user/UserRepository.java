@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import funix.tgcp.guide.service.GroupSizeCategory;
+import funix.tgcp.guide.service.ServiceType;
+
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email); // Tìm kiếm theo email
 	
@@ -23,24 +26,27 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	boolean existsByEmail(String email);
 	
+	@Query("SELECT DISTINCT u FROM User u JOIN u.guideServices gs WHERE u.role = 'ROLE_GUIDE' AND gs IS NOT NULL")
+	List<User> findTopUsersWithGuideServicesAndRoleGuide(Pageable pageable);
+
+	
 	    
-	@Query("SELECT u FROM User u WHERE u.role = 'ROLE_GUIDE' " +
-	       "AND (:city IS NULL OR u.city = :city) " +
-	       "AND (:maxPrice IS NULL OR u.pricePerDay <= :maxPrice) " +
+	@Query("SELECT DISTINCT u FROM User u " +
+	       "JOIN u.guideServices gs " +
+	       "WHERE (:type IS NULL OR gs.type = :type) " +
+	       "AND (:city IS NULL OR gs.city = :city) " +
+	       "AND (:language IS NULL OR gs.language = :language) " +
+	       "AND (:groupSize IS NULL OR gs.groupSizeCategory = :groupSize) " +
 	       "AND (:gender IS NULL OR u.gender = :gender) " +
-	       "AND (:language IS NULL OR :language MEMBER OF u.languages) " +
 	       "AND (:isLocalGuide IS NULL OR u.isLocalGuide = :isLocalGuide) " +
 	       "AND (:isInternationalGuide IS NULL OR u.isInternationalGuide = :isInternationalGuide)")
-	Page<User> findGuideByFilter(@Param("city") City city,
-	                             @Param("maxPrice") Integer maxPrice,
-	                             @Param("gender") Gender gender,
-	                             @Param("language") Language language,
-	                             @Param("isLocalGuide") Boolean isLocalGuide,
-	                             @Param("isInternationalGuide") Boolean isInternationalGuide,
-	                             Pageable pageable);
+	Page<User> findGuideByFilter(ServiceType type, City city, Language language, 
+	                             GroupSizeCategory groupSize, Gender gender, 
+	                             Boolean isLocalGuide, Boolean isInternationalGuide, Pageable pageable);
+
 	
 	
-	@Query("SELECT u FROM User u WHERE (:email IS NULL OR u.email LIKE CONCAT('%', :email, '%')) "
+	@Query("SELECT DISTINCT u FROM User u WHERE (:email IS NULL OR u.email LIKE CONCAT('%', :email, '%')) "
 	     + "AND (:fullName IS NULL OR u.fullName LIKE CONCAT('%', :fullName, '%')) "
 	     + "AND (:role IS NULL OR u.role = :role) "
 	     + "AND (:kycApproved IS NULL OR u.kycApproved = :kycApproved) "
@@ -55,6 +61,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	        @Param("enabled") Boolean enabled,
 	        @Param("verified") Boolean verified,
 	        Pageable pageable);
+
+
 
 
 

@@ -34,14 +34,14 @@ public class SecurityConfig {
     	logger.info("check login");
         http
             .authorizeHttpRequests(auth -> auth
-            	.requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/users/bookings/**").authenticated()
-            	.requestMatchers("/guides/bookings/**").authenticated()
-            	.requestMatchers("/dashboard/**").authenticated()
-            	.requestMatchers("/api/notifications/**").authenticated()
-            	.requestMatchers("/api/chat/**").authenticated()
-            	.requestMatchers("/api/bookings/**").authenticated()
-            	.requestMatchers("/api/comments/**").authenticated()
+//            	.requestMatchers("/admin/**").hasRole("ADMIN")
+//                .requestMatchers("/users/bookings/**").authenticated()
+//            	.requestMatchers("/guides/bookings/**").authenticated()
+//            	.requestMatchers("/dashboard/**").authenticated()
+//            	.requestMatchers("/api/notifications/**").authenticated()
+//            	.requestMatchers("/api/chat/**").authenticated()
+//            	.requestMatchers("/api/bookings/**").authenticated()
+//            	.requestMatchers("/api/comments/**").authenticated()
             	
         		.requestMatchers("/ckeditor/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().permitAll() // Allow all requests
