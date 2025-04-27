@@ -223,53 +223,69 @@ function createBookingPopup() {
                 <span class="close" onclick="closeBookingPopup()">&times;</span>
                 <h3>Booking a guide: <span id="guideName"></span></h3>
 
-                <form id="bookingForm">
-                    <input type="hidden" id="guideId" name="guideId">
+				<form id="bookingForm">
+				    <input type="hidden" id="guideId" name="guideId">
 
-                    <div class="mb-3">
-                        <label for="dateRange" class="form-label">Booking Period:</label>
-                        <input id="dateRange" type="text" class="form-control" placeholder="Booking Period" required>
-                        <input type="hidden" id="startDate" name="startDate" onchange="calculateTotal()">
-                        <input type="hidden" id="endDate" name="endDate" onchange="calculateTotal()">
-                    </div>
-					
-					<label for="serviceType">Service Type:</label>
-					<select id="serviceType" class="form-control" required>
-						
-					</select>
-					<br>
+				    <div class="mb-3 row">
+				        <label for="dateRange" class="col-sm-4 col-form-label">Period:</label>
+				        <div class="col-sm-8">
+				            <input id="dateRange" type="text" class="form-control" placeholder="Booking Period" required>
+				            <input type="hidden" id="startDate" name="startDate" onchange="calculateTotal()">
+				            <input type="hidden" id="endDate" name="endDate" onchange="calculateTotal()">
+				        </div>
+				    </div>
 
-					<label for="city">City:</label>
-					<select id="city" class="form-control" required>
-						
-					</select>
-					<br>
+				    <div class="mb-3 row">
+				        <label for="serviceType" class="col-sm-4 col-form-label">Service:</label>
+				        <div class="col-sm-8">
+				            <select id="serviceType" class="form-control" required>
+				                <!-- Options will be dynamically populated -->
+				            </select>
+				        </div>
+				    </div>
 
-					<label for="groupSizeCategory">Group Size:</label>
-					<select id="groupSizeCategory" class="form-control" required>
-						
-					</select>
-					<br>
+				    <div class="mb-3 row">
+				        <label for="city" class="col-sm-4 col-form-label">City:</label>
+				        <div class="col-sm-8">
+				            <select id="city" class="form-control" required>
+				                <!-- Options will be dynamically populated -->
+				            </select>
+				        </div>
+				    </div>
 
+				    <div class="mb-3 row">
+				        <label for="groupSizeCategory" class="col-sm-4 col-form-label">Group Size:</label>
+				        <div class="col-sm-8">
+				            <select id="groupSizeCategory" class="form-control" required>
+				                <!-- Options will be dynamically populated -->
+				            </select>
+				        </div>
+				    </div>
 
-					<label for="language">Language:</label>
-					<select id="language" class="form-control" required>
-					<br>
-												
-					</select>
+				    <div class="mb-3 row">
+				        <label for="language" class="col-sm-4 col-form-label">Language:</label>
+				        <div class="col-sm-8">
+				            <select id="language" class="form-control" required>
+				                <!-- Options will be dynamically populated -->
+				            </select>
+				        </div>
+				    </div>
 
-                    <div class="mb-3">
-                        <label for="locationDetail" class="form-label">Areas you want to visit / desired itinerary:</label>
-                        <input type="text" class="form-control" id="locationDetail" name="locationDetail" required>
-                    </div>
+				    <div class="mb-3 row">
+				        <label for="locationDetail" class="form-label">Areas you want to visit / desired itinerary:</label>
+				        <div>
+				            <input type="text" class="form-control" id="locationDetail" name="locationDetail" required>
+				        </div>
+				    </div>
 
-                    <p class="fw-bold">Total price: <span id="totalPrice" class="text-danger">0</span> USD</p>
+				    <p class="fw-bold">Total price: <span id="totalPrice" class="text-danger">0</span> USD</p>
 
-                    <div class="d-flex justify-content-between">
-                        <button type="button" onclick="submitBooking()" class="btn btn-success">Confirm</button>
-                        <button type="button" class="btn btn-secondary" onclick="closeBookingPopup()">Cancel</button>
-                    </div>
-                </form>
+				    <div class="d-flex justify-content-between">
+				        <button type="button" onclick="submitBooking()" class="btn btn-success">Confirm</button>
+				        <button type="button" class="btn btn-secondary" onclick="closeBookingPopup()">Cancel</button>
+				    </div>
+				</form>
+
             </div>
         </div>
     `;
