@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
+import funix.tgcp.booking.review.ReviewController;
 import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
-import funix.tgcp.review.ReviewController;
 import jakarta.servlet.http.HttpSession;
 
 @RestController

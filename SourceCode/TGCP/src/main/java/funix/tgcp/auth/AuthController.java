@@ -1,11 +1,9 @@
-package funix.tgcp.home.controller;
+package funix.tgcp.auth;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,89 +14,42 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import funix.tgcp.user.City;
-import funix.tgcp.user.Language;
-import funix.tgcp.user.User;
-import funix.tgcp.user.UserService;
+import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.exception.EmailAlreadyExistsException;
 import funix.tgcp.exception.EmailVerificationException;
-import funix.tgcp.guide.service.GroupSizeCategory;
-import funix.tgcp.guide.service.GuideService;
-import funix.tgcp.guide.service.ServiceType;
-import funix.tgcp.post.Post;
-import funix.tgcp.post.PostCategory;
-import funix.tgcp.post.PostService;
+import funix.tgcp.home.HomeController;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserService;
 import funix.tgcp.util.LogHelper;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
-public class HomeController {
+public class AuthController {
 
-	private static final LogHelper logger = new LogHelper(HomeController.class);
+	private static final LogHelper logger = new LogHelper(AuthController.class);
 
 	@Autowired
 	private UserService userService;
 
-	@Autowired
-	private PostService postService;
-
-	@GetMapping("/")
-	public String home(Model model, HttpSession session) {
-
-		List<Post> posts = postService.findTop4ByOrderByCreatedAtDesc();
-		List<User> users = userService.findTop6UsersWithGuideServicesAndRoleGuide();
-		
-		
-		logger.info("home users.size(); " + users.size());
-		
-		for (User u : users) {
-			Set<City> cities = new HashSet<>();
-			Set<ServiceType> types = new HashSet<>();
-			Set<Language> languages = new HashSet<>();
-			Set<GroupSizeCategory> groupSizes = new HashSet<>();
-
-			for (GuideService g : u.getGuideServices()) {
-				cities.add(g.getCity());
-				types.add(g.getType());
-				languages.add(g.getLanguage());
-				groupSizes.add(g.getGroupSizeCategory());
-			}
-			u.setCities(cities);
-			u.setServiceTypes(types);
-			u.setLanguages(languages);
-			u.setGroupSizes(groupSizes);
-		}
-		
-
-		model.addAttribute("postCategories", PostCategory.values());
-		model.addAttribute("posts", posts);
-		model.addAttribute("users", users);		
-
-		return "home";
-	}
-
 	@GetMapping("/signup")
-	public String showSignupForm(HttpSession session, Model model) {
-		if (session.getAttribute("loggedInUser") != null) {
+	public String showSignupForm(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+		if (userDetails != null) {
 			return "redirect:/"; // Nếu đã login, chuyển sang home
 		}
 		model.addAttribute("user", new User());
 		return "signup"; // Trả về trang signup.html
 	}
 
-	@GetMapping("/dashboard")
-	public String dashboard() {
-		return "/dashboard/dashboard";
-	}
-
-	@GetMapping("/admin/dashboard")
-	public String adminDashboard() {
-		return "/dashboard/admin-dashboard";
+	@GetMapping("/login")
+	public String login(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (userDetails != null) {
+			return "redirect:/"; // Nếu đã login, chuyển sang home
+		}
+		return "login";
 	}
 
 	@PostMapping("/signup")
-	public String createuser(@Valid @ModelAttribute User user, BindingResult result,
+	public String createUser(@Valid @ModelAttribute User user, BindingResult result,
 			@RequestParam MultipartFile cccdFile, Model model) {
 		if (result.hasErrors()) {
 			model.addAttribute("user", user);
@@ -109,7 +60,7 @@ public class HomeController {
 			userService.registerUser(cccdFile, user);
 			System.out.println("Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
 			model.addAttribute("successMessage",
-					"Đăng ký thành công, hãy kiểm tra email và chờ quản trị viên phê duyệt tài khoản.");
+					"Registration successful, please check your email and wait for the administrator to approve your account.");
 			model.addAttribute("user", new User());
 			return "signup";
 		} catch (EmailAlreadyExistsException e) {
@@ -122,14 +73,6 @@ public class HomeController {
 		model.addAttribute("user", user);
 		model.addAttribute("errorMessage", errorMessage);
 		return "signup";
-	}
-
-	@GetMapping("/login")
-	public String login(HttpSession session) {
-		if (session.getAttribute("loggedInUser") != null) {
-			return "redirect:/"; // Nếu đã login, chuyển sang home
-		}
-		return "login";
 	}
 
 	@GetMapping("/verify")
@@ -150,4 +93,28 @@ public class HomeController {
 		redirectAttributes.addFlashAttribute("successMessage", "Please check your email for reset instructions!");
 		return "redirect:/login";
 	}
+
+	// Hiển thị form nhập mật khẩu mới
+	@GetMapping("/reset-password")
+	public String showResetPasswordForm(@RequestParam String token, Model model) {
+		// TODO: kiểm tra token có hợp lệ không
+		model.addAttribute("token", token);
+		return "reset_password"; // tên view (reset_password.html)
+	}
+
+	// Xử lý submit mật khẩu mới
+	@PostMapping("/reset-password")
+	public String handleResetPassword(@RequestParam String token, @RequestParam String password,
+			RedirectAttributes redirectAttributes, Model model) {
+		try {
+			userService.handleResetPassword(token, password);
+		} catch (EmailVerificationException e) {
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+			e.printStackTrace();
+			return "redirect:/login";
+		}
+		redirectAttributes.addFlashAttribute("successMessage", "Password changed successfully!");
+		return "redirect:/login";
+	}
+
 }

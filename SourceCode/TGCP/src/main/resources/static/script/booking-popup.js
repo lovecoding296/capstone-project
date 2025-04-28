@@ -1,4 +1,4 @@
-let pricePerDay = 200000; // ví dụ: 200.000 VND/ngày
+let pricePerDay = 50; // ví dụ: 50 USD/day
 
 
 
@@ -154,7 +154,7 @@ function fetchDayOff(guideId) {
 
 }
 
-function openBookingPopup(guideId, guideName, price) {
+function openBookingPopup(guideId, guideName) {
 	
 	createBookingPopup()
 	

@@ -70,7 +70,7 @@
 				   </button>
 				   <button class="btn btn-warning"
 				           th:if="${user.isGuide() and session.loggedInUser != null and session.loggedInUser.id != user.id}"
-				           th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}', ${user.pricePerDay})|">
+				           th:attr="onclick=|openBookingPopup(${user.id}, '${user.fullName}')|">
 				       Book Now
 				   </button>
 

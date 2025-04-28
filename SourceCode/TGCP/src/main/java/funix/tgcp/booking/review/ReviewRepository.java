@@ -1,4 +1,4 @@
-package funix.tgcp.review;
+package funix.tgcp.booking.review;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

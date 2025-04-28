@@ -250,8 +250,8 @@
 
 								<button class="btn btn-warning btn-sm"
 									th:data-loggedin="${session.loggedInUser != null}" th:data-userid="${user.id}"
-									th:data-username="${user.fullName}" th:data-price="${user.pricePerDay}"
-									th:onclick="|if (this.dataset.loggedin === 'true') { openBookingPopup(this.dataset.userid, this.dataset.username, this.dataset.price); } else { window.location.href='/login'; }|">
+									th:data-username="${user.fullName}"
+									th:onclick="|if (this.dataset.loggedin === 'true') { openBookingPopup(this.dataset.userid, this.dataset.username); } else { window.location.href='/login'; }|">
 									Book Now
 								</button>
 							</div>

@@ -5,14 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
@@ -34,14 +30,14 @@ public class SecurityConfig {
     	logger.info("check login");
         http
             .authorizeHttpRequests(auth -> auth
-//            	.requestMatchers("/admin/**").hasRole("ADMIN")
-//                .requestMatchers("/users/bookings/**").authenticated()
-//            	.requestMatchers("/guides/bookings/**").authenticated()
-//            	.requestMatchers("/dashboard/**").authenticated()
-//            	.requestMatchers("/api/notifications/**").authenticated()
-//            	.requestMatchers("/api/chat/**").authenticated()
-//            	.requestMatchers("/api/bookings/**").authenticated()
-//            	.requestMatchers("/api/comments/**").authenticated()
+            	.requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/users/bookings/**").authenticated()
+            	.requestMatchers("/guides/bookings/**").authenticated()
+            	.requestMatchers("/dashboard/**").authenticated()
+            	.requestMatchers("/api/notifications/**").authenticated()
+            	.requestMatchers("/api/chat/**").authenticated()
+            	.requestMatchers("/api/bookings/**").authenticated()
+            	.requestMatchers("/api/comments/**").authenticated()
             	
         		.requestMatchers("/ckeditor/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().permitAll() // Allow all requests

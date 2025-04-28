@@ -1,22 +1,25 @@
 package funix.tgcp.chat;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import funix.tgcp.booking.BookingRestController;
-import funix.tgcp.config.CustomUserDetails;
-import funix.tgcp.user.User;
-import funix.tgcp.user.UserRepository;
-import funix.tgcp.util.LogHelper;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import funix.tgcp.config.CustomUserDetails;
+import funix.tgcp.user.User;
+import funix.tgcp.util.LogHelper;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -31,9 +34,6 @@ public class ChatMessageController {
     @Autowired
     private ChatMessageService chatService;
     
-    @Autowired
-    private UserRepository userRepository;
-
     // Gửi tin nhắn
     @PostMapping("/send")
     public ChatMessage sendMessage(

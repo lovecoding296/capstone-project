@@ -9,12 +9,9 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import funix.tgcp.dayoff.DayOff;
-import funix.tgcp.comment.Comment;
 import funix.tgcp.guide.service.GroupSizeCategory;
 import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.ServiceType;
-import funix.tgcp.post.like.PostLike;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -106,10 +103,7 @@ public class User {
 
     private String accountHolder; // Chủ tài khoản
     
-    private int reviewCount = 0; // số người đánh giá
-    
-    private double pricePerDay = 250000;
-    
+    private int reviewCount = 0; // số người đánh giá    
     
     private boolean isLocalGuide;
     private boolean isInternationalGuide;

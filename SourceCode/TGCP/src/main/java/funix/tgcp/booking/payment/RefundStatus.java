@@ -1,4 +1,4 @@
-package funix.tgcp.payment;
+package funix.tgcp.booking.payment;
 
 public enum RefundStatus {
 	NONE,

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,15 +24,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import funix.tgcp.booking.BookingService;
+import funix.tgcp.booking.review.Review;
+import funix.tgcp.booking.review.ReviewService;
+import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.guide.service.GroupSizeCategory;
 import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.ServiceType;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
-import funix.tgcp.review.Review;
-import funix.tgcp.review.ReviewService;
 import funix.tgcp.util.FileHelper;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -39,65 +40,53 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    
-    @Autowired
-    private PostService postService;
-    
-	@Autowired
-    private ReviewService reviewService;
-	
-	@Autowired
-    private BookingService bookingService;
 	
 	@Autowired
 	private FileHelper fileHelper;
+
+	@Autowired
+	private PostService postService;
+
+	@Autowired
+	private BookingService bookingService;
+
+	@Autowired
+	private ReviewService reviewService;
     
-    // Lấy thông tin người dùng theo ID
-    @GetMapping("/users/{userId}")
-    public String getuserById(@PathVariable Long userId, Model model) {
-        Optional<User> userOp = userService.findById(userId);
-        if (userOp.isPresent()) {
-        	User user = userOp.get();
-        	
+	// Lấy thông tin người dùng theo ID
+	@GetMapping("/users/{userId}")
+	public String getuserById(@PathVariable Long userId, Model model) {
+		try {
+			User user = userService.getUserDetails(userId);
             List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(userId);            
             List<Review> reviews = reviewService.findByReviewedUserIdOrderByRatingDesc(userId);
         	long bookingCount = bookingService.countCompletedByUserIdOrGuideId(userId);
         	
-			Set<City> cities = new HashSet<>();
-			Set<ServiceType> types = new HashSet<>();
-			Set<Language> languages = new HashSet<>();
-			Set<GroupSizeCategory> groupSizes = new HashSet<>();
-
-			for (GuideService g : user.getGuideServices()) {
-				cities.add(g.getCity());
-				types.add(g.getType());
-				languages.add(g.getLanguage());
-				groupSizes.add(g.getGroupSizeCategory());
-			}
-			user.setCities(cities);
-			user.setServiceTypes(types);
-			user.setLanguages(languages);
         	
-            model.addAttribute("user", user);
             model.addAttribute("posts", posts);
             model.addAttribute("reviews", reviews);
-            model.addAttribute("bookingCount", bookingCount);
-            
-            
-            return "user/user-details"; // Trả về trang chi tiết người dùng
-        }
-        return "redirect:/"; // Nếu không tìm thấy, chuyển hướng về trang danh sách
-    }
-
+            model.addAttribute("bookingCount", bookingCount);	
+			
+			model.addAttribute("user", user);
+			
+			
+			
+			
+			return "user/user-details";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "redirect:/"; // Nếu không tìm thấy, chuyển hướng về trang danh sách
+	}
 
     // Cập nhật thông tin người dùng
     @GetMapping("/users/{id}/edit")
-    public String showEditForm(@PathVariable Long id, Model model, HttpSession session) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
+    public String showEditForm(@PathVariable Long id, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    	if (userDetails == null) {
+			return "redirect:/login";
+		}
 
-        if (loggedInUser == null) {
-            return "redirect:/login"; // Chưa đăng nhập -> Chuyển hướng đến trang login
-        }
+		User loggedInUser = userDetails.getUser();
 
         if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
             return "redirect:/"; // Không phải chính chủ hoặc admin -> Từ chối truy cập
@@ -112,62 +101,62 @@ public class UserController {
     }
 
 
-    @PostMapping("/users/{id}/edit")
-    public String updateuser(@PathVariable Long id, @Valid @ModelAttribute User user, BindingResult result,
-    		@RequestParam("avatarFile") MultipartFile avatarFile, @RequestParam("cccdFile") MultipartFile cccdFile,Model model, HttpSession session) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
+	@PostMapping("/users/{id}/edit")
+	public String updateUser(@PathVariable Long id, @Valid @ModelAttribute User user, BindingResult result,
+			@RequestParam MultipartFile avatarFile, @RequestParam MultipartFile cccdFile, Model model,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        if (loggedInUser == null) {
-            return "redirect:/login"; // Chưa đăng nhập
-        }
+		if (userDetails == null) {
+			return "redirect:/login"; // Chưa đăng nhập
+		}
 
-        if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
-            return "redirect:/"; // Không có quyền chỉnh sửa
-        }
+		User loggedInUser = userDetails.getUser();
 
-        if (result.hasErrors()) {
-            return "user/user-form"; // Trả về lại trang chỉnh sửa nếu có lỗi
-        }
+		if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
+			return "redirect:/"; // Không có quyền chỉnh sửa
+		}
 
-        user.setId(id);
-        try {
-        	String avatarFileUrl = fileHelper.uploadFile(avatarFile);
-        	if(avatarFileUrl != null) {        		
-        		fileHelper.deleteFile(user.getAvatarUrl());        		
-        		user.setAvatarUrl(avatarFileUrl);
-        	}
-        	
-        	String cccd = fileHelper.uploadFile(cccdFile);
-        	if(cccd != null) {
-        		user.setCccd(cccd);
-        	}
+		if (result.hasErrors()) {
+			return "user/user-form"; // Trả về lại trang chỉnh sửa nếu có lỗi
+		}
+
+		user.setId(id);
+		try {
+			String avatarFileUrl = fileHelper.uploadFile(avatarFile);
+			if (avatarFileUrl != null) {
+				fileHelper.deleteFile(user.getAvatarUrl());
+				user.setAvatarUrl(avatarFileUrl);
+			}
+
+			String cccd = fileHelper.uploadFile(cccdFile);
+			if (cccd != null) {
+				user.setCccd(cccd);
+			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("upload avatar error " + e.getMessage());
 		}
-        userService.updateCurrentUser(user);
-        return "redirect:/users/{id}"; // Chuyển hướng sau khi cập nhật
-    }
+		userService.updateCurrentUser(user);
+		return "redirect:/users/{id}"; // Chuyển hướng sau khi cập nhật
+	}
 
 
-    // Xóa người dùng theo ID
-    @GetMapping("/users/{id}/delete")
-    public String deleteuser(@PathVariable Long id, HttpSession session) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
+	// Xóa người dùng theo ID
+	@GetMapping("/users/{id}/delete")
+	public String deleteUser(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (userDetails == null) {
+			return "redirect:/login"; // Chưa đăng nhập
+		}
 
-        if (loggedInUser == null) {
-            return "redirect:/login"; // Chưa đăng nhập
-        }
+		User loggedInUser = userDetails.getUser();
 
-        if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
-            return "redirect:/";
-        }
+		if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
+			return "redirect:/";
+		}
 
-        userService.deleteById(id);
-        return "redirect:/"; 
-    }
-    
+		userService.deleteById(id);
+		return "redirect:/";
+	}
     
     @GetMapping("/guides")
     public String searchGuides(
@@ -228,7 +217,7 @@ public class UserController {
     
     @GetMapping("/manager-user/verify/{id}/approve")
 	public String approveRequest(@PathVariable Long id, RedirectAttributes redirectAttributes) {    	
-		boolean approved = userService.approveuser(id);
+		boolean approved = userService.approveUser(id);
 		if (approved) {
 			redirectAttributes.addFlashAttribute("message", "User approved successfully.");
 		} else {
@@ -239,7 +228,7 @@ public class UserController {
 
 	@GetMapping("/manager-user/verify/{id}/reject")
 	public String rejectRequest(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-		boolean rejected = userService.rejectuser(id);
+		boolean rejected = userService.rejectUser(id);
 		if (rejected) {
 			redirectAttributes.addFlashAttribute("message", "User rejected successfully.");
 		} else {

@@ -7,7 +7,7 @@ import java.util.Set;
 import org.springframework.validation.annotation.Validated;
 
 import funix.tgcp.user.User;
-import funix.tgcp.comment.Comment;
+import funix.tgcp.post.comment.Comment;
 import funix.tgcp.post.like.PostLike;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

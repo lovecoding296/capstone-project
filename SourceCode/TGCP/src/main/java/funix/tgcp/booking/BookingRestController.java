@@ -1,7 +1,6 @@
 package funix.tgcp.booking;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,8 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.config.CustomUserDetails;
-import funix.tgcp.user.Role;
-import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;
 
 @RestController

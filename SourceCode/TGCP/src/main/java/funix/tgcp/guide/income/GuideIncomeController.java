@@ -1,6 +1,5 @@
 package funix.tgcp.guide.income;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import funix.tgcp.booking.Booking;
 import funix.tgcp.booking.BookingRepository;
 import funix.tgcp.config.CustomUserDetails;
-import funix.tgcp.home.controller.HomeController;
-import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;
 
 @RestController

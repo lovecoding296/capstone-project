@@ -1,4 +1,4 @@
-package funix.tgcp.comment;
+package funix.tgcp.post.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

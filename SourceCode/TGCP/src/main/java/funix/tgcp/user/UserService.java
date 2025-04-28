@@ -1,10 +1,12 @@
 package funix.tgcp.user;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,10 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import funix.tgcp.booking.BookingController;
 import funix.tgcp.exception.EmailAlreadyExistsException;
 import funix.tgcp.exception.EmailVerificationException;
 import funix.tgcp.guide.service.GroupSizeCategory;
+import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.ServiceType;
 import funix.tgcp.util.EmailHelper;
 import funix.tgcp.util.FileHelper;
@@ -112,7 +114,7 @@ public class UserService {
         }
 	}
 	
-	public boolean approveuser(Long id) {
+	public boolean approveUser(Long id) {
 		Optional<User> currentUserOption = findById(id);
 
 		if (currentUserOption.isPresent()) {
@@ -124,7 +126,7 @@ public class UserService {
 		return false;		
 	}
 	
-	public boolean rejectuser(Long id) {
+	public boolean rejectUser(Long id) {
 		Optional<User> currentUserOption = findById(id);
 
 		if (currentUserOption.isPresent()) {
@@ -137,76 +139,47 @@ public class UserService {
 	}
 	
 	public void updateCurrentUser(User user) {
+	    User currentUser = findById(user.getId())
+	        .orElseThrow(() -> new IllegalArgumentException("Updated user information cannot be null."));
 
-		Optional<User> currentUserOption = findById(user.getId());
+	    // Helper method for setting non-null, non-empty fields
+	    updateFieldIfNotEmpty(user.getFullName(), currentUser::setFullName);
+	    updateFieldIfNotEmpty(user.getPhone(), currentUser::setPhone);
+	    updateFieldIfNotEmpty(user.getFacebook(), currentUser::setFacebook);
+	    updateFieldIfNotEmpty(user.getTiktok(), currentUser::setTiktok);
+	    updateFieldIfNotEmpty(user.getInstagram(), currentUser::setInstagram);
+	    updateFieldIfNotEmpty(user.getBio(), currentUser::setBio);
+	    updateFieldIfNotEmpty(user.getInterests(), currentUser::setInterests);
+	    updateFieldIfNotNull(user.getDateOfBirth(), currentUser::setDateOfBirth);
+	    updateFieldIfNotNull(user.getGender(), currentUser::setGender);
+	    updateFieldIfNotEmpty(user.getAvatarUrl(), currentUser::setAvatarUrl);
+	    updateFieldIfNotEmpty(user.getCccd(), currentUser::setCccd);
+	    updateFieldIfNotEmpty(user.getBankName(), currentUser::setBankName);
+	    updateFieldIfNotEmpty(user.getAccountNumber(), currentUser::setAccountNumber);
+	    updateFieldIfNotEmpty(user.getAccountHolder(), currentUser::setAccountHolder);
 
-		if (currentUserOption.isEmpty()) {
-			throw new IllegalArgumentException("Updated user information cannot be null.");
-		}
-		
-		User currentUser = currentUserOption.get();
+	    // Update password only if provided
+	    if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+	        currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
+	    }
 
-		if (user.getFullName() != null && !user.getFullName().isEmpty()) {
-			currentUser.setFullName(user.getFullName());
-		}
-		if (user.getPhone() != null && !user.getPhone().isEmpty()) {
-			currentUser.setPhone(user.getPhone());
-		}
-		if (user.getFacebook() != null && !user.getFacebook().isEmpty()) {
-			currentUser.setFacebook(user.getFacebook());
-		}
-		if (user.getTiktok() != null && !user.getTiktok().isEmpty()) {
-			currentUser.setTiktok(user.getTiktok());
-		}
-		if (user.getInstagram() != null && !user.getInstagram().isEmpty()) {
-			currentUser.setInstagram(user.getInstagram());
-		}
-		if (user.getBio() != null && !user.getBio().isEmpty()) {
-			currentUser.setBio(user.getBio());
-		}
-		if (user.getBio() != null && !user.getBio().isEmpty()) {
-			currentUser.setBio(user.getBio());
-		}
-		if (user.getInterests() != null && !user.getInterests().isEmpty()) {
-			currentUser.setInterests(user.getInterests());
-		}
-
-		if (user.getDateOfBirth() != null) {
-			currentUser.setDateOfBirth(user.getDateOfBirth());
-		}
-		
-		if (user.getGender() != null) {
-			currentUser.setGender(user.getGender());
-		}
-		
-		if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-			currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
-		}
-		
-		if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
-			currentUser.setAvatarUrl(user.getAvatarUrl());
-		}
-		
-		if (user.getCccd() != null && !user.getCccd().isEmpty()) {
-			currentUser.setCccd(user.getCccd());
-		}
-		
-		if (user.getBankName() != null && !user.getBankName().isEmpty()) {
-			currentUser.setBankName(user.getBankName());
-		}
-		
-		if (user.getAccountNumber() != null && !user.getAccountNumber().isEmpty()) {
-			currentUser.setAccountNumber(user.getAccountNumber());
-		}
-		
-		if (user.getAccountHolder() != null && !user.getAccountHolder().isEmpty()) {
-			currentUser.setAccountHolder(user.getAccountHolder());
-		}
-		
-		currentUser.setPricePerDay(user.getPricePerDay());
-
-		userRepo.save(currentUser);
+	    userRepo.save(currentUser);
 	}
+
+	// Helper method to update fields if they are not null or empty
+	private void updateFieldIfNotEmpty(String newValue, Consumer<String> setter) {
+	    if (newValue != null && !newValue.isEmpty()) {
+	        setter.accept(newValue);
+	    }
+	}
+
+	// Helper method to update fields if they are not null
+	private <T> void updateFieldIfNotNull(T newValue, Consumer<T> setter) {
+	    if (newValue != null) {
+	        setter.accept(newValue);
+	    }
+	}
+
 
 	public List<User> findTop6UsersWithGuideServicesAndRoleGuide() {
 		Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Order.desc("averageRating")));
@@ -287,5 +260,25 @@ public class UserService {
 		
 		return userRepo.findGuideByFilter(serviceType, city, language, groupSize, gender, isLocalGuide, isInternationalGuide, pageable);
 
+	}
+	
+	
+	public User getUserDetails(Long userId) throws Exception {
+	    User user = userRepo.findById(userId).orElseThrow(() -> new Exception("User not found"));
+	    Set<City> cities = new HashSet<>();
+	    Set<ServiceType> types = new HashSet<>();
+	    Set<Language> languages = new HashSet<>();
+	    Set<GroupSizeCategory> groupSizes = new HashSet<>();
+	    for (GuideService g : user.getGuideServices()) {
+	        cities.add(g.getCity());
+	        types.add(g.getType());
+	        languages.add(g.getLanguage());
+	        groupSizes.add(g.getGroupSizeCategory());
+	    }
+	    user.setCities(cities);
+	    user.setServiceTypes(types);
+	    user.setLanguages(languages);
+	    user.setGroupSizes(groupSizes);
+	    return user;
 	}
 }

@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import funix.tgcp.user.User;
+import funix.tgcp.booking.review.ReviewController;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.post.Post;
-import funix.tgcp.review.ReviewController;
 import jakarta.transaction.Transactional;
 
 import java.util.List;

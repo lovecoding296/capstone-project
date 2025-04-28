@@ -1,4 +1,4 @@
-package funix.tgcp.dayoff;
+package funix.tgcp.guide.dayoff;
 
 import java.time.LocalDate;
 import org.springframework.validation.annotation.Validated;

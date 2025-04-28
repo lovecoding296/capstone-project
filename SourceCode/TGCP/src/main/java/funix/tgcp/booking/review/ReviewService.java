@@ -1,4 +1,4 @@
-package funix.tgcp.review;
+package funix.tgcp.booking.review;
 
 import jakarta.transaction.Transactional;
 

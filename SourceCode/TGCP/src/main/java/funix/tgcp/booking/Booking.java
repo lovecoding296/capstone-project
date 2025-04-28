@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
 
+import funix.tgcp.booking.payment.Payment;
 import funix.tgcp.guide.service.GuideService;
-import funix.tgcp.payment.Payment;
 import funix.tgcp.user.User;
 
 @Entity

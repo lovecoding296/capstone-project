@@ -1,4 +1,4 @@
-package funix.tgcp.payment;
+package funix.tgcp.booking.payment;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import funix.tgcp.booking.Booking;
-import funix.tgcp.booking.BookingRestController;
-import funix.tgcp.booking.BookingRepository;
 import funix.tgcp.booking.BookingService;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.util.FileHelper;

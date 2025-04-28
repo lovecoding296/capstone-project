@@ -1,17 +1,11 @@
-package funix.tgcp.comment;
+package funix.tgcp.booking.review;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import funix.tgcp.user.User;
-import funix.tgcp.post.Post;
-import jakarta.persistence.CascadeType;
+import funix.tgcp.booking.Booking;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,50 +13,53 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Người dùng có thể bình luận trên bài viết.
- */
+
+
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Validated
-public class Comment {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Min(1)
+    @Max(5)
+    private int rating; // 1-5 sao
+    
     @Column(columnDefinition = "NVARCHAR(1000)")
-    private String content;
+    private String feedback;
+    
+    private LocalDateTime reviewDate;
     
     @ManyToOne
-    private Comment parent;
-    
-    private LocalDateTime createdAt;
+    @JoinColumn(name = "booking_id", nullable = false)
+    private Booking booking;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User commenter;
+    @JoinColumn(name = "reviewer_id", nullable = false)
+    private User reviewer; // Người đánh giá
 
     @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    @JsonIgnore
-    private Post post;
-
-    @Transient
-    private List<Comment> replies = new ArrayList<>();
+    @JoinColumn(name = "reviewed_user_id", nullable = false)
+    private User reviewedUser; // Người được đánh giá
     
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    	reviewDate = LocalDateTime.now();
+    } 
+
 }
+

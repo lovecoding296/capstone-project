@@ -1,4 +1,4 @@
-package funix.tgcp.comment;
+package funix.tgcp.post.comment;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
