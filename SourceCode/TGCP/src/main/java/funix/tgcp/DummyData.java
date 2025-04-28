@@ -1,9 +1,6 @@
 package funix.tgcp;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -21,8 +18,8 @@ import funix.tgcp.guide.request.GuideRequestStatus;
 import funix.tgcp.guide.service.GroupSizeCategory;
 import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.GuideServiceRepository;
+import funix.tgcp.guide.service.GuideServiceService;
 import funix.tgcp.guide.service.ServiceType;
-import funix.tgcp.post.PostRepository;
 
 @Component
 public class DummyData implements ApplicationRunner {
@@ -34,7 +31,7 @@ public class DummyData implements ApplicationRunner {
     private GuideRequestRepository guideRequestRepo;
 	
 	@Autowired
-    private GuideServiceRepository guideServiceRepo;
+    private GuideServiceService guideServiceService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -76,8 +73,9 @@ public class DummyData implements ApplicationRunner {
 		gs.setType(t);
 		gs.setPrice(price);
 		gs.setGuide(u);
-		guideServiceRepo.save(gs);
 		
+		guideServiceService.createGuideService(gs);
+				
 	}
 	
 	private void createUser(String email, String fullName, String rawPassword, Role role) {
@@ -175,9 +173,9 @@ public class DummyData implements ApplicationRunner {
             createService(savedU, City.HA_NOI, Language.English, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_10, 55d);
             createService(savedU, City.HA_NOI, Language.English, ServiceType.CITY_TOUR, GroupSizeCategory.OVER_10, 60d);
             
-            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_10, 55d);
+            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_5, 55d);
             createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_10, 60d);
-            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_10, 70d);
+            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.OVER_10, 70d);
             
             
             System.out.println("account created successfully!");

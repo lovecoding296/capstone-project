@@ -106,7 +106,7 @@
 				<p><strong>Destination:</strong> <span th:text="${booking.destination}">Destination</span></p>
 				<p><strong>Start date:</strong> <span th:text="${booking.startDate}">Start Date</span></p>
 				<p><strong>End date:</strong> <span th:text="${booking.endDate}">End Date</span></p>
-				<p><strong>Total price:</strong> <span th:text="${booking.totalPrice}">0</span></p>
+				<p><strong>Total price:</strong> <span th:text="${booking.totalPrice} + ' USD'">0</span></p>
 			</div>
 
 			<div class="col-md-6 d-flex justify-content-center">
@@ -122,7 +122,7 @@
 						<p class="text-center">
 							<span
 								th:text="${booking.customer.averageRating != null ? booking.customer.averageRating : 'N/A'}">N/A</span>⭐
-								<br></bt><span>Created services:<span th:text="${bookingCount}"></span></span>
+								<br></bt><span>Rented services:<span th:text="${bookingCount}"></span></span>
 						</p>
 						<p><span
 								th:text="${booking.customer.email != null ? booking.customer.email : 'No email available'}">Email</span>
@@ -139,7 +139,7 @@
 			<div class="table-responsive">
 				<div id="payment-table-container" class="mb-4">
 					<div id="payment-table-container">
-						<div>
+						<div th:if="${#lists.size(booking.payments.?[type.name() == 'PAYMENT']) > 0}">
 							<table class="table table-bordered table-hover text-center align-middle shadow">
 								<thead class="table-light">
 									<tr>

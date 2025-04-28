@@ -12,7 +12,13 @@ import org.springframework.data.repository.query.Param;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByCustomerId(Long customerId); 
     List<Booking> findByGuideId(Long guideId);
-	List<Booking> findCompletedByGuideId(Long guideId);
+    
+    
+    
+    @Query("SELECT b FROM Booking b WHERE b.status = 'COMPLETED' "
+	     + "AND b.guide.id = :guideId ORDER BY b.endDate")
+	List<Booking> findCompletedByGuideId(@Param("guideId") Long guideId);
+
 	
 	
 	

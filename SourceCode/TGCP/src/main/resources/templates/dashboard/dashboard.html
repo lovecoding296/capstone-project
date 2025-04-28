@@ -143,12 +143,12 @@
 						<li class="nav-item"><a class="panel-link nav-link" href="#booking-history"
 								onclick="navigate(event,'booking-history')">Booking history</a>
 						</li>
-						<li class="nav-item"><a class="panel-link nav-link" href="#manage-posts"
-								onclick="navigate(event,'manage-posts')">Manage posts</a>
-						</li>
 						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-bookings"
 								onclick="navigate(event,'manage-bookings')">Manage bookings</a>
 						</li>
+						<li class="nav-item"><a class="panel-link nav-link" href="#manage-posts"
+								onclick="navigate(event,'manage-posts')">Manage posts</a>
+						</li>						
 						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-dayoff"
 								onclick="navigate(event,'manage-dayoff')">Manage days off</a>
 						</li>

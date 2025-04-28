@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,7 +58,7 @@ public class BookingRestController {
 	        @AuthenticationPrincipal CustomUserDetails userDetails){
     	logger.info("userDetails " + userDetails);
 			
-    	Pageable pageable = PageRequest.of(page, size);
+    	Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("id")));
     	return bookingService.findBookingByCustomerAndFilter(
 				userDetails.getId(),
 				destination,
@@ -83,7 +84,7 @@ public class BookingRestController {
         
     	logger.info("userDetails " + userDetails);
     	
-    	Pageable pageable = PageRequest.of(page, size);
+    	Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("id")));
     	return bookingService.findBookingByGuideAndFilter(
 				userDetails.getId(),
 				destination,

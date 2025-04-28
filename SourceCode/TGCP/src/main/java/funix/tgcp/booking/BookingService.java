@@ -1,6 +1,7 @@
 package funix.tgcp.booking;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -163,10 +164,11 @@ public class BookingService {
         Booking booking = bookingOpt.get();       
        
 
-        if(booking.getStatus() == BookingStatus.PENDING) {
+        if(booking.getStatus() == BookingStatus.PENDING || booking.getStatus() == BookingStatus.CONFIRMED) {
         	logger.info(reason);
             booking.setStatus(BookingStatus.CANCELED_BY_USER);
             booking.setReason(reason);
+            booking.setCanceledAt(LocalDateTime.now());
             bookingRepo.save(booking);        	
         	
             notifiService.sendNotification(
@@ -219,6 +221,7 @@ public class BookingService {
         	logger.info(reason);
             booking.setStatus(BookingStatus.CANCELED_BY_GUIDE);
             booking.setReason(reason);
+            booking.setCanceledAt(LocalDateTime.now());
             bookingRepo.save(booking);            
             dayOffRepo.deleteByBookingId(bookingId);
             

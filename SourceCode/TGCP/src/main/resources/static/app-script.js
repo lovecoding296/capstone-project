@@ -935,6 +935,31 @@ async function loadIncomeSummary() {
 				}
 			}
 		});
+		
+		
+		const ctx3 = document.getElementById('incomeByTypeChart').getContext('2d');
+		
+		new Chart(ctx3, {
+			type: 'pie',
+			data: {
+				labels: Object.keys(data.incomeByServiceType),
+				datasets: [{
+					labels: Object.keys(data.incomeByServiceType),
+					data: Object.values(data.incomeByServiceType),
+					backgroundColor: [
+						'rgba(255, 99, 132, 0.7)',
+						'rgba(54, 162, 235, 0.7)',
+						'rgba(255, 206, 86, 0.7)',
+						'rgba(75, 192, 192, 0.7)'
+					]
+				}]
+			},
+			options: {
+				responsive: false,
+				maintainAspectRatio: false
+			}
+		});
+		
 	} catch (error) {
 		console.error("Error loading income summary:", error);
 		alert("Failed to load income summary.");
@@ -1110,7 +1135,7 @@ async function fetchGuideBookings(page = 1) {
 		      ${booking.status}
 		    </span>
 			${booking.status === "CANCELED_BY_USER" || booking.status === "CANCELED_BY_GUIDE" || booking.status === "REJECTED"
-				? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.reason || "Không có lý do"}</div>`
+				? `<div class="text-muted small fst-italic mt-1">Reason: ${booking.reason || "No reason"}. (Canceled at: ${formatDate(booking.canceledAt)})</div>`
 				: ""
 			}
 		  </td>
@@ -1216,9 +1241,9 @@ async function handleBookingAction(bookingId, action) {
 
 	// Kiểm tra nếu cần nhập lý do (đối với các hành động hủy hoặc từ chối)
 	if (action === 'cancel-by-user' || action === 'cancel-by-guide' || action === 'reject') {
-		reason = prompt("Nhập lý do:");
+		reason = prompt("Enter reason:");
 		if (!reason) {
-			alert("Bạn cần nhập lý do hủy!");
+			alert("You need to enter a reason for cancellation!");
 			return;
 		}
 	}
@@ -1234,14 +1259,18 @@ async function handleBookingAction(bookingId, action) {
 		});
 
 		const data = await response.json();
-
 		if (!response.ok) {
-			throw new Error(data.message || "Đã xảy ra lỗi");
+			throw new Error(data.message || "An error occurred.");
 		}
 
 		// Thông báo và cập nhật danh sách đặt chỗ
-		alert(data.message || `${action} thành công`);
-		await fetchGuideBookings(); // Hoặc update riêng dòng nếu bạn muốn tối ưu
+		alert(data.message || `${action} success`);
+		if(action === 'cancel-by-user') {
+			await fetchBookings(historyBookingsPage.currentPage); 
+		} else {
+			await fetchGuideBookings(guideBookingsPage.currentPage); 
+		}
+		
 
 	} catch (err) {
 		console.error("Error handling booking action:", err);
@@ -1306,7 +1335,7 @@ async function fetchBookings(page = 1) {
 		      ${booking.status}
 		    </span>
 		    ${booking.status === "CANCELED_BY_USER" || booking.status === "CANCELED_BY_GUIDE" || booking.status === "REJECTED"
-				? `<div class="text-muted small fst-italic mt-1">Lý do: ${booking.reason || "Không có lý do"}</div>`
+				? `<div class="text-muted small fst-italic mt-1">Reason: ${booking.reason || "No reason"}. (Cancled at: ${formatDate(booking.canceledAt)})</div>`
 				: ""
 			}
 		  </td>
@@ -1314,11 +1343,13 @@ async function fetchBookings(page = 1) {
 		    <div class="d-flex gap-2">
 		      <a class="btn btn-sm btn-primary" href="/users/bookings/${booking.id}" data-id="${booking.id}">View</a>
 		      
-		      ${booking.status === "PENDING" ? `
-		        <button class="btn btn-sm btn-danger" onclick="handleBookingAction('${booking.id}', 'cancel-by-user')">Cancel</button>
-		      ` : booking.status === "COMPLETED" ? `
-		        <button class="btn btn-sm btn-success" onclick="openReviewModal(${booking.id}, ${booking.guide.id},'${booking.guide.fullName}')">Submit Review</button>
-		      ` : ''}
+			  ${(booking.status === "PENDING" || booking.status === "CONFIRMED") ? `
+			    <button class="btn btn-sm btn-danger" onclick="handleBookingAction('${booking.id}', 'cancel-by-user')">Cancel</button>
+			  ` : ''}
+
+			  ${booking.status === "COMPLETED" ? `
+			    <button class="btn btn-sm btn-success" onclick="openReviewModal(${booking.id}, ${booking.guide.id}, '${booking.guide.fullName}')">Submit Review</button>
+			  ` : ''}
 		      
 		    </div>
 		  </td>
@@ -1346,8 +1377,8 @@ function changeHistoryBookingPage(direction) {
 
 
 async function cancelBooking(bookingId) {
-	if (confirm("Bạn có chắc chắn muốn hủy đặt chỗ?")) {
-		let canceledReason = prompt("Nhập lý do hủy:");
+	if (confirm("Are you sure you want to cancel your booking?")) {
+		let canceledReason = prompt("Enter reason for cancellation:");
 		if (canceledReason) {
 			await fetch(`/api/bookings/${bookingId}/cancel`, {
 				method: 'PUT',
@@ -1401,7 +1432,7 @@ async function checkGuideRequestStatus() {
 		// Xử lý theo các trạng thái khác nhau
 		switch (data.status) {
 			case 'REJECTED':
-				statusMessage.innerHTML = `<div class="alert alert-danger">Bị từ chối: ${data.reason}</div>`;
+				statusMessage.innerHTML = `<div class="alert alert-danger">Rejected: ${data.reason}</div>`;
 				guideForm.style.display = 'block';
 				statusMessage.dataset.status = 'REJECTED';
 
@@ -1415,12 +1446,12 @@ async function checkGuideRequestStatus() {
 				}
 				break;
 			case 'PENDING':
-				statusMessage.innerHTML = `<div class="alert alert-info">Yêu cầu của bạn đang chờ duyệt.</div>`;
+				statusMessage.innerHTML = `<div class="alert alert-info">Your request is pending approval.</div>`;
 				guideForm.style.display = 'none';
 				statusMessage.dataset.status = 'PENDING';
 				break;
 			case 'APPROVED':
-				statusMessage.innerHTML = `<div class="alert alert-info">Yêu cầu của bạn đã được duyệt.</div>`;
+				statusMessage.innerHTML = `<div class="alert alert-info">Your request has been approved.</div>`;
 				guideForm.style.display = 'none';
 				statusMessage.dataset.status = 'APPROVED';
 				break;
@@ -1463,14 +1494,14 @@ async function submitGuideRegister() {
 
 		if (!response.ok) {
 			const errorData = await response.json(); 
-			throw new Error(errorData.message || "Gửi yêu cầu thất bại");
+			throw new Error(errorData.message || "An error occurred, please try again later!");
 		}
 
-		alert("Đăng ký thành công!");
+		alert("Application submitted successfully!");
 		document.getElementById("guideForm").reset();
 	} catch (error) {
 		console.error(error);
-		alert(`Có lỗi xảy ra: ${error.message}`);
+		alert(`An error occurred, please try again later!`);
 	}
 }
 
@@ -1481,34 +1512,6 @@ function formatDate(dateString) {
 }
 
 
-
-async function updateTourStatus(id, action) {
-	let url = `/api/admin/tours/${id}/${action}`;
-	let options = { method: 'PUT' };
-
-	if (action === "reject") {
-		let reason = prompt("Nhập lý do từ chối:");
-		if (!reason) {
-			alert("Bạn cần nhập lý do từ chối!");
-			return;
-		}
-
-		options = {
-			method: 'PUT',
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ reason })
-		};
-	}
-
-	const response = await fetch(url, options);
-
-	if (response.ok) {
-		alert(`Tour ${action}d successfully!`);
-		fetchPendingTours();
-	} else {
-		alert(`Failed to ${action} tour.`);
-	}
-}
 
 let guideRequestsPage = {
 	currentPage: 1,
@@ -1521,7 +1524,7 @@ async function fetchGuideRequests(page = 1) {
 	console.log("fetchGuideRequests....")
 	try {
 		const response = await fetch("/api/admin/guide-requests");
-		if (!response.ok) throw new Error("Không thể tải danh sách đơn đăng ký");
+		if (!response.ok) throw new Error("Unable to load application list.");
 		const guideRequests = await response.json();
 
 		// Tính toán chỉ số bắt đầu và kết thúc cho phân trang
@@ -1554,7 +1557,7 @@ async function fetchGuideRequests(page = 1) {
 		updatePaginationButtons(page, guideRequests.length, guideRequestsPage.itemsPerPage);
 
 	} catch (error) {
-		console.error("Lỗi:", error);
+		console.error("error:", error);
 	}
 }
 
@@ -1570,24 +1573,24 @@ function changeGuideRequestsPage(direction) {
 
 
 async function approveGuide(id) {
-	if (!confirm("Bạn có chắc chắn muốn duyệt đơn này?")) return;
+	if (!confirm("Are you sure you want to approve this application?")) return;
 
 	try {
 		const response = await fetch(`/api/admin/guide-requests/${id}/approve`, { method: "PUT" });
-		if (!response.ok) throw new Error("Duyệt đơn thất bại");
-		alert("Đã duyệt đơn thành công!");
+		if (!response.ok) throw new Error("An error occurred, please try again later!");
+		alert("Application approved successfully!");
 		fetchGuideRequests(guideRequestsPage.currentPage);
 	} catch (error) {
 		console.error(error);
-		alert("Có lỗi xảy ra, vui lòng thử lại!");
+		alert("An error occurred, please try again later!");
 	}
 }
 
 async function rejectGuide(id) {
-	const reason = prompt("Nhập lý do từ chối:");
+	const reason = prompt("Enter the reason:");
 	if (!reason) return;
 
-	if (!confirm("Bạn có chắc chắn muốn từ chối đơn này?")) return;
+	if (!confirm("Are you sure you want to reject this application?")) return;
 
 	try {
 		const response = await fetch(`/api/admin/guide-requests/${id}/reject`, {
@@ -1596,12 +1599,12 @@ async function rejectGuide(id) {
 			body: JSON.stringify({ reason: reason })
 		});
 
-		if (!response.ok) throw new Error("Từ chối đơn thất bại");
+		if (!response.ok) throw new Error("An error occurred, please try again later!");
 
-		alert("Đã từ chối đơn thành công!");
+		alert("Booking rejected successfully!");
 		fetchGuideRequests(guideRequestsPage.currentPage);
 	} catch (error) {
 		console.error(error);
-		alert("Có lỗi xảy ra, vui lòng thử lại!");
+		alert("An error occurred, please try again later!");
 	}
 }

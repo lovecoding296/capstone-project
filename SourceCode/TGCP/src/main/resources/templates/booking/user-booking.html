@@ -259,7 +259,7 @@
 				<p><strong>Destination:</strong> <span th:text="${booking.destination}">Destination</span></p>
 				<p><strong>Start date:</strong> <span th:text="${booking.startDate}">Start Date</span></p>
 				<p><strong>End date:</strong> <span th:text="${booking.endDate}">End Date</span></p>
-				<p><strong>Total price:</strong> <span th:text="${booking.totalPrice}">0</span></p>
+				<p><strong>Total price:</strong> <span th:text="${booking.totalPrice} + ' USD'">0</span></p>
 			</div>
 
 			<div class="col-md-6 d-flex justify-content-center">

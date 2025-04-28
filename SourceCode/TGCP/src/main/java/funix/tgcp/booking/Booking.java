@@ -63,5 +63,8 @@ public class Booking {
     
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+    
+    @Column
+    private LocalDateTime canceledAt;
 }
 

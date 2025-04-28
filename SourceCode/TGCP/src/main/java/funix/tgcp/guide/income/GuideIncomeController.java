@@ -57,11 +57,19 @@ public class GuideIncomeController {
 	            TreeMap::new, // để các tháng sắp xếp theo thứ tự
 	            Collectors.summingDouble(Booking::getTotalPrice)
 	        ));
+	    
+	    Map<String, Double> incomeByServiceType = completedBookings.stream()
+	    		.collect(Collectors.groupingBy(
+	    	            b -> b.getGuideService().getType().toString(),
+	    	            TreeMap::new,
+	    	            Collectors.summingDouble(Booking::getTotalPrice)
+	    	        ));
 
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("totalIncome", totalIncome);
 	    response.put("monthlyIncome", incomeByMonth);
 	    response.put("bookings", completedBookings);
+	    response.put("incomeByServiceType", incomeByServiceType);
 
 	    return response;
 	}
