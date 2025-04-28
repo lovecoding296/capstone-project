@@ -143,9 +143,9 @@ function calculatePrice(data, serviceType, city, groupSizeCategory, language) {
 
 
 
-function fetchBusyDate(guideId) {
-	console.log("fetchBusyDate guideId " + guideId)
-	fetch(`/api/guides/${guideId}/busy-date`)
+function fetchDayOff(guideId) {
+	console.log("fetchDayOff guideId " + guideId)
+	fetch(`/api/guides/${guideId}/day-off`)
 		.then(response => response.json())
 		.then(data => {
 			console.log("date  " + data.map(d => d.date))
@@ -183,7 +183,7 @@ function openBookingPopup(guideId, guideName, price) {
 	document.getElementById("totalPrice").textContent = "0";
 
 
-	fetchBusyDate(guideId)
+	fetchDayOff(guideId)
 	fetchGuideService(guideId)
 }
 

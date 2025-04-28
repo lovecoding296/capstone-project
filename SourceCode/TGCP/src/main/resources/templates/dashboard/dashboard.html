@@ -149,8 +149,8 @@
 						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-bookings"
 								onclick="navigate(event,'manage-bookings')">Manage bookings</a>
 						</li>
-						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-busydate"
-								onclick="navigate(event,'manage-busydate')">Manage days off</a>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-dayoff"
+								onclick="navigate(event,'manage-dayoff')">Manage days off</a>
 						</li>
 						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#income-summary"
 								onclick="navigate(event,'income-summary')">Income summary</a>
@@ -238,8 +238,8 @@
 										fetchGuideBookings();
 										break;
 																
-									case "manage-busydate":
-										fetchBusyDate();								
+									case "manage-dayoff":
+										fetchDayOff();								
 								        break;			
 													
 									case "income-summary":

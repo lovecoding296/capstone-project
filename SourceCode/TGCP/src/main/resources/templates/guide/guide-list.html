@@ -230,17 +230,14 @@
 									<span th:text="${user.cities}"></span>
 								</span>
 							</div>
-							<div class="languages mb-2 d-flex align-items-center">
+							<div class="city languages mb-2 d-flex align-items-center">
 								<img src="images/icons/language-icon.PNG" style="width: 16px; height: 16px;"
 									class="me-2">
 								<span th:text="${user.languages}"></span>
 							</div>
 
 							<div class="city mb-2 d-flex align-items-center">
-								<span>Services:</span>
-								<span>
-									<span th:text="${user.serviceTypes}"></span>
-								</span>
+								<span th:text="'Services: ' + ${user.serviceTypes}"></span>
 							</div>
 
 							<div class="buttons d-flex justify-content-between mt-3">

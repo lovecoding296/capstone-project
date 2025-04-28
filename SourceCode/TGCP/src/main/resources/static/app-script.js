@@ -96,15 +96,15 @@ const languages = [
 ];
 
 function changeLanguage(lang) {
-	let url = new URL(window.location.href); // Get current URL
-	url.searchParams.set('lang', lang); // Set or update 'lang' parameter
-	window.location.href = url.toString(); // Redirect to new URL
+	let url = new URL(window.location.href); 
+	url.searchParams.set('lang', lang); 
+	window.location.href = url.toString(); 
 }
 
 
 function autoResize(textarea) {
-	textarea.style.height = 'auto';  // Đặt lại chiều cao về mặc định
-	textarea.style.height = (textarea.scrollHeight) + 'px';  // Cập nhật chiều cao
+	textarea.style.height = 'auto';  
+	textarea.style.height = (textarea.scrollHeight) + 'px';  
 }
 
 /* manage services */
@@ -115,15 +115,13 @@ function initOptionData() {
 
 
 
-	// Get the select element
 	const languageSelect = document.getElementById('language');
 	const editLanguageSelect = document.getElementById('editLanguage');
 
-	// Loop through the Language enum and add each language to the select element
 	languages.forEach(language => {
 		const option = document.createElement('option');
-		option.value = language;  // Use the language as value
-		option.textContent = language;  // Display language as text
+		option.value = language;  
+		option.textContent = language; 
 
 
 		const editOption = document.createElement('option');
@@ -134,11 +132,11 @@ function initOptionData() {
 		editLanguageSelect.appendChild(editOption)
 
 	});
-	// Get the select element
+
 	const citySelect = document.getElementById('city');
 	const editCitySelect = document.getElementById('editCity');
 
-	// Loop through the City enum and add each city to the select element
+
 	for (const code in cityDisplayNames) {
 		const option = document.createElement('option');	
 		option.value = code;
@@ -173,7 +171,7 @@ function openEditServicePopup(serviceId) {
 
 	const row = document.getElementById(`service-row-${serviceId}`);
 
-	// Lấy thông tin từ HTML
+
 	const serviceType = row.querySelector(".type").dataset.type;
 	const groupSizeCategory = row.querySelector(".groupSizeCategory").dataset.groupSizeCategory;
 	const city = row.querySelector(".city").dataset.city;
@@ -250,7 +248,7 @@ async function submitEditService() {
 
 
 async function submitService() {
-	// Get the selected data
+
 	const serviceForm = document.getElementById("serviceForm");
 	const type = document.getElementById("serviceType").value;
 	const groupSizeCategory = document.getElementById("groupSizeCategory").value;
@@ -260,7 +258,7 @@ async function submitService() {
 
 	if (!type || !groupSizeCategory || !city || !price || !language) {
 		alert("Please fill out all fields.");
-		return;  // Dừng lại nếu có trường không hợp lệ
+		return;
 	}
 
 	const serviceData = {
@@ -271,7 +269,7 @@ async function submitService() {
 		price
 	};
 
-	console.log("Service Data:", serviceData);  // Print to console (can replace with an API call)
+	console.log("Service Data:", serviceData); 
 
 	closeAddServicePopup()
 
@@ -337,10 +335,10 @@ async function fetchServices(page = 1) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		const data = await response.json(); // Dữ liệu từ Page<GuideService>
+		const data = await response.json();
 		const services = data.content;
 		const tableBody = document.getElementById('servicesTableBody');
-		tableBody.innerHTML = ''; // Clear bảng cũ
+		tableBody.innerHTML = '';
 
 		services.forEach(service => {
 			const row = document.createElement('tr');
@@ -363,7 +361,7 @@ async function fetchServices(page = 1) {
 
 	} catch (error) {
 		console.error('Lỗi khi tải danh sách dịch vụ:', error);
-		const tableBody = document.getElementById('servicesTableBody'); // Fix đúng ID
+		const tableBody = document.getElementById('servicesTableBody');
 		tableBody.innerHTML = `<tr><td colspan="6">Không thể tải danh sách dịch vụ.</td></tr>`;
 	}
 }
@@ -405,7 +403,7 @@ async function fetchPosts(page = 1) {
 	const title = document.getElementById('title').value;
 	const category = document.getElementById('category').value;
 
-	// Tạo URL với các tham số tìm kiếm
+
 	let url = '/api/users/posts?';
 	if (title) url += `title=${encodeURIComponent(title)}&`;
 	if (category) url += `category=${encodeURIComponent(category)}&`;
@@ -424,7 +422,7 @@ async function fetchPosts(page = 1) {
 		tableBody.innerHTML = '';
 
 		posts.forEach(post => {
-			const categoryName = categoryDisplayNames[post.category] || post.category; // fallback nếu không có
+			const categoryName = categoryDisplayNames[post.category] || post.category;
 			const row = document.createElement('tr');
 			row.innerHTML = `
                 <td>${post.title}</td>
@@ -502,7 +500,7 @@ async function fetchUsers(page = 1) {
 	const verified = document.getElementById('verified').value;
 	const enabled = document.getElementById('enabled').value;
 
-	// Tạo URL với các tham số tìm kiếm
+
 	let url = '/api/users?';
 	if (email) url += `email=${encodeURIComponent(email)}&`;
 	if (fullName) url += `fullName=${encodeURIComponent(fullName)}&`;
@@ -522,7 +520,7 @@ async function fetchUsers(page = 1) {
 		const data = await response.json();
 
 		const tableBody = document.getElementById('usersTable');
-		tableBody.innerHTML = ''; // Xóa dữ liệu cũ
+		tableBody.innerHTML = '';
 
 		const users = data.content;
 
@@ -637,7 +635,7 @@ async function fetchReports(page = 1) {
 	const reportType = document.getElementById('reportType').value;
 
 
-	// Tạo URL với các tham số tìm kiếm
+
 	let url = '/api/reports?';
 	if (reporter) url += `reporter=${reporter}&`;
 	if (reason) url += `reason=${reason}&`;
@@ -646,8 +644,6 @@ async function fetchReports(page = 1) {
 
 	url += `page=${reportsPage.currentPage - 1}&`;
 	url += `size=${reportsPage.itemsPerPage}`
-
-	// Xóa dấu "&" thừa ở cuối URL nếu có
 
 	const response = await fetch(url);
 	const data = await response.json();
@@ -684,7 +680,7 @@ async function fetchReports(page = 1) {
 		tbody.appendChild(row);
 	});
 
-	// Cập nhật trạng thái các nút pagination
+
 	updatePaginationButtons(data.number + 1, data.totalElements, data.size);
 }
 
@@ -718,7 +714,7 @@ async function resolveReport(reportId) {
 		const result = await res.text();
 		alert(result || "Feedback resolved successfully!");
 
-		fetchReports(reportsPage.currentPage); // Refresh the reports list
+		fetchReports(reportsPage.currentPage); 
 
 	} catch (err) {
 		console.error(err);
@@ -767,15 +763,13 @@ async function checkReviewStatus(bookingId) {
 }
 
 async function submitReview(bookingId, reviewedUserId) {
-	// Lấy số sao đã chọn
+
 	const rating = document.getElementById("rating").value;
 
-	// Lấy nội dung feedback
 	const feedback = document.getElementById("feedback").value.trim();
 
 	console.log("rating " + rating);
 
-	// Kiểm tra hợp lệ
 	if (!rating) {
 		alert("Please select a rating.");
 		return;
@@ -785,7 +779,7 @@ async function submitReview(bookingId, reviewedUserId) {
 		return;
 	}
 
-	// Tạo object dữ liệu
+
 	const reviewData = {
 		reviewedUser: { id: reviewedUserId },
 		booking: { id: bookingId },
@@ -805,7 +799,7 @@ async function submitReview(bookingId, reviewedUserId) {
 		}
 
 		const msg = await response.text();
-		alert(msg); // hoặc hiển thị ra giao diện
+		alert(msg);
 		closeReviewPopup();
 		document.getElementById("reviewForm").reset();
 	} catch (err) {
@@ -813,7 +807,6 @@ async function submitReview(bookingId, reviewedUserId) {
 		alert("Failed to submit review.");
 	}
 
-	// Đóng popup và reset form
 	closeReviewPopup();
 	document.getElementById("reviewForm").reset();
 }
@@ -951,15 +944,20 @@ async function loadIncomeSummary() {
 
 
 
-/* manage BusyDate */
+/* manage DayOff */
 let flatpickrInstance;
-let originalDates = [];   // các ngày đã lưu từ server
+let originalDates = []; 
 let originalAutoGeneratedDates = [];
-let selectedDates = [];   // ngày người dùng chọn hiện tại
+let selectedDates = [];
 
-function fetchBusyDate() {
-	fetch('/api/guides/busy-date')
-		.then(response => response.json())
+function fetchDayOff() {
+	fetch('/api/guides/day-off')
+		.then(response => {
+			if (!response.ok) {
+				throw new Error("Lỗi khi fetch day-off");
+			}
+			return response.json();
+		})
 		.then(data => {
 			originalDates = data
 				.filter(d => !d.autoGenerated)
@@ -971,81 +969,83 @@ function fetchBusyDate() {
 
 			selectedDates = [...originalDates];
 
-			console.log("data " + data)
-			console.log("originalDates " + originalDates)
+			console.log("data", data);
+			console.log("originalDates", originalDates);
 
-			//if (flatpickrInstance) {
-			//flatpickrInstance.destroy();
-			//}
-
-			flatpickrInstance = flatpickr("#manualBusyDates", {
-				mode: "multi", // Cho phép chọn nhiều ngày
-				dateFormat: "Y-m-d",
-				minDate: "today",
-				disable: originalAutoGeneratedDates,
-				inline: true,
-				defaultDate: selectedDates, // Khởi tạo các ngày đã chọn
-				onDayCreate: function(dObj, dStr, fp, dayElem) {
-					const date = fp.formatDate(dayElem.dateObj, "Y-m-d");
-					if (selectedDates.includes(date)) {
-						console.log("add busy-date " + date)
-						dayElem.classList.add("busy-date");
-					}
-
-					// Toggle chọn ngày
-					dayElem.addEventListener("click", function() {
+			if (flatpickrInstance) {
+				// Nếu đã có flatpickr -> update lại
+				flatpickrInstance.set("disable", originalAutoGeneratedDates);
+				flatpickrInstance.setDate(selectedDates, false);
+				flatpickrInstance.redraw();
+			} else {
+				// Nếu chưa có flatpickr -> khởi tạo mới
+				flatpickrInstance = flatpickr("#manualDayOffs", {
+					mode: "multi",
+					dateFormat: "Y-m-d",
+					minDate: "today",
+					disable: originalAutoGeneratedDates,
+					inline: true,
+					defaultDate: selectedDates,
+					onDayCreate: function(dObj, dStr, fp, dayElem) {
+						const date = fp.formatDate(dayElem.dateObj, "Y-m-d");
 						if (selectedDates.includes(date)) {
-							selectedDates = selectedDates.filter(d => d !== date);
-						} else {
-							selectedDates.push(date);
+							console.log("add day-off", date);
+							dayElem.classList.add("day-off");
 						}
-						fp.setDate(selectedDates, false); // Cập nhật lại các ngày chọn
-						fp.redraw(); // Cập nhật giao diện
-					});
-				},
-				onReady: function() {
-					if (flatpickrInstance) {
-						flatpickrInstance.setDate(selectedDates, false); // Cập nhật lại các ngày đã chọn
-						flatpickrInstance.redraw(); // Vẽ lại giao diện với màu đã chọn
+
+						dayElem.addEventListener("click", function() {
+							if (selectedDates.includes(date)) {
+								selectedDates = selectedDates.filter(d => d !== date);
+							} else {
+								selectedDates.push(date);
+							}
+							fp.setDate(selectedDates, false);
+							fp.redraw();
+						});
 					}
-				}
-			});
+				});
+			}
+		})
+		.catch(err => {
+			console.error("Lỗi fetch day-off:", err);
+			alert("Không thể tải lịch bận.");
 		});
 }
 
 
-function deleteBusyDates(datesToDelete) {
+
+function deleteDayOffs(datesToDelete) {
 	if (datesToDelete.length === 0) return Promise.resolve();
-	return fetch('/api/guides/busy-date/delete', {
+	return fetch('/api/guides/day-off/delete', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(datesToDelete)
 	});
 }
 
-function addBusyDates(datesToAdd) {
+function addDayOffs(datesToAdd) {
 	if (datesToAdd.length === 0) return Promise.resolve();
-	return fetch('/api/guides/busy-date', {
+	return fetch('/api/guides/day-off', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(datesToAdd)
 	});
 }
 
-async function submitBusyDate() {
+async function submitDayOff() {
 	const toAdd = selectedDates.filter(date => !originalDates.includes(date));
 	const toDelete = originalDates.filter(date => !selectedDates.includes(date));
 
 	try {
 		// Xóa các ngày bận cũ trước
-		await deleteBusyDates(toDelete);
-
+		await deleteDayOffs(toDelete);
+		
 		// Thêm các ngày bận mới sau
-		await addBusyDates(toAdd);
+		await addDayOffs(toAdd);
 
 		// Hiển thị thông báo và reload lịch bận
 		alert("Đã cập nhật lịch bận!");
-		await fetchBusyDate(); // Reload lại từ server
+		fetchDayOff(); // Reload lại từ server
 	} catch (err) {
 		console.error("Lỗi cập nhật:", err);
 		alert("Đã xảy ra lỗi, vui lòng thử lại.");
@@ -1461,10 +1461,8 @@ async function submitGuideRegister() {
 			body: formData
 		});
 
-		// Kiểm tra response status
 		if (!response.ok) {
-			// Nếu có lỗi từ server, lấy message chi tiết từ response
-			const errorData = await response.json();  // giả sử API trả về lỗi dưới dạng JSON
+			const errorData = await response.json(); 
 			throw new Error(errorData.message || "Gửi yêu cầu thất bại");
 		}
 
@@ -1479,7 +1477,7 @@ async function submitGuideRegister() {
 
 function formatDate(dateString) {
 	const date = new Date(dateString);
-	return date.toLocaleDateString("vi-VN"); // Định dạng ngày tháng theo Việt Nam
+	return date.toLocaleDateString("vi-VN");
 }
 
 
@@ -1488,7 +1486,6 @@ async function updateTourStatus(id, action) {
 	let url = `/api/admin/tours/${id}/${action}`;
 	let options = { method: 'PUT' };
 
-	// Nếu action là "reject", yêu cầu nhập lý do từ chối
 	if (action === "reject") {
 		let reason = prompt("Nhập lý do từ chối:");
 		if (!reason) {
@@ -1496,7 +1493,6 @@ async function updateTourStatus(id, action) {
 			return;
 		}
 
-		// Gửi request với lý do từ chối
 		options = {
 			method: 'PUT',
 			headers: { "Content-Type": "application/json" },
@@ -1508,7 +1504,7 @@ async function updateTourStatus(id, action) {
 
 	if (response.ok) {
 		alert(`Tour ${action}d successfully!`);
-		fetchPendingTours(); // Refresh danh sách mà không làm lại toàn bộ bảng
+		fetchPendingTours();
 	} else {
 		alert(`Failed to ${action} tour.`);
 	}
@@ -1569,7 +1565,7 @@ function changeGuideRequestsPage(direction) {
 		guideRequestsPage.currentPage += 1;
 	}
 
-	fetchGuideRequests(guideRequestsPage.currentPage); // Fetch lại bookings cho trang mới
+	fetchGuideRequests(guideRequestsPage.currentPage);
 }
 
 
@@ -1580,7 +1576,7 @@ async function approveGuide(id) {
 		const response = await fetch(`/api/admin/guide-requests/${id}/approve`, { method: "PUT" });
 		if (!response.ok) throw new Error("Duyệt đơn thất bại");
 		alert("Đã duyệt đơn thành công!");
-		fetchGuideRequests(guideRequestsPage.currentPage); // Cập nhật danh sách mà không tải lại trang
+		fetchGuideRequests(guideRequestsPage.currentPage);
 	} catch (error) {
 		console.error(error);
 		alert("Có lỗi xảy ra, vui lòng thử lại!");
@@ -1589,7 +1585,7 @@ async function approveGuide(id) {
 
 async function rejectGuide(id) {
 	const reason = prompt("Nhập lý do từ chối:");
-	if (!reason) return; // Nếu không nhập, thoát
+	if (!reason) return;
 
 	if (!confirm("Bạn có chắc chắn muốn từ chối đơn này?")) return;
 

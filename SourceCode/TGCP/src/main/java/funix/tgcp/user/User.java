@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import funix.tgcp.busydate.BusyDate;
+import funix.tgcp.dayoff.DayOff;
 import funix.tgcp.comment.Comment;
 import funix.tgcp.guide.service.GroupSizeCategory;
 import funix.tgcp.guide.service.GuideService;

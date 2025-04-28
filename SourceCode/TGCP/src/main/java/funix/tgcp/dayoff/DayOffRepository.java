@@ -1,13 +1,13 @@
-package funix.tgcp.busydate;
+package funix.tgcp.dayoff;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BusyDateRepository extends JpaRepository<BusyDate, Long> {
+public interface DayOffRepository extends JpaRepository<DayOff, Long> {
 
-    List<BusyDate> findByGuideId(Long guideId);
+    List<DayOff> findByGuideId(Long guideId);
 
     boolean existsByGuideIdAndDate(Long guideId, LocalDate date);
     

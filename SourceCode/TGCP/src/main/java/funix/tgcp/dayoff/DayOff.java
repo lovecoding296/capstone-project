@@ -1,4 +1,4 @@
-package funix.tgcp.busydate;
+package funix.tgcp.dayoff;
 
 import java.time.LocalDate;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Validated
-public class BusyDate {
+public class DayOff {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
