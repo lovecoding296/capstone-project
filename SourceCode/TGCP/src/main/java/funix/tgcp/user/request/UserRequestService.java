@@ -29,10 +29,7 @@ public class UserRequestService {
 	private UserRequestRepository userRequestRepo;
 	
     @Autowired
-    private EmailHelper emailHelper;
-	
-    @Autowired
-	private FileHelper fileHelper;
+    private EmailHelper emailHelper;	
     
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -41,16 +38,11 @@ public class UserRequestService {
     private NotificationService notiService;
 	
 	@Transactional
-    public UserRequest registerUser(MultipartFile cccdFile, @Valid UserRequest userRequest) throws EmailAlreadyExistsException, IOException {
+    public UserRequest registerUser(@Valid UserRequest userRequest) throws EmailAlreadyExistsException, IOException {
 		if (userRepo.existsByEmail(userRequest.getEmail())) {
 			System.out.println("Attempt to register with existing email: " + userRequest.getEmail());
 			throw new EmailAlreadyExistsException("Email already exists");
 		}
-		
-		String cccd = fileHelper.uploadFile(cccdFile);			
-		if(cccd != null) {
-			userRequest.setCccd(cccd);
-    	}
 		
 		// Tạo token ngẫu nhiên
         String token = UUID.randomUUID().toString();

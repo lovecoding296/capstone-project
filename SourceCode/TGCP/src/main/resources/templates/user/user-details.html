@@ -95,8 +95,9 @@
 				<img th:src="@{${user.avatarUrl}}" width="204" height="204"
 					style="border-radius: 15px; border: solid 4px darkseagreen;">
 				<br><br><br>
-				<div th:if="${(session.loggedInUser != null) and (session.loggedInUser.id == user.id || session.loggedInUser.isAdmin())}">
-					<label><i>Citizen ID photo (Only visible to you or admin):</i></label>
+				<div th:if="${session.loggedInUser != null and session.loggedInUser.isAdmin()}">
+					<label><i>Citizen ID photo:</i></label>
+					<br>
 					<img th:src="@{${user.cccd} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">					
 				</div>
 			</div>

@@ -47,7 +47,8 @@ public class GuideRequestController {
     }
 
     @PostMapping("/api/guide-requests/register")
-    public ResponseEntity<String> registerGuide(
+    public ResponseEntity<?> registerGuide(
+    		@RequestParam MultipartFile cccdFile,
             @RequestParam MultipartFile guideLicenseFile,
             @RequestParam String guideLicense,
             @RequestParam String experience,
@@ -63,20 +64,24 @@ public class GuideRequestController {
 	        try {
 	        	System.out.println("GuideRequestController guideRequestService");
 	        	logger.info("userId " + userId);
-	            guideRequestService.registerGuide(userId, guideLicenseFile, 
+	        	GuideRequest guideRequest = guideRequestService.registerGuide(userId,cccdFile, guideLicenseFile, 
 	            		guideLicense, experience,isInternationalGuide,isLocalGuide);
-	            return ResponseEntity.ok("Đăng ký hướng dẫn viên thành công!");
+	            logger.info("return ok");
+	            return ResponseEntity.status(HttpStatus.OK).body(guideRequest);
 	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đăng ký thất bại: " + e.getMessage());
+	        	logger.info("return INTERNAL_SERVER_ERROR");
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", ""));
 	        }
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User chua dang nhap");
+			logger.info("return UNAUTHORIZED");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", ""));
 		}
     }  
     
     @PutMapping("/api/guide-requests/register")
-    public ResponseEntity<String> updateGuideRequest(
+    public ResponseEntity<?> updateGuideRequest(
+    		@RequestParam(required = false) MultipartFile cccdFile,
             @RequestParam(required = false) MultipartFile guideLicenseFile,
             @RequestParam String guideLicense, 
             @RequestParam String experience,
@@ -90,14 +95,16 @@ public class GuideRequestController {
             Long userId = userDetails.getId();
             
             try {
-                logger.info("Cập nhật đăng ký hướng dẫn viên cho userId: " + userId);
-                guideRequestService.updateGuideRequest(userId, guideLicenseFile, guideLicense, experience, isLocalGuide, isInternationalGuide);
-                return ResponseEntity.ok("Cập nhật đăng ký hướng dẫn viên thành công!");
+            	GuideRequest guideRequest = guideRequestService.updateGuideRequest(userId, cccdFile, guideLicenseFile, guideLicense, experience, isLocalGuide, isInternationalGuide);
+                if(guideRequest == null) {
+                	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "NOT_FOUND"));
+                }
+            	return ResponseEntity.ok(guideRequest);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật thất bại: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "INTERNAL_SERVER_ERROR"));
             }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User chưa đăng nhập");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "UNAUTHORIZED"));
         }
     }
 

@@ -103,7 +103,7 @@ public class UserController {
 
 	@PostMapping("/users/{id}/edit")
 	public String updateUser(@PathVariable Long id, @Valid @ModelAttribute User user, BindingResult result,
-			@RequestParam MultipartFile avatarFile, @RequestParam MultipartFile cccdFile, Model model,
+			@RequestParam MultipartFile avatarFile, Model model,
 			@AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		if (userDetails == null) {
@@ -128,10 +128,6 @@ public class UserController {
 				user.setAvatarUrl(avatarFileUrl);
 			}
 
-			String cccd = fileHelper.uploadFile(cccdFile);
-			if (cccd != null) {
-				user.setCccd(cccd);
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("upload avatar error " + e.getMessage());

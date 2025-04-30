@@ -45,10 +45,11 @@ public class FileHelper {
             uploadPath.mkdirs();
         }
         
-
-
+        
         // Generate unique file name
         String fileName = System.currentTimeMillis() + "_" + UUID.randomUUID()  + "_" + file.getOriginalFilename();
+        
+        logger.info(" " + fileName );
         
         
         File destination;        

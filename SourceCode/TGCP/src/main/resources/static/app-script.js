@@ -1456,10 +1456,10 @@ async function cancelBooking(bookingId) {
 }
 
 /*guide register */
-function previewImage(event) {
+function previewImage(event, previewId) {
 	console.log("previewImage...")
 	const file = event.target.files[0];  // Lấy file người dùng chọn
-	const previewDiv = document.getElementById('guideLicensePreview');  // Nơi hiển thị ảnh preview
+	const previewDiv = document.getElementById(previewId);  // Nơi hiển thị ảnh preview
 	previewDiv.innerHTML = '';  // Xóa mọi ảnh preview trước đó (nếu có)
 
 	if (file) {
@@ -1472,6 +1472,72 @@ function previewImage(event) {
 		reader.readAsDataURL(file);  // Đọc file ảnh dưới dạng base64
 	}
 }
+
+
+function updateGuideStatusUI(data) {
+	
+	// Các phần tử DOM cần cập nhật
+	const statusMessage = document.getElementById('statusMessage');
+	const guideForm = document.getElementById('guideForm');
+	const guideLicenseInput = document.getElementById('guideLicense');
+	const experienceInput = document.getElementById('experience');
+	const guideLicensePreview = document.getElementById('guideLicensePreview');
+	const cccdPreview = document.getElementById('cccdPreview');
+	const internationalGuide = document.getElementById('isInternationalGuide');
+	const localGuide = document.getElementById('isLocalGuide');
+	
+	const status = data.status;
+	statusMessage.dataset.status = status || 'UNKNOWN';
+
+	switch (status) {
+		case 'REJECTED':
+			statusMessage.innerHTML = `<div class="alert alert-danger">Rejected: ${data.reason || 'No reason provided.'}</div>`;
+			guideForm.style.display = 'block';
+			guideLicenseInput.value = data.guideLicense || '';
+			experienceInput.value = data.experience || '';
+			internationalGuide.checked = data.internationalGuide;
+			localGuide.checked = data.localGuide;
+			cccdPreview.innerHTML = data.cccdUrl
+				? `<img src="${data.cccdUrl}" alt="cccdUrl" class="img-thumbnail mt-2" width="200">`
+							: '';
+			guideLicensePreview.innerHTML = data.guideLicenseUrl
+				? `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`
+				: '';
+			break;
+
+		case 'PENDING':
+			statusMessage.innerHTML = `<div class="alert alert-info">Your request is pending approval.</div>`;
+			guideForm.style.display = 'none';
+			break;
+
+		case 'APPROVED':
+			statusMessage.innerHTML = `<div class="alert alert-info">Your request has been approved.</div>`;
+			guideForm.style.display = 'block';
+			guideLicenseInput.value = data.guideLicense || '';
+			experienceInput.value = data.experience || '';
+			internationalGuide.checked = data.internationalGuide;
+		    localGuide.checked = data.localGuide;
+			cccdPreview.innerHTML = data.cccdUrl
+				? `<img src="${data.cccdUrl}" alt="cccdUrl" class="img-thumbnail mt-2" width="200">`
+				: '';
+			guideLicensePreview.innerHTML = data.guideLicenseUrl
+				? `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`
+				: '';
+			break;
+
+		case 'NONE':
+			statusMessage.innerHTML = '';
+			guideForm.style.display = 'block';
+			break;
+
+		default:
+			statusMessage.textContent = 'You are not registered as a guide.';
+			guideForm.style.display = 'block';
+			break;
+	}
+}
+
+
 
 async function checkGuideRequestStatus() {
 	try {
@@ -1488,71 +1554,9 @@ async function checkGuideRequestStatus() {
 		}
 		else {
 			data = await response.json();
-		}		
-
-		// Các phần tử DOM cần cập nhật
-		const statusMessage = document.getElementById('statusMessage');
-		const guideForm = document.getElementById('guideForm');
-		const guideLicenseInput = document.getElementById('guideLicense');
-		const experienceInput = document.getElementById('experience');
-		const guideLicensePreview = document.getElementById('guideLicensePreview');
-
-		// Guard clause for missing DOM elements
-		if (!statusMessage || !guideForm || !guideLicenseInput || !experienceInput || !guideLicensePreview) {
-			console.warn('One or more DOM elements are missing.');
-			return;
-		}
-
+		}	
 		console.log("checkGuideRequestStatus data.status " + data.status);
-
-		switch (data.status) {
-			case 'REJECTED':
-				statusMessage.innerHTML = `<div class="alert alert-danger">Rejected: ${data.reason || 'No reason provided.'}</div>`;
-				statusMessage.dataset.status = 'REJECTED';
-
-				guideForm.style.display = 'block';
-				guideLicenseInput.value = data.guideLicense || '';
-				experienceInput.value = data.experience || '';
-
-				if (data.guideLicenseUrl) {
-					guideLicensePreview.innerHTML = `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`;
-				} else {
-					guideLicensePreview.innerHTML = '';
-				}
-				break;
-
-			case 'PENDING':
-				statusMessage.innerHTML = `<div class="alert alert-info">Your request is pending approval.</div>`;
-				statusMessage.dataset.status = 'PENDING';
-				guideForm.style.display = 'none';
-				break;
-
-			case 'APPROVED':
-				statusMessage.innerHTML = `<div class="alert alert-info">Your request has been approved.</div>`;
-				statusMessage.dataset.status = 'APPROVED';
-				guideForm.style.display = 'block';
-				guideLicenseInput.value = data.guideLicense || '';
-				experienceInput.value = data.experience || '';
-
-				if (data.guideLicenseUrl) {
-					guideLicensePreview.innerHTML = `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`;
-				} else {
-					guideLicensePreview.innerHTML = '';
-				}
-				break;
-
-			case 'NONE':
-				statusMessage.innerHTML = '';
-				statusMessage.dataset.status = 'NONE';
-				guideForm.style.display = 'block';
-				break;
-
-			default:
-				statusMessage.textContent = 'You are not registered as a guide.';
-				statusMessage.dataset.status = 'UNKNOWN';
-				guideForm.style.display = 'block';
-				break;
-		}
+		updateGuideStatusUI(data)
 	} catch (error) {
 		console.error('Error:', error);
 		const statusMessage = document.getElementById('statusMessage');
@@ -1569,15 +1573,16 @@ async function submitGuideRegister() {
 	console.log("submitGuideRegister...")
 
 	const formData = new FormData();
+	formData.append("cccdFile", document.getElementById("cccdFile").files[0]);
 	formData.append("guideLicenseFile", document.getElementById("guideLicenseFile").files[0]);
 	formData.append("guideLicense", document.getElementById("guideLicense").value);
 	formData.append("experience", CKEDITOR.instances["experience"].getData());
-	formData.append("isLocalGuide", document.getElementById("isLocalGuide").value);
-	formData.append("isInternationalGuide", document.getElementById("isInternationalGuide").value);
+	formData.append("isLocalGuide", document.getElementById("isLocalGuide").checked);
+	formData.append("isInternationalGuide", document.getElementById("isInternationalGuide").checked);
 
 	const statusMessage = document.getElementById('statusMessage');
 	let requestMethod = 'POST';
-	if (statusMessage.dataset.status === 'REJECTED') {
+	if (statusMessage.dataset.status === 'REJECTED' || statusMessage.dataset.status === 'APPROVED') {
 		requestMethod = 'PUT'
 	}
 
@@ -1588,13 +1593,18 @@ async function submitGuideRegister() {
 			body: formData
 		});
 
+		console.log("response " + response)
+		console.log("response.ok " + response.ok)
+		
 		if (!response.ok) {
 			const errorData = await response.json(); 
 			throw new Error(errorData.message || "An error occurred, please try again later!");
 		}
 
 		alert("Application submitted successfully!");
-		document.getElementById("guideForm").reset();
+		data = await response.json(); 
+		updateGuideStatusUI(data)
+		
 	} catch (error) {
 		console.error(error);
 		alert(`An error occurred, please try again later!`);
@@ -1637,8 +1647,11 @@ async function fetchGuideRequests(page = 1) {
 			const row = document.createElement("tr");
 			row.innerHTML = `
 				                <td>${request.user.fullName}</td>
+								<td><img src="${request.cccdUrl}" alt="cccd" width="100" height="60" style="object-fit: cover; border-radius: 5px;"></td>
 				                <td><img src="${request.guideLicenseUrl}" alt="Guide License" width="100" height="60" style="object-fit: cover; border-radius: 5px;"></td>
 				                <td>${request.guideLicense}</td>
+								<td>${request.localGuide}</td>
+								<td>${request.internationalGuide}</td>
 				                <td>${request.experience}</td>
 				                <td>
 				                    <a href="/users/${request.user.id}" class="btn btn-info btn-sm">View user profile</a>
@@ -1697,7 +1710,7 @@ async function rejectGuide(id) {
 
 		if (!response.ok) throw new Error("An error occurred, please try again later!");
 
-		alert("Booking rejected successfully!");
+		alert("GuideRequest rejected successfully!");
 		fetchGuideRequests(guideRequestsPage.currentPage);
 	} catch (error) {
 		console.error(error);

@@ -54,15 +54,14 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public String createUser(@Valid @ModelAttribute UserRequest user, BindingResult result,
-			@RequestParam MultipartFile cccdFile, Model model) {
+	public String createUser(@Valid @ModelAttribute UserRequest user, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			model.addAttribute("user", user);
 			return "signup";
 		}
 		String errorMessage = "";
 		try {
-			userRequestService.registerUser(cccdFile, user);
+			userRequestService.registerUser(user);
 			System.out.println("Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
 			model.addAttribute("successMessage",
 					"Registration successful, please check your email and wait for the administrator to approve your account.");

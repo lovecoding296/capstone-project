@@ -33,6 +33,9 @@ public class GuideRequest {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // User gửi yêu cầu
+    
+    @Column(columnDefinition = "NVARCHAR(255)")
+	private String cccdUrl;
 
     @Column(columnDefinition = "NVARCHAR(255)")
 	private String guideLicenseUrl;

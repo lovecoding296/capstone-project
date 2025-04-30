@@ -3,8 +3,14 @@
 	<div id="statusMessage"></div>
 	<form id="guideForm" class="mt-3" enctype="multipart/form-data" style="display: none;">
 		<div class="mb-3">
-			<label for="guideLicenseFile" class="form-label">Update load certificate image:</label>
-			<input type="file" id="guideLicenseFile" class="form-control" onchange="previewImage(event)">
+			<label for="cccdFile" class="form-label">Upload cccd image:</label>
+			<input type="file" id="cccdFile" class="form-control" onchange="previewImage(event, 'cccdPreview')">
+		</div>
+		<div id="cccdPreview"></div>
+		
+		<div class="mb-3">
+			<label for="guideLicenseFile" class="form-label">Upload certificate image:</label>
+			<input type="file" id="guideLicenseFile" class="form-control" onchange="previewImage(event, 'guideLicensePreview')">
 		</div>
 		<div id="guideLicensePreview"></div>
 
@@ -33,6 +39,6 @@
 			<textarea id="experience" class="form-control" required></textarea>
 		</div>
 
-		<button type="submit" onclick="submitGuideRegister()" class="btn btn-success">Submit</button>
+		<button type="button" onclick="submitGuideRegister()" class="btn btn-success">Submit</button>
 	</form>
 </div>
