@@ -53,7 +53,7 @@ public class NotificationService {
 	}
 	
 	
-	public synchronized void sendNotification(User receiver, String message, String sourceLink) {
+	public void sendNotification(User receiver, String message, String sourceLink) {
 	    Notification notify = new Notification();
 	    notify.setUser(receiver);
 	    notify.setMessage(message);

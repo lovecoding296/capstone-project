@@ -136,14 +136,16 @@ function connect() {
 			const payload = JSON.parse(messageOutput.body);
 			console.log("payload.type " + payload.type)
 			if (payload.type === "NEW_MESSAGE") {
-				debounceuUpdateUnreadMessageCount();
+				unReadMessageCount++;
+				updateUnReadMessageCountUI(unReadMessageCount);
+				//debounceuUpdateUnreadMessageCount();
 			} else if (payload.type === "NEW_NOTIFICATION") {
-				updateUnreadNotificationCount();
+				unReadNotificationCount++;
+				updateUnreadNotificationCountUI(unReadNotificationCount)
+				//updateUnreadNotificationCount();
 			} else if (payload.type === "REFRESH_MESSAGE_BADGE") {
 				debounceuUpdateUnreadMessageCount();
 			}
-			
-			
         });
 
         // Subscribe vào kênh chat của người dùng

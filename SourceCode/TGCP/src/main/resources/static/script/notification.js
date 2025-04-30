@@ -1,6 +1,10 @@
 
+let unReadNotificationCount = 0;
+
 setupNotificationClickHandler()
 updateUnreadNotificationCount()
+
+
 
 const debounceuUpdateUnreadNotificationCount = debounce(updateUnreadNotificationCount, 200);
 
@@ -10,17 +14,22 @@ function updateUnreadNotificationCount() {
 		.then(response => response.json())
 		.then(count => {
 			console.log("updateUnreadNotificationCount " + count)
-			const badge = document.getElementById('notificationCountBadge');
-			if (count > 0) {
-				badge.textContent = count;
-				badge.style.display = 'inline-block';
-			} else {
-				badge.style.display = 'none';
-			}
+			unReadNotificationCount = count;
+			updateUnreadNotificationCountUI(count);
 		})
 		.catch(err => {
 			console.error("Lỗi khi lấy số tin nhắn chưa đọc:", err);
 		});
+}
+
+function updateUnreadNotificationCountUI(count) {
+	const badge = document.getElementById('notificationCountBadge');
+	if (count > 0) {		
+		badge.textContent = count;
+		badge.style.display = 'inline-block';
+	} else {
+		badge.style.display = 'none';
+	}
 }
 
 

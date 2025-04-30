@@ -1,6 +1,7 @@
 package funix.tgcp.chat;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -22,4 +23,11 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 	List<ChatMessage> getMessagesBetweenUsers(@Param("userA") Long userA, @Param("userB") Long userB);
 
 	int countByReceiverIdAndIsReadFalse(Long currentUserId);
+	
+	
+	
+	@Modifying
+	@Query("UPDATE ChatMessage m SET m.isRead = true WHERE m.sender.id = :partnerId AND m.receiver.id = :currentUserId AND m.isRead = false")
+	int markAsRead(@Param("partnerId") Long partnerId, @Param("currentUserId") Long currentUserId);
+
 }

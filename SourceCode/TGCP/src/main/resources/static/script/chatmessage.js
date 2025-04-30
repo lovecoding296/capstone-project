@@ -4,6 +4,8 @@ let currentReceiver = {
 	email: null
 };
 
+let unReadMessageCount = 0;
+
 // Đánh dấu tin nhắn là đã đọc
 function markMessAsRead() {
 	console.log("markMessAsRead")
@@ -24,17 +26,22 @@ function updateUnreadMessageCount() {
 		.then(response => response.json())
 		.then(count => {
 			console.log("updateUnreadMessageCount " + count)
-			const badge = document.getElementById('messageCountBadge');
-			if (count > 0) {
-				badge.textContent = count;
-				badge.style.display = 'inline-block';
-			} else {
-				badge.style.display = 'none';
-			}
+			unReadMessageCount = count;
+			updateUnReadMessageCountUI(count)
 		})
 		.catch(err => {
 			console.error("Lỗi khi lấy số tin nhắn chưa đọc:", err);
 		});
+}
+
+function updateUnReadMessageCountUI(count) {
+	const badge = document.getElementById('messageCountBadge');		
+	if (count > 0) {		
+		badge.textContent = count;
+		badge.style.display = 'inline-block';
+	} else {
+		badge.style.display = 'none';
+	}
 }
 
 

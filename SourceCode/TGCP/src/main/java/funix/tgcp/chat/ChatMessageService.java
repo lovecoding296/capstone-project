@@ -1,9 +1,8 @@
 package funix.tgcp.chat;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ChatMessageService {
@@ -12,15 +11,9 @@ public class ChatMessageService {
 	ChatMessageRepository chatRepo;
 	
 
+	@Transactional
 	public void markMessagesAsRead(Long partnerId, Long currentUserId) {
-        List<ChatMessage> unreadMessages = chatRepo
-            .findBySenderIdAndReceiverIdAndIsReadFalse(partnerId, currentUserId);
-
-        for (ChatMessage message : unreadMessages) {
-            message.setRead(true);
-        }
-        
-        chatRepo.saveAll(unreadMessages);
+        chatRepo.markAsRead(partnerId, currentUserId);        
     }
 	
 	public void markMessageAsRead(Long messageId) {
