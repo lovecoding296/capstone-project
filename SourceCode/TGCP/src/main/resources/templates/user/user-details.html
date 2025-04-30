@@ -133,6 +133,33 @@
 		</div>
 
 
+		
+		<br>		
+		<h6 th:if="${user.guideServices.size() > 0}"><strong>Service details:</strong></h6>
+		<div th:if="${user.guideServices.size() > 0}" style="max-height: 400px; overflow-y: auto;" >
+			
+		    <table class="table table-bordered" style="width: 100%;">
+		        <thead>
+		            <tr>
+		                <th>Service Type</th>
+		                <th>Group Size</th>
+		                <th>Language</th>
+		                <th>City</th>
+		                <th>Price per Day (VND)</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            <tr th:each="service : ${user.guideServices}">
+		                <td th:text="${service.type}">Service Type</td>
+		                <td th:text="${service.groupSizeCategory}">Group Size</td>
+		                <td th:text="${service.language}">Language</td>
+		                <td th:text="${service.city}">City</td>
+		                <td th:text="${service.price}">Price per Day</td>
+		            </tr>
+		        </tbody>
+		    </table>
+		</div>
+
 		<div th:if="${user.isGuide()}" class="review-section position-relative mt-5">
 		    <!-- Section title đè lên khung -->
 		    <div class="review-section-title bg-white position-absolute">

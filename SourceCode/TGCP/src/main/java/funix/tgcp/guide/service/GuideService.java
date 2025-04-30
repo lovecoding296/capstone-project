@@ -44,7 +44,7 @@ public class GuideService {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private GroupSizeCategory groupSizeCategory;  // Enum: UNDER_5, UNDER_10, OVER_10
+    private GroupSizeCategory groupSizeCategory;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

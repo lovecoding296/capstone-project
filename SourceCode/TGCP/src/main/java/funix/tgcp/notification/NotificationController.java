@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import funix.tgcp.chat.ChatMessage;
-import funix.tgcp.chat.ChatMessageController;
+import funix.tgcp.chat.ChatMessageRestController;
 import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;

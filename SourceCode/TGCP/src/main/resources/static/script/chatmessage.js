@@ -227,6 +227,7 @@ function appendMessageToChat(msg, isOwnMessage) {
 		  <div class="small text-muted">${formatTimestamp(msg.timestamp)}</div>
 		`;
 		chatMessages.appendChild(msgDiv);
+		chatMessages.scrollTop = chatMessages.scrollHeight;
 	}
 }
 

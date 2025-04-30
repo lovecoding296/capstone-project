@@ -15,7 +15,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-import funix.tgcp.chat.ChatController;
+import funix.tgcp.chat.ChatMessageController;
 import funix.tgcp.util.LogHelper;
 
 @Configuration

@@ -1,4 +1,4 @@
-let pricePerDay = 50; // ví dụ: 50 USD/day
+let pricePerDay = 50; // ví dụ: 50 VND/day
 
 
 
@@ -278,7 +278,7 @@ function createBookingPopup() {
 				        </div>
 				    </div>
 
-				    <p class="fw-bold">Total price: <span id="totalPrice" class="text-danger">0</span> USD</p>
+				    <p class="fw-bold">Total price: <span id="totalPrice" class="text-danger">0</span> VND</p>
 
 				    <div class="d-flex justify-content-between">
 				        <button type="button" onclick="submitBooking()" class="btn btn-success">Confirm</button>

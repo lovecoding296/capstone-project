@@ -52,13 +52,16 @@ public class BookingService {
     	logger.info("GuideService isPresent " + gO.isPresent());
     	
     	if(gO.isPresent()) {    		
+    		
+    		
+    		bookingRequest.setGuideService(gO.get());    		
+    		Booking savedBooking = bookingRepo.save(bookingRequest);
+    		
     		notifiService.sendNotification(
         			bookingRequest.getGuide(),
         			bookingRequest.getCustomer().getFullName() + " booked you, please confirm!",
         			"/dashboard#manage-bookings");
-    		
-    		bookingRequest.setGuideService(gO.get());
-    		return bookingRepo.save(bookingRequest);
+    		return savedBooking;
     	}
     	
     	return null;

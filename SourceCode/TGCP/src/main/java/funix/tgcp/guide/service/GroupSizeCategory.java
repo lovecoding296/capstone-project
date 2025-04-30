@@ -2,7 +2,7 @@ package funix.tgcp.guide.service;
 
 public enum GroupSizeCategory {
     UNDER_5("Under 5"),
-    UNDER_10("Under 10"),
+    FROM_5_TO_10("From 5 to 10"),
     OVER_10("Over 10");
 
     private final String displayName;

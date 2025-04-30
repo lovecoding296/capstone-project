@@ -53,7 +53,7 @@ public class NotificationService {
 	}
 	
 	
-	public void sendNotification(User receiver, String message, String sourceLink) {
+	public synchronized void sendNotification(User receiver, String message, String sourceLink) {
 	    Notification notify = new Notification();
 	    notify.setUser(receiver);
 	    notify.setMessage(message);
@@ -76,9 +76,6 @@ public class NotificationService {
 		
 		for(User admin : admins) {
 			sendNotification(admin, message, sourceLink);
-			
-			messagingTemplate.convertAndSendToUser(admin.getEmail(), "/queue/notification",
-					Map.of("type", "NEW_NOTIFICATION"));
 		}		
 	}
 

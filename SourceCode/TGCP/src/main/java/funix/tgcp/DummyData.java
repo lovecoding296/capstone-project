@@ -148,29 +148,29 @@ public class DummyData implements ApplicationRunner {
             
             	
             
-            createService(savedU, City.HA_NOI, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_5, 50d);
-            createService(savedU, City.HA_NOI, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_10, 55d);            
-            createService(savedU, City.HA_NOI, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.OVER_10, 60d);
+            createService(savedU, City.HA_NOI, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_5, 800000d);
+            createService(savedU, City.HA_NOI, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.FROM_5_TO_10, 1000000d);            
+            createService(savedU, City.HA_NOI, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.OVER_10, 1200000d);
             
-            createService(savedU, City.HA_NOI, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_5, 70d);
-            createService(savedU, City.HA_NOI, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_10, 75d);
-            createService(savedU, City.HA_NOI, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.OVER_10, 80d);
+            createService(savedU, City.HA_NOI, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_5, 950000d);
+            createService(savedU, City.HA_NOI, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.FROM_5_TO_10, 1200000d);
+            createService(savedU, City.HA_NOI, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.OVER_10, 1500000d);
             
-            createService(savedU, City.HAI_PHONG, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_5, 50d);
-            createService(savedU, City.HAI_PHONG, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_10, 55d);            
-            createService(savedU, City.HAI_PHONG, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.OVER_10, 60d);
+            createService(savedU, City.HAI_PHONG, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_5, 950000d);
+            createService(savedU, City.HAI_PHONG, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.FROM_5_TO_10, 1000000d);            
+            createService(savedU, City.HAI_PHONG, Language.English, ServiceType.TRANSLATOR, GroupSizeCategory.OVER_10, 1200000d);
             
-            createService(savedU, City.HAI_PHONG, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_5, 70d);
-            createService(savedU, City.HAI_PHONG, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_10, 75d);
-            createService(savedU, City.HAI_PHONG, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.OVER_10, 80d);
+            createService(savedU, City.HAI_PHONG, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.UNDER_5, 950000d);
+            createService(savedU, City.HAI_PHONG, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.FROM_5_TO_10, 1000000d);
+            createService(savedU, City.HAI_PHONG, Language.French, ServiceType.TRANSLATOR, GroupSizeCategory.OVER_10, 1150000d);
             
-            createService(savedU, City.HA_NOI, Language.English, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_5, 50d);
-            createService(savedU, City.HA_NOI, Language.English, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_10, 55d);
-            createService(savedU, City.HA_NOI, Language.English, ServiceType.CITY_TOUR, GroupSizeCategory.OVER_10, 60d);
+            createService(savedU, City.HA_NOI, Language.English, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_5, 950000d);
+            createService(savedU, City.HA_NOI, Language.English, ServiceType.CITY_TOUR, GroupSizeCategory.FROM_5_TO_10, 1300000d);
+            createService(savedU, City.HA_NOI, Language.English, ServiceType.CITY_TOUR, GroupSizeCategory.OVER_10, 1600000d);
             
-            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_5, 55d);
-            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_10, 60d);
-            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.OVER_10, 70d);
+            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.UNDER_5, 950000d);
+            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.FROM_5_TO_10, 1000000d);
+            createService(savedU, City.HA_NOI, Language.French, ServiceType.CITY_TOUR, GroupSizeCategory.OVER_10, 1550000d);
             
             
             System.out.println("account created successfully!");

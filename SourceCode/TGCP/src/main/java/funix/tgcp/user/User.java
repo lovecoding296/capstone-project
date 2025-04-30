@@ -110,6 +110,7 @@ public class User {
     private boolean isInternationalGuide;
     
     @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OrderBy("type ASC, city ASC, language ASC, groupSizeCategory ASC")
     private Set<GuideService> guideServices = new HashSet<>();  
     
     @Transient

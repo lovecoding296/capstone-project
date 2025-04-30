@@ -65,7 +65,7 @@ const cityDisplayNames = {
 
 const groupSizeCategoryDisplayNames = {
     UNDER_5: "Under 5",
-    UNDER_10: "Under 10",
+    FROM_5_TO_10: "From 5 to 10",
     OVER_10: "Over 10"
 };
 
@@ -138,7 +138,7 @@ function connect() {
 			if (payload.type === "NEW_MESSAGE") {
 				debounceuUpdateUnreadMessageCount();
 			} else if (payload.type === "NEW_NOTIFICATION") {
-				debounceuUpdateUnreadNotificationCount();
+				updateUnreadNotificationCount();
 			} else if (payload.type === "REFRESH_MESSAGE_BADGE") {
 				debounceuUpdateUnreadMessageCount();
 			}
