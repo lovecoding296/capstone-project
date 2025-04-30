@@ -58,7 +58,7 @@
 				   </button>
 				   <button class="btn btn-primary"
 				           th:if="${session.loggedInUser != null and session.loggedInUser.id != user.id}"
-				           th:attr="onclick=|openChatWithUser(${user.id}, '${user.fullName}')|">
+				           th:attr="onclick=|openChatWithUser(${user.id},'${user.email}', '${user.fullName}')|">
 				       Message
 				   </button>
 

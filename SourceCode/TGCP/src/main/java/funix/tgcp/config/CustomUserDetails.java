@@ -43,8 +43,7 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return user.isVerified(); // Chặn login nếu chưa xác minh
-//		return true;
+		return user.isEnabled();
 	}
 
 	@Override

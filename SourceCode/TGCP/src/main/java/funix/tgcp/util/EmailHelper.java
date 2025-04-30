@@ -62,4 +62,59 @@ public class EmailHelper {
         // Gửi email
         mailSender.send(email);
     }
+    
+    @Async
+    public void sendApprovalNotificationEmail(String toEmail) {
+        System.out.println("sendApprovalNotificationEmail");
+        
+        String subject = "Account Approved";
+        String text = "Congratulations! Your account has been approved by the admin. "
+                    + "You can now log in and use the services on our website.";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("phibh96@gmail.com");
+        message.setTo(toEmail);
+        message.setSubject(subject);
+        message.setText(text);
+        
+        System.out.println(message.toString());
+
+        // Send the email
+        try {
+            mailSender.send(message);
+            System.out.println("Approval notification email sent successfully to: " + toEmail);
+        } catch (Exception e) {
+            System.out.println("Error sending approval notification email: " + e);
+        }
+    }
+    
+    
+    @Async
+    public void sendKycRejectEmail(String toEmail, String rejectReason) {
+        System.out.println("sendKycRejectEmail");
+
+        String subject = "KYC Rejection Notification";
+        String text = "Dear User,\n\n"
+                    + "We regret to inform you that your KYC (Know Your Customer) request has been rejected. "
+                    + "Reason for rejection: " + rejectReason + "\n\n"
+                    + "If you have any questions or need further assistance, please contact our support team.";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("phibh96@gmail.com");  // Địa chỉ email của bạn
+        message.setTo(toEmail);
+        message.setSubject(subject);
+        message.setText(text);
+
+        System.out.println(message.toString());
+
+        // Send the email
+        try {
+            mailSender.send(message);
+            System.out.println("KYC rejection email sent successfully to: " + toEmail);
+        } catch (Exception e) {
+            System.out.println("Error sending KYC rejection email: " + e);
+        }
+    }
+
+
 }

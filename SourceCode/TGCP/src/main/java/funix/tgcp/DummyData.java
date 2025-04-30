@@ -90,7 +90,6 @@ public class DummyData implements ApplicationRunner {
             user.setFullName(fullName);
             user.setAvatarUrl("/uploads/default-avatar.jpg");
             user.setKycApproved(true);
-            user.setVerified(true);
             
             
             userRepo.save(user);
@@ -123,14 +122,10 @@ public class DummyData implements ApplicationRunner {
             user.setPassword(passwordEncoder.encode(rawPassword)); // Mật khẩu mã hóa
             user.setRole(role);
             user.setFullName(fullName);
-            user.setAvatarUrl("/uploads/default-avatar.jpg");
-            user.setKycApproved(true);
-            user.setVerified(true);
             user.setReviewCount(reviewCount);
             user.setAverageRating(rating);
             
             user.setActive(true);
-            user.setVerified(true);
             user.setKycApproved(true);
             user.setInternationalGuide(isInternationalGuidem);
             user.setLocalGuide(isLocalGuide);

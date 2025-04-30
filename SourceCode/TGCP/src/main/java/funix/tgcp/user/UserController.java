@@ -213,28 +213,5 @@ public class UserController {
          model.addAttribute("users", users);
          return "user/verify-list";
     }
-    
-    
-    @GetMapping("/manager-user/verify/{id}/approve")
-	public String approveRequest(@PathVariable Long id, RedirectAttributes redirectAttributes) {    	
-		boolean approved = userService.approveUser(id);
-		if (approved) {
-			redirectAttributes.addFlashAttribute("message", "User approved successfully.");
-		} else {
-			redirectAttributes.addFlashAttribute("error", "Failed to approve User.");
-		}
-		return "redirect:/manager-user/verify";
-	}
-
-	@GetMapping("/manager-user/verify/{id}/reject")
-	public String rejectRequest(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-		boolean rejected = userService.rejectUser(id);
-		if (rejected) {
-			redirectAttributes.addFlashAttribute("message", "User rejected successfully.");
-		} else {
-			redirectAttributes.addFlashAttribute("error", "Failed to reject User.");
-		}
-		return "redirect:/manager-user/verify";
-	}
 
 }

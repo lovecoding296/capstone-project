@@ -67,11 +67,12 @@ public class User {
 
 	private double averageRating;
 
+	@JsonIgnore
 	private String verificationToken;
-	
-	private boolean verified = false; // verify email
-	
+		
 	private boolean kycApproved = false; // verify cccd
+	
+	private String kycRejectionReason;
 	
 	private boolean enabled = true; // report
 	

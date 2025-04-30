@@ -22,6 +22,14 @@ public class ChatMessageService {
         
         chatRepo.saveAll(unreadMessages);
     }
+	
+	public void markMessageAsRead(Long messageId) {
+        
+        chatRepo.findById(messageId).ifPresent(mes -> {
+        	mes.setRead(true);
+        	chatRepo.save(mes);
+        });        
+    }
 
 
 	public int countUnreadMessages(Long currentUserId) {

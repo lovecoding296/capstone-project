@@ -35,13 +35,6 @@ public class GuideRequestController {
             CustomUserDetails userDetails = (CustomUserDetails) principal;
             Long userId = userDetails.getId();
             
-            if(userDetails.getUser().isGuide()) {
-            	GuideRequest guideRequest = new GuideRequest();   
-            	guideRequest.setStatus(GuideRequestStatus.APPROVED);
-            	return ResponseEntity.ok(guideRequest);
-            }
-            
-
             GuideRequest guideRequest = guideRequestService.findByUserId(userId);            
             if (guideRequest != null) {
                 return ResponseEntity.ok(guideRequest); // Trả về đối tượng GuideRequest
@@ -55,9 +48,11 @@ public class GuideRequestController {
 
     @PostMapping("/api/guide-requests/register")
     public ResponseEntity<String> registerGuide(
-            @RequestParam("guideLicenseFile") MultipartFile guideLicenseFile,
-            @RequestParam("guideLicense") String guideLicense,
-            @RequestParam("experience") String experience) {
+            @RequestParam MultipartFile guideLicenseFile,
+            @RequestParam String guideLicense,
+            @RequestParam String experience,
+            @RequestParam boolean isInternationalGuide, 
+            @RequestParam boolean isLocalGuide) {
     	
     	logger.info("");
     	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -69,7 +64,7 @@ public class GuideRequestController {
 	        	System.out.println("GuideRequestController guideRequestService");
 	        	logger.info("userId " + userId);
 	            guideRequestService.registerGuide(userId, guideLicenseFile, 
-	            		guideLicense, experience);
+	            		guideLicense, experience,isInternationalGuide,isLocalGuide);
 	            return ResponseEntity.ok("Đăng ký hướng dẫn viên thành công!");
 	        } catch (Exception e) {
 	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đăng ký thất bại: " + e.getMessage());
@@ -84,9 +79,9 @@ public class GuideRequestController {
     public ResponseEntity<String> updateGuideRequest(
             @RequestParam(required = false) MultipartFile guideLicenseFile,
             @RequestParam String guideLicense, 
-            @RequestParam boolean isLocalGuide,
-            @RequestParam boolean isInternationalGuide,
-            @RequestParam String experience) {
+            @RequestParam String experience,
+            @RequestParam boolean isLocalGuide,            
+            @RequestParam boolean isInternationalGuide) {
         
     	logger.info("");
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -96,7 +91,7 @@ public class GuideRequestController {
             
             try {
                 logger.info("Cập nhật đăng ký hướng dẫn viên cho userId: " + userId);
-                guideRequestService.updateGuideRequest(userId, guideLicenseFile, guideLicense, isLocalGuide, isInternationalGuide, experience);
+                guideRequestService.updateGuideRequest(userId, guideLicenseFile, guideLicense, experience, isLocalGuide, isInternationalGuide);
                 return ResponseEntity.ok("Cập nhật đăng ký hướng dẫn viên thành công!");
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật thất bại: " + e.getMessage());

@@ -107,6 +107,66 @@ function autoResize(textarea) {
 	textarea.style.height = (textarea.scrollHeight) + 'px';  
 }
 
+/* connect socket */
+
+function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+let stompClient = null;
+
+function connect() {
+	
+	console.log("userId " + userId)
+		
+    const socket = new SockJS('/ws-chat');
+    stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function(frame) {
+        console.log('Connected: ' + frame);
+
+        // Subscribe vào kênh thông báo
+        stompClient.subscribe(`/user/queue/notification`, function(messageOutput) {            
+			const payload = JSON.parse(messageOutput.body);
+			console.log("payload.type " + payload.type)
+			if (payload.type === "NEW_MESSAGE") {
+				debounceuUpdateUnreadMessageCount();
+			} else if (payload.type === "NEW_NOTIFICATION") {
+				debounceuUpdateUnreadNotificationCount();
+			} else if (payload.type === "REFRESH_MESSAGE_BADGE") {
+				debounceuUpdateUnreadMessageCount();
+			}
+			
+			
+        });
+
+        // Subscribe vào kênh chat của người dùng
+		stompClient.subscribe(`/user/queue/chat`, function(messageOutput) {
+			const chatMessage = JSON.parse(messageOutput.body);
+			console.log(" chatMessage.sender.id " + chatMessage.sender.id + " userId " + userId + " " + (chatMessage.sender.id == userId))
+			appendMessageToChat(chatMessage, chatMessage.sender.id == userId);
+			
+			const chatMessages = document.getElementById('chatMessages');
+			
+			if(chatMessages != null && chatMessage.receiver.id == userId) {
+				debouncedMarkMessAsRead();
+				console.log("đánh dấu tin nhắn đã đọc.")
+			}
+		});
+    });
+}
+
+
+window.onload = connect;
+
+
+
 /* manage services */
 
 function initOptionData() {
@@ -497,7 +557,6 @@ async function fetchUsers(page = 1) {
 	const fullName = document.getElementById('fullName').value;
 	const role = document.getElementById('role').value;
 	const kycApproved = document.getElementById('kycApproved').value;
-	const verified = document.getElementById('verified').value;
 	const enabled = document.getElementById('enabled').value;
 
 
@@ -506,7 +565,6 @@ async function fetchUsers(page = 1) {
 	if (fullName) url += `fullName=${encodeURIComponent(fullName)}&`;
 	if (role) url += `role=${encodeURIComponent(role)}&`;
 	if (kycApproved !== "") url += `kycApproved=${kycApproved}&`;
-	if (verified !== "") url += `verified=${verified}&`;
 	if (enabled !== "") url += `enabled=${enabled}&`;
 	url += `page=${usersPage.currentPage - 1}&`;
 	url += `size=${usersPage.itemsPerPage}`;
@@ -526,7 +584,8 @@ async function fetchUsers(page = 1) {
 
 		users.forEach(user => {
 			const actions = [];
-
+ 
+			actions.push(`<a class="button btn btn-sm btn-info" href="/users/${user.id}">View profile</a>`);
 			if (user.enabled) {
 				actions.push(`<button class="btn btn-sm btn-danger" onclick="performUserAction(${user.id}, 'disable')">Disable</button>`);
 			} else {
@@ -535,6 +594,7 @@ async function fetchUsers(page = 1) {
 
 			if (!user.kycApproved) {
 				actions.push(`<button class="btn btn-sm btn-primary" onclick="performUserAction(${user.id}, 'approve-kyc')">Approve KYC</button>`);
+				actions.push(`<button class="btn btn-sm btn-warning" onclick="performUserAction(${user.id}, 'reject-kyc')">Reject KYC</button>`);
 			}
 
 			const row = document.createElement('tr');
@@ -543,7 +603,6 @@ async function fetchUsers(page = 1) {
                 <td>${user.email}</td>
                 <td>${user.role}</td>
                 <td><b>KYC: </b>${user.kycApproved}</td>
-                <td><b>Email Verified: </b>${user.verified}</td>
                 <td><b>Enabled: </b>${user.enabled}</td>
                 <td>${actions.join(' ')}</td>
             `;
@@ -567,6 +626,8 @@ async function performUserAction(userId, action) {
 	let url = `/api/users/${userId}/${action}`;
 	let confirmMessage = '';
 	let successMessage = '';
+	let rejectReason;
+	
 
 	switch (action) {
 		case 'enable':
@@ -581,6 +642,10 @@ async function performUserAction(userId, action) {
 			confirmMessage = 'Bạn có chắc chắn muốn duyệt KYC cho người dùng này?';
 			successMessage = 'Đã duyệt KYC.';
 			break;
+		/*case 'reject-kyc':
+			const data = {
+					reason: rejectReason
+				};*/
 		default:
 			console.error('Hành động không hợp lệ:', action);
 			return;
@@ -1413,14 +1478,17 @@ async function checkGuideRequestStatus() {
 		const response = await fetch('/api/guide-requests/status');
 
 		// Kiểm tra lỗi phản hồi từ server
+		let data;
 		if (!response.ok) {
 			if (response.status === 404) {
-				return { status: 'NONE' }; // Trường hợp không có yêu cầu
+				data = { status: 'NONE' };
+			} else {
+				throw new Error(`HTTP error! status: ${response.status}`);
 			}
-			throw new Error(`HTTP error! status: ${response.status}`);
 		}
-
-		const data = await response.json();
+		else {
+			data = await response.json();
+		}		
 
 		// Các phần tử DOM cần cập nhật
 		const statusMessage = document.getElementById('statusMessage');
@@ -1429,13 +1497,20 @@ async function checkGuideRequestStatus() {
 		const experienceInput = document.getElementById('experience');
 		const guideLicensePreview = document.getElementById('guideLicensePreview');
 
-		// Xử lý theo các trạng thái khác nhau
+		// Guard clause for missing DOM elements
+		if (!statusMessage || !guideForm || !guideLicenseInput || !experienceInput || !guideLicensePreview) {
+			console.warn('One or more DOM elements are missing.');
+			return;
+		}
+
+		console.log("checkGuideRequestStatus data.status " + data.status);
+
 		switch (data.status) {
 			case 'REJECTED':
-				statusMessage.innerHTML = `<div class="alert alert-danger">Rejected: ${data.reason}</div>`;
-				guideForm.style.display = 'block';
+				statusMessage.innerHTML = `<div class="alert alert-danger">Rejected: ${data.reason || 'No reason provided.'}</div>`;
 				statusMessage.dataset.status = 'REJECTED';
 
+				guideForm.style.display = 'block';
 				guideLicenseInput.value = data.guideLicense || '';
 				experienceInput.value = data.experience || '';
 
@@ -1445,27 +1520,48 @@ async function checkGuideRequestStatus() {
 					guideLicensePreview.innerHTML = '';
 				}
 				break;
+
 			case 'PENDING':
 				statusMessage.innerHTML = `<div class="alert alert-info">Your request is pending approval.</div>`;
-				guideForm.style.display = 'none';
 				statusMessage.dataset.status = 'PENDING';
+				guideForm.style.display = 'none';
 				break;
+
 			case 'APPROVED':
 				statusMessage.innerHTML = `<div class="alert alert-info">Your request has been approved.</div>`;
-				guideForm.style.display = 'none';
 				statusMessage.dataset.status = 'APPROVED';
+				guideForm.style.display = 'block';
+				guideLicenseInput.value = data.guideLicense || '';
+				experienceInput.value = data.experience || '';
+
+				if (data.guideLicenseUrl) {
+					guideLicensePreview.innerHTML = `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`;
+				} else {
+					guideLicensePreview.innerHTML = '';
+				}
 				break;
+
+			case 'NONE':
+				statusMessage.innerHTML = '';
+				statusMessage.dataset.status = 'NONE';
+				guideForm.style.display = 'block';
+				break;
+
 			default:
-				statusMessage.innerHTML = 'You are not registered as a guide.';
+				statusMessage.textContent = 'You are not registered as a guide.';
+				statusMessage.dataset.status = 'UNKNOWN';
 				guideForm.style.display = 'block';
 				break;
 		}
 	} catch (error) {
 		console.error('Error:', error);
 		const statusMessage = document.getElementById('statusMessage');
-		statusMessage.innerHTML = 'Có lỗi xảy ra. Vui lòng thử lại sau.';
+		if (statusMessage) {
+			statusMessage.innerHTML = '<div class="alert alert-danger">Có lỗi xảy ra. Vui lòng thử lại sau.</div>';
+		}
 	}
 }
+
 
 
 async function submitGuideRegister() {
@@ -1475,9 +1571,9 @@ async function submitGuideRegister() {
 	const formData = new FormData();
 	formData.append("guideLicenseFile", document.getElementById("guideLicenseFile").files[0]);
 	formData.append("guideLicense", document.getElementById("guideLicense").value);
+	formData.append("experience", CKEDITOR.instances["experience"].getData());
 	formData.append("isLocalGuide", document.getElementById("isLocalGuide").value);
 	formData.append("isInternationalGuide", document.getElementById("isInternationalGuide").value);
-	formData.append("experience", CKEDITOR.instances["experience"].getData());
 
 	const statusMessage = document.getElementById('statusMessage');
 	let requestMethod = 'POST';
@@ -1545,7 +1641,7 @@ async function fetchGuideRequests(page = 1) {
 				                <td>${request.guideLicense}</td>
 				                <td>${request.experience}</td>
 				                <td>
-				                    <a href="/users/${request.user.id}" class="btn btn-info btn-sm">View</a>
+				                    <a href="/users/${request.user.id}" class="btn btn-info btn-sm">View user profile</a>
 				                    <button class="btn btn-success btn-sm" onclick="approveGuide(${request.id})">Approve</button>
 				                    <button class="btn btn-danger btn-sm" onclick="rejectGuide(${request.id})">Reject</button>
 				                </td>

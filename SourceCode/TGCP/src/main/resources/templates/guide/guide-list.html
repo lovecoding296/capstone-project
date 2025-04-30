@@ -242,9 +242,9 @@
 
 							<div class="buttons d-flex justify-content-between mt-3">
 								<button class="btn btn-primary btn-sm"
-									th:data-loggedin="${session.loggedInUser != null}" th:data-userid="${user.id}"
+									th:data-loggedin="${session.loggedInUser != null}" th:data-userid="${user.id}" th:data-useremail="${user.email}"
 									th:data-username="${user.fullName}"
-									th:onclick="|if (this.dataset.loggedin === 'true') { openChatWithUser(this.dataset.userid, this.dataset.username); } else { window.location.href='/login'; }|">
+									th:onclick="|if (this.dataset.loggedin === 'true') { openChatWithUser(this.dataset.userid, this.dataset.useremail, this.dataset.username); } else { window.location.href='/login'; }|">
 									Message
 								</button>
 

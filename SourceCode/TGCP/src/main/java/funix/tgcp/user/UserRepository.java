@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findByKycApprovedFalse();
 	List<User> findByRole(Role role);
 	
-	List<User> findTop6ByRoleAndKycApprovedTrueAndVerifiedTrueAndIsActiveTrueOrderByAverageRatingDesc(Role role);
+	List<User> findTop6ByRoleAndKycApprovedTrueAndAndIsActiveTrueOrderByAverageRatingDesc(Role role);
 
 	Optional<User> findByVerificationToken(String token);
 
@@ -39,27 +39,26 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	       "AND (:groupSize IS NULL OR gs.groupSizeCategory = :groupSize) " +
 	       "AND (:gender IS NULL OR u.gender = :gender) " +
 	       "AND (:isLocalGuide IS NULL OR u.isLocalGuide = :isLocalGuide) " +
-	       "AND (:isInternationalGuide IS NULL OR u.isInternationalGuide = :isInternationalGuide)")
+	       "AND (:isInternationalGuide IS NULL OR u.isInternationalGuide = :isInternationalGuide) " + 
+	       "ORDER BY u.id desc")
 	Page<User> findGuideByFilter(ServiceType type, City city, Language language, 
 	                             GroupSizeCategory groupSize, Gender gender, 
 	                             Boolean isLocalGuide, Boolean isInternationalGuide, Pageable pageable);
 
 	
 	
-	@Query("SELECT DISTINCT u FROM User u WHERE (:email IS NULL OR u.email LIKE CONCAT('%', :email, '%')) "
-	     + "AND (:fullName IS NULL OR u.fullName LIKE CONCAT('%', :fullName, '%')) "
-	     + "AND (:role IS NULL OR u.role = :role) "
-	     + "AND (:kycApproved IS NULL OR u.kycApproved = :kycApproved) "
-	     + "AND (:enabled IS NULL OR u.enabled = :enabled) "
-	     + "AND (:verified IS NULL OR u.verified = :verified) "
-	     + "ORDER BY u.id ASC")
+	@Query("SELECT DISTINCT u FROM User u WHERE (:email IS NULL OR u.email LIKE CONCAT('%', :email, '%')) " + 
+			"AND (:fullName IS NULL OR u.fullName LIKE CONCAT('%', :fullName, '%')) " + 
+			"AND (:role IS NULL OR u.role = :role) " + 
+			"AND (:kycApproved IS NULL OR u.kycApproved = :kycApproved) " + 
+			"AND (:enabled IS NULL OR u.enabled = :enabled) " + 
+			"ORDER BY u.id desc")
 	Page<User> findUserByFilter(
 	        @Param("email") String email,
 	        @Param("fullName") String fullName,
 	        @Param("role") Role role,
 	        @Param("kycApproved") Boolean kycApproved,
 	        @Param("enabled") Boolean enabled,
-	        @Param("verified") Boolean verified,
 	        Pageable pageable);
 
 

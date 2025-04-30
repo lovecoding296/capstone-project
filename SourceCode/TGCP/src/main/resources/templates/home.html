@@ -4,6 +4,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+
 	<!-- Flatpickr CSS -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 	<!-- Flatpickr JS -->
@@ -232,13 +234,13 @@
 
 					<div class="buttons d-flex justify-content-between mt-3">
 						<button class="btn btn-primary btn-sm" th:data-loggedin="${session.loggedInUser != null}"
-							th:data-userid="${user.id}" th:data-username="${user.fullName}"
-							th:onclick="|if (this.dataset.loggedin === 'true') { openChatWithUser(this.dataset.userid, this.dataset.username); } else { window.location.href='/login'; }|">
+							th:data-userid="${user.id}" th:data-useremail="${user.email}" th:data-username="${user.fullName}"
+							th:onclick="|if (this.dataset.loggedin === 'true') { openChatWithUser(this.dataset.userid, this.dataset.useremail, this.dataset.username); } else { window.location.href='/login'; }|">
 							Message
 						</button>
 
 						<button class="btn btn-warning btn-sm" th:data-loggedin="${session.loggedInUser != null}"
-							th:data-userid="${user.id}" th:data-username="${user.fullName}"
+							th:data-userid="${user.id}" th:data-username="${user.fullName}" 
 							th:onclick="|if (this.dataset.loggedin === 'true') { openBookingPopup(this.dataset.userid, this.dataset.username); } else { window.location.href='/login'; }|">
 							Book Now
 						</button>

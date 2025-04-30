@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import funix.tgcp.exception.EmailAlreadyExistsException;
@@ -22,9 +23,12 @@ import funix.tgcp.exception.EmailVerificationException;
 import funix.tgcp.guide.service.GroupSizeCategory;
 import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.ServiceType;
+import funix.tgcp.notification.NotificationService;
+import funix.tgcp.user.request.UserRequest;
 import funix.tgcp.util.EmailHelper;
 import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
+import jakarta.validation.Valid;
 
 @Service
 public class UserService {
@@ -40,9 +44,6 @@ public class UserService {
     
     @Autowired
     private EmailHelper emailHelper;
-    
-    @Autowired
-	private FileHelper fileHelper;
 
     public List<User> getUnapprovedUsers() {
         return userRepo.findByKycApprovedFalse();
@@ -73,65 +74,19 @@ public class UserService {
     	userRepo.deleteById(id);
     }
     
-    public User registerUser(MultipartFile cccdFile, User user) throws EmailAlreadyExistsException, IOException {
-		if (userRepo.existsByEmail(user.getEmail())) {
-			System.out.println("Attempt to register with existing email: " + user.getEmail());
-			throw new EmailAlreadyExistsException("Email already exists");
-		}
-		
-		String cccd = fileHelper.uploadFile(cccdFile);			
-		if(cccd != null) {
-    		user.setCccd(cccd);
-    	}
-		
-		// Tạo token ngẫu nhiên
-        String token = UUID.randomUUID().toString();
-        System.out.println("Tạo token ngẫu nhiên " + token);
-        
-        user.setVerificationToken(token);
-        user.setVerified(false);        
-        
-        user.setAvatarUrl("/uploads/default-avatar.jpg");        
-        
-		emailHelper.sendVerificationEmail(user.getEmail(), token);
+    
 
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		
-		User savedUser = userRepo.save(user);
-		return savedUser;
-	}
 
-	public void verifyEmail(String token) throws EmailVerificationException{
-		Optional<User> optionalUser = userRepo.findByVerificationToken(token);
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setVerified(true);
-            user.setVerificationToken(null); // Xóa token sau khi xác thực
-            userRepo.save(user);
-        } else {
-            throw new EmailVerificationException("Invalid verification token or the token has expired.");
-        }
-	}
 	
-	public boolean approveUser(Long id) {
-		Optional<User> currentUserOption = findById(id);
-
-		if (currentUserOption.isPresent()) {
-			User currentUser = currentUserOption.get();
-			currentUser.setKycApproved(true);
-			userRepo.save(currentUser);
-			return true;
-		}
-		return false;		
-	}
-	
-	public boolean rejectUser(Long id) {
+	public boolean rejectKyc(Long id, String reason) {
 		Optional<User> currentUserOption = findById(id);
 
 		if (currentUserOption.isPresent()) {
 			User currentUser = currentUserOption.get();
 			currentUser.setKycApproved(false);
+			currentUser.setKycRejectionReason(reason);
+			
+			emailHelper.sendKycRejectEmail(currentUser.getEmail(), reason);			
 			userRepo.save(currentUser);
 			return true;
 		}
@@ -211,13 +166,14 @@ public class UserService {
 	public void approveKyc(Long id) {
 		userRepo.findById(id).ifPresent(user -> {
 			user.setKycApproved(true);
-			userRepo.save(user);
+			userRepo.save(user);			
+			emailHelper.sendApprovalNotificationEmail(user.getEmail());		
 		});		
 	}
 
 	public Page<User> findUserByFilter(String email, String fullName, Role role, Boolean kycApproved, Boolean enabled,
-			Boolean verified, Pageable pageable) {
-		return userRepo.findUserByFilter(email, fullName, role, kycApproved, enabled, verified, pageable);
+			Pageable pageable) {
+		return userRepo.findUserByFilter(email, fullName, role, kycApproved, enabled, pageable);
 	}
 
 	public void forgotPassword(String email) {

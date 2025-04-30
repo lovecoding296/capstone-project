@@ -1,8 +1,10 @@
 package funix.tgcp.notification;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import funix.tgcp.booking.BookingService;
@@ -21,6 +23,9 @@ public class NotificationService {
 	
 	@Autowired
 	UserRepository userRepo;
+	
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
 	public List<Notification> findByUserIdAndIsReadFalse(Long currentUser) {
 		return notiRepo.findByUserIdAndIsReadFalse(currentUser);
@@ -54,6 +59,13 @@ public class NotificationService {
 	    notify.setMessage(message);
 	    notify.setSourceLink(sourceLink);
 	    save(notify);
+	    
+	    userRepo.findById(receiver.getId()).ifPresent(user -> {
+	    	messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/notification",
+					Map.of("type", "NEW_NOTIFICATION"));
+	    });
+	    
+		
 
 	    logger.info("Notification: {}", message);
 	}
@@ -63,7 +75,10 @@ public class NotificationService {
 		List<User> admins = userRepo.findByRole(Role.ROLE_ADMIN);
 		
 		for(User admin : admins) {
-			sendNotification( admin, message, sourceLink);
+			sendNotification(admin, message, sourceLink);
+			
+			messagingTemplate.convertAndSendToUser(admin.getEmail(), "/queue/notification",
+					Map.of("type", "NEW_NOTIFICATION"));
 		}		
 	}
 

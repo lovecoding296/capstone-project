@@ -116,6 +116,7 @@ public class ChatMessageController {
             Map<String, Object> item = new HashMap<>();
             item.put("partnerId", partnerId);
             item.put("fullName", partner.getFullName());
+            item.put("email", partner.getEmail());
             item.put("avatarUrl", partner.getAvatarUrl());
             item.put("lastMessage", msg.getContent());
             item.put("read", msg.getSender().getId().equals(currentUserId) || msg.isRead());

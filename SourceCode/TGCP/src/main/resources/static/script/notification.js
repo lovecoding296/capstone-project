@@ -2,6 +2,8 @@
 setupNotificationClickHandler()
 updateUnreadNotificationCount()
 
+const debounceuUpdateUnreadNotificationCount = debounce(updateUnreadNotificationCount, 200);
+
 function updateUnreadNotificationCount() {
 	
 	fetch('/api/notifications/unread-count')

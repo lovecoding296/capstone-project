@@ -137,7 +137,7 @@
 						<li class="nav-item"><a class="panel-link nav-link" href="#guide-register"
 								onclick="navigate(event,'guide-register')">Guide register</a>
 						</li>					
-						<li class="nav-item"><a class="panel-link nav-link" href="#manage-services"
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-services"
 								onclick="navigate(event,'manage-services')">Manage services</a>
 						</li>	
 						<li class="nav-item"><a class="panel-link nav-link" href="#booking-history"

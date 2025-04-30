@@ -20,6 +20,8 @@ import funix.tgcp.exception.EmailVerificationException;
 import funix.tgcp.home.HomeController;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
+import funix.tgcp.user.request.UserRequest;
+import funix.tgcp.user.request.UserRequestService;
 import funix.tgcp.util.LogHelper;
 import jakarta.validation.Valid;
 
@@ -30,13 +32,16 @@ public class AuthController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserRequestService userRequestService;
 
 	@GetMapping("/signup")
 	public String showSignupForm(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 		if (userDetails != null) {
 			return "redirect:/"; // Nếu đã login, chuyển sang home
 		}
-		model.addAttribute("user", new User());
+		model.addAttribute("user", new UserRequest());
 		return "signup"; // Trả về trang signup.html
 	}
 
@@ -49,7 +54,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public String createUser(@Valid @ModelAttribute User user, BindingResult result,
+	public String createUser(@Valid @ModelAttribute UserRequest user, BindingResult result,
 			@RequestParam MultipartFile cccdFile, Model model) {
 		if (result.hasErrors()) {
 			model.addAttribute("user", user);
@@ -57,11 +62,11 @@ public class AuthController {
 		}
 		String errorMessage = "";
 		try {
-			userService.registerUser(cccdFile, user);
+			userRequestService.registerUser(cccdFile, user);
 			System.out.println("Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
 			model.addAttribute("successMessage",
 					"Registration successful, please check your email and wait for the administrator to approve your account.");
-			model.addAttribute("user", new User());
+			model.addAttribute("user", new UserRequest());
 			return "signup";
 		} catch (EmailAlreadyExistsException e) {
 			errorMessage = "Email already exists, please log in!";
@@ -78,8 +83,8 @@ public class AuthController {
 	@GetMapping("/verify")
 	public String verifyEmail(@RequestParam String token, Model model) {
 		try {
-			userService.verifyEmail(token);
-			model.addAttribute("successMessage", "Email verified successfully! You can now log in.");
+			userRequestService.verifyEmail(token);
+			model.addAttribute("successMessage", "Email verified successfully! Please wait for the administrator to approve your account.");
 		} catch (EmailVerificationException e) {
 			e.printStackTrace();
 			model.addAttribute("error", "Invalid verification token or the token has expired.");

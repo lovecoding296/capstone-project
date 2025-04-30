@@ -1,4 +1,19 @@
 let currentReceiverId = null;
+let currentReceiver = {
+	id: null,
+	email: null
+};
+
+// Đánh dấu tin nhắn là đã đọc
+function markMessAsRead() {
+	console.log("markMessAsRead")
+    stompClient.send("/app/chat.read", {}, JSON.stringify(currentReceiver.id));
+	console.log("finish")
+}
+
+const debouncedMarkMessAsRead = debounce(markMessAsRead, 500);
+const debounceuUpdateUnreadMessageCount = debounce(updateUnreadMessageCount, 600);
+
 
 setupMessageClickHandler()
 updateUnreadMessageCount()
@@ -23,8 +38,9 @@ function updateUnreadMessageCount() {
 }
 
 
-function sendChatMessage() {
-	console.log("sendChatMessage currentReceiverId " + currentReceiverId)
+function sendChatMessage(event) {
+	event.preventDefault(); // Ngăn reload trang khi submit
+	console.log("sendChatMessage currentReceiverId " + currentReceiver.id)
 
 	const chatForm = document.getElementById('chatForm');
 	const chatInput = document.getElementById('chatInput');
@@ -35,11 +51,16 @@ function sendChatMessage() {
 	if (!message) return;
 
 	const payload = {
-		receiver: { id: currentReceiverId },
+		receiver: currentReceiver,
 		content: message
 	};
+	
+	
+	stompClient.send("/app/chat.send", {}, JSON.stringify(payload));
+	
+	chatInput.value = '';
 
-	fetch('/api/chat/send', {
+/*	fetch('/api/chat/send', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(payload)
@@ -48,22 +69,22 @@ function sendChatMessage() {
 		.then(data => {
 			appendMessage(data, true);
 			chatInput.value = '';
-		});
+		});*/
 }
 
 
 // Hiển thị tin nhắn
-function appendMessage(msg, isOwn) {
+/*function appendMessage(msg, isOwn) {
 	console.log("appendMessage")
 	const el = document.createElement('div');
 	el.className = `mb-2 ${isOwn ? 'text-end' : 'text-start'}`;
 	el.innerHTML = `<span class="badge ${isOwn ? 'bg-primary' : 'bg-secondary'}">${msg.content}</span>`;
 	chatMessages.appendChild(el);
 	chatMessages.scrollTop = chatMessages.scrollHeight;
-}
+}*/
 
 // Lấy cuộc hội thoại hiện có
-function loadConversation(receiverId) {
+/*function loadConversation(receiverId) {
 	console.log("loadConversation")
 	fetch(`/api/chat/conversation?user2=${receiverId}`)
 		.then(res => res.json())
@@ -77,7 +98,7 @@ function loadConversation(receiverId) {
 			});
 		});
 
-}
+}*/
 
 function closeChat() {
 	console.log("closeChat")
@@ -86,7 +107,7 @@ function closeChat() {
 
 
 function createChatBox() {
-	console.log("createChatBox currentReceiverId " + currentReceiverId)
+	console.log("createChatBox currentReceiverId " + currentReceiver.id)
 
 
 	if (document.getElementById('chatBox')) return; // Tránh tạo lại
@@ -108,7 +129,7 @@ function createChatBox() {
 
 	chatBox.innerHTML = `
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <a href="/users/${currentReceiverId}"><h5 id="chatBoxPartnerName" class="mb-0"></h5></a>
+      <a href="/users/${currentReceiver.id}"><h5 id="chatBoxPartnerName" class="mb-0"></h5></a>
       <button class="btn btn-sm btn-outline-danger" onclick="closeChat()">Close</button>
     </div>
 
@@ -117,7 +138,7 @@ function createChatBox() {
 
     <form id="chatForm" class="d-flex gap-2">
       <input type="text" id="chatInput" class="form-control" placeholder="Send a message..." required>
-      <button type="button" onclick="sendChatMessage()" class="btn btn-primary">Send</button>
+      <button type="submit" onclick="sendChatMessage(event)" class="btn btn-primary">Send</button>
     </form>
   `;
 
@@ -125,9 +146,10 @@ function createChatBox() {
 
 }
 
-function openChatWithUser(partnerId, partnerName) {
+function openChatWithUser(partnerId, partnerEmail, partnerName) {
 	console.log("openChatWithUser")
-	currentReceiverId = partnerId;
+	currentReceiver.id = partnerId;
+	currentReceiver.email = partnerEmail;
 
 	createChatBox(); // đảm bảo chatBox đã được tạo
 
@@ -135,8 +157,8 @@ function openChatWithUser(partnerId, partnerName) {
 	const chatBoxPartnerName = document.getElementById('chatBoxPartnerName');
 	console.log("partnerName " + partnerName)
 	console.log("chatBoxPartnerName " + chatBoxPartnerName.innerText)
+	
 	chatBoxPartnerName.innerText = partnerName;
-
 	chatBox.dataset.partnerId = partnerId;
 
 	fetch(`/api/chat/conversation/${partnerId}`)
@@ -195,15 +217,17 @@ function markMessagesAsRead(partnerId) {
 function appendMessageToChat(msg, isOwnMessage) {
 	const chatMessages = document.getElementById('chatMessages');
 
-	const msgDiv = document.createElement('div');
-	msgDiv.className = `mb-2 ${isOwnMessage ? 'text-end' : 'text-start'}`;
-	msgDiv.innerHTML = `
-    <div class="d-inline-block p-2 rounded ${isOwnMessage ? 'bg-primary text-white' : 'bg-secondary text-white'}">
-      ${msg.content}
-    </div>
-    <div class="small text-muted">${formatTimestamp(msg.timestamp)}</div>
-  `;
-	chatMessages.appendChild(msgDiv);
+	if(chatMessages != null) {
+		const msgDiv = document.createElement('div');
+		msgDiv.className = `mb-2 ${isOwnMessage ? 'text-end' : 'text-start'}`;
+		msgDiv.innerHTML = `
+		  <div class="d-inline-block p-2 rounded ${isOwnMessage ? 'bg-primary text-white' : 'bg-secondary text-white'}">
+		    ${msg.content}
+		  </div>
+		  <div class="small text-muted">${formatTimestamp(msg.timestamp)}</div>
+		`;
+		chatMessages.appendChild(msgDiv);
+	}
 }
 
 function formatTimestamp(isoString) {
@@ -251,7 +275,8 @@ function setupMessageClickHandler(messageLinkId = 'messageLink', userListId = 'u
 		
 		
         li.innerHTML = `
-          <a class="dropdown-item d-flex align-items-start ${highlightClass} gap-2" href="#" data-userid="${user.partnerId}" data-username="${user.fullName}">
+          <a class="dropdown-item d-flex align-items-start ${highlightClass} gap-2" href="#" 
+		  data-userid="${user.partnerId}"  data-useremail="${user.email}" data-username="${user.fullName}">
             <img src="${user.avatarUrl || 'https://i.pravatar.cc/40?u=' + user.partnerId}" 
                  alt="${user.fullName || 'Người dùng'}" 
                  class="rounded-circle" width="40" height="40">
@@ -269,10 +294,11 @@ function setupMessageClickHandler(messageLinkId = 'messageLink', userListId = 'u
         li.querySelector('a').addEventListener('click', (e) => {
           e.preventDefault();
           const partnerId = e.currentTarget.dataset.userid;
+		  const partnerEmail = e.currentTarget.dataset.useremail;
           const partnerName = e.currentTarget.dataset.username;
 
           console.log("data set " + partnerId);
-          openChatWithUser(partnerId, partnerName);
+          openChatWithUser(partnerId,partnerEmail, partnerName);
         });
       });
     }).catch(err => {
