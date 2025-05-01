@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+	<!-- Flatpickr CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<!-- Flatpickr JS -->
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/app-script.js}"></script>
+
+	<style>
+		.pagination {
+			display: flex;
+			justify-content: center;
+			padding-left: 0;
+			list-style: none;
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+
+		.pagination .page-item {
+			margin: 0 5px;
+		}
+	</style>
+
+</head>
+
+<body>
+	<nav th:replace="~{page-component :: header}"></nav>
+
+
+	<div id="services" class="container mt-4" style="min-height: 500px;">
+		<h2 class="page-title">Find services</h2>
+		<div class="row">
+			<!-- Cột bên trái: Bộ lọc -->
+			<div class="col-md-3 mb-4">
+				<form id="filterForm" method="get" action="/guide-services">
+					<div class="p-3 border rounded shadow-sm">
+						<h5 class="mb-3">Filter</h5>
+
+						<div class="mb-3">
+							<label class="form-label">Guide name:</label>
+							<input type="text" name="guideName" class="form-control" placeholder="Enter guide name"
+								style="max-width: 100%;"
+								th:value="${param.guideName != null ? param.guideName[0] : ''}">
+						</div>
+
+
+						<div class="mb-3">
+							<label class="form-label">Service:</label>
+							<select name="serviceType" class="form-select" style="max-width: 100%;">
+								<option value="">All</option>
+								<option th:each="s : ${serviceTypes}" th:value="${s.name()}"
+									th:text="${s.getDisplayName()}"
+									th:selected="${param.serviceType != null && s.name() == param.serviceType[0]}">
+								</option>
+							</select>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">City:</label>
+							<select name="city" class="form-select" style="max-width: 100%;">
+								<option value="">All</option>
+								<option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.getDisplayName()}"
+									th:selected="${param.city != null && c.name() == param.city[0]}">
+								</option>
+							</select>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">Language:</label>
+							<select name="language" class="form-select" style="max-width: 100%;">
+								<option value="">All</option>
+								<option th:each="lang : ${languages}" th:value="${lang.name()}" th:text="${lang}"
+									th:selected="${param.language != null && lang.name() == param.language[0]}">
+								</option>
+							</select>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">Group size:</label>
+							<select name="groupSize" class="form-select" style="max-width: 100%;">
+								<option value="">All</option>
+								<option th:each="g : ${groupSizes}" th:value="${g.name()}" th:text="${g}"
+									th:selected="${param.groupSize != null && g.name() == param.groupSize[0]}">
+								</option>
+							</select>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">Max price (VND):</label>
+							<input type="number" name="maxPrice" class="form-control" placeholder="Enter max price"
+								style="max-width: 100%;" th:value="${param.maxPrice != null ? param.maxPrice[0] : ''}">
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">Min rating:</label>
+							<select name="minRating" class="form-select" style="max-width: 100%;">
+								<option value="" th:selected="${param.minRating == null}">All</option>
+								<option value="1"
+									th:selected="${param.minRating != null and param.minRating[0] == '1'}">⭐</option>
+								<option value="2"
+									th:selected="${param.minRating != null and param.minRating[0] == '2'}">⭐⭐</option>
+								<option value="3"
+									th:selected="${param.minRating != null and param.minRating[0] == '3'}">⭐⭐⭐</option>
+								<option value="4"
+									th:selected="${param.minRating != null and param.minRating[0] == '4'}">⭐⭐⭐⭐</option>
+								<option value="5"
+									th:selected="${param.minRating != null and param.minRating[0] == '5'}">⭐⭐⭐⭐⭐
+								</option>
+							</select>
+						</div>
+
+						<button type="submit" class="btn btn-primary w-100">Search</button>
+					</div>
+				</form>
+			</div>
+
+
+			<br>
+
+			<div class="col-md-9">
+				<table class="table table-bordered table-hover align-middle bg-white">
+					<thead class="table-light">
+						<tr>
+							<th scope="col">Service Type</th>
+							<th scope="col">Group Size</th>
+							<th scope="col">Language</th>
+							<th scope="col">City</th>
+							<th scope="col">Price per day (VND)</th>
+							<th scope="col">Guide</th>
+							<th scope="col">Rating</th>
+							<th scope="col">Actions</th>
+						</tr>
+					</thead>
+					<tbody id="serviceTableBody">
+						<tr th:each="service : ${services}">
+							<td th:text="${service.type.displayName}">Service Type</td>
+							<td th:text="${service.groupSizeCategory}">Group Size</td>
+							<td th:text="${service.language}">Language</td>
+							<td th:text="${service.city.displayName}">City</td>
+							<td class="price" th:text="${service.price} + ' VND'">Price</td>
+							<td>
+								<a th:href="@{/users/{id}(id=${service.guide.id})}"
+									style="text-decoration: none; color: inherit;">
+									<div style="display: flex; align-items: center;">
+										<img th:src="${service.guide.avatarUrl}" alt="Avatar"
+											style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+										<span th:text="${service.guide.fullName}">Guide Name</span>
+									</div>
+								</a>
+							</td>
+							<td>
+								<span th:if="${service.guide.averageRating != null}"
+									th:text="${service.guide.averageRating} + ' ★'">Rating</span>
+								<span th:if="${service.guide.averageRating == null}">N/A</span>
+							</td>
+							<td>
+								<a class="btn btn-warning btn-sm text-white" th:attr="data-guide-id=${service.guide.id},
+								            data-guide-name=${service.guide.fullName},
+								            data-service-type=${service.type.name()},
+								            data-group-size=${service.groupSizeCategory.name()},
+								            data-language=${service.language.name()},
+								            data-city=${service.city.name()},
+											data-price=${service.price}" onclick="openBookingPopupWithData(this)">
+									Book
+								</a>
+
+
+							</td>
+						</tr>
+					</tbody>
+
+
+				</table>
+				<p class="text-muted">
+					Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span>
+				</p>
+
+
+				<div class="pagination">
+					<ul class="pagination justify-content-center" th:if="${totalPages > 0}">
+						<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+							<a class="page-link" href="#" th:data-page="0">First</a>
+						</li>
+						<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+							<a class="page-link" href="#" th:data-page="${currentPage - 1}">Previous</a>
+						</li>
+						<li class="page-item disabled" th:if="${currentPage > 3}">
+							<span class="page-link">...</span>
+						</li>
+
+						<li class="page-item"
+							th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, currentPage - 2), T(java.lang.Math).min(totalPages - 1, currentPage + 2))}"
+							th:classappend="${i == currentPage} ? 'active' : ''">
+							<a class="page-link" href="#" th:data-page="${i}" th:text="${i + 1}"></a>
+						</li>
+						<li class="page-item disabled" th:if="${currentPage < totalPages - 3}">
+							<span class="page-link">...</span>
+						</li>
+
+						<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+							<a class="page-link" href="#" th:data-page="${currentPage + 1}">Next</a>
+						</li>
+						<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+							<a class="page-link" href="#" th:data-page="${totalPages - 1}">Last</a>
+						</li>
+
+					</ul>
+					<script>
+						document.querySelectorAll('.page-link').forEach(function (link) {
+							link.addEventListener('click', function (event) {
+								event.preventDefault();
+								var page = this.getAttribute('data-page');
+
+								// Nếu bị disabled (ví dụ đang ở trang đầu tiên hoặc cuối cùng), không làm gì
+								if (this.closest('.page-item').classList.contains('disabled')) {
+									return;
+								}
+
+								// Lấy URL hiện tại
+								var url = new URL(window.location.href);
+
+								// Set lại tham số page
+								url.searchParams.set('page', page);
+
+								// Điều hướng đến URL mới
+								window.location.href = url.toString();
+							});
+						});
+					</script>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<footer th:replace="~{page-component :: footer}"></footer>
+
+	<script th:src="@{/script/booking-popup.js}"></script>
+	<script th:src="@{/script/report-popup.js}"></script>
+
+	<script>
+		document.querySelectorAll('.price').forEach(el => {
+			const rawValue = parseFloat(el.innerText);
+			el.textContent = rawValue.toLocaleString() + ' VND';			
+		});
+	</script>
+</body>
+
+</html>

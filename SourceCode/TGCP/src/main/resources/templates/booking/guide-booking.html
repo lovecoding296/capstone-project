@@ -103,12 +103,15 @@
 				<p><strong>City:</strong> <span th:text="${booking.guideService.city}"></span></p>
 				<p><strong>Language:</strong> <span th:text="${booking.guideService.language}"></span></p>
 				<p><strong>Group Size:</strong> <span th:text="${booking.guideService.groupSizeCategory}"></span></p>
-				<p><strong>Destination:</strong> <span th:text="${booking.destination}">Destination</span></p>
+				<p><strong>Destination:</strong> <span th:text="${booking.destination ?: 'N/A'}">Destination</span></p>
 				<p><strong>Start date:</strong> <span th:text="${booking.startDate}">Start Date</span></p>
 				<p><strong>End date:</strong> <span th:text="${booking.endDate}">End Date</span></p>
-				<p><strong>Total price:</strong> <span th:text="${booking.totalPrice} + ' VND'">0</span></p>
+				<p><strong>Total price:</strong> <span id="totalPrice" class="text-danger">0</span> VND</p>
+				<script>
+					var totalPrice = parseFloat("[[${booking.totalPrice}]]");
+					document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
+				</script>			
 			</div>
-
 			<div class="col-md-6 d-flex justify-content-center">
 				<div class="card" style="width: 18rem; border-radius: 12px;">
 					<img th:src="${booking.customer.avatarUrl != null ? booking.customer.avatarUrl : '/images/default-avatar.jpg'}"

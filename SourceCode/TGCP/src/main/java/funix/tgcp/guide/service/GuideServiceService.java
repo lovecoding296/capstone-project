@@ -80,4 +80,21 @@ public class GuideServiceService {
             City city) {
 		return guideServiceRepo.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(guideId, type, groupSizeCategory, language, city);
 	}
+
+
+
+	public Page<GuideService> searchServices(ServiceType serviceType, City city, Language language,
+			GroupSizeCategory groupSize, Double maxPrice, Integer minRating, String guideName, Pageable pageable) {
+		return guideServiceRepo.searchServices(serviceType, city, language, groupSize, maxPrice, minRating, guideName, pageable);
+	}
+
+
+
+	public Page<GuideService> findByGuideIdAndFilter(Long id, ServiceType serviceType, City city, Language language,
+			GroupSizeCategory groupSize, Pageable pageable) {
+		return guideServiceRepo.findByGuideIdAndFilter(id, serviceType, city, language, groupSize, pageable);
+	}
+	
+	
+	
 }

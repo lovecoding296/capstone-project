@@ -179,6 +179,7 @@ function initOptionData() {
 
 	const languageSelect = document.getElementById('language');
 	const editLanguageSelect = document.getElementById('editLanguage');
+	const filterLanguageSelect = document.getElementById('filterLanguage');
 
 	languages.forEach(language => {
 		const option = document.createElement('option');
@@ -189,15 +190,19 @@ function initOptionData() {
 		const editOption = document.createElement('option');
 		editOption.value = language;
 		editOption.textContent = language;
+		
+		const filterOption = document.createElement('option');
+		filterOption.value = language;
+		filterOption.textContent = language;
 
 		languageSelect.appendChild(option);
-		editLanguageSelect.appendChild(editOption)
-
+		editLanguageSelect.appendChild(editOption)		
+		filterLanguageSelect.appendChild(filterOption);
 	});
 
 	const citySelect = document.getElementById('city');
 	const editCitySelect = document.getElementById('editCity');
-
+	const filterCitySelect = document.getElementById('filterCity');
 
 	for (const code in cityDisplayNames) {
 		const option = document.createElement('option');	
@@ -208,7 +213,12 @@ function initOptionData() {
 		const editOption = document.createElement('option');
 		editOption.value = code;
 		editOption.textContent = cityDisplayNames[code];
-		editCitySelect.appendChild(editOption);
+		editCitySelect.appendChild(editOption);		
+		
+		const filterOption = document.createElement('option');
+		filterOption.value = code;
+		filterOption.textContent = cityDisplayNames[code];
+		filterCitySelect.appendChild(filterOption);
 	}
 }
 
@@ -244,7 +254,7 @@ function openEditServicePopup(serviceId) {
 	document.getElementById("editServiceType").value = serviceType;
 	document.getElementById("editGroupSizeCategory").value = groupSizeCategory;
 	document.getElementById("editCity").value = city;
-	document.getElementById("editPrice").value = price;
+	document.getElementById("editPrice").value = parseFloat(price.replace(/\./g, "").replace(",", ".")),
 	document.getElementById("editLanguage").value = language;
 }
 
@@ -386,8 +396,18 @@ async function deleteService(serviceId) {
 
 async function fetchServices(page = 1) {
 	servicesPage.currentPage = page;
+	
+	const serviceType = document.getElementById('filterServiceType').value;
+	const city = document.getElementById('filterCity').value;
+	const language = document.getElementById('filterLanguage').value;
+	const groupSize = document.getElementById('filterGroupSize').value;
 
 	let url = '/api/guide-services?';
+	url += `serviceType=${serviceType}&`;
+	url += `city=${city}&`;
+	url += `groupSize=${groupSize}&`;
+	url += `language=${language}&`;
+	url += `page=${servicesPage.currentPage - 1}&`;
 	url += `page=${servicesPage.currentPage - 1}&`;
 	url += `size=${servicesPage.itemsPerPage}`;
 
@@ -410,7 +430,7 @@ async function fetchServices(page = 1) {
 				<td class="groupSizeCategory" data-group-size-category=${service.groupSizeCategory}>${groupSizeCategoryDisplayNames[service.groupSizeCategory]}</td>
 				<td class="language">${service.language}</td>
 				<td class="city" data-city=${service.city}>${cityDisplayNames[service.city]}</td>
-				<td class="price" data-price="150">${service.price}</td>
+				<td class="price" data-price="150">${service.price.toLocaleString()}</td>
                 <td>
                     <button class="btn btn-sm btn-warning" onclick="openEditServicePopup(${service.id})">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">Delete</button>

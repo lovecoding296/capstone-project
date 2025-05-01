@@ -3,90 +3,90 @@ let pricePerDay = 50; // ví dụ: 50 VND/day
 
 
 function fetchGuideService(guideId) {
-    console.log("fetchGuideService guideId " + guideId);
+	console.log("fetchGuideService guideId " + guideId);
 
-    fetch(`/api/guide-services/guides/${guideId}`)
-        .then(response => response.json())
-        .then(data => {
-            // Chúng ta sẽ giữ tất cả dữ liệu ban đầu để dễ dàng cập nhật các dropdowns
-            const allData = data;
+	fetch(`/api/guide-services/guides/${guideId}`)
+		.then(response => response.json())
+		.then(data => {
+			// Chúng ta sẽ giữ tất cả dữ liệu ban đầu để dễ dàng cập nhật các dropdowns
+			const allData = data;
 
-            // Lắng nghe sự thay đổi trên các dropdown
-            const serviceTypeSelect = document.getElementById('serviceType');
-            const citySelect = document.getElementById('city');
-            const groupSizeCategorySelect = document.getElementById('groupSizeCategory');
-            const languageSelect = document.getElementById('language');
+			// Lắng nghe sự thay đổi trên các dropdown
+			const serviceTypeSelect = document.getElementById('serviceType');
+			const citySelect = document.getElementById('city');
+			const groupSizeCategorySelect = document.getElementById('groupSizeCategory');
+			const languageSelect = document.getElementById('language');
 
-            // Cập nhật các dropdown khi có sự thay đổi
-            serviceTypeSelect.addEventListener('change', function() {
-                updateDropdowns(allData);
-            });
-            citySelect.addEventListener('change', function() {
-                updateDropdowns(allData);
-            });
-            groupSizeCategorySelect.addEventListener('change', function() {
-                updateDropdowns(allData);
-            });
-            languageSelect.addEventListener('change', function() {
-                updateDropdowns(allData);
-            });
+			// Cập nhật các dropdown khi có sự thay đổi
+			serviceTypeSelect.addEventListener('change', function() {
+				updateDropdowns(allData);
+			});
+			citySelect.addEventListener('change', function() {
+				updateDropdowns(allData);
+			});
+			groupSizeCategorySelect.addEventListener('change', function() {
+				updateDropdowns(allData);
+			});
+			languageSelect.addEventListener('change', function() {
+				updateDropdowns(allData);
+			});
 
-            // Cập nhật các dropdowns ban đầu
-            updateDropdowns(allData);
-        })
-        .catch(error => {
-            console.error('Error fetching guide service:', error);
-        });
+			// Cập nhật các dropdowns ban đầu
+			updateDropdowns(allData);
+		})
+		.catch(error => {
+			console.error('Error fetching guide service:', error);
+		});
 }
 
 function updateDropdowns(data) {
-    const serviceTypeSelect = document.getElementById('serviceType');
-    const citySelect = document.getElementById('city');
-    const groupSizeCategorySelect = document.getElementById('groupSizeCategory');
-    const languageSelect = document.getElementById('language');
+	const serviceTypeSelect = document.getElementById('serviceType');
+	const citySelect = document.getElementById('city');
+	const groupSizeCategorySelect = document.getElementById('groupSizeCategory');
+	const languageSelect = document.getElementById('language');
 
-    const selectedServiceType = serviceTypeSelect.value;
-    const selectedCity = citySelect.value;
-    const selectedGroupSizeCategory = groupSizeCategorySelect.value;
-    const selectedLanguage = languageSelect.value;
+	const selectedServiceType = serviceTypeSelect.value;
+	const selectedCity = citySelect.value;
+	const selectedGroupSizeCategory = groupSizeCategorySelect.value;
+	const selectedLanguage = languageSelect.value;
 
-    // Populate service type options
-    const serviceTypes = [...new Set(data.map(item => item.type))];
-    updateDropdown('SERVICE_TYPE', serviceTypeSelect, serviceTypes, selectedServiceType);
+	// Populate service type options
+	const serviceTypes = [...new Set(data.map(item => item.type))];
+	updateDropdown('SERVICE_TYPE', serviceTypeSelect, serviceTypes, selectedServiceType);
 
-    // Populate city options
-    const filteredByService = data.filter(item => !serviceTypeSelect.value || item.type === serviceTypeSelect.value);
-    const cities = [...new Set(filteredByService.map(item => item.city))];
-    updateDropdown('CITY', citySelect, cities, selectedCity);
+	// Populate city options
+	const filteredByService = data.filter(item => !serviceTypeSelect.value || item.type === serviceTypeSelect.value);
+	const cities = [...new Set(filteredByService.map(item => item.city))];
+	updateDropdown('CITY', citySelect, cities, selectedCity);
 
-    // Populate group size category options
-    const filteredByServiceAndCity = filteredByService.filter(item => !citySelect.value || item.city === citySelect.value);
-    const groupSizeCategories = [...new Set(filteredByServiceAndCity.map(item => item.groupSizeCategory))];
-    updateDropdown('GROUP_SIZE_CATEGORY',groupSizeCategorySelect, groupSizeCategories, selectedGroupSizeCategory);
+	// Populate group size category options
+	const filteredByServiceAndCity = filteredByService.filter(item => !citySelect.value || item.city === citySelect.value);
+	const groupSizeCategories = [...new Set(filteredByServiceAndCity.map(item => item.groupSizeCategory))];
+	updateDropdown('GROUP_SIZE_CATEGORY', groupSizeCategorySelect, groupSizeCategories, selectedGroupSizeCategory);
 
-    // Populate language options
-    const filteredByServiceCityGroup = filteredByServiceAndCity.filter(item => !groupSizeCategorySelect.value || item.groupSizeCategory === groupSizeCategorySelect.value);
-    const languages = [...new Set(filteredByServiceCityGroup.map(item => item.language))];
-    updateDropdown('LANGUAGE',languageSelect, languages, selectedLanguage);
+	// Populate language options
+	const filteredByServiceCityGroup = filteredByServiceAndCity.filter(item => !groupSizeCategorySelect.value || item.groupSizeCategory === groupSizeCategorySelect.value);
+	const languages = [...new Set(filteredByServiceCityGroup.map(item => item.language))];
+	updateDropdown('LANGUAGE', languageSelect, languages, selectedLanguage);
 
-    // Calculate price
-    calculatePrice(data, serviceTypeSelect.value, citySelect.value, groupSizeCategorySelect.value, languageSelect.value);
+	// Calculate price
+	calculatePrice(data, serviceTypeSelect.value, citySelect.value, groupSizeCategorySelect.value, languageSelect.value);
 }
 
 function updateDropdown(optionType, selectElement, values, previouslySelectedValue) {
-    // Ghi nhớ giá trị cũ
-    const oldValue = previouslySelectedValue;
+	// Ghi nhớ giá trị cũ
+	const oldValue = previouslySelectedValue;
 
-    // Xóa tất cả options
-    selectElement.innerHTML = '';
+	// Xóa tất cả options
+	selectElement.innerHTML = '';
 
-    // Thêm placeholder
-    const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.textContent = 'Select an option';
-    selectElement.appendChild(placeholder);
+	// Thêm placeholder
+	const placeholder = document.createElement('option');
+	placeholder.value = '';
+	placeholder.textContent = 'Select an option';
+	selectElement.appendChild(placeholder);
 
-    // Thêm các option mới
+	// Thêm các option mới
 	values.forEach(val => {
 		const option = document.createElement('option');
 		option.value = val;
@@ -99,43 +99,44 @@ function updateDropdown(optionType, selectElement, values, previouslySelectedVal
 			option.textContent = serviceTypeDisplayNames[val];
 		} else {
 			option.textContent = val;
-		}		
-        selectElement.appendChild(option);
-    });
+		}
+		selectElement.appendChild(option);
+	});
 
-    // Nếu giá trị cũ còn tồn tại thì chọn lại
-    if (values.includes(oldValue)) {
-        selectElement.value = oldValue;
-    } else {
-        selectElement.value = ''; // Nếu không thì chọn placeholder
-    }
+	// Nếu giá trị cũ còn tồn tại thì chọn lại
+	if (values.includes(oldValue)) {
+		selectElement.value = oldValue;
+	} else {
+		selectElement.value = ''; // Nếu không thì chọn placeholder
+	}
 }
 
 
 function clearDropdown(dropdown) {
-    while (dropdown.options.length) {
-        dropdown.remove(0);
-    }
-    const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.textContent = 'Select an option';
-    dropdown.appendChild(placeholder);
+	while (dropdown.options.length) {
+		dropdown.remove(0);
+	}
+	const placeholder = document.createElement('option');
+	placeholder.value = '';
+	placeholder.textContent = 'Select an option';
+	dropdown.appendChild(placeholder);
 }
 
 function calculatePrice(data, serviceType, city, groupSizeCategory, language) {
-    const price = data.find(item => 
-        (!serviceType || item.type === serviceType) && 
-        (!city || item.city === city) && 
-        (!groupSizeCategory || item.groupSizeCategory === groupSizeCategory) && 
-        (!language || item.language === language)
-    )?.price;
+	const price = data.find(item =>
+		(!serviceType || item.type === serviceType) &&
+		(!city || item.city === city) &&
+		(!groupSizeCategory || item.groupSizeCategory === groupSizeCategory) &&
+		(!language || item.language === language)
+	)?.price;
 
-    if (price !== undefined) {
+	if (price !== undefined) {
 		pricePerDay = price;
+		document.getElementById('pricePerDay').textContent = price.toLocaleString();
 		calculateTotal();
-    } else {
-        document.getElementById('totalPrice').textContent = 'Price not available';
-    }	
+	} else {
+		document.getElementById('totalPrice').textContent = 'Price not available';
+	}
 }
 
 
@@ -154,10 +155,34 @@ function fetchDayOff(guideId) {
 
 }
 
+function openBookingPopupWithData(element) {
+	const guideId = element.dataset.guideId;
+	const guideName = element.dataset.guideName;
+	const type = element.dataset.serviceType;
+	const size = element.dataset.groupSize;
+	const language = element.dataset.language;
+	const city = element.dataset.city;
+	const price = element.dataset.price;
+
+	openBookingPopup(guideId, guideName);
+
+
+	setTimeout(function() {
+		// Gán giá trị cho các trường select
+		document.getElementById("serviceType").value = type;
+		document.getElementById("city").value = city;
+		document.getElementById("groupSizeCategory").value = size;
+		document.getElementById("language").value = language;
+		document.getElementById("pricePerDay").textContent = parseFloat(price).toLocaleString();
+	}, 100);
+
+}
+
+
 function openBookingPopup(guideId, guideName) {
-	
+
 	createBookingPopup()
-	
+
 	flatpickrInstance = flatpickr("#dateRange", {
 		mode: "range",
 		dateFormat: "Y-m-d",
@@ -171,7 +196,7 @@ function openBookingPopup(guideId, guideName) {
 			}
 		}
 	});
-	
+
 	flatpickrInstance.clear();
 
 	document.getElementById("bookingModal").style.display = "flex";
@@ -204,8 +229,8 @@ function calculateTotal() {
 }
 
 
-function submitBooking(){
-	
+function submitBooking() {
+
 	createBooking()
 	closeBookingPopup();
 }
@@ -215,9 +240,9 @@ function submitBooking(){
 
 
 function createBookingPopup() {
-    if (document.getElementById("bookingModal")) return; // Đã tồn tại thì không tạo lại
+	if (document.getElementById("bookingModal")) return; // Đã tồn tại thì không tạo lại
 
-    const modalHtml = `
+	const modalHtml = `
         <div id="bookingModal" class="modal" style="display:none;">
             <div class="modal-content">
                 <span class="close" onclick="closeBookingPopup()">&times;</span>
@@ -277,7 +302,7 @@ function createBookingPopup() {
 				            <input type="text" class="form-control" id="locationDetail" name="locationDetail" required>
 				        </div>
 				    </div>
-
+					<p class="fw-bold">Price per day: <span id="pricePerDay" class="text-danger">0</span> VND (depends on specific service)</p>
 				    <p class="fw-bold">Total price: <span id="totalPrice" class="text-danger">0</span> VND</p>
 
 				    <div class="d-flex justify-content-between">
@@ -290,9 +315,9 @@ function createBookingPopup() {
         </div>
     `;
 
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = modalHtml.trim();
-    document.body.appendChild(wrapper.firstChild);
+	const wrapper = document.createElement('div');
+	wrapper.innerHTML = modalHtml.trim();
+	document.body.appendChild(wrapper.firstChild);
 }
 
 
@@ -317,7 +342,7 @@ function createBooking() {
 			type: serviceType,
 			city: city,
 			groupSizeCategory: groupSizeCategory,
-			language: language			
+			language: language
 		},
 		//user: { id: userId }, 
 		startDate: startDate,
