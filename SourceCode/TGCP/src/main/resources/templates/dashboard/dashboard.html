@@ -5,11 +5,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Dashboard</title>
-	
+
 	<!-- Chèn thư viện Chart.js -->
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-	
+
 	<!-- Flatpickr CSS -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -29,95 +29,106 @@
 		.panel-link.active {
 			font-weight: bold;
 		}
-		
+
 		.panel-link {
 			width: 100%;
 		}
-		
+
 		/* Sidebar styles */
 		.sidebar {
-		    width: 250px; /* Đặt chiều rộng của sidebar */
-		    background-color: #f8f9fa; /* Màu nền sáng cho sidebar */
-		    position: fixed; /* Sidebar cố định bên trái */
-		    top: 65px;
-		    bottom: 0;
-		    left: 0;
-		    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng để tách biệt sidebar */
-		    overflow-y: auto; /* Cuộn dọc khi nội dung nhiều */
+			width: 250px;
+			/* Đặt chiều rộng của sidebar */
+			background-color: #f8f9fa;
+			/* Màu nền sáng cho sidebar */
+			position: fixed;
+			/* Sidebar cố định bên trái */
+			top: 65px;
+			bottom: 0;
+			left: 0;
+			box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+			/* Đổ bóng để tách biệt sidebar */
+			overflow-y: auto;
+			/* Cuộn dọc khi nội dung nhiều */
 			padding: 0 !important;
 			margin: 0 !important;
 		}
 
 		/* Nội dung trong sidebar */
 		.sidebar .position-sticky {
-		    padding-top: 20px; /* Khoảng cách từ trên cùng */
+			padding-top: 20px;
+			/* Khoảng cách từ trên cùng */
 		}
 
 		/* Tiêu đề trong sidebar */
 		.sidebar h4 {
-		    text-align: center;
-		    font-size: 20px;
-		    color: #333;
-		    font-weight: bold;
+			text-align: center;
+			font-size: 20px;
+			color: #333;
+			font-weight: bold;
 		}
 
 		/* Danh sách các mục điều hướng */
 		.sidebar .nav {
-		    padding-left: 0;
-		    list-style: none;
+			padding-left: 0;
+			list-style: none;
 		}
 
 		/* Các mục trong sidebar */
 		.sidebar .nav-item {
-		    margin-bottom: 1px;
+			margin-bottom: 1px;
 		}
 
 		/* Các liên kết trong sidebar */
 		.sidebar .nav-link {
-		    display: block;
-		    color: #333;
-		    padding: 12px;
-		    text-decoration: none;
-		    font-size: 16px;
-		    transition: background-color 0.3s ease, color 0.3s ease;
+			display: block;
+			color: #333;
+			padding: 12px;
+			text-decoration: none;
+			font-size: 16px;
+			transition: background-color 0.3s ease, color 0.3s ease;
 		}
 
 		/* Hiệu ứng hover */
 		.sidebar .nav-link:hover {
-		    background-color: #007bff; /* Màu nền khi hover */
-		    color: #fff; /* Màu chữ khi hover */
+			background-color: #007bff;
+			/* Màu nền khi hover */
+			color: #fff;
+			/* Màu chữ khi hover */
 		}
 
 		/* Định dạng cho các liên kết khi đã được chọn (active) */
 		.sidebar .nav-link.active {
-		    background-color: #0056b3; /* Màu nền khi active */
-		    color: #fff; /* Màu chữ khi active */
+			background-color: #0056b3;
+			/* Màu nền khi active */
+			color: #fff;
+			/* Màu chữ khi active */
 		}
 
 		/* Khi có nội dung dài trong sidebar, dùng overflow để cuộn */
 		.sidebar .nav {
-		    margin-bottom: 50px;
+			margin-bottom: 50px;
 		}
-		
+
 		.btn-pagination {
 			text-align: center;
 			margin: 0 5px;
 			width: 100px;
-			
+
 		}
-		
-		
+
+
 		/* Footer */
 		footer {
-		    position: relative;
-		    margin-top: auto; /* Đẩy footer xuống dưới */
-		    padding: 20px;
-		    background-color: #f1f1f1;
-		    text-align: center;
-		    width: 100%;
+			position: relative;
+			margin-top: auto;
+			/* Đẩy footer xuống dưới */
+			padding: 20px;
+			background-color: #f1f1f1;
+			text-align: center;
+			width: 100%;
 		}
-		
-		
+
+
 		#content {
 			min-height: 800px;
 		}
@@ -128,78 +139,131 @@
 <body>
 	<nav th:replace="~{page-component :: header}"></nav>
 	<div class="container-fluid page-title">
+
+		<!-- Toggle button -->
+		<button class="btn btn-primary d-xxl-none" type="button" data-bs-toggle="offcanvas"
+			data-bs-target="#sidebarMenu">
+			☰ Dashboard Panel
+		</button>
+
 		<div class="row">
-			<!-- Sidebar -->
-			<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+
+
+			<!-- Sidebar for desktop -->
+			<nav class="col-xxl-2 d-none d-xxl-block bg-light sidebar">
 				<div class="position-sticky">
 					<h4>Dashboard Panel</h4>
-					<ul class="nav flex-column">						
+					<ul class="nav flex-column">
 						<li class="nav-item"><a class="panel-link nav-link" href="#guide-register"
 								onclick="navigate(event,'guide-register')">Guide register</a>
-						</li>					
-						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-services"
+						</li>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item">
+							<a class="panel-link nav-link" href="#manage-services"
 								onclick="navigate(event,'manage-services')">Manage services</a>
-						</li>	
+						</li>
 						<li class="nav-item"><a class="panel-link nav-link" href="#booking-history"
 								onclick="navigate(event,'booking-history')">Booking history</a>
 						</li>
-						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-bookings"
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item">
+							<a class="panel-link nav-link" href="#manage-bookings"
 								onclick="navigate(event,'manage-bookings')">Manage bookings</a>
 						</li>
 						<li class="nav-item"><a class="panel-link nav-link" href="#manage-posts"
 								onclick="navigate(event,'manage-posts')">Manage posts</a>
-						</li>						
-						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#manage-dayoff"
+						</li>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item">
+							<a class="panel-link nav-link" href="#manage-dayoff"
 								onclick="navigate(event,'manage-dayoff')">Manage days off</a>
 						</li>
-						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item"><a class="panel-link nav-link" href="#income-summary"
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item">
+							<a class="panel-link nav-link" href="#income-summary"
 								onclick="navigate(event,'income-summary')">Income summary</a>
-						</li>						
+						</li>
 
 					</ul>
 				</div>
 			</nav>
+			<!-- Offcanvas sidebar -->
+			<div class="offcanvas offcanvas-start d-xxl-none" tabindex="-1" id="sidebarMenu">
+				<div class="offcanvas-header">
+					<h5 class="offcanvas-title">Dashboard Panel</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+				</div>
+				<div class="offcanvas-body">
+					<ul class="nav flex-column">
+						<li class="nav-item"><a class="panel-link nav-link" href="#guide-register"
+								onclick="navigate(event,'guide-register')">Guide register</a>
+						</li>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item">
+							<a class="panel-link nav-link" href="#manage-services"
+								onclick="navigate(event,'manage-services')">Manage
+								services</a>
+						</li>
+						<li class="nav-item"><a class="panel-link nav-link" href="#booking-history"
+								onclick="navigate(event,'booking-history')">Booking history</a>
+						</li>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item">
+							<a class="panel-link nav-link" href="#manage-bookings"
+								onclick="navigate(event,'manage-bookings')">Manage
+								bookings</a>
+						</li>
+						<li class="nav-item"><a class="panel-link nav-link" href="#manage-posts"
+								onclick="navigate(event,'manage-posts')">Manage posts</a>
+						</li>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item">
+							<a class="panel-link nav-link" href="#manage-dayoff"
+								onclick="navigate(event,'manage-dayoff')">Manage
+								days off</a>
+						</li>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isGuide()}" class="nav-item">
+							<a class="panel-link nav-link" href="#income-summary"
+								onclick="navigate(event,'income-summary')">Income
+								summary</a>
+						</li>
+					</ul>
+				</div>
+			</div>
 
-			<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+			<div class="col-xxl-10 ms-xxl-auto px-md-4 py-4">
 
 				<div id="content">
 					<!--<h2>Welcome to the Home Page!</h2>-->
 				</div>
 				<script>
-					
-					document.addEventListener("DOMContentLoaded", function () {
-					    // Lắng nghe khi người dùng thay đổi hash trên URL
-					    window.addEventListener("hashchange", function () {
-					        loadPageFromHash();
-					    });
 
-					    // Gọi khi trang vừa load để hiển thị đúng nội dung
-					    loadPageFromHash();
+					document.addEventListener("DOMContentLoaded", function () {
+						// Lắng nghe khi người dùng thay đổi hash trên URL
+						window.addEventListener("hashchange", function () {
+							loadPageFromHash();
+						});
+
+						// Gọi khi trang vừa load để hiển thị đúng nội dung
+						loadPageFromHash();
 					});
 
 					// Hàm này lấy trang từ hash (#...) và load nội dung tương ứng
 					function loadPageFromHash() {
-					    let page = window.location.hash.substring(1); // Lấy giá trị sau dấu #
-					    
-					    if (!page) {
-					        page = "guide-register"; // Trang mặc định nếu không có hash
-					    }
-					    
-					    // Cập nhật class active trong menu
-					    document.querySelectorAll(".panel-link").forEach(nav => nav.classList.remove("active"));
-					    let activeLink = document.querySelector(`.panel-link[href="#${page}"]`);
-					    if (activeLink) {
-					        activeLink.classList.add("active");
-					    }
+						let page = window.location.hash.substring(1); // Lấy giá trị sau dấu #
 
-					    // Tải nội dung trang
-					    loadPage(page);
+						if (!page) {
+							page = "guide-register"; // Trang mặc định nếu không có hash
+						}
+
+						// Cập nhật class active trong menu
+						document.querySelectorAll(".panel-link").forEach(nav => nav.classList.remove("active"));
+						let activeLink = document.querySelector(`.panel-link[href="#${page}"]`);
+						if (activeLink) {
+							activeLink.classList.add("active");
+						}
+
+						// Tải nội dung trang
+						loadPage(page);
 					}
 
 					// Điều chỉnh function navigate để cập nhật hash
 					function navigate(event, page) {
-					    event.preventDefault(); // Ngăn chặn tải lại trang
-					    window.location.hash = page; // Thay đổi hash trên URL
+						event.preventDefault(); // Ngăn chặn tải lại trang
+						window.location.hash = page; // Thay đổi hash trên URL
 					}
 
 
@@ -211,7 +275,7 @@
 							})
 							.then(html => {
 								document.getElementById("content").innerHTML = html;
-								
+
 								// Lấy tất cả các textarea
 								const textareas = document.querySelectorAll('textarea');
 								// Khởi tạo CKEditor cho mỗi textarea
@@ -221,43 +285,43 @@
 										extraPlugins: 'videoembed',
 									});
 								});
-								
-								
-								
-								
+
+
+
+
 								switch (page) {
 									case "guide-register":
-								        checkGuideRequestStatus();
-								        break;	
-															    
-								    case "booking-history":
-								        fetchBookings();
+										checkGuideRequestStatus();
 										break;
-										
+
+									case "booking-history":
+										fetchBookings();
+										break;
+
 									case "manage-bookings":
 										fetchGuideBookings();
 										break;
-																
+
 									case "manage-dayoff":
-										fetchDayOff();								
-								        break;			
-													
+										fetchDayOff();
+										break;
+
 									case "income-summary":
 										loadIncomeSummary();
-										break;		
-										
+										break;
+
 									case "manage-posts":
 										fetchPosts();
 										break;
-										
+
 									case "manage-services":
 										initOptionData();
 										fetchServices();
 										break;
-									
-								    default:
-								        console.log("No action found for page:", page);
-								        break;
+
+									default:
+										console.log("No action found for page:", page);
+										break;
 								}
 
 							})
@@ -267,7 +331,7 @@
 					}
 
 				</script>
-				
+
 
 			</div>
 		</div>

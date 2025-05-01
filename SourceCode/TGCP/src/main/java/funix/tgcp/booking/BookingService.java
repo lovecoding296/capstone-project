@@ -202,7 +202,7 @@ public class BookingService {
     		notifiService.sendNotification(
         			booking.getCustomer(),
         			"Your booking completed, please share a feedback abour your guide!",
-        			"/dashboard#manage-bookings");
+        			"/dashboard#booking-history");
 
     		return ResponseEntity.ok("{\"message\": \"Booking completed successfully\", \"bookingId\": " + bookingId + "}");
         }
