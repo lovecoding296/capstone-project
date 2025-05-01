@@ -334,6 +334,18 @@ function createBooking() {
 	let city = document.getElementById("city").value;
 	let groupSizeCategory = document.getElementById("groupSizeCategory").value;
 	let language = document.getElementById("language").value;
+	
+	if (!startDate || !endDate) {
+	    alert("Please select period dates.");
+	    return; 
+	}
+	
+	if (!destination) {
+		alert("Please enter the destination.");
+		return;
+	}
+
+	
 
 	const bookingData = {
 		guide: { id: guideId },

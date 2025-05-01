@@ -212,9 +212,9 @@ public class UserService {
 	}
 
 	public Page<User> searchGuides(ServiceType serviceType, City city, Language language, GroupSizeCategory groupSize,
-			Gender gender, Boolean isLocalGuide, Boolean isInternationalGuide, Pageable pageable) {
+			Gender gender, Boolean isLocalGuide, Boolean isInternationalGuide, Integer minRating, Pageable pageable) {
 		
-		return userRepo.findGuideByFilter(serviceType, city, language, groupSize, gender, isLocalGuide, isInternationalGuide, pageable);
+		return userRepo.findGuideByFilter(serviceType, city, language, groupSize, gender, isLocalGuide, isInternationalGuide, minRating, pageable);
 
 	}
 	

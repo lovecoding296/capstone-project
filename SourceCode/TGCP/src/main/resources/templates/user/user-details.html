@@ -160,16 +160,21 @@
 						<td th:text="${service.language}">Language</td>
 						<td th:text="${service.city}">City</td>
 						<td class="price" th:text="${service.price}">Price per Day</td>
-						<td> <a class="btn btn-warning btn-sm text-white" th:attr="data-guide-id=${service.guide.id},
-							            data-guide-name=${service.guide.fullName},
-							            data-service-type=${service.type.name()},
-							            data-group-size=${service.groupSizeCategory.name()},
-							            data-language=${service.language.name()},
-							            data-city=${service.city.name()},
-										data-price=${service.price}" onclick="openBookingPopupWithData(this)">
+						<td th:if="${session.loggedInUser == null}">
+							<a href="/login" class="btn btn-warning btn-sm text-white">
+								Book
+							</a>
+						</td>
+						<td th:if="${session.loggedInUser != null}"> <a class="btn btn-warning btn-sm text-white" th:attr="data-guide-id=${service.guide.id},
+						            data-guide-name=${service.guide.fullName},
+						            data-service-type=${service.type.name()},
+						            data-group-size=${service.groupSizeCategory.name()},
+						            data-language=${service.language.name()},
+						            data-city=${service.city.name()},
+									data-price=${service.price}" onclick="openBookingPopupWithData(this)">
 								Book
 							</a></td>
-					</tr>
+						</tr>
 				</tbody>
 			</table>
 		</div>

@@ -163,12 +163,13 @@ public class UserController {
             @RequestParam(required = false) Gender gender,
             @RequestParam(required = false) Boolean isLocalGuide,
             @RequestParam(required = false) Boolean isInternationalGuide,
+            @RequestParam(required = false) Integer minRating,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
             Model model) {
 
     	Pageable pageable = PageRequest.of(page, size); // Tạo Pageable    	
-    	Page<User> userPage = userService.searchGuides(serviceType, city, language, groupSize, gender, isLocalGuide, isInternationalGuide, pageable);
+    	Page<User> userPage = userService.searchGuides(serviceType, city, language, groupSize, gender, isLocalGuide, isInternationalGuide, minRating, pageable);
 
 		for (User u : userPage.getContent()) {
 			Set<City> cities = new HashSet<>();

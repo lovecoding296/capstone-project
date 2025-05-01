@@ -38,12 +38,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	       "AND (:language IS NULL OR gs.language = :language) " +
 	       "AND (:groupSize IS NULL OR gs.groupSizeCategory = :groupSize) " +
 	       "AND (:gender IS NULL OR u.gender = :gender) " +
+	       "AND (:minRating IS NULL OR u.averageRating >= :minRating) " +
 	       "AND (:isLocalGuide IS NULL OR u.isLocalGuide = :isLocalGuide) " +
 	       "AND (:isInternationalGuide IS NULL OR u.isInternationalGuide = :isInternationalGuide) " + 
 	       "ORDER BY u.id desc")
 	Page<User> findGuideByFilter(ServiceType type, City city, Language language, 
 	                             GroupSizeCategory groupSize, Gender gender, 
-	                             Boolean isLocalGuide, Boolean isInternationalGuide, Pageable pageable);
+	                             Boolean isLocalGuide, Boolean isInternationalGuide, Integer minRating, Pageable pageable);
 
 	
 	

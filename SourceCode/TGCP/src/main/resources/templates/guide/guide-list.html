@@ -188,6 +188,19 @@
 								</label>
 							</div>
 						</div>
+						
+						<div class="mb-3">
+							<label class="form-label">Min rating:</label>
+							<select name="minRating" class="form-select" style="max-width: 100%;">
+								<option value="" th:selected="${param.minRating == null}">All</option>
+								<option value="1" th:selected="${param.minRating != null and param.minRating[0] == '1'}">⭐</option>
+								<option value="2" th:selected="${param.minRating != null and param.minRating[0] == '2'}">⭐⭐</option>
+								<option value="3" th:selected="${param.minRating != null and param.minRating[0] == '3'}">⭐⭐⭐</option>
+								<option value="4" th:selected="${param.minRating != null and param.minRating[0] == '4'}">⭐⭐⭐⭐</option>
+								<option value="5" th:selected="${param.minRating != null and param.minRating[0] == '5'}">⭐⭐⭐⭐⭐
+								</option>
+							</select>
+						</div>
 
 
 

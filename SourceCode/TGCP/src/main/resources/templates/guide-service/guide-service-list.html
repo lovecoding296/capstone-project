@@ -166,7 +166,12 @@
 									th:text="${service.guide.averageRating} + ' ★'">Rating</span>
 								<span th:if="${service.guide.averageRating == null}">N/A</span>
 							</td>
-							<td>
+							<td th:if="${session.loggedInUser == null}">
+							    <a href="/login" class="btn btn-warning btn-sm text-white">
+							        Book
+							    </a>
+							</td>
+							<td th:if="${session.loggedInUser != null}">
 								<a class="btn btn-warning btn-sm text-white" th:attr="data-guide-id=${service.guide.id},
 								            data-guide-name=${service.guide.fullName},
 								            data-service-type=${service.type.name()},
