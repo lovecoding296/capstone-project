@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import funix.tgcp.booking.payment.PaymentOption;
 import funix.tgcp.user.City;
 import funix.tgcp.user.Language;
 
@@ -28,15 +29,16 @@ public class GuideServiceController {
             @RequestParam(required = false) City city,
             @RequestParam(required = false) Language language,
             @RequestParam(required = false) GroupSizeCategory groupSize,
+            @RequestParam(required = false) PaymentOption paymentOption,    
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Integer minRating,          
-            @RequestParam(required = false) String guideName,         
+            @RequestParam(required = false) String guideName,  
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
 
     	Pageable pageable = PageRequest.of(page, size); // Tạo Pageable    	
-    	Page<GuideService> servicePage = guideServiceService.searchServices(serviceType, city, language, groupSize, maxPrice, minRating, guideName, pageable);
+    	Page<GuideService> servicePage = guideServiceService.searchServices(serviceType, city, language, groupSize, paymentOption, maxPrice, minRating, guideName, pageable);
 
 		
 		
@@ -48,7 +50,8 @@ public class GuideServiceController {
         model.addAttribute("languages", Language.values());
         model.addAttribute("serviceTypes", ServiceType.values());
         model.addAttribute("groupSizes", GroupSizeCategory.values());
-
+        model.addAttribute("paymentOptions", PaymentOption.values());
+        
         return "guide-service/guide-service-list"; // Tên view Thymeleaf trả về, ví dụ: templates/guides/list.html
     }
 

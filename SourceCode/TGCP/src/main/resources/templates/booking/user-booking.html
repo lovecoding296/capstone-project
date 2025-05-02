@@ -260,6 +260,15 @@
 				<p><strong>Start date:</strong> <span th:text="${booking.startDate}">Start Date</span></p>
 				<p><strong>End date:</strong> <span th:text="${booking.endDate}">End Date</span></p>
 				<p><strong>Total price:</strong> <span id="totalPrice" class="text-danger">0</span> VND</p>
+				<p th:if="${booking.guideService.paymentOption.name() == 'PAY_LATER'}"
+				   class="alert alert-info">
+				    <strong>This booking allows payment after the service is completed.</strong>
+				</p>
+
+				<p th:if="${booking.guideService.paymentOption.name() == 'FULL_PAYMENT'}"
+				   class="alert alert-warning">
+				    <strong>This booking requires prepayment.</strong>
+				</p>
 				<script>
 					var totalPrice = parseFloat("[[${booking.totalPrice}]]");
 					document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
@@ -299,7 +308,7 @@
 		</div>
 
 
-		<button onclick="openNewPaymentPopup()" class="btn btn-success">Add a new payment</button>
+		<button th:if="${booking.status.name() == 'CONFIRMED'  || booking.status.name() == 'COMPLETED'}" onclick="openNewPaymentPopup()" class="btn btn-success">Add a new payment</button>
 		<br><br>
 		<div class="row">
 			<div class="table-responsive">

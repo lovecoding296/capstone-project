@@ -69,6 +69,11 @@ const groupSizeCategoryDisplayNames = {
     OVER_10: "Over 10"
 };
 
+const paymentOptionDisplayNames = {
+	FULL_PAYMENT: "Full Payment",
+	PAY_LATER: "Pay Later"	
+}
+
 const serviceTypeDisplayNames = {
     CITY_TOUR: "City Tour",
     NATURE_TOUR: "Nature Tour",
@@ -401,12 +406,14 @@ async function fetchServices(page = 1) {
 	const city = document.getElementById('filterCity').value;
 	const language = document.getElementById('filterLanguage').value;
 	const groupSize = document.getElementById('filterGroupSize').value;
+	const paymentOption = document.getElementById('filterPaymentOption').value;
 
 	let url = '/api/guide-services?';
 	url += `serviceType=${serviceType}&`;
 	url += `city=${city}&`;
 	url += `groupSize=${groupSize}&`;
 	url += `language=${language}&`;
+	url += `paymentOption=${paymentOption}&`;
 	url += `page=${servicesPage.currentPage - 1}&`;
 	url += `page=${servicesPage.currentPage - 1}&`;
 	url += `size=${servicesPage.itemsPerPage}`;
@@ -430,6 +437,7 @@ async function fetchServices(page = 1) {
 				<td class="groupSizeCategory" data-group-size-category=${service.groupSizeCategory}>${groupSizeCategoryDisplayNames[service.groupSizeCategory]}</td>
 				<td class="language">${service.language}</td>
 				<td class="city" data-city=${service.city}>${cityDisplayNames[service.city]}</td>
+				<td class="price" data-price="150">${paymentOptionDisplayNames[service.paymentOption]}</td>
 				<td class="price" data-price="150">${service.price.toLocaleString()}</td>
                 <td>
                     <button class="btn btn-sm btn-warning" onclick="openEditServicePopup(${service.id})">Edit</button>

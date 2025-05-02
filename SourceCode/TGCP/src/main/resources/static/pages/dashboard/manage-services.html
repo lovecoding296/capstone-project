@@ -26,6 +26,11 @@
 			<option value="FROM_5_TO_10">From 5 to 10</option>
 			<option value="OVER_10">Over 10</option>
 		</select>
+		<select id="filterPaymentOption" name="filterPaymentOption" class="form-select" style="max-width: 180px;">
+			<option value="">Payment option: All</option>
+			<option value="FULL_PAYMENT">Full Payment</option>
+			<option value="PAY_LATER">Pay Later</option>
+		</select>
 
 		<button type="button" onclick="fetchServices()" class="btn btn-primary">Filter</button>
 	</form>	
@@ -77,6 +82,18 @@
 						<select id="language" class="form-control" required>
 							<option value="">Select Language</option>
 							<!-- Add language options dynamically -->
+						</select>
+					</div>
+				</div>
+				
+
+				<div class="mb-3 row">
+					<label for="paymentOption" class="col-sm-4 col-form-label">Payment option</label>
+					<div class="col-sm-8">
+						<select id="paymentOption" class="form-control" required>
+							<option value="">Select Payment option</option>
+							<option value="FULL_PAYMENT">Full Payment</option>
+							<option value="PAY_LATER">Pay Later</option>
 						</select>
 					</div>
 				</div>
@@ -138,14 +155,7 @@
 						</select>
 					</div>
 				</div>
-
-				<div class="mb-3 row">
-					<label for="editPrice" class="col-sm-4 col-form-label">Price per day (VND)</label>
-					<div class="col-sm-8">
-						<input type="number" id="editPrice" class="form-control" required>
-					</div>
-				</div>
-
+				
 				<div class="mb-3 row">
 					<label for="editLanguage" class="col-sm-4 col-form-label">Language</label>
 					<div class="col-sm-8">
@@ -155,6 +165,25 @@
 						</select>
 					</div>
 				</div>
+				
+				<div class="mb-3 row">
+					<label for="editPaymentOption" class="col-sm-4 col-form-label">Payment option</label>
+					<div class="col-sm-8">
+						<select id="editPaymentOption" class="form-control" required>
+							<option value="">Select Payment option</option>
+							<option value="FULL_PAYMENT">Full Payment</option>
+							<option value="PAY_LATER">Pay Later</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="mb-3 row">
+					<label for="editPrice" class="col-sm-4 col-form-label">Price per day (VND)</label>
+					<div class="col-sm-8">
+						<input type="number" id="editPrice" class="form-control" required>
+					</div>
+				</div>
+				
 			</form>
 
 			<div style="display: flex; justify-content: space-between;">
@@ -176,6 +205,7 @@
 				<th scope="col">Group Size</th>
 				<th scope="col">Language</th>
 				<th scope="col">City</th>
+				<th scope="col">Payment option</th>
 				<th scope="col">Price per day (VND)</th>
 				<th scope="col">Actions</th>
 			</tr>

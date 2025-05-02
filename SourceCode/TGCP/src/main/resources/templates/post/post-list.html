@@ -319,23 +319,30 @@
 
 					</div>
 				</div>
-
+				<p class="text-muted">
+					Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span>
+				</p>
 				<div class="pagination">
 					<ul class="pagination justify-content-center" th:if="${totalPages > 0}">
 						<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
 							<a class="page-link" href="#" th:data-page="0">First</a>
 						</li>
 						<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
-							<a class="page-link" href="#"  th:data-page="${currentPage - 1}">Previous</a>
+							<a class="page-link" href="#" th:data-page="${currentPage - 1}">Previous</a>
 						</li>
-
+						<li class="page-item disabled" th:if="${currentPage > 3}">
+							<span class="page-link">...</span>
+						</li>
 						<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
 							th:classappend="${i == currentPage} ? 'active' : ''">
-							<a class="page-link" href="#"  th:data-page="${i}" th:text="${i + 1}"></a>
+							<a class="page-link" href="#" th:data-page="${i}" th:text="${i + 1}"></a>
+						</li>
+						<li class="page-item disabled" th:if="${currentPage < totalPages - 3}">
+							<span class="page-link">...</span>
 						</li>
 
 						<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-							<a class="page-link" href="#"  th:data-page="${currentPage + 1}">Next</a>
+							<a class="page-link" href="#" th:data-page="${currentPage + 1}">Next</a>
 						</li>
 						<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
 							<a class="page-link" href="#" th:data-page="${totalPages - 1}">Last</a>

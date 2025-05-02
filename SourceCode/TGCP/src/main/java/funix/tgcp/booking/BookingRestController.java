@@ -27,22 +27,23 @@ public class BookingRestController {
 
     // API tạo booking
     @PostMapping("/api/bookings/create")
-    public ResponseEntity<Booking> createBooking(
-    		@RequestBody Booking bookingRequest, 
-    		@AuthenticationPrincipal CustomUserDetails userDetails) {
-    	
-    	logger.info("userDetails " + userDetails);
-    	
-//    	User currentUser = new User();
-//    	if(userDetails != null ) {
-//    		currentUser.setId(userDetails.getId());
-//    		
-//    	} else {
-//    		currentUser.setId((long)1);
-//    	}    	
-    	bookingRequest.setCustomer(userDetails.getUser());
-		return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
+    public ResponseEntity<?> createBooking(
+            @RequestBody Booking bookingRequest,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        logger.info("userDetails " + userDetails);
+
+        bookingRequest.setCustomer(userDetails.getUser());
+
+        Optional<Booking> savedBooking = bookingService.createBooking(bookingRequest);
+
+        if (savedBooking.isPresent()) {
+            return ResponseEntity.ok(savedBooking.get());
+        }
+
+        return ResponseEntity.status(400).body(Map.of("message", "Failed to create booking"));
     }
+
     
     
 
@@ -111,32 +112,49 @@ public class BookingRestController {
     // API xác nhận booking
     @PutMapping("/api/bookings/{bookingId}/confirm")
     public ResponseEntity<?> confirmBooking(@PathVariable Long bookingId) {
-    	return bookingService.confirmBooking(bookingId);
+    	boolean success = bookingService.confirmBooking(bookingId);
+        if (success) {
+            return ResponseEntity.ok(Map.of("message", "Booking confirmed successfully", "bookingId", bookingId));
+        }
+        return ResponseEntity.status(400).body(Map.of("message", "Failed to confirm booking", "bookingId", bookingId));
     }
-    
-    // API xác nhận complete booking
+
     @PutMapping("/api/bookings/{bookingId}/complete")
     public ResponseEntity<?> completeBooking(@PathVariable Long bookingId) {
-    	return bookingService.completeBooking(bookingId);
+        boolean success = bookingService.completeBooking(bookingId);
+        if (success) {
+            return ResponseEntity.ok(Map.of("message", "Booking completed successfully", "bookingId", bookingId));
+        }
+        return ResponseEntity.status(400).body(Map.of("message", "Failed to complete booking", "bookingId", bookingId));
     }
-    
+
     @PutMapping("/api/bookings/{bookingId}/cancel-by-user")
     public ResponseEntity<?> cancelBookingByUser(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
-        logger.info(requestBody.get("reason"));
-    	return bookingService.cancelBookingByUser(bookingId, requestBody.get("reason"));
+        boolean success = bookingService.cancelBookingByUser(bookingId, requestBody.get("reason"));
+        if (success) {
+            return ResponseEntity.ok(Map.of("message", "Booking canceled successfully", "bookingId", bookingId));
+        }
+        return ResponseEntity.status(400).body(Map.of("message", "Failed to cancel booking", "bookingId", bookingId));
     }
-    
+
     @PutMapping("/api/bookings/{bookingId}/cancel-by-guide")
     public ResponseEntity<?> cancelBookingByGuide(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
-        logger.info(requestBody.get("reason"));
-    	return bookingService.cancelBookingByGuide(bookingId, requestBody.get("reason"));
+        boolean success = bookingService.cancelBookingByGuide(bookingId, requestBody.get("reason"));
+        if (success) {
+            return ResponseEntity.ok(Map.of("message", "Booking canceled successfully", "bookingId", bookingId));
+        }
+        return ResponseEntity.status(400).body(Map.of("message", "Failed to cancel booking", "bookingId", bookingId));
     }
-    
+
     @PutMapping("/api/bookings/{bookingId}/reject")
     public ResponseEntity<?> rejectBooking(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody) {
-        logger.info(requestBody.get("reason"));
-    	return bookingService.rejectBooking(bookingId, requestBody.get("reason"));
+        boolean success = bookingService.rejectBooking(bookingId, requestBody.get("reason"));
+        if (success) {
+            return ResponseEntity.ok(Map.of("message", "Booking rejected successfully", "bookingId", bookingId));
+        }
+        return ResponseEntity.status(400).body(Map.of("message", "Failed to reject booking", "bookingId", bookingId));
     }
+
     
 
     @DeleteMapping("/api/bookings/{bookingId}")

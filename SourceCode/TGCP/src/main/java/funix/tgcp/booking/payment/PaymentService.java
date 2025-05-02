@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import funix.tgcp.booking.Booking;
 import funix.tgcp.booking.BookingService;
+import funix.tgcp.booking.BookingStatus;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
@@ -75,7 +76,8 @@ public class PaymentService {
 
         // Cập nhật status thành RECEIVED khi thanh toán được xác nhận
         payment.setStatus(PaymentStatus.RECEIVED);
-        Booking booking = payment.getBooking();
+        Booking booking = payment.getBooking();        
+        bookingService.updateStatus(booking.getId(), BookingStatus.CONFIRMED);
         
         if(payment.getType() == PaymentType.PAYMENT) {
         	notificationService.sendNotification(

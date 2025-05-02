@@ -49,83 +49,103 @@
 					<div class="p-3 border rounded shadow-sm">
 						<h5 class="mb-3">Filter</h5>
 
-						<div class="mb-3">
-							<label class="form-label">Guide name:</label>
-							<input type="text" name="guideName" class="form-control" placeholder="Enter guide name"
-								style="max-width: 100%;"
-								th:value="${param.guideName != null ? param.guideName[0] : ''}">
+						<div class="mb-3 row align-items-center">
+							<label class="col-form-label col-4">Guide name:</label>
+							<div class="col-8">
+								<input type="text" name="guideName" class="form-control" placeholder="Enter guide name"
+									th:value="${param.guideName != null ? param.guideName[0] : ''}">
+							</div>
 						</div>
 
-
-						<div class="mb-3">
-							<label class="form-label">Service:</label>
-							<select name="serviceType" class="form-select" style="max-width: 100%;">
-								<option value="">All</option>
-								<option th:each="s : ${serviceTypes}" th:value="${s.name()}"
-									th:text="${s.getDisplayName()}"
-									th:selected="${param.serviceType != null && s.name() == param.serviceType[0]}">
-								</option>
-							</select>
+						<div class="mb-3 row align-items-center">
+							<label class="col-form-label col-4">Service:</label>
+							<div class="col-8">
+								<select name="serviceType" class="form-select">
+									<option value="">Service: All</option>
+									<option th:each="s : ${serviceTypes}" th:value="${s.name()}"
+										th:text="${s.getDisplayName()}"
+										th:selected="${param.serviceType != null && s.name() == param.serviceType[0]}">
+									</option>
+								</select>
+							</div>
 						</div>
 
-						<div class="mb-3">
-							<label class="form-label">City:</label>
-							<select name="city" class="form-select" style="max-width: 100%;">
-								<option value="">All</option>
-								<option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.getDisplayName()}"
-									th:selected="${param.city != null && c.name() == param.city[0]}">
-								</option>
-							</select>
+						<div class="mb-3 row align-items-center">
+							<label class="col-form-label col-4">City:</label>
+							<div class="col-8">
+								<select name="city" class="form-select">
+									<option value="">City: All</option>
+									<option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.getDisplayName()}"
+										th:selected="${param.city != null && c.name() == param.city[0]}">
+									</option>
+								</select>
+							</div>
 						</div>
 
-						<div class="mb-3">
-							<label class="form-label">Language:</label>
-							<select name="language" class="form-select" style="max-width: 100%;">
-								<option value="">All</option>
-								<option th:each="lang : ${languages}" th:value="${lang.name()}" th:text="${lang}"
-									th:selected="${param.language != null && lang.name() == param.language[0]}">
-								</option>
-							</select>
+						<div class="mb-3 row align-items-center">
+							<label class="col-form-label col-4">Language:</label>
+							<div class="col-8">
+								<select name="language" class="form-select">
+									<option value="">Language: All</option>
+									<option th:each="lang : ${languages}" th:value="${lang.name()}" th:text="${lang}"
+										th:selected="${param.language != null && lang.name() == param.language[0]}">
+									</option>
+								</select>
+							</div>
 						</div>
 
-						<div class="mb-3">
-							<label class="form-label">Group size:</label>
-							<select name="groupSize" class="form-select" style="max-width: 100%;">
-								<option value="">All</option>
-								<option th:each="g : ${groupSizes}" th:value="${g.name()}" th:text="${g}"
-									th:selected="${param.groupSize != null && g.name() == param.groupSize[0]}">
-								</option>
-							</select>
+						<div class="mb-3 row align-items-center">
+							<label class="col-form-label col-4">Group size:</label>
+							<div class="col-8">
+								<select name="groupSize" class="form-select">
+									<option value="">Group size: All</option>
+									<option th:each="g : ${groupSizes}" th:value="${g.name()}" th:text="${g}"
+										th:selected="${param.groupSize != null && g.name() == param.groupSize[0]}">
+									</option>
+								</select>
+							</div>
 						</div>
 
-						<div class="mb-3">
-							<label class="form-label">Max price (VND):</label>
-							<input type="number" name="maxPrice" class="form-control" placeholder="Enter max price"
-								style="max-width: 100%;" th:value="${param.maxPrice != null ? param.maxPrice[0] : ''}">
+						<div class="mb-3 row align-items-center">
+							<label class="col-form-label col-4">Payment option:</label>
+							<div class="col-8">
+								<select name="paymentOption" class="form-select">
+									<option value="">All</option>
+									<option th:each="paymentOption : ${paymentOptions}" th:value="${paymentOption.name()}"
+										th:text="${paymentOption}"
+										th:selected="${param.paymentOption != null && paymentOption.name() == param.paymentOption[0]}">
+									</option>
+								</select>
+							</div>
 						</div>
 
-						<div class="mb-3">
-							<label class="form-label">Min rating:</label>
-							<select name="minRating" class="form-select" style="max-width: 100%;">
-								<option value="" th:selected="${param.minRating == null}">All</option>
-								<option value="1"
-									th:selected="${param.minRating != null and param.minRating[0] == '1'}">⭐</option>
-								<option value="2"
-									th:selected="${param.minRating != null and param.minRating[0] == '2'}">⭐⭐</option>
-								<option value="3"
-									th:selected="${param.minRating != null and param.minRating[0] == '3'}">⭐⭐⭐</option>
-								<option value="4"
-									th:selected="${param.minRating != null and param.minRating[0] == '4'}">⭐⭐⭐⭐</option>
-								<option value="5"
-									th:selected="${param.minRating != null and param.minRating[0] == '5'}">⭐⭐⭐⭐⭐
-								</option>
-							</select>
+						<div class="mb-3 row align-items-center">
+							<label class="col-form-label col-4">Max price (VND):</label>
+							<div class="col-8">
+								<input type="number" name="maxPrice" class="form-control" placeholder="Enter max price"
+									th:value="${param.maxPrice != null ? param.maxPrice[0] : ''}">
+							</div>
+						</div>
+
+						<div class="mb-3 row align-items-center">
+							<label class="col-form-label col-4">Min rating:</label>
+							<div class="col-8">
+								<select name="minRating" class="form-select">
+									<option value="" th:selected="${param.minRating == null}">All</option>
+									<option value="1" th:selected="${param.minRating != null and param.minRating[0] == '1'}">⭐</option>
+									<option value="2" th:selected="${param.minRating != null and param.minRating[0] == '2'}">⭐⭐</option>
+									<option value="3" th:selected="${param.minRating != null and param.minRating[0] == '3'}">⭐⭐⭐</option>
+									<option value="4" th:selected="${param.minRating != null and param.minRating[0] == '4'}">⭐⭐⭐⭐</option>
+									<option value="5" th:selected="${param.minRating != null and param.minRating[0] == '5'}">⭐⭐⭐⭐⭐</option>
+								</select>
+							</div>
 						</div>
 
 						<button type="submit" class="btn btn-primary w-100">Search</button>
 					</div>
 				</form>
 			</div>
+
 
 
 			<br>

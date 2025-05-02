@@ -119,95 +119,109 @@
 					<div class="p-3 border rounded shadow-sm">
 						<h5 class="mb-3">Filter</h5>
 
-						<!-- Thành phố -->
-						<div class="mb-3">
-
-							<label for="filterServiceType" class="form-label">Service:</label>
-							<select id="filterServiceType" name="serviceType" class="form-select">
-								<option value="">All</option>
-								<option th:each="s : ${serviceTypes}" th:value="${s.name()}"
-									th:text="${s.getDisplayName()}"
-									th:selected="${param.serviceType != null && s.name() == param.serviceType[0]}">
-								</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label for="filterCity" class="form-label">City:</label>
-							<select id="filterCity" name="city" class="form-select">
-								<option value="">All</option>
-								<option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.getDisplayName()}"
-									th:selected="${param.city != null && c.name() == param.city[0]}">
-								</option>
-							</select>
-						</div>
-						<!-- Ngôn ngữ -->
-						<div class="mb-3">
-							<label for="filterLanguage" class="form-label">Language:</label>
-							<select id="filterLanguage" name="language" class="form-select">
-								<option value="">All</option>
-								<option th:each="lang : ${languages}" th:value="${lang.name()}" th:text="${lang}"
-									th:selected="${param.language != null && lang.name() == param.language[0]}">
-								</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label for="filterGroupSize" class="form-label">Group size:</label>
-							<select id="filterGroupSize" name="groupSize" class="form-select">
-								<option value="">All</option>
-								<option th:each="g : ${groupSizes}" th:value="${g.name()}" th:text="${g}"
-									th:selected="${param.groupSize != null && g.name() == param.groupSize[0]}">
-								</option>
-							</select>
-						</div>		
-
-						<div class="mb-3">
-							<label for="filterGender" class="form-label">Gender:</label>
-							<select id="filterGender" name="gender" class="form-select">
-								<option value="">All</option>
-								<option value="MALE" th:selected="${param.gender != null && param.gender[0] == 'MALE'}">
-									Male</option>
-								<option value="FEMALE"
-									th:selected="${param.gender != null && param.gender[0] == 'FEMALE'}">Female</option>
-							</select>
-						</div>
-
-						<div class="mb-3">
-							<label class="form-label">Cerificate</label>
-							<div class="form-check">
-								<input class="form-check-input" type="checkbox" id="filterLocalGuide"
-									name="isLocalGuide" th:checked="${param.isLocalGuide != null}">
-								<label class="form-check-label" for="filterLocalGuide">
-									Local guide
-								</label>
-							</div>
-							<div class="form-check">
-								<input class="form-check-input" type="checkbox" id="filterInternationalGuide"
-									name="isInternationalGuide" th:checked="${param.isInternationalGuide != null}">
-								<label class="form-check-label" for="filterInternationalGuide">
-									Internaltion guide
-								</label>
+						<!-- Service -->
+						<div class="mb-3 row">
+							<label for="filterServiceType" class="col-4 col-form-label">Service:</label>
+							<div class="col-8">
+								<select id="filterServiceType" name="serviceType" class="form-select">
+									<option value="">All</option>
+									<option th:each="s : ${serviceTypes}" th:value="${s.name()}" th:text="${s.getDisplayName()}"
+										th:selected="${param.serviceType != null && s.name() == param.serviceType[0]}">
+									</option>
+								</select>
 							</div>
 						</div>
-						
-						<div class="mb-3">
-							<label class="form-label">Min rating:</label>
-							<select name="minRating" class="form-select" style="max-width: 100%;">
-								<option value="" th:selected="${param.minRating == null}">All</option>
-								<option value="1" th:selected="${param.minRating != null and param.minRating[0] == '1'}">⭐</option>
-								<option value="2" th:selected="${param.minRating != null and param.minRating[0] == '2'}">⭐⭐</option>
-								<option value="3" th:selected="${param.minRating != null and param.minRating[0] == '3'}">⭐⭐⭐</option>
-								<option value="4" th:selected="${param.minRating != null and param.minRating[0] == '4'}">⭐⭐⭐⭐</option>
-								<option value="5" th:selected="${param.minRating != null and param.minRating[0] == '5'}">⭐⭐⭐⭐⭐
-								</option>
-							</select>
+
+						<!-- City -->
+						<div class="mb-3 row">
+							<label for="filterCity" class="col-4 col-form-label">City:</label>
+							<div class="col-8">
+								<select id="filterCity" name="city" class="form-select">
+									<option value="">All</option>
+									<option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.getDisplayName()}"
+										th:selected="${param.city != null && c.name() == param.city[0]}">
+									</option>
+								</select>
+							</div>
 						</div>
 
+						<!-- Language -->
+						<div class="mb-3 row">
+							<label for="filterLanguage" class="col-4 col-form-label">Language:</label>
+							<div class="col-8">
+								<select id="filterLanguage" name="language" class="form-select">
+									<option value="">All</option>
+									<option th:each="lang : ${languages}" th:value="${lang.name()}" th:text="${lang}"
+										th:selected="${param.language != null && lang.name() == param.language[0]}">
+									</option>
+								</select>
+							</div>
+						</div>
 
+						<!-- Group Size -->
+						<div class="mb-3 row">
+							<label for="filterGroupSize" class="col-4 col-form-label">Group size:</label>
+							<div class="col-8">
+								<select id="filterGroupSize" name="groupSize" class="form-select">
+									<option value="">All</option>
+									<option th:each="g : ${groupSizes}" th:value="${g.name()}" th:text="${g}"
+										th:selected="${param.groupSize != null && g.name() == param.groupSize[0]}">
+									</option>
+								</select>
+							</div>
+						</div>
 
+						<!-- Gender -->
+						<div class="mb-3 row">
+							<label for="filterGender" class="col-4 col-form-label">Gender:</label>
+							<div class="col-8">
+								<select id="filterGender" name="gender" class="form-select">
+									<option value="">All</option>
+									<option value="MALE" th:selected="${param.gender != null && param.gender[0] == 'MALE'}">Male</option>
+									<option value="FEMALE" th:selected="${param.gender != null && param.gender[0] == 'FEMALE'}">Female</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- Certificate -->
+						<div class="mb-3 row">
+							<label class="col-4 col-form-label">Certificate:</label>
+							<div class="col-8">
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" id="filterLocalGuide" name="isLocalGuide"
+										th:checked="${param.isLocalGuide != null}">
+									<label class="form-check-label" for="filterLocalGuide">Local guide</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" id="filterInternationalGuide" name="isInternationalGuide"
+										th:checked="${param.isInternationalGuide != null}">
+									<label class="form-check-label" for="filterInternationalGuide">International guide</label>
+								</div>
+							</div>
+						</div>
+
+						<!-- Min rating -->
+						<div class="mb-3 row">
+							<label for="minRating" class="col-4 col-form-label">Min rating:</label>
+							<div class="col-8">
+								<select name="minRating" class="form-select">
+									<option value="" th:selected="${param.minRating == null}">All</option>
+									<option value="1" th:selected="${param.minRating != null and param.minRating[0] == '1'}">⭐</option>
+									<option value="2" th:selected="${param.minRating != null and param.minRating[0] == '2'}">⭐⭐</option>
+									<option value="3" th:selected="${param.minRating != null and param.minRating[0] == '3'}">⭐⭐⭐</option>
+									<option value="4" th:selected="${param.minRating != null and param.minRating[0] == '4'}">⭐⭐⭐⭐</option>
+									<option value="5" th:selected="${param.minRating != null and param.minRating[0] == '5'}">⭐⭐⭐⭐⭐</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- Submit button -->
 						<button type="submit" class="btn btn-primary w-100">Search</button>
 					</div>
 				</form>
 			</div>
+
+
 
 
 			<!-- Cột bên phải: Danh sách hướng dẫn viên -->

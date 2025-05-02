@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import funix.tgcp.booking.payment.PaymentOption;
 import funix.tgcp.user.City;
 import funix.tgcp.user.Language;
 
@@ -84,15 +85,15 @@ public class GuideServiceService {
 
 
 	public Page<GuideService> searchServices(ServiceType serviceType, City city, Language language,
-			GroupSizeCategory groupSize, Double maxPrice, Integer minRating, String guideName, Pageable pageable) {
-		return guideServiceRepo.searchServices(serviceType, city, language, groupSize, maxPrice, minRating, guideName, pageable);
+			GroupSizeCategory groupSize, PaymentOption paymentOption, Double maxPrice, Integer minRating, String guideName, Pageable pageable) {
+		return guideServiceRepo.searchServices(serviceType, city, language, groupSize, paymentOption, maxPrice, minRating, guideName, pageable);
 	}
 
 
 
 	public Page<GuideService> findByGuideIdAndFilter(Long id, ServiceType serviceType, City city, Language language,
-			GroupSizeCategory groupSize, Pageable pageable) {
-		return guideServiceRepo.findByGuideIdAndFilter(id, serviceType, city, language, groupSize, pageable);
+			GroupSizeCategory groupSize, PaymentOption paymentOption, Pageable pageable) {
+		return guideServiceRepo.findByGuideIdAndFilter(id, serviceType, city, language, groupSize, paymentOption, pageable);
 	}
 	
 	

@@ -4,6 +4,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import funix.tgcp.booking.payment.PaymentOption;
 import funix.tgcp.user.City;
 import funix.tgcp.user.Language;
 import funix.tgcp.user.User;
@@ -53,6 +54,10 @@ public class GuideService {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private City city;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentOption paymentOption = PaymentOption.FULL_PAYMENT;
 
     private Double price;
 }

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import funix.tgcp.booking.payment.PaymentOption;
 import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.user.City;
 import funix.tgcp.user.Language;
@@ -68,6 +69,7 @@ public class GuideServiceRestController {
             @RequestParam(required = false) City city,
             @RequestParam(required = false) Language language,
             @RequestParam(required = false) GroupSizeCategory groupSize,
+            @RequestParam(required = false) PaymentOption paymentOption,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "6") int size, 
 			@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -78,7 +80,7 @@ public class GuideServiceRestController {
 		        .and(Sort.by("language").ascending())
 		        .and(Sort.by("groupSizeCategory").ascending()));
 
-		return guideServiceService.findByGuideIdAndFilter(userDetails.getId(), serviceType, city, language, groupSize, pageable);
+		return guideServiceService.findByGuideIdAndFilter(userDetails.getId(), serviceType, city, language, groupSize, paymentOption, pageable);
 	}
 	
 	@GetMapping("/guides/{guideId}")
