@@ -279,7 +279,7 @@
 	<script>
 		document.querySelectorAll('.price').forEach(el => {
 			const rawValue = parseFloat(el.innerText);
-			el.textContent = rawValue.toLocaleString() + ' VND';			
+			el.textContent = rawValue.toLocaleString('vi-VN') + ' VND';			
 		});
 	</script>
 </body>

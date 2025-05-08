@@ -26,10 +26,10 @@ public class BookingController {
 
 		if (bookingOp.isPresent()) {
 			logger.info("pass a booking");
-			long bookingCount = bookingService.countCompletedByUserIdOrGuideId(bookingOp.get().getGuide().getId());			
+			long completedCount = bookingService.countCompletedByGuideId(bookingOp.get().getGuide().getId());			
 			
 			model.addAttribute("booking", bookingOp.get());
-			model.addAttribute("bookingCount", bookingCount);
+			model.addAttribute("completedCount", completedCount);
 		}
 
 		return "booking/user-booking";
@@ -41,8 +41,8 @@ public class BookingController {
 
 		if (bookingOp.isPresent()) {
 			logger.info("pass a booking");
-			long bookingCount = bookingService.countCompletedByUserIdOrGuideId(bookingOp.get().getCustomer().getId());			
-			model.addAttribute("bookingCount", bookingCount);
+			long rentedCount = bookingService.countCompletedByUserId(bookingOp.get().getCustomer().getId());			
+			model.addAttribute("rentedCount", rentedCount);
 			model.addAttribute("booking", bookingOp.get());
 		}
 

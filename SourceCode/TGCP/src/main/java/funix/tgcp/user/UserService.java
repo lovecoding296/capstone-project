@@ -94,6 +94,7 @@ public class UserService {
 	}
 	
 	public void updateCurrentUser(User user) {
+		logger.info("");
 	    User currentUser = findById(user.getId())
 	        .orElseThrow(() -> new IllegalArgumentException("Updated user information cannot be null."));
 
@@ -113,6 +114,8 @@ public class UserService {
 	    updateFieldIfNotEmpty(user.getAccountNumber(), currentUser::setAccountNumber);
 	    updateFieldIfNotEmpty(user.getAccountHolder(), currentUser::setAccountHolder);
 
+	    logger.info("user.getAvatarUrl() " + user.getAvatarUrl());
+	    
 	    // Update password only if provided
 	    if (user.getPassword() != null && !user.getPassword().isEmpty()) {
 	        currentUser.setPassword(passwordEncoder.encode(user.getPassword()));

@@ -22,7 +22,7 @@
 	<nav th:replace="~{page-component :: header}"></nav>
 	<h3 class="page-title text-center">Edit user profile</h3>
 	<div class="container">
-		<form th:action="@{/users/{id}/edit(id=${user.id})}" method="post" th:object="${user}"
+		<form th:action="@{/users/{id}/edit(id=${user.id})}" method="POST" th:object="${user}"
 			enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-md-4">
@@ -57,9 +57,13 @@
 
 				<div class="col-md-8">
 					<div class="mb-3">
-						<label>Email:</label>
-						<input type="email" class="form-control" th:field="*{email}" required>
+						<label>Fullname:</label>
+						<input type="text" class="form-control" th:field="*{fullName}" required>
 					</div>
+					<!--<div class="mb-3">
+						<label>Email:</label>
+						<input type="email" class="form-control" th:field="*{email}" readonly disabled>
+					</div>-->
 					<div class="mb-3">
 						<label>Gender:</label>
 						<select class="form-control" th:field="*{gender}">

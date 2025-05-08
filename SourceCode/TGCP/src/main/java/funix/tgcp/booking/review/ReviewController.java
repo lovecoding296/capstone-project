@@ -35,24 +35,39 @@ public class ReviewController {
 
 	@PostMapping
 	public ResponseEntity<String> submitReview(
-			@RequestBody Review reviewRequest,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
-		System.out.println("Review received: " + reviewRequest);
+	        @RequestBody Review reviewRequest,
+	        @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-		logger.info("userDetails " + userDetails);
-		logger.info("book Id " +reviewRequest.getBooking().getId() + " reviewedId " + reviewRequest.getReviewedUser().getId());  
-		
-		if (userDetails == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-		}
-		reviewRequest.setReviewer(userDetails.getUser());
-		
+	    logger.info("Review received: {}", reviewRequest);
+	    logger.info("userDetails: {}", userDetails);
+	    logger.info("bookId: {}, reviewedId: {}", 
+	                reviewRequest.getBooking().getId(), 
+	                reviewRequest.getReviewedUser().getId());
 
-		return reviewService.addReview(reviewRequest);
-		
-		
+	    if (userDetails == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+	    }
+
+	    try {
+	        reviewRequest.setReviewer(userDetails.getUser());
+	        reviewService.addReview(reviewRequest);
+	        return ResponseEntity.ok("Review submitted successfully!");
+
+	    } catch (IllegalArgumentException e) {
+	        return ResponseEntity.badRequest().body(e.getMessage());
+
+	    } catch (SecurityException e) {
+	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+
+	    } catch (IllegalStateException e) {
+	        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+
+	    } catch (Exception e) {
+	        logger.error("Unexpected error when submitting review", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+	    }
 	}
-	
+
 	@GetMapping("/exists")
 	public ResponseEntity<Boolean> hasReviewed(
 			@RequestParam Long bookingId, 

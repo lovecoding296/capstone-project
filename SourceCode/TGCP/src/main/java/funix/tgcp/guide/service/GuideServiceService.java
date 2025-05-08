@@ -3,20 +3,36 @@ package funix.tgcp.guide.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
+import funix.tgcp.booking.Booking;
+import funix.tgcp.booking.BookingRepository;
 import funix.tgcp.booking.payment.PaymentOption;
 import funix.tgcp.user.City;
 import funix.tgcp.user.Language;
+import funix.tgcp.user.User;
+import funix.tgcp.user.UserRepository;
 
 @Service
 public class GuideServiceService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(GuideServiceRestController.class);
+
 
     @Autowired
     private GuideServiceRepository guideServiceRepo;
+    
+    @Autowired
+    private BookingRepository bookingRepo;
+
+    @Autowired
+	private UserRepository userRepo;
 
     public GuideService createGuideService(GuideService guideService) {
     	
@@ -51,7 +67,7 @@ public class GuideServiceService {
         guideService.setType(guideServiceDetails.getType());
         guideService.setGroupSizeCategory(guideServiceDetails.getGroupSizeCategory());
         guideService.setLanguage(guideServiceDetails.getLanguage());
-        guideService.setPrice(guideServiceDetails.getPrice());
+        guideService.setPricePerDay(guideServiceDetails.getPricePerDay());
         guideService.setCity(guideServiceDetails.getCity());
                 
         return guideServiceRepo.save(guideService);
@@ -61,8 +77,20 @@ public class GuideServiceService {
         return guideServiceRepo.findById(id);
     }
 
-    public void deleteGuideService(Long id) {
-    	guideServiceRepo.deleteById(id);
+    public boolean deleteGuideService(Long guideId, Long serviceId) {  	
+    	if(!bookingRepo.existsByGuideServiceId(serviceId)) {
+    		User guide = userRepo.findById(guideId).orElseThrow();
+    		GuideService serviceToRemove = guide.getGuideServices()
+    		    .stream()
+    		    .filter(gs -> gs.getId().equals(serviceId))
+    		    .findFirst()
+    		    .orElseThrow();
+
+    		guide.getGuideServices().remove(serviceToRemove);
+    		userRepo.save(guide);    		
+    		return true;
+    	}    	
+    	return false;
     }
 
 	public Page<GuideService> findByGuideId(Long userId, Pageable pageable) {		

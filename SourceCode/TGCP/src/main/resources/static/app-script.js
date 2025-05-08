@@ -248,12 +248,12 @@ function openEditServicePopup(serviceId) {
 
 	const row = document.getElementById(`service-row-${serviceId}`);
 
-
-	const serviceType = row.querySelector(".type").dataset.type;
-	const groupSizeCategory = row.querySelector(".groupSizeCategory").dataset.groupSizeCategory;
-	const city = row.querySelector(".city").dataset.city;
-	const language = row.querySelector(".language").innerText;
-	const price = row.querySelector(".price").innerText;
+	const serviceType = row.dataset.type;
+	const groupSizeCategory = row.dataset.groupSizeCategory;
+	const city = row.dataset.city;
+	const language = row.dataset.language;
+	const price = row.dataset.price;
+	const paymentOption = row.dataset.paymentOption;
 
 	document.getElementById("editServiceId").value = serviceId;
 	document.getElementById("editServiceType").value = serviceType;
@@ -261,6 +261,7 @@ function openEditServicePopup(serviceId) {
 	document.getElementById("editCity").value = city;
 	document.getElementById("editPrice").value = parseFloat(price.replace(/\./g, "").replace(",", ".")),
 	document.getElementById("editLanguage").value = language;
+	document.getElementById("editPaymentOption").value = paymentOption;
 }
 
 function openAddServicePopup() {
@@ -313,11 +314,11 @@ async function submitEditService() {
 			alert("Service updated successfully!");
 		} else {
 			closeEditServicePopup();
-			alert(`Error: ${message}`);
+			alert(`${message}`);
 		}
 	} catch (error) {
 		console.error("Error while updating service:", error);
-		alert("An unexpected error occurred!");
+		alert("An error occurred, please try again later!");
 	}
 
 	serviceForm.reset();
@@ -366,7 +367,7 @@ async function submitService() {
 		} else {
 			const errorMessage = await response.text();
 			closeAddServicePopup();
-			alert(`Error: ${errorMessage}`);
+			alert(`${errorMessage}`);
 		}
 	} catch (error) {
 		console.error("An unexpected error occurred!", error);
@@ -390,7 +391,7 @@ async function deleteService(serviceId) {
 			fetchServices(servicesPage.currentPage);
 		} else {
 			const errorMessage = await response.text();
-			alert(`Failed to delete service: ${errorMessage}`);
+			alert(`${errorMessage}`);
 		}
 	} catch (error) {
 		console.error('Error deleting service:', error);
@@ -400,6 +401,9 @@ async function deleteService(serviceId) {
 
 
 async function fetchServices(page = 1) {
+	
+	console.log("fetchServices page " + page)
+	
 	servicesPage.currentPage = page;
 	
 	const serviceType = document.getElementById('filterServiceType').value;
@@ -432,18 +436,29 @@ async function fetchServices(page = 1) {
 		services.forEach(service => {
 			const row = document.createElement('tr');
 			row.id = `service-row-${service.id}`;
+
+			// Set dataset attributes on the row element
+			row.dataset.serviceId = service.id;
+			row.dataset.type = service.type;
+			row.dataset.groupSizeCategory = service.groupSizeCategory;
+			row.dataset.language = service.language;
+			row.dataset.city = service.city;
+			row.dataset.paymentOption = service.paymentOption;
+			row.dataset.price = service.pricePerDay;
+
 			row.innerHTML = `
-				<td class="type" data-type=${service.type}>${serviceTypeDisplayNames[service.type]}</td>
-				<td class="groupSizeCategory" data-group-size-category=${service.groupSizeCategory}>${groupSizeCategoryDisplayNames[service.groupSizeCategory]}</td>
+				<td class="type">${serviceTypeDisplayNames[service.type]}</td>
+				<td class="groupSizeCategory">${groupSizeCategoryDisplayNames[service.groupSizeCategory]}</td>
 				<td class="language">${service.language}</td>
-				<td class="city" data-city=${service.city}>${cityDisplayNames[service.city]}</td>
-				<td class="price" data-price="150">${paymentOptionDisplayNames[service.paymentOption]}</td>
-				<td class="price" data-price="150">${service.price.toLocaleString()}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning" onclick="openEditServicePopup(${service.id})">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">Delete</button>
-                </td>
-            `;
+				<td class="city">${cityDisplayNames[service.city]}</td>
+				<td class="paymentOption">${paymentOptionDisplayNames[service.paymentOption]}</td>
+				<td class="price">${service.pricePerDay.toLocaleString('vi-VN')}</td>
+				<td>
+					<button class="btn btn-sm btn-warning" onclick="openEditServicePopup(${service.id})">Edit</button>
+					<button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">Delete</button>
+				</td>
+			`;
+
 			tableBody.appendChild(row);
 		});
 
@@ -530,9 +545,9 @@ async function fetchPosts(page = 1) {
 		updatePaginationButtons(data.number + 1, data.totalElements, data.size);
 
 	} catch (error) {
-		console.error('Lỗi khi tải danh sách bài viết:', error);
+		console.error('Unable to load post list:', error);
 		const tableBody = document.getElementById('postsTableBody');
-		tableBody.innerHTML = `<tr><td colspan="4">Không thể tải danh sách bài viết.</td></tr>`;
+		tableBody.innerHTML = `<tr><td colspan="4">Unable to load post list.</td></tr>`;
 	}
 }
 
@@ -690,7 +705,7 @@ async function performUserAction(userId, action) {
 
 	} catch (error) {
 		console.error(`Error performing action ${action}:`, error);
-		alert(`There was an error performing the action: ${action}`);
+		alert(`${error}`);
 	}
 }
 
@@ -797,7 +812,7 @@ async function resolveReport(reportId) {
 
 		if (!res.ok) {
 			const errorText = await res.text();
-			throw new Error(errorText || "Đã xảy ra lỗi");
+			throw new Error(errorText || "An error occurred.");
 		}
 
 		const result = await res.text();
@@ -807,7 +822,7 @@ async function resolveReport(reportId) {
 
 	} catch (err) {
 		console.error(err);
-		alert(err.message || "Đã xảy ra lỗi");
+		alert(err.message || "An error occurred.");
 	}
 }
 
@@ -846,7 +861,7 @@ async function checkReviewStatus(bookingId) {
 		return hasReviewed;
 
 	} catch (error) {
-		console.error("Lỗi khi kiểm tra đánh giá:", error);
+		console.error("Error checking status of review:", error);
 		return false;
 	}
 }
@@ -1027,7 +1042,7 @@ async function loadIncomeSummary() {
 		
 		
 		const ctx3 = document.getElementById('incomeByTypeChart').getContext('2d');
-		
+
 		new Chart(ctx3, {
 			type: 'pie',
 			data: {
@@ -1045,9 +1060,19 @@ async function loadIncomeSummary() {
 			},
 			options: {
 				responsive: false,
-				maintainAspectRatio: false
+				maintainAspectRatio: false,
+				plugins: {
+					datalabels: {
+						formatter: (value) => value.toLocaleString('vi-VN'),  // Format dữ liệu nếu cần
+						color: 'white',
+						font: {
+							weight: 'bold'
+						}
+					}
+				}
 			}
 		});
+
 		
 	} catch (error) {
 		console.error("Error loading income summary:", error);
@@ -1117,7 +1142,7 @@ function fetchDayOff() {
 		})
 		.catch(err => {
 			console.error("Lỗi fetch day-off:", err);
-			alert("Không thể tải lịch bận.");
+			alert("Unable to load busy calendar.");
 		});
 }
 
@@ -1153,11 +1178,11 @@ async function submitDayOff() {
 		await addDayOffs(toAdd);
 
 		// Hiển thị thông báo và reload lịch bận
-		alert("Đã cập nhật lịch bận!");
+		alert("Updated days off!");
 		fetchDayOff(); // Reload lại từ server
 	} catch (err) {
-		console.error("Lỗi cập nhật:", err);
-		alert("Đã xảy ra lỗi, vui lòng thử lại.");
+		console.error("Error:", err);
+		alert("An error occurred, please try again.");
 	}
 }
 
@@ -1219,7 +1244,7 @@ async function fetchGuideBookings(page = 1) {
 		      ${booking.status}
 		    </span>
 			${booking.status === "CANCELED_BY_USER" || booking.status === "CANCELED_BY_GUIDE" || booking.status === "REJECTED"
-				? `<div class="text-muted small fst-italic mt-1">Reason: ${booking.reason || "No reason"}. (Canceled at: ${formatDate(booking.canceledAt)})</div>`
+				? `<div class="text-muted small fst-italic mt-1 max-w-300">Reason: ${booking.reason || "No reason"} (Canceled at: ${formatDate(booking.canceledAt)})</div>`
 				: ""
 			}
 		  </td>
@@ -1386,8 +1411,8 @@ async function fetchBookings(page = 1) {
 	if (guide) url += `guide=${guide}&`;
 	if (bookingStatus) url += `status=${bookingStatus}&`;
 
-	url += `page=${postsPage.currentPage - 1}&`;
-	url += `size=${postsPage.itemsPerPage}`
+	url += `page=${historyBookingsPage.currentPage - 1}&`;
+	url += `size=${historyBookingsPage.itemsPerPage}`
 
 
 	const response = await fetch(url);
@@ -1415,7 +1440,7 @@ async function fetchBookings(page = 1) {
 		      ${booking.status}
 		    </span>
 		    ${booking.status === "CANCELED_BY_USER" || booking.status === "CANCELED_BY_GUIDE" || booking.status === "REJECTED"
-				? `<div class="text-muted small fst-italic mt-1">Reason: ${booking.reason || "No reason"}. (Cancled at: ${formatDate(booking.canceledAt)})</div>`
+				? `<div class="text-muted small fst-italic mt-1 max-w-300">Reason: ${booking.reason || "No reason"} (Cancled at: ${formatDate(booking.canceledAt)})</div>`
 				: ""
 			}
 		  </td>

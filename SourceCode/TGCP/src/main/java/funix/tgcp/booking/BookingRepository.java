@@ -25,8 +25,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 	
 	
 	@Query("SELECT COUNT(b) FROM Booking b WHERE b.status = 'COMPLETED' "
-			+ "AND (b.customer.id = :userId OR b.guide.id = :userId)")
-	long countCompletedByUserIdOrGuideId(@Param("userId") Long userId);
+			+ "AND (b.guide.id = :userId)")
+	long countCompletedByGuideId(@Param("userId") Long userId);
+	
+	@Query("SELECT COUNT(b) FROM Booking b WHERE b.status = 'COMPLETED' "
+			+ "AND (b.customer.id = :userId)")
+	long countCompletedByUserId(@Param("userId") Long userId);
 
 	
 	
@@ -70,6 +74,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Transactional
     @Query("UPDATE Booking b SET b.status = :status WHERE b.id = :id")
     int updateStatus(@Param("id") Long bookingId, @Param("status") BookingStatus status);
+    
+    
+    boolean existsByGuideServiceId(Long guideServiceId);
 
 }
 

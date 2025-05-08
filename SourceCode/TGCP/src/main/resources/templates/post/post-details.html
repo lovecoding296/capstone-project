@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Chi tiết bài viết</title>
+	<title>Post details</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 	
 
 	<div class="container mt-4">
-		<h3 class="page-title">Chi tiết bài viết</h3>
+		<h3 class="page-title">Post details</h3>
 		<div class="row">
 			<div class="col-md-12">
 				<div class="post-card mb-4">
@@ -36,14 +36,14 @@
 					
 						<h5 class="post-card-title" th:text="${post.title}"></h5>
 						<p class="text-muted">
-							<strong th:text="#{label.postedOn}"></strong>
+							<strong>Posted date:</strong>
 							<span th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
 						</p>
 					
 					
-						<p><strong th:text="#{label.category}"></strong> <span th:text="${#messages.msg(post.category.name)}"></span>
+						<p><strong>Category:</strong> <span th:text="${#messages.msg(post.category.name)}"></span>
 						</p>
-						<p><strong th:text="#{label.content}"></strong> <span th:utext="${post.content}"></span></p>
+						<p><strong>Content:</strong> <span th:utext="${post.content}"></span></p>
 					
 						<p>
 							<span class="like-comment-count">
@@ -56,16 +56,17 @@
 
 					<div class="post-card-footer">
 						<button class="btn btn-like btn-sm" th:id="'like-button-' + ${post.id}"
-							th:attr="onclick='toggleLike(' + ${post.id} + ')'" th:text="#{label.like}">
+							th:attr="onclick='toggleLike(' + ${post.id} + ')'">
+							👍 Like
 						</button>
 					
-						<button class="btn btn-comment btn-sm" th:attr="onclick='loadComments(' + ${post.id} + ')'"
-							th:text="#{label.viewComments}">
+						<button class="btn btn-comment btn-sm" th:attr="onclick='loadComments(' + ${post.id} + ')'">
+							💬 View comments
 						</button>
 					</div>
 					
 					<div class="post-card-body comment-section">
-						<h6 class="post-card-title" th:text="#{label.comments}"></h6>
+						<h6 class="post-card-title">Comments</h6>
 						<div th:id="'comment-section-' + ${post.id}" class="mt-3" style="max-height: 400px; overflow-y: auto;">
 					
 					
@@ -73,15 +74,12 @@
 					
 						<!-- Form thêm bình luận -->
 						<form th:attr="onsubmit='addComment(event, ' + ${post.id} + ')'" class="comment-form">
-							<input type="text" th:id="'comment-content-' + ${post.id}" class="form-control comment-input"
-								th:placeholder="#{label.enterComment}" required>
-							<button type="submit" class="btn btn-success btn-sm" th:text="#{label.send}"></button>
+							<input type="text" th:id="'comment-content-' + ${post.id}" class="form-control comment-input" placeholder="Enter a comment..."
+								required>
+							<button type="submit" class="btn btn-success btn-sm">Send</button>
 						</form>
 					</div>
 				</div>
-			</div>
-			<div class="col-md-12">
-				<a th:href="@{/posts/author/{id}(id=${session.loggedInUser.id})}">Quay lại</a>
 			</div>
 		</div>
 	</div>
@@ -148,17 +146,17 @@
 								            <p><strong>${reply.commenter.fullName}</strong></p>
 								            <p>${reply.content}</p>
 								            <p class="text-muted">
-								              <small>${new Date(reply.createdAt).toLocaleString()}</small>
+								              <small>${new Date(reply.createdAt).toLocaleString('vi-VN')}</small>
 								            </p>
 								            <button class="btn btn-link p-0 text-primary reply-btn" 
 								                    data-comment-id="${reply.id}" 
 								                    data-commenter-name="${reply.commenter.fullName}">
-								              Trả lời
+								              Reply
 								            </button>
 								            
 								            <!-- Vùng nhập trả lời cho comment con -->
 								            <div class="reply-form" id="reply-form-${reply.id}" style="display: none;">
-								              <textarea class="form-control" placeholder="Nhập trả lời..." id="reply-content-${reply.id}" style="min-width: 300px"></textarea>
+								              <textarea class="form-control" placeholder="Enter reply..." id="reply-content-${reply.id}" style="min-width: 300px"></textarea>
 								              <button class="btn btn-success btn-sm" onclick="submitReply(${reply.id}, ${postId})">Gửi</button>
 								            </div>
 								          </div>
@@ -178,19 +176,19 @@
 								        <p><strong>${comment.commenter.fullName}</strong></p>
 								        <p>${comment.content}</p>
 								        <p class="text-muted">
-								          <small>${new Date(comment.createdAt).toLocaleString()}</small>
+								          <small>${new Date(comment.createdAt).toLocaleString('vi-VN')}</small>
 								        </p>
 								        <button class="btn btn-link p-0 text-primary reply-btn" 
 								                data-comment-id="${comment.id}" 
 								                data-commenter-name="${comment.commenter.fullName}">
-								          Trả lời
+								          Reply
 								        </button>
 								        <hr>
 
 								        <!-- Vùng nhập trả lời -->
 								        <div class="reply-form" id="reply-form-${comment.id}" style="display: none;">
-								          <textarea class="form-control" placeholder="Nhập trả lời..." id="reply-content-${comment.id}" style="min-width: 300px"></textarea>
-								          <button class="btn btn-success btn-sm" onclick="submitReply(${comment.id}, ${postId})">Gửi</button>
+								          <textarea class="form-control" placeholder="Enter reply..." id="reply-content-${comment.id}" style="min-width: 300px"></textarea>
+								          <button class="btn btn-success btn-sm" onclick="submitReply(${comment.id}, ${postId})">Send</button>
 								        </div>
 
 								        <!-- Hiển thị các comment con -->
@@ -234,7 +232,7 @@
 			const replyContent = document.getElementById('reply-content-' + commentId).value;
 
 			if (replyContent.trim() === "") {
-				alert("Vui lòng nhập trả lời.");
+				alert("Please enter reply.");
 				return;
 			}
 

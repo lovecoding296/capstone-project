@@ -76,7 +76,7 @@
 			})
 				.then(response => {
 					if (response.ok) {
-						alert("Payment updated successfully!");
+						alert("Payment confirmed successfully!");
 						location.reload(); // Tải lại danh sách payment
 					} else {
 						alert("Failed to update payment.");
@@ -117,7 +117,7 @@
 
 				<script>
 					var totalPrice = parseFloat("[[${booking.totalPrice}]]");
-					document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
+					document.getElementById('totalPrice').textContent = totalPrice.toLocaleString('vi-VN');
 				</script>			
 			</div>
 			<div class="col-md-6 d-flex justify-content-center">
@@ -131,9 +131,7 @@
 							<h4 class="text-center" th:text="${booking.customer.fullName}">Customer Name</h4>
 						</a>
 						<p class="text-center">
-							<span
-								th:text="${booking.customer.averageRating != null ? booking.customer.averageRating : 'N/A'}">N/A</span>⭐
-								<br></bt><span>Rented services:<span th:text="${bookingCount}"></span></span>
+							<span>Rented services:<span th:text="${rentedCount}"></span>
 						</p>
 						<p><span
 								th:text="${booking.customer.email != null ? booking.customer.email : 'No email available'}">Email</span>

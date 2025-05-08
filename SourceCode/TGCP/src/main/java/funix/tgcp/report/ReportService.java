@@ -33,7 +33,7 @@ public class ReportService {
 		      
         notiService.sendNotificationToAdmin(
         		reportRequest.getReporter().getFullName() + " reported a " + reportRequest.getReportType() + ", plz check it!",
-        		"/dashboard#manage-reports");		
+        		"/admin/dashboard#manage-reports");		
         
 		reportRepo.save(reportRequest);		
 	}

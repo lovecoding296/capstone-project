@@ -115,36 +115,37 @@ public class ReviewService {
 	}
 
 	@Transactional
-	public ResponseEntity<String> addReview(Review reviewRequest) {
+	public void addReview(Review reviewRequest) {
+	    Long bookingId = reviewRequest.getBooking().getId();
+	    Long reviewedUserId = reviewRequest.getReviewedUser().getId();
 
-		Optional<Booking> bOp = bookingService.findById(reviewRequest.getBooking().getId());
-		Optional<User> reviewedUserOp = userService.findById(reviewRequest.getReviewedUser().getId());
+	    Booking booking = bookingService.findById(bookingId)
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid booking ID"));
 
-		if (bOp.isEmpty() || reviewedUserOp.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid booking or reviewed user ID");
-		}
+	    User reviewedUser = userService.findById(reviewedUserId)
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid reviewed user ID"));
 
-		Booking b = bOp.get();
-		User reviewedUser = reviewedUserOp.get();
+	    User reviewer = reviewRequest.getReviewer();
 
-		ArrayList<User> participants = new ArrayList<User>();
-		participants.add(b.getCustomer());
-		participants.add(b.getGuide());
+	    if (!booking.getCustomer().equals(reviewer)) {
+	        throw new SecurityException("You are not allowed to review this user");
+	    }
+	    
+	    boolean alreadyReviewed = reviewRepository.existsByReviewerIdAndBookingId(bookingId, reviewer.getId());
+	    if (alreadyReviewed) {
+	        throw new IllegalStateException("You have already reviewed this booking");
+	    }
 
-		if (participants.contains(reviewedUser) && participants.contains(reviewRequest.getReviewer())) {
-			reviewRepository.save(reviewRequest);
-			
-			userService.updateRating(reviewedUser, reviewRequest.getRating());
-			
-			notificationService.sendNotification(
-					reviewRequest.getReviewedUser(),
-					reviewRequest.getReviewer().getFullName() + " rated you " + reviewRequest.getRating() + " stars",
-	    			"/users/" + reviewRequest.getReviewedUser().getId());
-			
-			return ResponseEntity.ok("Review submitted successfully");
-		} else {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to review this user");
-		}
+	    reviewRequest.setReviewedUser(reviewedUser);
+	    reviewRepository.save(reviewRequest);
+
+	    userService.updateRating(reviewedUser, reviewRequest.getRating());
+
+	    notificationService.sendNotification(
+	        reviewedUser,
+	        String.format("%s rated you %d stars", reviewer.getFullName(), reviewRequest.getRating()),
+	        "/users/" + reviewedUser.getId()
+	    );
 	}
 
 	public List<Review> getAllReviews() {

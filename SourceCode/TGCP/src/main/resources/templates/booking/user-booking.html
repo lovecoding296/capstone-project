@@ -271,7 +271,7 @@
 				</p>
 				<script>
 					var totalPrice = parseFloat("[[${booking.totalPrice}]]");
-					document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
+					document.getElementById('totalPrice').textContent = totalPrice.toLocaleString('vi-VN');
 				</script>
 			</div>
 
@@ -287,8 +287,8 @@
 						</a>
 						<p class="text-center">
 							<span
-								th:text="${booking.guide.averageRating != null ? booking.guide.averageRating : 'N/A'}">N/A</span>⭐
-								<br></bt><span>Completed services:<span th:text="${bookingCount}"></span></span>
+								th:text="${booking.guide.averageRating != null ? #numbers.formatDecimal(booking.guide.averageRating, 1, 1) : 'N/A'}">N/A</span>⭐
+								<br></bt><span>Completed services:<span th:text="${completedCount}"></span></span>
 						</p>
 						<p><strong>Email:</strong><span
 								th:text="${booking.guide.email != null ? booking.guide.email : 'No email available'}">Email</span>

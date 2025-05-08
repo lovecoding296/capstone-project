@@ -35,7 +35,9 @@ public interface GuideServiceRepository extends JpaRepository<GuideService, Long
 	
 	Page<GuideService> findByGuideId(Long userId, Pageable pageable);
 
-	List<GuideService> findByGuideId(Long userId);
+	@Query("SELECT g FROM GuideService g WHERE g.guide.id = :userId ORDER BY g.type ASC, g.city ASC, g.language ASC, g.groupSizeCategory ASC")
+	List<GuideService> findByGuideId(@Param("userId") Long userId);
+
 	
 	
 	
@@ -54,7 +56,7 @@ public interface GuideServiceRepository extends JpaRepository<GuideService, Long
 	       "AND (:language IS NULL OR gs.language = :language) " +
 	       "AND (:paymentOption IS NULL OR gs.paymentOption = :paymentOption) " +
 	       "AND (:groupSize IS NULL OR gs.groupSizeCategory = :groupSize) " +
-	       "AND (:maxPrice IS NULL OR gs.price <= :maxPrice) " +
+	       "AND (:maxPrice IS NULL OR gs.pricePerDay <= :maxPrice) " +
 	       "AND (:minRating IS NULL OR u.averageRating >= :minRating) " +
 	       "AND (:guideName IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :guideName, '%')))")
 	Page<GuideService> searchServices(ServiceType serviceType, City city, Language language,

@@ -27,6 +27,8 @@ public class FileHelper {
     public String uploadFile(MultipartFile file) throws IOException {
         // Validate file type
     	
+    	logger.info("");
+    	
     	if (file == null || file.isEmpty()) {
             // Không có file nào được upload, bỏ qua cập nhật avatar
     		System.out.println("file null or empty");

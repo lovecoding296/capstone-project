@@ -14,6 +14,7 @@ import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.ServiceType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Entity
@@ -31,7 +32,7 @@ public class User {
 	@Column(nullable = false, columnDefinition = "NVARCHAR(255)")
 	private String fullName;
 
-	@Email(message = "Địa chỉ email không đúng định dạng")
+	@Email(message = "Email address is not in correct format")
 	@Column(nullable = false, unique = true)
 	private String email;
 
@@ -51,8 +52,7 @@ public class User {
 	@Column
     private LocalDate dateOfBirth;
 
-	// @Pattern(regexp = "0\\d{9}", message = "Số điện thoại phải bắt đầu bằng số 0
-	// và có 10 chữ số")
+	@Pattern(regexp = "0\\d{9}", message = "Phone number must start with 0 and have 10 digits")
 	private String phone;
 
 	private String facebook;

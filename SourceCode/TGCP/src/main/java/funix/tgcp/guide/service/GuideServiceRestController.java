@@ -50,7 +50,7 @@ public class GuideServiceRestController {
 			guideService.setGuide(userDetails.getUser());
 		}
 
-		logger.info(guideService.getType() + " " + guideService.getPrice() + " " + guideService.getCity() + " "
+		logger.info(guideService.getType() + " " + guideService.getPricePerDay() + " " + guideService.getCity() + " "
 				+ guideService.getGroupSizeCategory() + " " + guideService.getLanguage() + " ");
 
 		try {
@@ -108,7 +108,18 @@ public class GuideServiceRestController {
 	}
 
 	@DeleteMapping("/{id}")
-	public void deleteGuideService(@PathVariable Long id) {
-		guideServiceService.deleteGuideService(id);
+	public ResponseEntity<String> deleteGuideService(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	    logger.info("Request to delete GuideService with id: {} by user: {}", id, userDetails.getUsername());
+
+	    boolean isDeleted = guideServiceService.deleteGuideService(userDetails.getId(), id);
+
+	    if (isDeleted) {
+	        logger.info("GuideService with id: {} successfully deleted by user: {}", id, userDetails.getUsername());
+	        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("GuideService successfully deleted.");
+	    } else {
+	        logger.warn("Failed to delete GuideService with id: {} by user: {}", id, userDetails.getUsername());
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to delete GuideService. It may be in use by another booking.");
+	    }
 	}
+
 }

@@ -29,14 +29,21 @@ public class LogHelper {
     public void warn(String message) {
         logger.warn("[{}] {}", getMethodName(), message);
     }
-
-	public void info(String string, Long guideId) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public void info(String format, Object... arguments) {
 		logger.info(format, arguments);
+	}
+	
+	public void error(String format, Object... arguments) {
+		logger.error(format, arguments);
+	}
+	
+	public void debug(String format, Object... arguments) {
+		logger.debug(format, arguments);
+	}
+	
+	public void warn(String format, Object... arguments) {
+		logger.warn(format, arguments);
 	}
 	
 }

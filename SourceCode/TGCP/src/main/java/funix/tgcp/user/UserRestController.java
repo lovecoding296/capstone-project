@@ -64,26 +64,60 @@ public class UserRestController {
 	
 	@PutMapping("/{id}/enable")
 	public ResponseEntity<?> enableUser(@PathVariable Long id) {
-		userService.setUserEnabled(id, true);
-		return ResponseEntity.ok("User enabled");
+	    logger.info("Request to enable user with id: {}", id);
+
+	    try {
+	        userService.setUserEnabled(id, true);
+	        logger.info("User with id: {} successfully enabled.", id);
+	        return ResponseEntity.status(HttpStatus.OK).body("User enabled successfully.");
+	    } catch (Exception e) {
+	        logger.error("Error enabling user with id: {}", id, e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error enabling user.");
+	    }
 	}
 
 	@PutMapping("/{id}/disable")
 	public ResponseEntity<?> disableUser(@PathVariable Long id) {
-		userService.setUserEnabled(id, false);
-		return ResponseEntity.ok("User disabled");
+	    logger.info("Request to disable user with id: {}", id);
+
+	    try {
+	        userService.setUserEnabled(id, false);
+	        logger.info("User with id: {} successfully disabled.", id);
+	        return ResponseEntity.status(HttpStatus.OK).body("User disabled successfully.");
+	    } catch (Exception e) {
+	        logger.error("Error disabling user with id: {}", id, e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error disabling user.");
+	    }
 	}
+
 
 	@PutMapping("/{id}/approve-kyc")
 	public ResponseEntity<?> approveKyc(@PathVariable Long id) {
-		userService.approveKyc(id);
-		return ResponseEntity.ok("KYC approved");
+	    logger.info("Request to approve KYC for user with id: {}", id);
+
+	    try {
+	        userService.approveKyc(id);
+	        logger.info("KYC successfully approved for user with id: {}", id);
+	        return ResponseEntity.status(HttpStatus.OK).body("KYC approved successfully.");
+	    } catch (Exception e) {
+	        logger.error("Error approving KYC for user with id: {}", id, e);
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error approving KYC.");
+	    }
 	}
-	
+
 	@PutMapping("/{id}/reject-kyc")
 	public ResponseEntity<?> rejectKyc(@PathVariable Long id, @RequestParam String reason) {
-		userService.rejectKyc(id, reason);
-		return ResponseEntity.ok("KYC approved");
+	    logger.info("Request to reject KYC for user with id: {} with reason: {}", id, reason);
+
+	    try {
+	        userService.rejectKyc(id, reason);
+	        logger.info("KYC successfully rejected for user with id: {}", id);
+	        return ResponseEntity.status(HttpStatus.OK).body("KYC rejected successfully.");
+	    } catch (Exception e) {
+	        logger.error("Error rejecting KYC for user with id: {}", id, e);
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error rejecting KYC.");
+	    }
 	}
+
 	
 }

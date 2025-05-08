@@ -32,7 +32,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Double findAverageRatingByReviewedUser(@Param("user") User user);
     
     
-    boolean existsByReviewerIdAndBookingId(Long reviewerId, Long bookingId);
-    
+    boolean existsByReviewerIdAndBookingId(Long reviewerId, Long bookingId);    
 	
 }

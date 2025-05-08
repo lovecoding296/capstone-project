@@ -123,16 +123,20 @@ function clearDropdown(dropdown) {
 }
 
 function calculatePrice(data, serviceType, city, groupSizeCategory, language) {
+		
 	const price = data.find(item =>
 		(!serviceType || item.type === serviceType) &&
 		(!city || item.city === city) &&
 		(!groupSizeCategory || item.groupSizeCategory === groupSizeCategory) &&
 		(!language || item.language === language)
-	)?.price;
+	)?.pricePerDay;
+	
+	console.log("calculatePrice price " + price + " " + pricePerDay)
 
 	if (price !== undefined) {
+		console.log("calculatePrice price " + price)
 		pricePerDay = price;
-		document.getElementById('pricePerDay').textContent = price.toLocaleString();
+		document.getElementById('pricePerDay').textContent = price.toLocaleString('vi-VN');
 		calculateTotal();
 	} else {
 		document.getElementById('totalPrice').textContent = 'Price not available';
@@ -165,15 +169,15 @@ function openBookingPopupWithData(element) {
 	const price = element.dataset.price;
 
 	openBookingPopup(guideId, guideName);
-
-
+	
 	setTimeout(function() {
 		// Gán giá trị cho các trường select
 		document.getElementById("serviceType").value = type;
 		document.getElementById("city").value = city;
 		document.getElementById("groupSizeCategory").value = size;
 		document.getElementById("language").value = language;
-		document.getElementById("pricePerDay").textContent = parseFloat(price).toLocaleString();
+		document.getElementById("pricePerDay").textContent = parseFloat(price).toLocaleString('vi-VN');		
+		pricePerDay = price;
 	}, 100);
 
 }
@@ -220,18 +224,73 @@ function closeBookingPopup() {
 function calculateTotal() {
 	const start = new Date(document.getElementById("startDate").value);
 	const end = new Date(document.getElementById("endDate").value);
+	
+	console.log("calculateTotal pricePerDay " + pricePerDay)
 
 	if (!isNaN(start) && !isNaN(end) && end >= start) {
 		const days = (end - start) / (1000 * 60 * 60 * 24) + 1;
 		const total = days * pricePerDay;
-		document.getElementById("totalPrice").textContent = total.toLocaleString();
+		document.getElementById("totalPrice").textContent = total.toLocaleString('vi-VN');
 	}
 }
 
 
 function submitBooking() {
 
-	createBooking()
+	console.log("submit booking")
+
+	let guideId = document.getElementById("guideId").value;
+	let startDate = document.getElementById("startDate").value;
+	let endDate = document.getElementById("endDate").value;
+	let destination = document.getElementById("locationDetail").value;
+	let totalPrice = document.getElementById("totalPrice").textContent;
+	let serviceType = document.getElementById("serviceType").value;
+	let city = document.getElementById("city").value;
+	let groupSizeCategory = document.getElementById("groupSizeCategory").value;
+	let language = document.getElementById("language").value;
+
+	if (!startDate || !endDate) {
+		alert("Please select period dates.");
+		return;
+	}
+
+	if (!destination) {
+		alert("Please enter the destination.");
+		return;
+	}
+
+
+
+	const bookingData = {
+		guide: { id: guideId },
+		guideService: {
+			guide: { id: guideId },
+			type: serviceType,
+			city: city,
+			groupSizeCategory: groupSizeCategory,
+			language: language
+		},
+		//user: { id: userId }, 
+		startDate: startDate,
+		endDate: endDate,
+		destination: destination,
+		//totalPrice: parseFloat(totalPrice.replace(/[^\d]/g, "")),
+		status: "PENDING" // Status mặc định
+	};
+
+	fetch("/api/bookings/create", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(bookingData) // Gửi toàn bộ bookingData
+	})
+		.then(response => response.json())
+		.then(data => {
+			alert("Booking successful! Please pay and send payment receipt");
+			window.location.href = `/users/bookings/${data.id}`;
+		})
+		.catch(error => console.error("Error joining:", error));
+
+
 	closeBookingPopup();
 }
 
@@ -323,7 +382,7 @@ function createBookingPopup() {
 
 function createBooking() {
 
-	console.log("createBooking")
+	console.log("submit booking")
 
 	let guideId = document.getElementById("guideId").value;
 	let startDate = document.getElementById("startDate").value;
@@ -334,18 +393,18 @@ function createBooking() {
 	let city = document.getElementById("city").value;
 	let groupSizeCategory = document.getElementById("groupSizeCategory").value;
 	let language = document.getElementById("language").value;
-	
+
 	if (!startDate || !endDate) {
-	    alert("Please select period dates.");
-	    return; 
+		alert("Please select period dates.");
+		return;
 	}
-	
+
 	if (!destination) {
 		alert("Please enter the destination.");
 		return;
 	}
 
-	
+
 
 	const bookingData = {
 		guide: { id: guideId },
@@ -360,7 +419,7 @@ function createBooking() {
 		startDate: startDate,
 		endDate: endDate,
 		destination: destination,
-		totalPrice: parseFloat(totalPrice.replace(/\./g, "").replace(",", ".")),
+		//totalPrice: parseFloat(totalPrice.replace(/[^\d]/g, "")),
 		status: "PENDING" // Status mặc định
 	};
 
@@ -376,4 +435,6 @@ function createBooking() {
 		})
 		.catch(error => console.error("Error joining:", error));
 
+
+	closeBookingPopup();
 }

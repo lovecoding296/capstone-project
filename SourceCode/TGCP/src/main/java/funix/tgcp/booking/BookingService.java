@@ -1,8 +1,8 @@
 // Refactored BookingService (no ResponseEntity in service layer)
 package funix.tgcp.booking;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,12 +12,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import funix.tgcp.booking.payment.PaymentOption;
 import funix.tgcp.guide.dayoff.DayOff;
 import funix.tgcp.guide.dayoff.DayOffRepository;
 import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.GuideServiceService;
 import funix.tgcp.notification.NotificationService;
+import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;
 
 @Service
@@ -32,17 +32,34 @@ public class BookingService {
 
     @Transactional
     public Optional<Booking> createBooking(Booking bookingRequest) {
-        GuideService g = bookingRequest.getGuideService();
-        Optional<GuideService> gO = guideServiceService.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(
-                bookingRequest.getGuide().getId(), g.getType(), g.getGroupSizeCategory(), g.getLanguage(), g.getCity());
+    	User guide = bookingRequest.getGuide();
+    	GuideService requestedService = bookingRequest.getGuideService();
+    	
+        Optional<GuideService> matchingService  = guideServiceService
+        		.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(
+	        		guide.getId(), 
+	        		requestedService.getType(), 
+	        		requestedService.getGroupSizeCategory(), 
+	        		requestedService.getLanguage(), 
+	        		requestedService.getCity());
 
-        if (gO.isEmpty()) return Optional.empty();
-
-        bookingRequest.setGuideService(gO.get());       
+        if (matchingService.isEmpty()) {
+        	return Optional.empty();
+        }
+        
+        GuideService selectedService = matchingService.get();
+        bookingRequest.setGuideService(selectedService);    
+        
+        Double totalPrice = calculateTotalPrice(
+                bookingRequest.getStartDate(),
+                bookingRequest.getEndDate(),
+                selectedService.getPricePerDay()
+        );
+        bookingRequest.setTotalPrice(totalPrice);
 
         Booking savedBooking = bookingRepo.save(bookingRequest);
         notifiService.sendNotification(
-                bookingRequest.getGuide(),
+        		guide,
                 bookingRequest.getCustomer().getFullName() + " booked you, please confirm!",
                 "/dashboard#manage-bookings"
         );
@@ -180,8 +197,12 @@ public class BookingService {
         return true;
     }
 
-    public long countCompletedByUserIdOrGuideId(Long userId) {
-        return bookingRepo.countCompletedByUserIdOrGuideId(userId);
+    public long countCompletedByGuideId(Long userId) {
+        return bookingRepo.countCompletedByGuideId(userId);
+    }
+    
+    public long countCompletedByUserId(Long userId) {
+        return bookingRepo.countCompletedByUserId(userId);
     }
 
     public Page<Booking> findBookingByCustomerAndFilter(Long customerId, String destination, LocalDate startDate,
@@ -213,6 +234,15 @@ public class BookingService {
                 dayOffRepo.save(date);
             }
             start = start.plusDays(1);
+        }
+    }
+    
+    public static Double calculateTotalPrice(LocalDate startDate, LocalDate endDate, Double pricePerDay) {
+        if (startDate != null && endDate != null && !endDate.isBefore(startDate)) {
+            long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+            return days * pricePerDay;
+        } else {
+            throw new IllegalArgumentException("The end date must be after or equal to the start date.");
         }
     }
 }

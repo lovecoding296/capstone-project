@@ -42,26 +42,26 @@ public class DummyData implements ApplicationRunner {
         
         createUser("admin@tgcp.com", "admin", "123", Role.ROLE_ADMIN);
         createUser("giang@tgcp.com", "giang", "123", Role.ROLE_USER);
-        createUser("duc@tgcp.com",   "duc",   "123", Role.ROLE_USER);
+        createUser("phi@tgcp.com",   "phi",   "123", Role.ROLE_USER);
         
-        createUser("phi@tgcp.com",   "phi",   "123", Role.ROLE_GUIDE,  	88,  4.8, true,  false, "/uploads/guide1.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi1@tgcp.com",  "phi1",  "123", Role.ROLE_GUIDE,  	150, 4.7, true,  false, "/uploads/guide2.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi2@tgcp.com",  "phi2",  "123", Role.ROLE_GUIDE,   32,  5,   true,  false, "/uploads/guide3.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi3@tgcp.com",  "phi3",  "123", Role.ROLE_GUIDE,   5,   4,   true,  false, "/uploads/guide4.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi4@tgcp.com",  "phi4",  "123", Role.ROLE_GUIDE,  	15,  4.6, true,  true,  "/uploads/guide5.webp", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi5@tgcp.com",  "phi5",  "123", Role.ROLE_GUIDE,   100, 5,   true,  true,  "/uploads/guide6.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi6@tgcp.com",  "phi6",  "123", Role.ROLE_GUIDE,  	40,  5,   true,  false, "/uploads/guide1.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi7@tgcp.com",  "phi7",  "123", Role.ROLE_GUIDE,   60,  5,   true,  true,  "/uploads/guide2.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi8@tgcp.com",  "phi8",  "123", Role.ROLE_GUIDE,   100, 3.9, false, true,  "/uploads/guide3.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi9@tgcp.com",  "phi9",  "123", Role.ROLE_GUIDE,  	70,  4.8, true,  false, "/uploads/guide4.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi10@tgcp.com", "ph10", "123",  Role.ROLE_GUIDE,   100, 4.6, false, true,  "/uploads/guide5.webp", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi11@tgcp.com", "phi11", "123", Role.ROLE_GUIDE,  	80,  4.7, true,  true,  "/uploads/guide6.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi12@tgcp.com", "phi12", "123", Role.ROLE_GUIDE,   99,  4.9, false, true,  "/uploads/guide1.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi13@tgcp.com", "phi13", "123", Role.ROLE_GUIDE,   32,  4.2, true,  true,  "/uploads/guide2.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi14@tgcp.com", "phi14", "123", Role.ROLE_GUIDE,   11,  4.8, true,  true,  "/uploads/guide3.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi15@tgcp.com", "phi15", "123", Role.ROLE_GUIDE,  	5,   4.9, true,  true,  "/uploads/guide4.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi16@tgcp.com", "phi16", "123", Role.ROLE_GUIDE,  	13,  4.8, true,  true,  "/uploads/guide5.webp", "Vietcombank", "Nguyen Van A", "0123456789123");
-        createUser("phi17@tgcp.com", "phi17", "123", Role.ROLE_GUIDE,   25,  4.9, true,  true,  "/uploads/guide6.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("duc@tgcp.com",   	"Nguyễn Văn Đức",   "123", Role.ROLE_GUIDE,  	88,  4.8, true,  false, "/uploads/guide1.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("linh@tgcp.com",  	"Trần Thị Linh",  	"123", Role.ROLE_GUIDE,  	150, 4.7, true,  false, "/uploads/guide2.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("minh@tgcp.com",  	"Lê Văn Minh",  	"123", Role.ROLE_GUIDE,   	32,  5,   true,  false, "/uploads/guide3.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("huy@tgcp.com",  	"Nguyễn Hữu Huy",  	"123", Role.ROLE_GUIDE,   	5,   4,   true,  false, "/uploads/guide4.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("thao@tgcp.com",  	"Phạm Thị Thảo",  	"123", Role.ROLE_GUIDE,  	15,  4.6, true,  true,  "/uploads/guide5.webp", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("tuan@tgcp.com",  	"Đỗ Tuấn Anh",  	"123", Role.ROLE_GUIDE,  	100, 5,   true,  true,  "/uploads/guide6.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("nga@tgcp.com",  	"Bùi Thị Nga",  	"123", Role.ROLE_GUIDE,  	40,  5,   true,  false, "/uploads/guide1.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("khanh@tgcp.com",  	"Trịnh Toàn Khánh", "123", Role.ROLE_GUIDE,   	60,  5,   true,  true,  "/uploads/guide2.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("thu@tgcp.com",  	"Đặng Thị Thu",  	"123", Role.ROLE_GUIDE,   	100, 3.9, false, true,  "/uploads/guide3.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("long@tgcp.com",  	"Hồ Hoàng Long",  	"123", Role.ROLE_GUIDE,  	70,  4.8, true,  false, "/uploads/guide4.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("anh@tgcp.com", 		"Nguyễn Thị Ánh", 	"123",  Role.ROLE_GUIDE,   	100, 4.6, false, true,  "/uploads/guide5.webp", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("bao@tgcp.com", 		"Lý Văn Bảo", 		"123", Role.ROLE_GUIDE,  	80,  4.7, true,  true,  "/uploads/guide6.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("trang@tgcp.com", 	"Mai Thị Trang", 	"123", Role.ROLE_GUIDE,   	99,  4.9, false, true,  "/uploads/guide1.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("khoa@tgcp.com", 	"Vũ Ngọc Khoa", 	"123", Role.ROLE_GUIDE,   	32,  4.2, true,  true,  "/uploads/guide2.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("tien@tgcp.com", 	"Cao Minh Tiến", 	"123", Role.ROLE_GUIDE,   	11,  4.8, true,  true,  "/uploads/guide3.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("hien@tgcp.com", 	"Đinh Thị Hiền", 	"123", Role.ROLE_GUIDE,  	5,   4.9, true,  true,  "/uploads/guide4.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("son@tgcp.com", 		"Tạ Quốc Sơn", 		"123", Role.ROLE_GUIDE,  	13,  4.8, true,  true,  "/uploads/guide5.webp", "Vietcombank", "Nguyen Van A", "0123456789123");
+        createUser("nhu@tgcp.com", 		"Lâm Thị Như", 		"123", Role.ROLE_GUIDE,   	25,  4.9, true,  true,  "/uploads/guide6.jpg", "Vietcombank", "Nguyen Van A", "0123456789123");
 	}
 	
 	private void createService(User u, City c, Language l, ServiceType t, GroupSizeCategory g, Double price) {
@@ -71,7 +71,7 @@ public class DummyData implements ApplicationRunner {
 		gs.setLanguage(l);
 		gs.setGroupSizeCategory(g);
 		gs.setType(t);
-		gs.setPrice(price);
+		gs.setPricePerDay(price);
 		gs.setGuide(u);
 		
 		guideServiceService.createGuideService(gs);

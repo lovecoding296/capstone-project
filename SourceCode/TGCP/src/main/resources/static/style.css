@@ -24,6 +24,11 @@ body {
     cursor: not-allowed !important; /* Giữ con trỏ không cho phép */
 }
 
+.max-w-300 {
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
 img {
 	object-fit: cover;
 }
@@ -165,6 +170,10 @@ a {
 	padding: 40px 80px;
 	margin-top: 80px;
 	height: 400px;
+}
+
+#footer a{
+	color: white;	
 }
 
 

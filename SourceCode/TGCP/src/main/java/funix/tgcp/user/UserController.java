@@ -29,14 +29,18 @@ import funix.tgcp.booking.review.ReviewService;
 import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.guide.service.GroupSizeCategory;
 import funix.tgcp.guide.service.GuideService;
+import funix.tgcp.guide.service.GuideServiceService;
 import funix.tgcp.guide.service.ServiceType;
 import funix.tgcp.post.Post;
 import funix.tgcp.post.PostService;
 import funix.tgcp.util.FileHelper;
+import funix.tgcp.util.LogHelper;
 import jakarta.validation.Valid;
 
 @Controller
 public class UserController {
+	
+	private static final LogHelper logger = new LogHelper(UserController.class);
 
     @Autowired
     private UserService userService;
@@ -52,6 +56,9 @@ public class UserController {
 
 	@Autowired
 	private ReviewService reviewService;
+	
+	@Autowired
+	private GuideServiceService guideServiceService;
     
 	// Lấy thông tin người dùng theo ID
 	@GetMapping("/users/{userId}")
@@ -60,17 +67,18 @@ public class UserController {
 			User user = userService.getUserDetails(userId);
             List<Post> posts = postService.findTop3ByAuthorIdOrderByCreatedAtDesc(userId);            
             List<Review> reviews = reviewService.findByReviewedUserIdOrderByRatingDesc(userId);
-        	long bookingCount = bookingService.countCompletedByUserIdOrGuideId(userId);
+        	long rentedCount = bookingService.countCompletedByUserId(userId);
+        	long completedCount = bookingService.countCompletedByGuideId(userId);
         	
+        	List<GuideService> guideServices = guideServiceService.findByGuideId(userId);
         	
             model.addAttribute("posts", posts);
             model.addAttribute("reviews", reviews);
-            model.addAttribute("bookingCount", bookingCount);	
-			
+            model.addAttribute("rentedCount", rentedCount);	
+            model.addAttribute("completedCount", completedCount);	
+            model.addAttribute("guideServices", guideServices);	
+            
 			model.addAttribute("user", user);
-			
-			
-			
 			
 			return "user/user-details";
 		} catch (Exception e) {
@@ -106,6 +114,7 @@ public class UserController {
 			@RequestParam MultipartFile avatarFile, Model model,
 			@AuthenticationPrincipal CustomUserDetails userDetails) {
 
+		logger.info("");
 		if (userDetails == null) {
 			return "redirect:/login"; // Chưa đăng nhập
 		}
@@ -116,14 +125,15 @@ public class UserController {
 			return "redirect:/"; // Không có quyền chỉnh sửa
 		}
 
-		if (result.hasErrors()) {
-			return "user/user-form"; // Trả về lại trang chỉnh sửa nếu có lỗi
-		}
+//		if (result.hasErrors()) {
+//			return "user/user-form"; // Trả về lại trang chỉnh sửa nếu có lỗi
+//		}
 
 		user.setId(id);
 		try {
 			String avatarFileUrl = fileHelper.uploadFile(avatarFile);
 			if (avatarFileUrl != null) {
+				logger.info("upload avatar");
 				fileHelper.deleteFile(user.getAvatarUrl());
 				user.setAvatarUrl(avatarFileUrl);
 			}
@@ -177,7 +187,9 @@ public class UserController {
 			Set<Language> languages = new HashSet<>();
 			Set<GroupSizeCategory> groupSizes = new HashSet<>();
 
-			for (GuideService g : u.getGuideServices()) {
+			List<GuideService> guideServices = guideServiceService.findByGuideId(u.getId());
+			
+			for (GuideService g : guideServices) {
 				cities.add(g.getCity());
 				types.add(g.getType());
 				languages.add(g.getLanguage());
