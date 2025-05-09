@@ -196,4 +196,5 @@ erDiagram
     post ||--o{ comment : "has"
     post ||--o{ post_like : "receives"
     
-    comment ||--o{ comment : "has replies"```
+    comment ||--o{ comment : "has replies"
+```
