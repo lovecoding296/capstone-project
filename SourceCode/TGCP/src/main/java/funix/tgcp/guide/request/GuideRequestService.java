@@ -33,8 +33,8 @@ public class GuideRequestService {
 	private FileHelper fileHelper;
 
 	@Transactional
-	public GuideRequest registerGuide(Long userId, MultipartFile cccdFile, MultipartFile guideLicenseFile,
-			String guideLicense, String experience, boolean isInternationalGuide, boolean isLocalGuide) {
+	public GuideRequest registerGuide(Long userId, MultipartFile cccdFile, MultipartFile certificateFile,
+			String certificateNumber, String experience, boolean isInternationalGuide, boolean isLocalGuide) {
 
 		logger.info(" experience " + experience);
 
@@ -54,12 +54,12 @@ public class GuideRequestService {
 			}
 			request.setStatus(GuideRequestStatus.PENDING);
 			request.setExperience(experience);
-			request.setGuideLicense(guideLicense);
+			request.setCertificateNumber(certificateNumber);
 			request.setInternationalGuide(isInternationalGuide);
 			request.setLocalGuide(isLocalGuide);
 			try {
 				logger.info(" upload file ");
-				request.setGuideLicenseUrl(fileHelper.uploadFile(guideLicenseFile));
+				request.setCertificateUrl(fileHelper.uploadFile(certificateFile));
 				request.setCccdUrl(fileHelper.uploadFile(cccdFile));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -74,23 +74,23 @@ public class GuideRequestService {
 		return null;
 	}
 
-	public GuideRequest updateGuideRequest(Long userId, MultipartFile cccdFile, MultipartFile guideLicenseFile,
-			String guideLicense, String experience, boolean isLocalGuide, boolean isInternationalGuide) {
+	public GuideRequest updateGuideRequest(Long userId, MultipartFile cccdFile, MultipartFile certificateFile,
+			String certificateNumber, String experience, boolean isLocalGuide, boolean isInternationalGuide) {
 
 		logger.info(" experience " + experience);
 		GuideRequest existingRequest = guideRequestRepository.findByUserId(userId);
 
 		if (existingRequest != null) {
 			existingRequest.setStatus(GuideRequestStatus.PENDING);
-			existingRequest.setGuideLicense(guideLicense);
+			existingRequest.setCertificateNumber(certificateNumber);
 			existingRequest.setExperience(experience);
 			existingRequest.setInternationalGuide(isInternationalGuide);
 			existingRequest.setLocalGuide(isLocalGuide);
 			try {
-				String filePath = fileHelper.uploadFile(guideLicenseFile);
+				String filePath = fileHelper.uploadFile(certificateFile);
 				if (filePath != null) {
-					fileHelper.deleteFile(existingRequest.getGuideLicenseUrl());
-					existingRequest.setGuideLicenseUrl(filePath);
+					fileHelper.deleteFile(existingRequest.getCertificateUrl());
+					existingRequest.setCertificateUrl(filePath);
 				}
 
 				filePath = fileHelper.uploadFile(cccdFile);
@@ -125,11 +125,11 @@ public class GuideRequestService {
 
 			user.setRole(Role.ROLE_GUIDE);
 			user.setExperience(request.getExperience());
-			user.setGuideLicense(request.getGuideLicense());
-			user.setGuideLicenseUrl(request.getGuideLicenseUrl());
+			user.setCertificateNumber(request.getCertificateNumber());
+			user.setCertificateUrl(request.getCertificateUrl());
 			user.setInternationalGuide(request.isInternationalGuide());
 			user.setLocalGuide(request.isLocalGuide());
-			user.setCccd(request.getCccdUrl());
+			user.setCccdUrl(request.getCccdUrl());
 
 			userRepository.save(user);
 

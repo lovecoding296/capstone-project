@@ -20,8 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findByKycApprovedFalse();
 	List<User> findByRole(Role role);
 	
-	List<User> findTop6ByRoleAndKycApprovedTrueAndAndIsActiveTrueOrderByAverageRatingDesc(Role role);
-
 	Optional<User> findByVerificationToken(String token);
 
 	boolean existsByEmail(String email);

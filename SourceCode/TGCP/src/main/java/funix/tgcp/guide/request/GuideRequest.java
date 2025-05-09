@@ -38,10 +38,10 @@ public class GuideRequest {
 	private String cccdUrl;
 
     @Column(columnDefinition = "NVARCHAR(255)")
-	private String guideLicenseUrl;
+	private String certificateUrl;
 	
 	@Column(columnDefinition = "NVARCHAR(255)")
-    private String guideLicense;
+    private String certificateNumber;
     
     @Column(columnDefinition = "NVARCHAR(2000)")
     private String experience;

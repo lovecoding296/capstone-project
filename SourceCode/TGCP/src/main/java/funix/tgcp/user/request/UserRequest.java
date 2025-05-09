@@ -52,7 +52,7 @@ public class UserRequest {
 	private String password;
 	
 	@Column(columnDefinition = "NVARCHAR(255)")
-	private String cccd;//cccd url
+	private String cccdUrl;//cccd url
 	
 	private String verificationToken;
 }

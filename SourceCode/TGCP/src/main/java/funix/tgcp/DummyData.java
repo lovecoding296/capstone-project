@@ -125,7 +125,6 @@ public class DummyData implements ApplicationRunner {
             user.setReviewCount(reviewCount);
             user.setAverageRating(rating);
             
-            user.setActive(true);
             user.setKycApproved(true);
             user.setInternationalGuide(isInternationalGuidem);
             user.setLocalGuide(isLocalGuide);

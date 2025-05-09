@@ -109,7 +109,7 @@ public class UserService {
 	    updateFieldIfNotNull(user.getDateOfBirth(), currentUser::setDateOfBirth);
 	    updateFieldIfNotNull(user.getGender(), currentUser::setGender);
 	    updateFieldIfNotEmpty(user.getAvatarUrl(), currentUser::setAvatarUrl);
-	    updateFieldIfNotEmpty(user.getCccd(), currentUser::setCccd);
+	    updateFieldIfNotEmpty(user.getCccdUrl(), currentUser::setCccdUrl);
 	    updateFieldIfNotEmpty(user.getBankName(), currentUser::setBankName);
 	    updateFieldIfNotEmpty(user.getAccountNumber(), currentUser::setAccountNumber);
 	    updateFieldIfNotEmpty(user.getAccountHolder(), currentUser::setAccountHolder);

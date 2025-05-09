@@ -170,7 +170,7 @@
 							<td th:text="${service.groupSizeCategory}">Group Size</td>
 							<td th:text="${service.language}">Language</td>
 							<td th:text="${service.city.displayName}">City</td>
-							<td class="price" th:text="${service.price} + ' VND'">Price</td>
+							<td class="price" th:text="${service.pricePerDay} + ' VND'">Price</td>
 							<td>
 								<a th:href="@{/users/{id}(id=${service.guide.id})}"
 									style="text-decoration: none; color: inherit;">
@@ -183,7 +183,7 @@
 							</td>
 							<td>
 								<span th:if="${service.guide.averageRating != null}"
-									th:text="${service.guide.averageRating} + ' ⭐'">Rating</span>
+									th:text="${#numbers.formatDecimal(service.guide.averageRating, 1, 1)} + ' ⭐'">Rating</span>
 								<span th:if="${service.guide.averageRating == null}">N/A</span>
 							</td>
 							<td th:if="${session.loggedInUser == null}">
@@ -198,11 +198,9 @@
 								            data-group-size=${service.groupSizeCategory.name()},
 								            data-language=${service.language.name()},
 								            data-city=${service.city.name()},
-											data-price=${service.price}" onclick="openBookingPopupWithData(this)">
+											data-price=${service.pricePerDay}" onclick="openBookingPopupWithData(this)">
 									Book
 								</a>
-
-
 							</td>
 						</tr>
 					</tbody>

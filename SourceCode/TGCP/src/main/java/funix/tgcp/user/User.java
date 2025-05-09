@@ -77,10 +77,8 @@ public class User {
 	private boolean enabled = true; // report
 	
 	@Column(columnDefinition = "NVARCHAR(255)")
-	private String cccd;//cccd url
+	private String cccdUrl;//cccd url
 	
-	private boolean isActive = true;
-
 	public boolean isAdmin() {
 		return this.role == Role.ROLE_ADMIN;
 	}
@@ -90,10 +88,10 @@ public class User {
 	}	
 	
 	@Column(columnDefinition = "NVARCHAR(255)")
-	private String guideLicenseUrl;
+	private String certificateUrl;
 	
 	@Column(columnDefinition = "NVARCHAR(255)")
-    private String guideLicense;
+    private String certificateNumber;
     
     @Column(columnDefinition = "NVARCHAR(2000)")
     private String experience;
