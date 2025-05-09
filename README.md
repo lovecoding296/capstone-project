@@ -1,7 +1,8 @@
 # capstone-project
 
 
-```erDiagram
+```mermaid
+erDiagram
     app_user {
         bigint id PK
         varchar email
