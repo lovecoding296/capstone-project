@@ -190,9 +190,9 @@
     
     booking ||--o{ payment : "has"
     booking ||--o{ day_off : "generates"
-    booking ||--o{ review : "generates"``` </pre>
+    booking ||--o{ review : "generates"
     
     post ||--o{ comment : "has"
     post ||--o{ post_like : "receives"
     
-    comment ||--o{ comment : "has replies"
+    comment ||--o{ comment : "has replies"``` </pre>
