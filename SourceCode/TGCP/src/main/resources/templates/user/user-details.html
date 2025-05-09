@@ -94,7 +94,7 @@
 				<div th:if="${session.loggedInUser != null and session.loggedInUser.isAdmin()}">
 					<label><i>Citizen ID photo:</i></label>
 					<br>
-					<img th:src="@{${user.cccd} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">
+					<img th:src="@{${user.cccdUrl} ?: '/uploads/default-cccd.jpg'}" width="170" height="108">
 				</div>
 			</div>
 

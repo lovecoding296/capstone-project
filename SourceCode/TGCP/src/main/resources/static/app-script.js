@@ -1519,9 +1519,9 @@ function updateGuideStatusUI(data) {
 	// Các phần tử DOM cần cập nhật
 	const statusMessage = document.getElementById('statusMessage');
 	const guideForm = document.getElementById('guideForm');
-	const guideLicenseInput = document.getElementById('guideLicense');
+	const certificateNumberInput = document.getElementById('certificateNumber');
 	const experienceInput = document.getElementById('experience');
-	const guideLicensePreview = document.getElementById('guideLicensePreview');
+	const certificatePreview = document.getElementById('certificatePreview');
 	const cccdPreview = document.getElementById('cccdPreview');
 	const internationalGuide = document.getElementById('isInternationalGuide');
 	const localGuide = document.getElementById('isLocalGuide');
@@ -1533,15 +1533,15 @@ function updateGuideStatusUI(data) {
 		case 'REJECTED':
 			statusMessage.innerHTML = `<div class="alert alert-danger">Rejected: ${data.reason || 'No reason provided.'}</div>`;
 			guideForm.style.display = 'block';
-			guideLicenseInput.value = data.guideLicense || '';
+			certificateNumberInput.value = data.certificateNumber || '';
 			experienceInput.value = data.experience || '';
 			internationalGuide.checked = data.internationalGuide;
 			localGuide.checked = data.localGuide;
 			cccdPreview.innerHTML = data.cccdUrl
 				? `<img src="${data.cccdUrl}" alt="cccdUrl" class="img-thumbnail mt-2" width="200">`
 							: '';
-			guideLicensePreview.innerHTML = data.guideLicenseUrl
-				? `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`
+			certificatePreview.innerHTML = data.certificateUrl
+				? `<img src="${data.certificateUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`
 				: '';
 			break;
 
@@ -1553,15 +1553,15 @@ function updateGuideStatusUI(data) {
 		case 'APPROVED':
 			statusMessage.innerHTML = `<div class="alert alert-info">Your request has been approved.</div>`;
 			guideForm.style.display = 'block';
-			guideLicenseInput.value = data.guideLicense || '';
+			certificateNumberInput.value = data.certificateNumber || '';
 			experienceInput.value = data.experience || '';
 			internationalGuide.checked = data.internationalGuide;
 		    localGuide.checked = data.localGuide;
 			cccdPreview.innerHTML = data.cccdUrl
 				? `<img src="${data.cccdUrl}" alt="cccdUrl" class="img-thumbnail mt-2" width="200">`
 				: '';
-			guideLicensePreview.innerHTML = data.guideLicenseUrl
-				? `<img src="${data.guideLicenseUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`
+			certificatePreview.innerHTML = data.certificateUrl
+				? `<img src="${data.certificateUrl}" alt="Ảnh giấy phép" class="img-thumbnail mt-2" width="200">`
 				: '';
 			break;
 
@@ -1614,8 +1614,8 @@ async function submitGuideRegister() {
 
 	const formData = new FormData();
 	formData.append("cccdFile", document.getElementById("cccdFile").files[0]);
-	formData.append("guideLicenseFile", document.getElementById("guideLicenseFile").files[0]);
-	formData.append("guideLicense", document.getElementById("guideLicense").value);
+	formData.append("certificateFile", document.getElementById("certificateFile").files[0]);
+	formData.append("certificateNumber", document.getElementById("certificateNumber").value);
 	formData.append("experience", CKEDITOR.instances["experience"].getData());
 	formData.append("isLocalGuide", document.getElementById("isLocalGuide").checked);
 	formData.append("isInternationalGuide", document.getElementById("isInternationalGuide").checked);
@@ -1688,8 +1688,8 @@ async function fetchGuideRequests(page = 1) {
 			row.innerHTML = `
 				                <td>${request.user.fullName}</td>
 								<td><img src="${request.cccdUrl}" alt="cccd" width="100" height="60" style="object-fit: cover; border-radius: 5px;"></td>
-				                <td><img src="${request.guideLicenseUrl}" alt="Guide License" width="100" height="60" style="object-fit: cover; border-radius: 5px;"></td>
-				                <td>${request.guideLicense}</td>
+				                <td><img src="${request.certificateUrl}" alt="Guide License" width="100" height="60" style="object-fit: cover; border-radius: 5px;"></td>
+				                <td>${request.certificateNumber}</td>
 								<td>${request.localGuide}</td>
 								<td>${request.internationalGuide}</td>
 				                <td>${request.experience}</td>
