@@ -11,6 +11,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,15 +32,16 @@ public class Notification {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 
-    @Column(columnDefinition = "NVARCHAR(1000)")
+    @Column(columnDefinition = "NVARCHAR(1000)", nullable = false)
     private String message;
 
     private boolean isRead = false;
     
-    @Column(columnDefinition = "NVARCHAR(1000)")
+    @Column(columnDefinition = "NVARCHAR(1000)", nullable = false)
     private String sourceLink;
 
     private LocalDateTime createdAt = LocalDateTime.now();

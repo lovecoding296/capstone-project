@@ -34,13 +34,13 @@ public class GuideRequest {
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // User gửi yêu cầu
     
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(255)", nullable = false)
 	private String cccdUrl;
 
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(255)", nullable = false)
 	private String certificateUrl;
 	
-	@Column(columnDefinition = "NVARCHAR(255)")
+	@Column(columnDefinition = "NVARCHAR(255)", nullable = false)
     private String certificateNumber;
     
     @Column(columnDefinition = "NVARCHAR(2000)")

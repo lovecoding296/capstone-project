@@ -39,9 +39,10 @@ public class Review {
     @Max(5)
     private int rating; // 1-5 sao
     
-    @Column(columnDefinition = "NVARCHAR(1000)")
+    @Column(columnDefinition = "NVARCHAR(1000)", nullable = false)
     private String feedback;
     
+    @Column(nullable = false)
     private LocalDateTime reviewDate;
     
     @ManyToOne

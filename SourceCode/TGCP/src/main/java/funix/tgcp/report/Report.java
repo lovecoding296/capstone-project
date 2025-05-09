@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Report {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "reporter_id", nullable = false)
     private User reporter; // Người gửi báo cáo
 
     @Enumerated(EnumType.STRING)

@@ -46,11 +46,11 @@ public class Payment {
     private String senderAccountName;
 
     // Nội dung chuyển khoản
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String transactionNote;
 
     // Lưu ảnh xác nhận giao dịch (URL)
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String transactionImageUrl;   
 
     @Enumerated(EnumType.STRING)
