@@ -1,7 +1,7 @@
 # capstone-project
 
 
-<pre> ```erDiagram
+```erDiagram
     app_user {
         bigint id PK
         varchar email
@@ -195,4 +195,4 @@
     post ||--o{ comment : "has"
     post ||--o{ post_like : "receives"
     
-    comment ||--o{ comment : "has replies"``` </pre>
+    comment ||--o{ comment : "has replies"```
