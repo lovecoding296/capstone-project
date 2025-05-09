@@ -1,7 +1,7 @@
 # capstone-project
 
 
-erDiagram
+<pre> ```erDiagram
     app_user {
         bigint id PK
         varchar email
@@ -190,7 +190,7 @@ erDiagram
     
     booking ||--o{ payment : "has"
     booking ||--o{ day_off : "generates"
-    booking ||--o{ review : "generates"
+    booking ||--o{ review : "generates"``` </pre>
     
     post ||--o{ comment : "has"
     post ||--o{ post_like : "receives"
