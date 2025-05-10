@@ -17,9 +17,9 @@ import funix.tgcp.user.UserService;
 import funix.tgcp.util.LogHelper;
 
 @RestController
-public class DayOffController {
+public class DayOffRestController {
 
-	private static final LogHelper logger = new LogHelper(DayOffController.class);
+	private static final LogHelper logger = new LogHelper(DayOffRestController.class);
 
 	
 	@Autowired

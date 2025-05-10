@@ -19,9 +19,9 @@ import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.util.LogHelper;
 
 @RestController
-public class GuideIncomeController {
+public class GuideIncomeRestController {
 	
-	private static final LogHelper logger = new LogHelper(GuideIncomeController.class);
+	private static final LogHelper logger = new LogHelper(GuideIncomeRestController.class);
 
 	
 	@Autowired

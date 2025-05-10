@@ -19,10 +19,10 @@ import funix.tgcp.util.LogHelper;
 
 @RestController
 @RequestMapping("/api/notifications")
-public class NotificationController {
+public class NotificationRestController {
 
 	
-	private static final LogHelper logger = new LogHelper(NotificationController.class);
+	private static final LogHelper logger = new LogHelper(NotificationRestController.class);
 
 	
 	@Autowired

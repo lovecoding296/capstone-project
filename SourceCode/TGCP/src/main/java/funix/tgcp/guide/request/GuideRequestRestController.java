@@ -19,9 +19,9 @@ import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.util.LogHelper;
 
 @RestController
-public class GuideRequestController {
+public class GuideRequestRestController {
 	
-	private static final LogHelper logger = new LogHelper(GuideRequestController.class);
+	private static final LogHelper logger = new LogHelper(GuideRequestRestController.class);
 
 	
     @Autowired

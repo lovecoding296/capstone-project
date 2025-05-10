@@ -22,9 +22,9 @@ import funix.tgcp.util.LogHelper;
 
 @RestController
 @RequestMapping("/api/payments")
-public class PaymentController {
+public class PaymentRestController {
 	
-	private static final LogHelper logger = new LogHelper(PaymentController.class);
+	private static final LogHelper logger = new LogHelper(PaymentRestController.class);
 
 
     private final PaymentService paymentService;
@@ -42,7 +42,7 @@ public class PaymentController {
 	}
     
 
-    public PaymentController(PaymentService paymentService) {
+    public PaymentRestController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
 

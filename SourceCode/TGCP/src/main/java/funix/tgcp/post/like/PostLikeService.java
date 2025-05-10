@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import funix.tgcp.user.User;
-import funix.tgcp.booking.review.ReviewController;
+import funix.tgcp.booking.review.ReviewRestController;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.post.Post;
 import jakarta.transaction.Transactional;
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 public class PostLikeService {
-	private static final Logger logger = LoggerFactory.getLogger(ReviewController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReviewRestController.class);
 
 	
     @Autowired

@@ -22,9 +22,9 @@ import funix.tgcp.util.LogHelper;
 
 @RestController
 @RequestMapping("/api/reports")
-public class ReportController {
+public class ReportRestController {
 
-	private static final LogHelper logger = new LogHelper(ReportController.class);
+	private static final LogHelper logger = new LogHelper(ReportRestController.class);
 
 	
 	@Autowired

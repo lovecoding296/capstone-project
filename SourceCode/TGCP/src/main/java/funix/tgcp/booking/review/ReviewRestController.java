@@ -18,8 +18,8 @@ import funix.tgcp.util.LogHelper;
 
 @RestController
 @RequestMapping("/api/reviews")
-public class ReviewController {
-	private static final LogHelper logger = new LogHelper(ReviewController.class);
+public class ReviewRestController {
+	private static final LogHelper logger = new LogHelper(ReviewRestController.class);
 
 	@Autowired
 	private ReviewService reviewService;

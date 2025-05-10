@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
-import funix.tgcp.booking.review.ReviewController;
+import funix.tgcp.booking.review.ReviewRestController;
 import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.post.Post;
@@ -26,8 +26,8 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/likes")
-public class PostLikeController {
-	private static final Logger logger = LoggerFactory.getLogger(ReviewController.class);
+public class PostLikeRestController {
+	private static final Logger logger = LoggerFactory.getLogger(ReviewRestController.class);
 
 	
     @Autowired

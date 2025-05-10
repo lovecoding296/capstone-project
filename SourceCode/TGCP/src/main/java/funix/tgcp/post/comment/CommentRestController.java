@@ -23,9 +23,9 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/comments")
-public class CommentController {
+public class CommentRestController {
 
-	private static final LogHelper logger = new LogHelper(CommentController.class);
+	private static final LogHelper logger = new LogHelper(CommentRestController.class);
 
 	@Autowired
 	private CommentService commentService;
