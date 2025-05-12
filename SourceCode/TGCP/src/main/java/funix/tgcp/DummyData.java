@@ -88,9 +88,7 @@ public class DummyData implements ApplicationRunner {
             user.setPassword(passwordEncoder.encode(rawPassword)); // Mật khẩu mã hóa
             user.setRole(role);
             user.setFullName(fullName);
-            user.setAvatarUrl("/uploads/default-avatar.jpg");
-            user.setKycApproved(true);
-            
+            user.setAvatarUrl("/uploads/default-avatar.jpg");            
             
             userRepo.save(user);
             
@@ -125,7 +123,6 @@ public class DummyData implements ApplicationRunner {
             user.setReviewCount(reviewCount);
             user.setAverageRating(rating);
             
-            user.setKycApproved(true);
             user.setInternationalGuide(isInternationalGuidem);
             user.setLocalGuide(isLocalGuide);
             user.setAvatarUrl(avtarUrl);

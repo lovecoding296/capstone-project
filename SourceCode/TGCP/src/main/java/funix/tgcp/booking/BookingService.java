@@ -1,4 +1,3 @@
-// Refactored BookingService (no ResponseEntity in service layer)
 package funix.tgcp.booking;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,24 +28,48 @@ public class BookingService {
     @Autowired private DayOffRepository dayOffRepo;
     @Autowired private NotificationService notifiService;
     @Autowired private GuideServiceService guideServiceService;
+    
+    private void validateGuideOwnership(Booking booking, Long guideId) {
+        if (booking == null || booking.getGuide() == null) {
+            throw new IllegalArgumentException("Booking or guide is null");
+        }
+
+        if (!booking.getGuide().getId().equals(guideId)) {
+            throw new SecurityException("Guide ID mismatch. Booking guide does not match the provided guide ID.");
+        }
+    }
+    
+    private void validateCustomerOwnership(Booking booking, Long customerId) {
+        if (booking == null || booking.getCustomer() == null) {
+            throw new IllegalArgumentException("Booking or customer is null");
+        }
+
+        if (!booking.getCustomer().getId().equals(customerId)) {
+            throw new SecurityException("Customer ID mismatch. Booking customer does not match the provided customer ID.");
+        }
+    }
+
+
 
     @Transactional
     public Optional<Booking> createBooking(Booking bookingRequest) {
-    	User guide = bookingRequest.getGuide();
+    	
+    	User guide = bookingRequest.getGuide();    
+    	
+    	logger.info("");
+    	
+		if (guide == null || bookingRequest.getStartDate() == null || bookingRequest.getEndDate() == null) {
+			throw new IllegalArgumentException();
+		}
+				
     	GuideService requestedService = bookingRequest.getGuideService();
     	
-        Optional<GuideService> matchingService  = guideServiceService
-        		.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(
-	        		guide.getId(), 
-	        		requestedService.getType(), 
-	        		requestedService.getGroupSizeCategory(), 
-	        		requestedService.getLanguage(), 
-	        		requestedService.getCity());
-
-        if (matchingService.isEmpty()) {
-        	return Optional.empty();
-        }
+    	Optional<GuideService> matchingService = guideServiceService.findValidGuideService(guide.getId(), requestedService);
         
+    	 if (matchingService.isEmpty()) {
+             throw new IllegalArgumentException("No matching guide service found for the specified criteria.");
+         }
+    	
         GuideService selectedService = matchingService.get();
         bookingRequest.setGuideService(selectedService);    
         
@@ -55,15 +78,14 @@ public class BookingService {
                 bookingRequest.getEndDate(),
                 selectedService.getPricePerDay()
         );
-        bookingRequest.setTotalPrice(totalPrice);
-
-        Booking savedBooking = bookingRepo.save(bookingRequest);
+        bookingRequest.setTotalPrice(totalPrice);        
+		
         notifiService.sendNotification(
         		guide,
                 bookingRequest.getCustomer().getFullName() + " booked you, please confirm!",
                 "/dashboard#manage-bookings"
         );
-        return Optional.of(savedBooking);
+        return Optional.of(bookingRepo.save(bookingRequest));
     }
 
     public List<Booking> getBookingsByCustomer(Long customerId) {
@@ -92,6 +114,9 @@ public class BookingService {
         if (bookingOpt.isEmpty()) return false;
 
         Booking booking = bookingOpt.get();
+        
+        validateGuideOwnership(booking, booking.getGuide().getId());
+        
         if (booking.getStatus() != BookingStatus.PENDING) {
             return false;
         }
@@ -113,11 +138,18 @@ public class BookingService {
     @Transactional
     public boolean cancelBookingByUser(Long bookingId, String reason) {
         Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);
-        if (bookingOpt.isEmpty()) return false;
+        if (bookingOpt.isEmpty()) {
+        	logger.info("booking empty");
+        	return false;
+        }
 
         Booking booking = bookingOpt.get();
+        
+        validateCustomerOwnership(booking, booking.getCustomer().getId());
+        
         if (booking.getStatus() != BookingStatus.PENDING 
         		&& booking.getStatus() != BookingStatus.CONFIRMED) {
+        	logger.info("booking status is not suitable for cancellation");
             return false;
         }
 
@@ -140,6 +172,9 @@ public class BookingService {
         if (bookingOpt.isEmpty()) return false;
 
         Booking booking = bookingOpt.get();
+        
+        validateGuideOwnership(booking, booking.getGuide().getId());
+        
         if (booking.getStatus() != BookingStatus.CONFIRMED) 
         	return false;
 
@@ -163,6 +198,9 @@ public class BookingService {
         if (bookingOpt.isEmpty()) return false;
 
         Booking booking = bookingOpt.get();
+        
+        validateGuideOwnership(booking, booking.getGuide().getId());
+        
         if (booking.getStatus() != BookingStatus.PENDING) return false;
 
         booking.setStatus(BookingStatus.REJECTED);
@@ -183,6 +221,9 @@ public class BookingService {
         if (bookingOpt.isEmpty()) return false;
 
         Booking booking = bookingOpt.get();
+        
+        validateGuideOwnership(booking, booking.getGuide().getId());
+        
         if (booking.getStatus() != BookingStatus.CONFIRMED) return false;
 
         booking.setReason(null);
@@ -237,7 +278,7 @@ public class BookingService {
         }
     }
     
-    public static Double calculateTotalPrice(LocalDate startDate, LocalDate endDate, Double pricePerDay) {
+    private Double calculateTotalPrice(LocalDate startDate, LocalDate endDate, Double pricePerDay) {
         if (startDate != null && endDate != null && !endDate.isBefore(startDate)) {
             long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
             return days * pricePerDay;

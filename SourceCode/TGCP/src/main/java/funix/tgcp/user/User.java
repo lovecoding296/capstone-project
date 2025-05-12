@@ -69,9 +69,7 @@ public class User {
 
 	@JsonIgnore
 	private String verificationToken;
-		
-	private boolean kycApproved = false; // verify cccd
-	
+			
 	private String kycRejectionReason;
 	
 	private boolean enabled = true; // report

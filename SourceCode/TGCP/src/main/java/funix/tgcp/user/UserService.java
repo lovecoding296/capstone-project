@@ -1,8 +1,8 @@
 package funix.tgcp.user;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -15,20 +15,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import funix.tgcp.exception.EmailAlreadyExistsException;
 import funix.tgcp.exception.EmailVerificationException;
 import funix.tgcp.guide.service.GroupSizeCategory;
 import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.ServiceType;
-import funix.tgcp.notification.NotificationService;
-import funix.tgcp.user.request.UserRequest;
 import funix.tgcp.util.EmailHelper;
-import funix.tgcp.util.FileHelper;
 import funix.tgcp.util.LogHelper;
-import jakarta.validation.Valid;
 
 @Service
 public class UserService {
@@ -44,10 +37,6 @@ public class UserService {
     
     @Autowired
     private EmailHelper emailHelper;
-
-    public List<User> getUnapprovedUsers() {
-        return userRepo.findByKycApprovedFalse();
-    }
 
     // Tìm User theo ID
     public Optional<User> findById(Long id) {
@@ -73,25 +62,6 @@ public class UserService {
     public void deleteById(Long id) {
     	userRepo.deleteById(id);
     }
-    
-    
-
-
-	
-	public boolean rejectKyc(Long id, String reason) {
-		Optional<User> currentUserOption = findById(id);
-
-		if (currentUserOption.isPresent()) {
-			User currentUser = currentUserOption.get();
-			currentUser.setKycApproved(false);
-			currentUser.setKycRejectionReason(reason);
-			
-			emailHelper.sendKycRejectEmail(currentUser.getEmail(), reason);			
-			userRepo.save(currentUser);
-			return true;
-		}
-		return false;		
-	}
 	
 	public void updateCurrentUser(User user) {
 		logger.info("");
@@ -157,49 +127,53 @@ public class UserService {
 		
 		userRepo.save(user);
 	}
-
-	public void setUserEnabled(Long id, boolean b) {
-		userRepo.findById(id).ifPresent(user -> {
-			user.setEnabled(b);
-			userRepo.save(user);
-		});
-		
+	
+	public void setUserEnabled(Long id, boolean enabled) {
+	    Optional<User> userOpt = userRepo.findById(id);
+	    
+	    if (userOpt.isPresent()) {
+	        User user = userOpt.get();
+	        user.setEnabled(enabled);
+	        userRepo.save(user);
+	    } else {
+	        throw new NoSuchElementException("User not found with id: " + id);
+	    }
 	}
 
-	public void approveKyc(Long id) {
-		userRepo.findById(id).ifPresent(user -> {
-			user.setKycApproved(true);
-			userRepo.save(user);			
-			emailHelper.sendApprovalNotificationEmail(user.getEmail());		
-		});		
-	}
-
-	public Page<User> findUserByFilter(String email, String fullName, Role role, Boolean kycApproved, Boolean enabled,
+	public Page<User> findUserByFilter(String email, String fullName, Role role, Boolean enabled,
 			Pageable pageable) {
-		return userRepo.findUserByFilter(email, fullName, role, kycApproved, enabled, pageable);
+		return userRepo.findUserByFilter(email, fullName, role, enabled, pageable);
 	}
 
 	public void forgotPassword(String email) {
 		logger.info("email " + email);
+		
+		if(email == null ) {
+			throw new IllegalArgumentException();
+		}
+		
 		Optional<User> userOp = findByEmail(email);
 		
 		if(userOp.isPresent()) {
 			
 			String token = UUID.randomUUID().toString();
-	        System.out.println("Tạo token ngẫu nhiên " + token);	      
+	        System.out.println("Create random token: " + token);	      
 	        
 	        logger.info("create token " + token);
 	        
 	        
 	        userOp.get().setVerificationToken(token);
 	        userRepo.save(userOp.get());
-	        emailHelper.sendForgotPasswordEmail(email, token);
+	        emailHelper.sendResetPasswordEmail(email, token);
 		}
 	}
 
 	public void handleResetPassword(String token, String newPassword) throws EmailVerificationException {
 		logger.info("token " + token + " newPassword " + newPassword);
 		
+		if(token == null || newPassword == null) {
+			throw new IllegalArgumentException();
+		}
 		
 		Optional<User> optionalUser = userRepo.findByVerificationToken(token);
 

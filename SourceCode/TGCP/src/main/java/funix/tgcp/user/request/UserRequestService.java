@@ -33,9 +33,7 @@ public class UserRequestService {
     
     @Autowired
 	private PasswordEncoder passwordEncoder;
-    
-    @Autowired 
-    private NotificationService notiService;
+ 
 	
 	@Transactional
     public UserRequest registerUser(@Valid UserRequest userRequest) throws EmailAlreadyExistsException, IOException {
@@ -46,7 +44,7 @@ public class UserRequestService {
 		
 		// Tạo token ngẫu nhiên
         String token = UUID.randomUUID().toString();
-        System.out.println("Tạo token ngẫu nhiên " + token);
+        System.out.println("Create random token: " + token);
         
         userRequest.setVerificationToken(token);
         userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
@@ -72,9 +70,6 @@ public class UserRequestService {
         	
             userRequestRepo.delete(userRequest);            
             userRepo.save(user);            
-            notiService.sendNotificationToAdmin(
-            		"New user registered, please check kyc!", 
-            		"/admin/dashboard#manage-users");
         } else {
             throw new EmailVerificationException("Invalid verification token or the token has expired.");
         }

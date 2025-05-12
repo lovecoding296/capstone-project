@@ -1,7 +1,5 @@
 package funix.tgcp.booking.review;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +21,6 @@ public class ReviewRestController {
 
 	@Autowired
 	private ReviewService reviewService;
-
-	
-	
-	
-	@GetMapping
-    public ResponseEntity<List<Review>> getAllReviews() {
-        List<Review> reviews = reviewService.getAllReviews();
-        return ResponseEntity.ok(reviews);
-    }
 
 	@PostMapping
 	public ResponseEntity<String> submitReview(

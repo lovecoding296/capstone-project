@@ -72,4 +72,19 @@ public class JwtUtil {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+    
+    
+    // Tạo token luôn valid
+    public String createToken(Long id, String email) {
+    	Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", id); // Thêm userId vào JWT
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 }

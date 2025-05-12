@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
@@ -22,8 +23,8 @@ public class SecurityConfig {
 	@Autowired
 	private CustomAuthenticationFailureHandler failureHandler;
 	
-	//@Autowired
-	//private JwtFilter authenticationFilter;
+	@Autowired
+	private JwtFilter authenticationFilter;
     
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -62,7 +63,7 @@ public class SecurityConfig {
                 .maxSessionsPreventsLogin(false) // Nếu user đăng nhập lại thì session cũ bị xóa
             )
             .csrf().disable() // Disable CSRF (optional)
-            //.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic().disable();            
         return http.build();
     }

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import funix.tgcp.booking.BookingService;
 import funix.tgcp.booking.review.Review;
@@ -212,15 +211,6 @@ public class UserController {
         
 
         return "guide/guide-list"; // Tên view Thymeleaf trả về, ví dụ: templates/guides/list.html
-    }
-    
-    
-    //verify cccd
-    @GetMapping("/manager-user/verify")
-    public String manageVerify(Model model) {
-    	 List<User> users = userService.getUnapprovedUsers();     
-         model.addAttribute("users", users);
-         return "user/verify-list";
     }
 
 }

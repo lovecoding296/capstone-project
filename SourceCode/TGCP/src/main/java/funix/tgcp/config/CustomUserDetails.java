@@ -58,10 +58,7 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		 
-		return user.isKycApproved();
-		
-//		return true;
+		return true;
 	}
 
 	@Override

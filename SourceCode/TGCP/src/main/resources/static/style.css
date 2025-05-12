@@ -8,6 +8,14 @@ body {
 
 }
 
+.login-container {
+	min-height: 575px;
+}
+
+.main-body {
+	min-height: 575px;
+}
+
 
 .disabled-btn {
     background-color: #d6d6d6 !important; /* Màu nền xám nhạt */

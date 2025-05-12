@@ -637,11 +637,6 @@ async function fetchUsers(page = 1) {
 				actions.push(`<button class="btn btn-sm btn-success" onclick="performUserAction(${user.id}, 'enable')">Enable</button>`);
 			}
 
-			if (!user.kycApproved) {
-				actions.push(`<button class="btn btn-sm btn-primary" onclick="performUserAction(${user.id}, 'approve-kyc')">Approve KYC</button>`);
-				actions.push(`<button class="btn btn-sm btn-warning" onclick="performUserAction(${user.id}, 'reject-kyc')">Reject KYC</button>`);
-			}
-
 			const row = document.createElement('tr');
 			row.innerHTML = `
                 <td>${user.fullName}</td>
@@ -680,10 +675,6 @@ async function performUserAction(userId, action) {
 		case 'disable':
 			confirmMessage = 'Are you sure you want to DISABLE this user?';
 			successMessage = 'User has been disabled.';
-			break;
-		case 'approve-kyc':
-			confirmMessage = 'Are you sure you want to approve KYC for this user?';
-			successMessage = 'KYC has been approved.';
 			break;
 		default:
 			console.error('Invalid action:', action);

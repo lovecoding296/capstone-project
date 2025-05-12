@@ -1,5 +1,6 @@
 package funix.tgcp.user;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,29 +52,31 @@ public class UserRestController {
 	        @RequestParam(required = false) String email,
 	        @RequestParam(required = false) String fullName,
 	        @RequestParam(required = false) Role role, 
-	        @RequestParam(required = false) Boolean kycApproved, 
 	        @RequestParam(required = false) Boolean enabled,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size) {	    
 
 		Pageable pageable = PageRequest.of(page, size);
-		return userService.findUserByFilter(email, fullName, role, kycApproved, enabled, pageable);
+		return userService.findUserByFilter(email, fullName, role, enabled, pageable);
 	}
 
 	
 	
 	@PutMapping("/{id}/enable")
 	public ResponseEntity<?> enableUser(@PathVariable Long id) {
-	    logger.info("Request to enable user with id: {}", id);
+		logger.info("Request to enable user with id: {}", id);
 
-	    try {
-	        userService.setUserEnabled(id, true);
-	        logger.info("User with id: {} successfully enabled.", id);
-	        return ResponseEntity.status(HttpStatus.OK).body("User enabled successfully.");
-	    } catch (Exception e) {
-	        logger.error("Error enabling user with id: {}", id, e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error enabling user.");
-	    }
+		try {
+			userService.setUserEnabled(id, true);
+			logger.info("User with id: {} successfully enabled.", id);
+			return ResponseEntity.status(HttpStatus.OK).body("User enabled successfully.");
+		} catch (NoSuchElementException e) {
+			logger.error("Error enabling user with id: {}", id, e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error enabling user.");
+		} catch (Exception e) {
+			logger.error("Error enabling user with id: {}", id, e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error enabling user.");
+		}
 	}
 
 	@PutMapping("/{id}/disable")
@@ -89,35 +92,5 @@ public class UserRestController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error disabling user.");
 	    }
 	}
-
-
-	@PutMapping("/{id}/approve-kyc")
-	public ResponseEntity<?> approveKyc(@PathVariable Long id) {
-	    logger.info("Request to approve KYC for user with id: {}", id);
-
-	    try {
-	        userService.approveKyc(id);
-	        logger.info("KYC successfully approved for user with id: {}", id);
-	        return ResponseEntity.status(HttpStatus.OK).body("KYC approved successfully.");
-	    } catch (Exception e) {
-	        logger.error("Error approving KYC for user with id: {}", id, e);
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error approving KYC.");
-	    }
-	}
-
-	@PutMapping("/{id}/reject-kyc")
-	public ResponseEntity<?> rejectKyc(@PathVariable Long id, @RequestParam String reason) {
-	    logger.info("Request to reject KYC for user with id: {} with reason: {}", id, reason);
-
-	    try {
-	        userService.rejectKyc(id, reason);
-	        logger.info("KYC successfully rejected for user with id: {}", id);
-	        return ResponseEntity.status(HttpStatus.OK).body("KYC rejected successfully.");
-	    } catch (Exception e) {
-	        logger.error("Error rejecting KYC for user with id: {}", id, e);
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error rejecting KYC.");
-	    }
-	}
-
 	
 }

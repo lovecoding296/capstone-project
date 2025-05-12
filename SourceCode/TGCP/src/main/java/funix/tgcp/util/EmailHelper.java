@@ -39,7 +39,7 @@ public class EmailHelper {
     
     
     @Async
-    public void sendForgotPasswordEmail(String toEmail, String token) {
+    public void sendResetPasswordEmail(String toEmail, String token) {
         // Tạo link reset password
         String resetLink = "http://localhost:8080/reset-password?token=" + token;
 

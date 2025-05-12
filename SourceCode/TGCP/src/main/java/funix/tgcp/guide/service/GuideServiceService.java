@@ -109,6 +109,14 @@ public class GuideServiceService {
             City city) {
 		return guideServiceRepo.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(guideId, type, groupSizeCategory, language, city);
 	}
+	
+	public Optional<GuideService> findValidGuideService(Long guideId, GuideService guideService) {
+		return guideServiceRepo.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(guideId, 
+				guideService.getType(), 
+				guideService.getGroupSizeCategory(), 
+				guideService.getLanguage(), 
+				guideService.getCity());
+	}
 
 
 
