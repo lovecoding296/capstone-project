@@ -72,7 +72,7 @@ public class BookingRestControllerTest {
                 .contentType("application/json")
                 .content(bookingJson))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Failed to create booking"));
+                .andExpect(jsonPath("$.message").value("Invalid booking data"));
     }
 
     @Test
@@ -120,8 +120,8 @@ public class BookingRestControllerTest {
     void TC08_ConfirmBookingFail() throws Exception {
         mockMvc.perform(put("/api/bookings/{id}/confirm", NON_EXISTING_BOOKING_ID)
         		.header("Authorization", "Bearer " + jwtUtil.createToken(3L, "phi@tgcp.com")))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Failed to confirm booking"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Booking not found with id: " + NON_EXISTING_BOOKING_ID));
     }
 
     @Test

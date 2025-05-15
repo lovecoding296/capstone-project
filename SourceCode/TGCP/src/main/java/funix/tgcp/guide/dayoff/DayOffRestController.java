@@ -30,15 +30,15 @@ public class DayOffRestController {
 	
     //Lấy danh sách ngày nghỉ của guide hiện tại
     @GetMapping("/api/guides/day-off")
-    public List<DayOff> getDayOffs(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public List<DayOff> getDayOffs(@AuthenticationPrincipal CustomUserDetails auth) {
     	
     	User guide;
     	
-    	if(userDetails == null) {
+    	if(auth == null) {
     		guide = new User();
     		guide.setId((long)5);
     	} else {
-    		guide = userDetails.getUser();
+    		guide = auth.getUser();
     	}
     	
     	logger.info("guide.getId() " + guide.getId());
@@ -58,15 +58,15 @@ public class DayOffRestController {
 	@PostMapping("/api/guides/day-off")
 	public ResponseEntity<?> saveDayOffs(
 			@RequestBody List<LocalDate> dates,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+			@AuthenticationPrincipal CustomUserDetails auth) {
 		logger.info("");
 		User guide;
 		
-    	if(userDetails == null) {
+    	if(auth == null) {
     		guide = new User();
     		guide.setId((long)5);
     	} else {
-    		guide = userDetails.getUser();
+    		guide = auth.getUser();
     	}
 		
     	
@@ -90,14 +90,14 @@ public class DayOffRestController {
 	@PostMapping("/api/guides/day-off/delete")
 	public ResponseEntity<?> deleteUnavailableDates(
 			@RequestBody List<LocalDate> dates,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+			@AuthenticationPrincipal CustomUserDetails auth) {
 		User guide;
 		
-    	if(userDetails == null) {
+    	if(auth == null) {
     		guide = new User();
     		guide.setId((long)5);
     	} else {
-    		guide = userDetails.getUser();
+    		guide = auth.getUser();
     	}
 
 	    List<DayOff> toDelete = dayOffRepository

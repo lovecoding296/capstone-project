@@ -32,8 +32,8 @@ public class GuideRequestRestController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-            Long userId = userDetails.getId();
+            CustomUserDetails auth = (CustomUserDetails) principal;
+            Long userId = auth.getId();
             
             GuideRequest guideRequest = guideRequestService.findByUserId(userId);            
             if (guideRequest != null) {
@@ -49,8 +49,8 @@ public class GuideRequestRestController {
     @PostMapping("/api/guide-requests/register")
     public ResponseEntity<?> registerGuide(
     		@RequestParam MultipartFile cccdFile,
-            @RequestParam MultipartFile guideLicenseFile,
-            @RequestParam String guideLicense,
+            @RequestParam MultipartFile certificateFile,
+            @RequestParam String certificateNumber,
             @RequestParam String experience,
             @RequestParam boolean isInternationalGuide, 
             @RequestParam boolean isLocalGuide) {
@@ -58,14 +58,14 @@ public class GuideRequestRestController {
     	logger.info("");
     	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (principal instanceof CustomUserDetails) {
-		    CustomUserDetails userDetails = (CustomUserDetails) principal;
-			Long userId = userDetails.getId();
+		    CustomUserDetails auth = (CustomUserDetails) principal;
+			Long userId = auth.getId();
 			
 	        try {
 	        	System.out.println("GuideRequestController guideRequestService");
 	        	logger.info("userId " + userId);
-	        	GuideRequest guideRequest = guideRequestService.registerGuide(userId,cccdFile, guideLicenseFile, 
-	            		guideLicense, experience,isInternationalGuide,isLocalGuide);
+	        	GuideRequest guideRequest = guideRequestService.registerGuide(userId,cccdFile, certificateFile, 
+	        			certificateNumber, experience,isInternationalGuide,isLocalGuide);
 	            logger.info("return ok");
 	            return ResponseEntity.status(HttpStatus.OK).body(guideRequest);
 	        } catch (Exception e) {
@@ -82,8 +82,8 @@ public class GuideRequestRestController {
     @PutMapping("/api/guide-requests/register")
     public ResponseEntity<?> updateGuideRequest(
     		@RequestParam(required = false) MultipartFile cccdFile,
-            @RequestParam(required = false) MultipartFile guideLicenseFile,
-            @RequestParam String guideLicense, 
+            @RequestParam(required = false) MultipartFile certificateFile,
+            @RequestParam String certificateNumber, 
             @RequestParam String experience,
             @RequestParam boolean isLocalGuide,            
             @RequestParam boolean isInternationalGuide) {
@@ -91,11 +91,11 @@ public class GuideRequestRestController {
     	logger.info("");
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-            Long userId = userDetails.getId();
+            CustomUserDetails auth = (CustomUserDetails) principal;
+            Long userId = auth.getId();
             
             try {
-            	GuideRequest guideRequest = guideRequestService.updateGuideRequest(userId, cccdFile, guideLicenseFile, guideLicense, experience, isLocalGuide, isInternationalGuide);
+            	GuideRequest guideRequest = guideRequestService.updateGuideRequest(userId, cccdFile, certificateFile, certificateNumber, experience, isLocalGuide, isInternationalGuide);
                 if(guideRequest == null) {
                 	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "NOT_FOUND"));
                 }

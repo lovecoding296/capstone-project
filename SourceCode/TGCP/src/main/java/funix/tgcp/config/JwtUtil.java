@@ -24,13 +24,13 @@ public class JwtUtil {
     }
 
     // ✅ Tạo JWT từ UserDetails
-    public String generateToken(UserDetails userDetails, Long userId) {
+    public String generateToken(UserDetails auth, Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId); // Thêm userId vào JWT
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(auth.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -68,9 +68,9 @@ public class JwtUtil {
     }
 
     // ✅ Kiểm tra token có hợp lệ không
-    public boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, UserDetails auth) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(auth.getUsername()) && !isTokenExpired(token));
     }
     
     

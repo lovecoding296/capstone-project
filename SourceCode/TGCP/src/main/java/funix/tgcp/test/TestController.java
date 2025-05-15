@@ -51,10 +51,10 @@ public class TestController {
 				
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (principal instanceof CustomUserDetails) {
-		    CustomUserDetails userDetails = (CustomUserDetails) principal;
-			Long userId = userDetails.getId();
+		    CustomUserDetails auth = (CustomUserDetails) principal;
+			Long userId = auth.getId();
 			
-			System.out.println("user logged in: id " + userId + " " + userDetails.getUsername() + " " + userDetails.getPassword());
+			System.out.println("user logged in: id " + userId + " " + auth.getUsername() + " " + auth.getPassword());
 		} else {
 			System.out.println("principal " + (String)principal);
 		    System.out.println("Principal is not an instance of CustomUserDetails");

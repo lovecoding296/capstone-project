@@ -54,13 +54,13 @@ public class CommentRestController {
 	public ResponseEntity<Comment> createComment(
 			@PathVariable Long postId, 
 			@RequestBody @Valid Comment comment,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+			@AuthenticationPrincipal CustomUserDetails auth) {
 
-		logger.info("userDetails " + userDetails);
+		logger.info("auth " + auth);
 
 		User currentUser = new User();
-		if (userDetails != null) {
-			currentUser.setId(userDetails.getId());
+		if (auth != null) {
+			currentUser.setId(auth.getId());
 
 		} else {
 			currentUser.setId((long) 1);
@@ -72,11 +72,11 @@ public class CommentRestController {
 
 		if (!post.getAuthor().equals(currentUser)) {
 
-			logger.info(userDetails.getFullName() + " commented on your post!");
+			logger.info(auth.getFullName() + " commented on your post!");
 						
 			notificationService.sendNotification(
 					post.getAuthor(),
-					userDetails.getFullName() + " commented on your post (" + post.getTitle() + ")!",
+					auth.getFullName() + " commented on your post (" + post.getTitle() + ")!",
 					"/posts/" + postId
 					);
 			
@@ -90,12 +90,12 @@ public class CommentRestController {
 	public ResponseEntity<Comment> createReplyComment(
 	        @PathVariable Long commentId,
 	        @RequestBody @Valid Comment comment,
-	        @AuthenticationPrincipal CustomUserDetails userDetails) {
+	        @AuthenticationPrincipal CustomUserDetails auth) {
 
-	    logger.info("userDetails: {}", userDetails);
+	    logger.info("auth: {}", auth);
 
-	    Long currentUserId = (userDetails != null) ? userDetails.getId() : 1L;
-	    String currentUserName = (userDetails != null) ? userDetails.getFullName() : "Người dùng";
+	    Long currentUserId = (auth != null) ? auth.getId() : 1L;
+	    String currentUserName = (auth != null) ? auth.getFullName() : "Người dùng";
 
 	    User currentUser = new User();
 	    currentUser.setId(currentUserId);

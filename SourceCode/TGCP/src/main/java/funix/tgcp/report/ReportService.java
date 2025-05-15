@@ -1,6 +1,5 @@
 package funix.tgcp.report;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -11,17 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import funix.tgcp.notification.NotificationService;
-import funix.tgcp.user.User;
-import funix.tgcp.user.UserRepository;
 
 @Service
 public class ReportService {
 
 	@Autowired
     private ReportRepository reportRepo;
-	
-	@Autowired
-    private UserRepository userRepo;
 	
 	@Autowired NotificationService notiService;
     

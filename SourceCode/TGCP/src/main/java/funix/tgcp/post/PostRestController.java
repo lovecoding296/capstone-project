@@ -33,15 +33,15 @@ public class PostRestController {
 	        @RequestParam(required = false) PostCategory category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal CustomUserDetails auth
 	        ) {    	
     	
-		logger.info("userDetails " + userDetails);
+		logger.info("auth " + auth);
 		
 		Pageable pageable = PageRequest.of(page, size);
 		
     	return postService.findPostByCurrentUserAndByFilter(
-    			userDetails.getId(),
+    			auth.getId(),
     			title,
     			category,
     			pageable
@@ -70,7 +70,7 @@ public class PostRestController {
 	@DeleteMapping("/api/posts/{id}/delete")
 	public ResponseEntity<Void> deleteById(
 			@PathVariable Long id,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+			@AuthenticationPrincipal CustomUserDetails auth) {
 		Optional<Post> postOpt = postService.findById(id);
 	    if (postOpt.isEmpty()) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 nếu không tìm thấy bài viết
@@ -78,12 +78,12 @@ public class PostRestController {
 	    
 	    Post post = postOpt.get();
 	    
-	    if(userDetails == null) {
+	    if(auth == null) {
 	    	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	    }
 
 	    // Kiểm tra quyền sở hữu bài viết
-	    if (!userDetails.isAdmin() && !post.getAuthor().equals(userDetails.getUser())) {
+	    if (!auth.isAdmin() && !post.getAuthor().equals(auth.getUser())) {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 nếu người dùng không phải chủ sở hữu bài viết
 	    }
 

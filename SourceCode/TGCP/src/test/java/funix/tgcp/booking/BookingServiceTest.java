@@ -70,13 +70,9 @@ public class BookingServiceTest {
         bookingRequest.setGuide(guide);
         bookingRequest.setCustomer(customer);
                
-        when(guideServiceService
-        		.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(
-        				guide.getId(), 
-        				guideService.getType(), 
-        				guideService.getGroupSizeCategory(), 
-        				guideService.getLanguage(), 
-        				guideService.getCity())).thenReturn(Optional.of(guideService));
+		when(guideServiceService
+				.findValidGuideService(guide.getId(), guideService))
+				.thenReturn(Optional.of(guideService));
         when(bookingRepo.save(bookingRequest)).thenReturn(bookingRequest);
         Optional<Booking> booking = bookingService.createBooking(bookingRequest);
         
@@ -184,12 +180,8 @@ public class BookingServiceTest {
         bookingRequest.setCustomer(customer);
         
         when(guideServiceService
-        		.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(
-        				guide.getId(), 
-        				guideService.getType(), 
-        				guideService.getGroupSizeCategory(), 
-        				guideService.getLanguage(), 
-        				guideService.getCity())).thenReturn(Optional.of(guideService));
+				.findValidGuideService(guide.getId(), guideService))
+				.thenReturn(Optional.of(guideService));
         when(bookingRepo.save(bookingRequest)).thenReturn(bookingRequest);
                 
         Optional<Booking> booking = bookingService.createBooking(bookingRequest);
@@ -227,12 +219,8 @@ public class BookingServiceTest {
         bookingRequest.setCustomer(customer);
         
         when(guideServiceService
-        		.findByGuideIdAndTypeAndGroupSizeCategoryAndLanguageAndCity(
-        				guide.getId(), 
-        				guideService.getType(), 
-        				guideService.getGroupSizeCategory(), 
-        				guideService.getLanguage(), 
-        				guideService.getCity())).thenReturn(Optional.of(guideService));
+				.findValidGuideService(guide.getId(), guideService))
+				.thenReturn(Optional.of(guideService));
         when(bookingRepo.save(bookingRequest)).thenReturn(bookingRequest);
                 
         Optional<Booking> booking = bookingService.createBooking(bookingRequest);

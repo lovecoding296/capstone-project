@@ -142,8 +142,8 @@ function connect() {
 			console.log("payload.type " + payload.type)
 			if (payload.type === "NEW_MESSAGE") {
 				unReadMessageCount++;
-				updateUnReadMessageCountUI(unReadMessageCount);
-				//debounceuUpdateUnreadMessageCount();
+				//updateUnReadMessageCountUI(unReadMessageCount);
+				debounceuUpdateUnreadMessageCount();
 			} else if (payload.type === "NEW_NOTIFICATION") {
 				unReadNotificationCount++;
 				updateUnreadNotificationCountUI(unReadNotificationCount)
@@ -159,9 +159,9 @@ function connect() {
 			console.log(" chatMessage.sender.id " + chatMessage.sender.id + " userId " + userId + " " + (chatMessage.sender.id == userId))
 			appendMessageToChat(chatMessage, chatMessage.sender.id == userId);
 			
-			const chatMessages = document.getElementById('chatMessages');
+			const chatBox = document.getElementById('chatBox');
 			
-			if(chatMessages != null && chatMessage.receiver.id == userId) {
+			if(chatBox != null &&  chatBox.style.display == 'flex' && chatMessage.receiver.id == userId) {
 				debouncedMarkMessAsRead();
 				console.log("đánh dấu tin nhắn đã đọc.")
 			}

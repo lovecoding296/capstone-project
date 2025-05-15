@@ -25,49 +25,20 @@ public class ReviewRestController {
 	@PostMapping
 	public ResponseEntity<String> submitReview(
 	        @RequestBody Review reviewRequest,
-	        @AuthenticationPrincipal CustomUserDetails userDetails) {
-
-	    logger.info("Review received: {}", reviewRequest);
-	    logger.info("userDetails: {}", userDetails);
-	    logger.info("bookId: {}, reviewedId: {}", 
-	                reviewRequest.getBooking().getId(), 
-	                reviewRequest.getReviewedUser().getId());
-
-	    if (userDetails == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-	    }
-
-	    try {
-	        reviewRequest.setReviewer(userDetails.getUser());
-	        reviewService.addReview(reviewRequest);
-	        return ResponseEntity.ok("Review submitted successfully!");
-
-	    } catch (IllegalArgumentException e) {
-	        return ResponseEntity.badRequest().body(e.getMessage());
-
-	    } catch (SecurityException e) {
-	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-
-	    } catch (IllegalStateException e) {
-	        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-
-	    } catch (Exception e) {
-	        logger.error("Unexpected error when submitting review", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-	    }
+	        @AuthenticationPrincipal CustomUserDetails auth) {
+		
+        reviewRequest.setReviewer(auth.getUser());
+        reviewService.addReview(reviewRequest);
+        return ResponseEntity.ok("Review submitted successfully!");
 	}
 
 	@GetMapping("/exists")
-	public ResponseEntity<Boolean> hasReviewed(
-			@RequestParam Long bookingId, 
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<Boolean> hasReviewed(@RequestParam Long bookingId,
+			@AuthenticationPrincipal CustomUserDetails auth) {
 
-		if(userDetails != null) {
-			boolean exists = reviewService.existsByReviewerIdAndBookingId(userDetails.getUser().getId(), bookingId);
-			return ResponseEntity.ok(exists);
-		}
-		
-		return ResponseEntity.ok(false);
+		boolean exists = reviewService.existsByReviewerIdAndBookingId(auth.getId(), bookingId);
+		return ResponseEntity.ok(exists);
+
 	}
 	
 	

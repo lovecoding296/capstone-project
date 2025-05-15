@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,13 +33,17 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers("/admin/**").hasRole("ADMIN")
+            	.requestMatchers(HttpMethod.PUT, "/api/users/*/enable").hasRole("ADMIN")
+            	.requestMatchers(HttpMethod.PUT, "/api/users/*/disable").hasRole("ADMIN")
                 .requestMatchers("/users/bookings/**").authenticated()
             	.requestMatchers("/guides/bookings/**").authenticated()
             	.requestMatchers("/dashboard/**").authenticated()
             	.requestMatchers("/api/notifications/**").authenticated()
             	.requestMatchers("/api/chat/**").authenticated()
             	.requestMatchers("/api/bookings/**").authenticated()
-            	.requestMatchers("/api/comments/**").authenticated()
+            	.requestMatchers("/api/comments/**").authenticated()            	
+            	.requestMatchers("/api/guides/bookings").authenticated()
+            	.requestMatchers("/api/bookings").authenticated()
             	
         		.requestMatchers("/ckeditor/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().permitAll() // Allow all requests

@@ -27,10 +27,6 @@ public class NotificationService {
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
 
-	public List<Notification> findByUserIdAndIsReadFalse(Long currentUser) {
-		return notiRepo.findByUserIdAndIsReadFalse(currentUser);
-	}
-
 	public void markNotificationsAsRead(Long notiId) {
 
 		notiRepo.findById(notiId).ifPresent(noti -> {

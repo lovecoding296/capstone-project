@@ -33,9 +33,9 @@ public class GuideIncomeRestController {
 	}
 
 	@GetMapping("/api/guides/income-summary")
-	public Map<String, Object> getIncomeSummary(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public Map<String, Object> getIncomeSummary(@AuthenticationPrincipal CustomUserDetails auth) {
 		
-	    Long guideId = Optional.ofNullable(userDetails)
+	    Long guideId = Optional.ofNullable(auth)
 	                           .map(details -> details.getUser().getId())
 	                           .orElse(5L); // fallback ID
 	    return buildIncomeSummary(guideId);

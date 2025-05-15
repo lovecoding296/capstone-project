@@ -39,15 +39,15 @@ public class GuideServiceRestController {
 
 	@PostMapping
 	public ResponseEntity<String> createGuideService(@RequestBody GuideService guideService,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+			@AuthenticationPrincipal CustomUserDetails auth) {
 
-		logger.info("userDetails " + userDetails);
-		if (userDetails == null) {
+		logger.info("auth " + auth);
+		if (auth == null) {
 			User guide = new User();
 			guide.setId(5L);
 			guideService.setGuide(guide);
 		} else {
-			guideService.setGuide(userDetails.getUser());
+			guideService.setGuide(auth.getUser());
 		}
 
 		logger.info(guideService.getType() + " " + guideService.getPricePerDay() + " " + guideService.getCity() + " "
@@ -72,15 +72,15 @@ public class GuideServiceRestController {
             @RequestParam(required = false) PaymentOption paymentOption,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "6") int size, 
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+			@AuthenticationPrincipal CustomUserDetails auth) {
 
-		logger.info("userDetails " + userDetails);
+		logger.info("auth " + auth);
 		Pageable pageable = PageRequest.of(page, size, Sort.by("type").ascending()
 		        .and(Sort.by("city").ascending())
 		        .and(Sort.by("language").ascending())
 		        .and(Sort.by("groupSizeCategory").ascending()));
 
-		return guideServiceService.findByGuideIdAndFilter(userDetails.getId(), serviceType, city, language, groupSize, paymentOption, pageable);
+		return guideServiceService.findByGuideIdAndFilter(auth.getId(), serviceType, city, language, groupSize, paymentOption, pageable);
 	}
 	
 	@GetMapping("/guides/{guideId}")
@@ -108,16 +108,16 @@ public class GuideServiceRestController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteGuideService(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-	    logger.info("Request to delete GuideService with id: {} by user: {}", id, userDetails.getUsername());
+	public ResponseEntity<String> deleteGuideService(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails auth) {
+	    logger.info("Request to delete GuideService with id: {} by user: {}", id, auth.getUsername());
 
-	    boolean isDeleted = guideServiceService.deleteGuideService(userDetails.getId(), id);
+	    boolean isDeleted = guideServiceService.deleteGuideService(auth.getId(), id);
 
 	    if (isDeleted) {
-	        logger.info("GuideService with id: {} successfully deleted by user: {}", id, userDetails.getUsername());
+	        logger.info("GuideService with id: {} successfully deleted by user: {}", id, auth.getUsername());
 	        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("GuideService successfully deleted.");
 	    } else {
-	        logger.warn("Failed to delete GuideService with id: {} by user: {}", id, userDetails.getUsername());
+	        logger.warn("Failed to delete GuideService with id: {} by user: {}", id, auth.getUsername());
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to delete GuideService. It may be in use by another booking.");
 	    }
 	}

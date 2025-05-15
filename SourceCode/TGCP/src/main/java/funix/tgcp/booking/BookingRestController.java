@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,60 +19,48 @@ import funix.tgcp.util.LogHelper;
 
 @RestController
 public class BookingRestController {
-	
-	private static final LogHelper logger = new LogHelper(BookingRestController.class);
+
+    private static final LogHelper logger = new LogHelper(BookingRestController.class);
 
     @Autowired
     private BookingService bookingService;
 
     // API tạo booking
     @PostMapping("/api/bookings/create")
-    public ResponseEntity<?> createBooking(
-            @RequestBody Booking bookingRequest,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-
-        logger.info("userDetails " + userDetails);
-
-		if (userDetails == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(Map.of("message", "Unauthorized: user not logged in"));
-		}
-        bookingRequest.setCustomer(userDetails.getUser());
-
+    public ResponseEntity<?> createBooking(@RequestBody Booking bookingRequest, 
+    		@AuthenticationPrincipal CustomUserDetails auth) {    
+    	
+    	bookingRequest.setCustomer(auth.getUser());    	
         Optional<Booking> savedBooking = bookingService.createBooking(bookingRequest);
-
         if (savedBooking.isPresent()) {
             return ResponseEntity.ok(savedBooking.get());
         }
-
-        return ResponseEntity.status(400).body(Map.of("message", "Failed to create booking"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Failed to create booking"));
     }
 
     @GetMapping("/api/bookings")
     public Page<Booking> findBookingByCustomerAndFilter(
-	        @RequestParam(required = false) String destination,
-	        @RequestParam(required = false) LocalDate startDate,
-	        @RequestParam(required = false) LocalDate endDate, 
-	        @RequestParam(required = false) String guide, 
-	        @RequestParam(required = false) BookingStatus status,
-	        @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String destination,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) String guide,
+            @RequestParam(required = false) BookingStatus status,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
-	        @AuthenticationPrincipal CustomUserDetails userDetails){
-    	logger.info("userDetails " + userDetails);
-			
-    	Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("id")));
-    	return bookingService.findBookingByCustomerAndFilter(
-				userDetails.getId(),
-				destination,
-				startDate,
-				endDate,
-				guide,
-				status,
-				pageable);
-		    	    	
+            @AuthenticationPrincipal CustomUserDetails auth) {
+
+        logger.info("auth " + auth);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("id")));
+        return bookingService.findBookingByCustomerAndFilter(
+        		auth.getId(),
+                destination,
+                startDate,
+                endDate,
+                guide,
+                status,
+                pageable);
     }
-    
-    // API lấy tất cả booking nhận được của guide
+
     @GetMapping("/api/guides/bookings")
     public ResponseEntity<?> findBookingsByGuideAndFilter(
             @RequestParam(required = false) String destination,
@@ -83,18 +70,11 @@ public class BookingRestController {
             @RequestParam(required = false) BookingStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-
-        logger.info("userDetails: {}", userDetails);
-
-        if (userDetails == null || userDetails.getUser() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Unauthorized: user not logged in"));
-        }
+            @AuthenticationPrincipal CustomUserDetails auth) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("id")));
         Page<Booking> bookings = bookingService.findBookingByGuideAndFilter(
-                userDetails.getId(),
+                auth.getId(),
                 destination,
                 startDate,
                 endDate,
@@ -105,107 +85,62 @@ public class BookingRestController {
         return ResponseEntity.ok(bookings);
     }
 
-
     @GetMapping("/api/bookings/{bookingId}")
     public ResponseEntity<?> getBookingById(@PathVariable Long bookingId) {
         Optional<Booking> booking = bookingService.findById(bookingId);
-        
-        
+
         if (booking.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(booking.get());
     }
-    
 
-
-    // API xác nhận booking
     @PutMapping("/api/bookings/{bookingId}/confirm")
-    public ResponseEntity<?> confirmBooking(@PathVariable Long bookingId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    	
-    	if (userDetails == null || userDetails.getUser() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Unauthorized: user not logged in"));
-        }
-    	
-    	boolean success = bookingService.confirmBooking(bookingId);
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Booking confirmed successfully", "bookingId", bookingId));
-        }
-        return ResponseEntity.status(400).body(Map.of("message", "Failed to confirm booking", "bookingId", bookingId));
+    public ResponseEntity<?> confirmBooking(
+            @PathVariable Long bookingId,
+            @AuthenticationPrincipal CustomUserDetails auth) {
+
+        bookingService.confirmBooking(bookingId, auth.getId());
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Booking confirmed successfully",
+                "bookingId", bookingId
+        ));
     }
 
     @PutMapping("/api/bookings/{bookingId}/complete")
-    public ResponseEntity<?> completeBooking(@PathVariable Long bookingId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        
-    	if (userDetails == null || userDetails.getUser() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Unauthorized: user not logged in"));
-        }
-    	
-    	boolean success = bookingService.completeBooking(bookingId);
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Booking completed successfully", "bookingId", bookingId));
-        }
-        return ResponseEntity.status(400).body(Map.of("message", "Failed to complete booking", "bookingId", bookingId));
+    public ResponseEntity<?> completeBooking(@PathVariable Long bookingId, 
+    		@AuthenticationPrincipal CustomUserDetails auth) {
+        bookingService.completeBooking(bookingId, auth.getId());
+        return ResponseEntity.ok(Map.of("message", "Booking completed successfully", "bookingId", bookingId));
     }
 
     @PutMapping("/api/bookings/{bookingId}/cancel-by-user")
-    public ResponseEntity<?> cancelBookingByUser(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        
-    	if (userDetails == null || userDetails.getUser() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Unauthorized: user not logged in"));
-        }
-    	
-    	boolean success = bookingService.cancelBookingByUser(bookingId, requestBody.get("reason"));
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Booking canceled successfully", "bookingId", bookingId));
-        }
-        return ResponseEntity.status(400).body(Map.of("message", "Failed to cancel booking", "bookingId", bookingId));
+    public ResponseEntity<?> cancelBookingByUser(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody, 
+    		@AuthenticationPrincipal CustomUserDetails auth) {
+        bookingService.cancelBookingByUser(bookingId, requestBody.get("reason"), auth.getId());
+        return ResponseEntity.ok(Map.of("message", "Booking canceled successfully", "bookingId", bookingId));
     }
 
     @PutMapping("/api/bookings/{bookingId}/cancel-by-guide")
-    public ResponseEntity<?> cancelBookingByGuide(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        
-    	if (userDetails == null || userDetails.getUser() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Unauthorized: user not logged in"));
-        }
-    	
-    	boolean success = bookingService.cancelBookingByGuide(bookingId, requestBody.get("reason"));
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Booking canceled successfully", "bookingId", bookingId));
-        }
-        return ResponseEntity.status(400).body(Map.of("message", "Failed to cancel booking", "bookingId", bookingId));
+    public ResponseEntity<?> cancelBookingByGuide(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody, 
+    		@AuthenticationPrincipal CustomUserDetails auth) {
+        bookingService.cancelBookingByGuide(bookingId, requestBody.get("reason"), auth.getId());
+        return ResponseEntity.ok(Map.of("message", "Booking canceled successfully", "bookingId", bookingId));
     }
 
     @PutMapping("/api/bookings/{bookingId}/reject")
-    public ResponseEntity<?> rejectBooking(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        
-    	if (userDetails == null || userDetails.getUser() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Unauthorized: user not logged in"));
-        }
-    	
-    	boolean success = bookingService.rejectBooking(bookingId, requestBody.get("reason"));
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Booking rejected successfully", "bookingId", bookingId));
-        }
-        return ResponseEntity.status(400).body(Map.of("message", "Failed to reject booking", "bookingId", bookingId));
-    }    
+    public ResponseEntity<?> rejectBooking(@PathVariable Long bookingId, @RequestBody Map<String, String> requestBody, 
+    		@AuthenticationPrincipal CustomUserDetails auth) {
+        bookingService.rejectBooking(bookingId, requestBody.get("reason"), auth.getId());
+        return ResponseEntity.ok(Map.of("message", "Booking rejected successfully", "bookingId", bookingId));
+    }
 
     @DeleteMapping("/api/bookings/{bookingId}")
-	public ResponseEntity<?> deleteBooking(@PathVariable Long bookingId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-		
-    	if (userDetails == null || userDetails.getUser() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Unauthorized: user not logged in"));
-        }
-    	
-    	bookingService.deleteBooking(bookingId);
-		return ResponseEntity.ok(Map.of("message", "Booking has been deleted successfully."));
-	}
+    public ResponseEntity<?> deleteBooking(@PathVariable Long bookingId, 
+    		@AuthenticationPrincipal CustomUserDetails auth) {
+        bookingService.deleteBooking(bookingId, auth.getId());
+        return ResponseEntity.ok(Map.of("message", "Booking has been deleted successfully."));
+    }
 }
-

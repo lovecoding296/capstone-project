@@ -27,8 +27,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
+        UserDetails auth = (UserDetails) authentication.getPrincipal();
+        String username = auth.getUsername();
 
         // Fetch user from database
         Optional<User> user = userService.findByEmail(username);

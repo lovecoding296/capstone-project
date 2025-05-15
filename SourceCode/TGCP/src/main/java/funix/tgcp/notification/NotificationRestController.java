@@ -29,11 +29,11 @@ public class NotificationRestController {
 	private NotificationService notificationService;
 
 	@GetMapping
-	public ResponseEntity<?> viewNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<?> viewNotifications(@AuthenticationPrincipal CustomUserDetails auth) {
     	
 		Long currentUserId = (long)1;
-		if(userDetails != null ) {
-			currentUserId = userDetails.getId();
+		if(auth != null ) {
+			currentUserId = auth.getId();
     		
     	} 
     	    	
@@ -52,10 +52,10 @@ public class NotificationRestController {
     }
     
     @GetMapping("/unread-count")
-    public ResponseEntity<Integer> getUnreadNotificationsCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<Integer> getUnreadNotificationsCount(@AuthenticationPrincipal CustomUserDetails auth) {
     	Long currentUserId = 1L;
-        if (userDetails != null) {
-        	currentUserId = userDetails.getId();
+        if (auth != null) {
+        	currentUserId = auth.getId();
         }
         
         

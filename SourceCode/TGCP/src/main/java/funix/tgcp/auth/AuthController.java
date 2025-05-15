@@ -37,8 +37,8 @@ public class AuthController {
 	private UserRequestService userRequestService;
 
 	@GetMapping("/signup")
-	public String showSignupForm(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-		if (userDetails != null) {
+	public String showSignupForm(@AuthenticationPrincipal CustomUserDetails auth, Model model) {
+		if (auth != null) {
 			return "redirect:/"; // Nếu đã login, chuyển sang home
 		}
 		model.addAttribute("user", new UserRequest());
@@ -46,8 +46,8 @@ public class AuthController {
 	}
 
 	@GetMapping("/login")
-	public String login(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		if (userDetails != null) {
+	public String login(@AuthenticationPrincipal CustomUserDetails auth) {
+		if (auth != null) {
 			return "redirect:/"; // Nếu đã login, chuyển sang home
 		}
 		return "login";

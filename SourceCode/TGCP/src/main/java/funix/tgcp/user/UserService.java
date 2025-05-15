@@ -2,7 +2,6 @@ package funix.tgcp.user;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -22,6 +21,7 @@ import funix.tgcp.guide.service.GuideService;
 import funix.tgcp.guide.service.ServiceType;
 import funix.tgcp.util.EmailHelper;
 import funix.tgcp.util.LogHelper;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -136,7 +136,7 @@ public class UserService {
 	        user.setEnabled(enabled);
 	        userRepo.save(user);
 	    } else {
-	        throw new NoSuchElementException("User not found with id: " + id);
+	        throw new EntityNotFoundException("User not found with id: " + id);
 	    }
 	}
 

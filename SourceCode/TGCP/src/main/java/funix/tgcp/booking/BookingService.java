@@ -1,4 +1,5 @@
 package funix.tgcp.booking;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -8,9 +9,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.guide.dayoff.DayOff;
 import funix.tgcp.guide.dayoff.DayOffRepository;
 import funix.tgcp.guide.service.GuideService;
@@ -18,6 +22,7 @@ import funix.tgcp.guide.service.GuideServiceService;
 import funix.tgcp.notification.NotificationService;
 import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class BookingService {
@@ -28,7 +33,7 @@ public class BookingService {
     @Autowired private DayOffRepository dayOffRepo;
     @Autowired private NotificationService notifiService;
     @Autowired private GuideServiceService guideServiceService;
-    
+
     private void validateGuideOwnership(Booking booking, Long guideId) {
         if (booking == null || booking.getGuide() == null) {
             throw new IllegalArgumentException("Booking or guide is null");
@@ -38,7 +43,7 @@ public class BookingService {
             throw new SecurityException("Guide ID mismatch. Booking guide does not match the provided guide ID.");
         }
     }
-    
+
     private void validateCustomerOwnership(Booking booking, Long customerId) {
         if (booking == null || booking.getCustomer() == null) {
             throw new IllegalArgumentException("Booking or customer is null");
@@ -49,42 +54,37 @@ public class BookingService {
         }
     }
 
-
-
     @Transactional
     public Optional<Booking> createBooking(Booking bookingRequest) {
-    	
-    	User guide = bookingRequest.getGuide();    
-    	
-    	logger.info("");
-    	
-		if (guide == null || bookingRequest.getStartDate() == null || bookingRequest.getEndDate() == null) {
-			throw new IllegalArgumentException();
-		}
-				
-    	GuideService requestedService = bookingRequest.getGuideService();
-    	
-    	Optional<GuideService> matchingService = guideServiceService.findValidGuideService(guide.getId(), requestedService);
+        User guide = bookingRequest.getGuide();    
+
+        if (guide == null || bookingRequest.getStartDate() == null || bookingRequest.getEndDate() == null) {
+            throw new IllegalArgumentException("Invalid booking data");
+        }
+
+        GuideService requestedService = bookingRequest.getGuideService();
+        Optional<GuideService> matchingService = guideServiceService.findValidGuideService(guide.getId(), requestedService);
         
-    	 if (matchingService.isEmpty()) {
-             throw new IllegalArgumentException("No matching guide service found for the specified criteria.");
-         }
-    	
+        if (matchingService.isEmpty()) {
+            throw new IllegalArgumentException("No matching guide service found for the specified criteria.");
+        }
+
         GuideService selectedService = matchingService.get();
-        bookingRequest.setGuideService(selectedService);    
-        
+        bookingRequest.setGuideService(selectedService);
+
         Double totalPrice = calculateTotalPrice(
                 bookingRequest.getStartDate(),
                 bookingRequest.getEndDate(),
                 selectedService.getPricePerDay()
         );
-        bookingRequest.setTotalPrice(totalPrice);        
-		
+        bookingRequest.setTotalPrice(totalPrice);
+
         notifiService.sendNotification(
-        		guide,
+                guide,
                 bookingRequest.getCustomer().getFullName() + " booked you, please confirm!",
                 "/dashboard#manage-bookings"
         );
+
         return Optional.of(bookingRepo.save(bookingRequest));
     }
 
@@ -100,7 +100,7 @@ public class BookingService {
         return bookingRepo.findAll();
     }
 
-    public void deleteBooking(Long bookingId) {
+    public void deleteBooking(Long bookingId, Long currentUserId) {
         bookingRepo.deleteById(bookingId);
     }
 
@@ -109,16 +109,14 @@ public class BookingService {
     }
 
     @Transactional
-    public boolean confirmBooking(Long bookingId) {
-        Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);
-        if (bookingOpt.isEmpty()) return false;
-
+    public void confirmBooking(Long bookingId, Long guideId) {
+    	Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);       
         Booking booking = bookingOpt.get();
         
-        validateGuideOwnership(booking, booking.getGuide().getId());
-        
+        validateGuideOwnership(booking, guideId);
+
         if (booking.getStatus() != BookingStatus.PENDING) {
-            return false;
+            throw new IllegalStateException("Only bookings in PENDING status can be confirmed.");
         }
 
         booking.setReason(null);
@@ -126,31 +124,24 @@ public class BookingService {
         bookingRepo.save(booking);
 
         notifiService.sendNotification(
-                booking.getCustomer(),
-                booking.getGuide().getFullName() + " confirmed your booking!",
-                "/dashboard#booking-history"
+            booking.getCustomer(),
+            booking.getGuide().getFullName() + " confirmed your booking!",
+            "/dashboard#booking-history"
         );
 
         generateAutoDayOffs(booking);
-        return true;
     }
 
     @Transactional
-    public boolean cancelBookingByUser(Long bookingId, String reason) {
-        Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);
-        if (bookingOpt.isEmpty()) {
-        	logger.info("booking empty");
-        	return false;
-        }
-
+    public void cancelBookingByUser(Long bookingId, String reason, Long currentUserId) {
+        Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);       
         Booking booking = bookingOpt.get();
         
-        validateCustomerOwnership(booking, booking.getCustomer().getId());
-        
+        validateCustomerOwnership(booking, currentUserId);
+
         if (booking.getStatus() != BookingStatus.PENDING 
-        		&& booking.getStatus() != BookingStatus.CONFIRMED) {
-        	logger.info("booking status is not suitable for cancellation");
-            return false;
+                && booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new IllegalStateException("Booking cannot be canceled, invalid status.");
         }
 
         booking.setStatus(BookingStatus.CANCELED_BY_USER);
@@ -163,25 +154,24 @@ public class BookingService {
                 booking.getCustomer().getFullName() + " canceled booking!",
                 "/dashboard#manage-bookings"
         );
-        return true;
     }
 
     @Transactional
-    public boolean cancelBookingByGuide(Long bookingId, String reason) {
+    public void cancelBookingByGuide(Long bookingId, String reason, Long currentUserId) {
         Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);
-        if (bookingOpt.isEmpty()) return false;
-
         Booking booking = bookingOpt.get();
-        
-        validateGuideOwnership(booking, booking.getGuide().getId());
-        
-        if (booking.getStatus() != BookingStatus.CONFIRMED) 
-        	return false;
+
+        validateGuideOwnership(booking, currentUserId);
+
+        if (booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new IllegalStateException("Booking must be confirmed before it can be canceled.");
+        }
 
         booking.setStatus(BookingStatus.CANCELED_BY_GUIDE);
         booking.setReason(reason);
         booking.setCanceledAt(LocalDateTime.now());
         bookingRepo.save(booking);
+
         dayOffRepo.deleteByBookingId(bookingId);
 
         notifiService.sendNotification(
@@ -189,19 +179,18 @@ public class BookingService {
                 booking.getGuide().getFullName() + " canceled your booking!",
                 "/dashboard#booking-history"
         );
-        return true;
     }
 
     @Transactional
-    public boolean rejectBooking(Long bookingId, String reason) {
-        Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);
-        if (bookingOpt.isEmpty()) return false;
-
+    public void rejectBooking(Long bookingId, String reason, Long currentUserId) {
+        Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);      
         Booking booking = bookingOpt.get();
-        
-        validateGuideOwnership(booking, booking.getGuide().getId());
-        
-        if (booking.getStatus() != BookingStatus.PENDING) return false;
+
+        validateGuideOwnership(booking, currentUserId);
+
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            throw new IllegalStateException("Only pending bookings can be rejected.");
+        }
 
         booking.setStatus(BookingStatus.REJECTED);
         booking.setReason(reason);
@@ -212,19 +201,18 @@ public class BookingService {
                 booking.getGuide().getFullName() + " rejected your booking!",
                 "/dashboard#booking-history"
         );
-        return true;
     }
 
     @Transactional
-    public boolean completeBooking(Long bookingId) {
+    public void completeBooking(Long bookingId, Long currentUserId) {
         Optional<Booking> bookingOpt = bookingRepo.findById(bookingId);
-        if (bookingOpt.isEmpty()) return false;
-
         Booking booking = bookingOpt.get();
-        
-        validateGuideOwnership(booking, booking.getGuide().getId());
-        
-        if (booking.getStatus() != BookingStatus.CONFIRMED) return false;
+
+        validateGuideOwnership(booking, currentUserId);
+
+        if (booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new IllegalStateException("Booking must be confirmed before it can be completed.");
+        }
 
         booking.setReason(null);
         booking.setStatus(BookingStatus.COMPLETED);
@@ -235,13 +223,12 @@ public class BookingService {
                 "Your booking completed, please share feedback about your guide!",
                 "/dashboard#booking-history"
         );
-        return true;
     }
 
     public long countCompletedByGuideId(Long userId) {
         return bookingRepo.countCompletedByGuideId(userId);
     }
-    
+
     public long countCompletedByUserId(Long userId) {
         return bookingRepo.countCompletedByUserId(userId);
     }
@@ -277,7 +264,7 @@ public class BookingService {
             start = start.plusDays(1);
         }
     }
-    
+
     private Double calculateTotalPrice(LocalDate startDate, LocalDate endDate, Double pricePerDay) {
         if (startDate != null && endDate != null && !endDate.isBefore(startDate)) {
             long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;

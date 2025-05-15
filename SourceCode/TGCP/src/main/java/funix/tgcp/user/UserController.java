@@ -88,12 +88,12 @@ public class UserController {
 
     // Cập nhật thông tin người dùng
     @GetMapping("/users/{id}/edit")
-    public String showEditForm(@PathVariable Long id, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    	if (userDetails == null) {
+    public String showEditForm(@PathVariable Long id, Model model, @AuthenticationPrincipal CustomUserDetails auth) {
+    	if (auth == null) {
 			return "redirect:/login";
 		}
 
-		User loggedInUser = userDetails.getUser();
+		User loggedInUser = auth.getUser();
 
         if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
             return "redirect:/"; // Không phải chính chủ hoặc admin -> Từ chối truy cập
@@ -111,14 +111,14 @@ public class UserController {
 	@PostMapping("/users/{id}/edit")
 	public String updateUser(@PathVariable Long id, @Valid @ModelAttribute User user, BindingResult result,
 			@RequestParam MultipartFile avatarFile, Model model,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+			@AuthenticationPrincipal CustomUserDetails auth) {
 
 		logger.info("");
-		if (userDetails == null) {
+		if (auth == null) {
 			return "redirect:/login"; // Chưa đăng nhập
 		}
 
-		User loggedInUser = userDetails.getUser();
+		User loggedInUser = auth.getUser();
 
 		if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
 			return "redirect:/"; // Không có quyền chỉnh sửa
@@ -148,12 +148,12 @@ public class UserController {
 
 	// Xóa người dùng theo ID
 	@GetMapping("/users/{id}/delete")
-	public String deleteUser(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-		if (userDetails == null) {
+	public String deleteUser(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails auth) {
+		if (auth == null) {
 			return "redirect:/login"; // Chưa đăng nhập
 		}
 
-		User loggedInUser = userDetails.getUser();
+		User loggedInUser = auth.getUser();
 
 		if (!loggedInUser.getId().equals(id) && !loggedInUser.isAdmin()) {
 			return "redirect:/";

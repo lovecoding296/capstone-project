@@ -54,10 +54,10 @@ public class ReportRestController {
     @PostMapping("/create")
     public ResponseEntity<String> report(
     		@RequestBody Report reportRequest,
-    		@AuthenticationPrincipal CustomUserDetails userDetails) {    	
+    		@AuthenticationPrincipal CustomUserDetails auth) {    	
     	
-    	logger.info("userDetails " + userDetails);
-    	reportRequest.setReporter(userDetails.getUser());  
+    	logger.info("auth " + auth);
+    	reportRequest.setReporter(auth.getUser());  
     	
         reportService.createReport(reportRequest);
         return ResponseEntity.ok("Report submitted successfully.");

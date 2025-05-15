@@ -1,6 +1,10 @@
 package funix.tgcp.booking.payment;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,33 +35,40 @@ public class Payment {
     @JsonIgnore
     private Booking booking;
 
-    @Column(nullable = false)
+    @NotNull
+    @Positive(message = "Amount must be greater than 0")
     private double amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @NotNull
     private PaymentStatus status = PaymentStatus.PENDING;
 
     // Thông tin tài khoản người gửi
-    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(255)")
+    @NotBlank(message = "senderAccountNumber URL is required")
+    @Size(max = 255)
     private String senderAccountNumber;
 
-    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(255)")
+    @NotBlank(message = "Sender account name is required")
+    @Size(max = 255)
     private String senderAccountName;
 
     // Nội dung chuyển khoản
-    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(255)")
+    @NotBlank(message = "Transaction note is required")
+    @Size(max = 255)
     private String transactionNote;
 
     // Lưu ảnh xác nhận giao dịch (URL)
     @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Size(max = 255)
     private String transactionImageUrl;   
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @NotNull
     private PaymentType type = PaymentType.PAYMENT;
 
-    @Column(nullable = false)
+    @NotNull
     private LocalDateTime createdAt = LocalDateTime.now();
 }
-
