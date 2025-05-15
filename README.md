@@ -1,4 +1,4 @@
-# capstone-project
+# Erd Diagram
 
 
 ```mermaid
