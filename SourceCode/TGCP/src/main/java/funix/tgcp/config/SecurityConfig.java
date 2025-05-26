@@ -24,8 +24,8 @@ public class SecurityConfig {
 	@Autowired
 	private CustomAuthenticationFailureHandler failureHandler;
 	
-	@Autowired
-	private JwtFilter authenticationFilter;
+	//@Autowired
+	//private JwtFilter authenticationFilter;
     
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .maxSessionsPreventsLogin(false) // Nếu user đăng nhập lại thì session cũ bị xóa
             )
             .csrf().disable() // Disable CSRF (optional)
-            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            //.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic().disable();            
         return http.build();
     }

@@ -72,7 +72,7 @@ public class DummyData implements ApplicationRunner {
 		gs.setGroupSizeCategory(g);
 		gs.setType(t);
 		gs.setPricePerDay(price);
-		gs.setGuide(u);
+		gs.setGuide(u);		
 		
 		guideServiceService.createGuideService(gs);
 				
@@ -138,7 +138,9 @@ public class DummyData implements ApplicationRunner {
             guideRequest.setInternationalGuide(isInternationalGuidem);
             guideRequest.setLocalGuide(isLocalGuide);
             guideRequest.setStatus(GuideRequestStatus.APPROVED);
-            
+            guideRequest.setCccdUrl("/uploads/default-cccd.jpg");
+            guideRequest.setCertificateUrl("/uploads/guide-certificate.jpg");
+            guideRequest.setCertificateNumber("0123");
             
             guideRequestRepo.save(guideRequest);
             

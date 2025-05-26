@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,24 +55,25 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public String createUser(@Valid @ModelAttribute UserRequest user, BindingResult result, Model model) {
+	public String createUser(@Valid @ModelAttribute("user") UserRequest user, BindingResult result, Model model) {
 		if (result.hasErrors()) {
-			model.addAttribute("user", user);
-			return "signup";
+		    model.addAttribute("user", user);  
+		    return "signup";
 		}
+
 		String errorMessage = "";
 		try {
 			userRequestService.registerUser(user);
-			System.out.println("Đăng ký thành công, hãy chờ quản trị viên phê duyệt tài khoản.");
+			System.out.println("Registration successful, please check your email.");
 			model.addAttribute("successMessage",
-					"Registration successful, please check your email and wait for the administrator to approve your account.");
+					"Registration successful, please check your email.");
 			model.addAttribute("user", new UserRequest());
 			return "signup";
 		} catch (EmailAlreadyExistsException e) {
 			errorMessage = "Email already exists, please log in!";
 			e.printStackTrace();
 		} catch (IOException e) {
-			errorMessage = "Error occurred while uploading file. Plz try again later!";
+			errorMessage = "Error occurred while uploading file. Please try again later!";
 			e.printStackTrace();
 		}
 		model.addAttribute("user", user);

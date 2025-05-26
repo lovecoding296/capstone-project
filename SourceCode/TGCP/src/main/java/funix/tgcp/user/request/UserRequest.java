@@ -21,6 +21,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,7 +44,7 @@ public class UserRequest {
 	@Column(nullable = false, columnDefinition = "NVARCHAR(255)")
 	private String fullName;
 	
-	@Email(message = "Địa chỉ email không đúng định dạng")
+	@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "The email is invalid")
 	@Column(nullable = false)
 	private String email;
 	
