@@ -27,30 +27,28 @@ public class PostLikeService {
 
     @Transactional
     public boolean toggleLike(Post post, User user) {
-    	
-    	logger.info("toggleLike " + post.toString() + " " + user.toString());
-    	
+        
+        logger.info("toggleLike " + post.toString() + " " + user.toString());
+        
         Optional<PostLike> existingLikeOp = likeRepository.findByPostAndUser(post, user);
         if (existingLikeOp.isPresent()) {
-        	PostLike existingLike = existingLikeOp.get();
-        	existingLike.setLiked(!existingLike.isLiked());
-            likeRepository.save(existingLike);
+            likeRepository.delete(existingLikeOp.get());
             return false; // Đã bỏ thích
         } else {
-        	PostLike like = new PostLike();
+            PostLike like = new PostLike();
             like.setPost(post);
             like.setUser(user);
             likeRepository.save(like);
-            
-            
+
             notificationService.sendNotification(
-            		post.getAuthor(), 
-            		user.getFullName() + " likded your post (" + post.getTitle() + ")!",
-            		"/posts/" + post.getId());
-            
+                post.getAuthor(), 
+                user.getFullName() + " liked your post (" + post.getTitle() + ")!",
+                "/posts/" + post.getId());
+
             return true; // Đã thích
         }
     }
+
 
     public long countLikes(Post post) {
         return likeRepository.countByPostAndIsLikedTrue(post);
