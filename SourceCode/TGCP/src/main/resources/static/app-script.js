@@ -668,7 +668,6 @@ async function fetchUsers(page = 1) {
 	const email = document.getElementById('email').value;
 	const fullName = document.getElementById('fullName').value;
 	const role = document.getElementById('role').value;
-	const kycApproved = document.getElementById('kycApproved').value;
 	const enabled = document.getElementById('enabled').value;
 
 
@@ -676,7 +675,6 @@ async function fetchUsers(page = 1) {
 	if (email) url += `email=${encodeURIComponent(email)}&`;
 	if (fullName) url += `fullName=${encodeURIComponent(fullName)}&`;
 	if (role) url += `role=${encodeURIComponent(role)}&`;
-	if (kycApproved !== "") url += `kycApproved=${kycApproved}&`;
 	if (enabled !== "") url += `enabled=${enabled}&`;
 	url += `page=${usersPage.currentPage - 1}&`;
 	url += `size=${usersPage.itemsPerPage}`;
@@ -709,7 +707,6 @@ async function fetchUsers(page = 1) {
                 <td>${user.fullName}</td>
                 <td>${user.email}</td>
                 <td>${user.role}</td>
-                <td><b>KYC: </b>${user.kycApproved}</td>
                 <td><b>Enabled: </b>${user.enabled}</td>
                 <td>${actions.join(' ')}</td>
             `;
