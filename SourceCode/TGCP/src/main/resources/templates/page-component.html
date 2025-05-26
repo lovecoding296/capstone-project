@@ -138,7 +138,15 @@
 			<div class="col-3">
 				<h2>Support</h2>
 				<!--<br><a class="text-start" href="#">FAQs</a>-->
-				<br><a class="text-start" onclick="openChatWithUser(1, 'admin@tgcp.com', 'Admin')">Chat with Admin</a>
+				<br>				
+				<a class="text-start"
+				   th:if="${session.loggedInUser != null}"
+				   onclick="openChatWithUser(1, 'admin@tgcp.com', 'Admin')">Chat with Admin</a>
+
+				<a class="text-start"
+				   th:if="${session.loggedInUser == null}"
+				   href="/login">Chat with Admin</a>
+
 				<br><a class="text-start" href="#">Support Us</a>
 			</div>
 			<!--<div class="col-3">

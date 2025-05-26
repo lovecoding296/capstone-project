@@ -37,7 +37,7 @@ public class PostService {
     }
 
     // Cập nhật bài viết
-    public boolean update(Long id, Post post) {
+    public Post update(Long id, Post post) {
         return postRepo.findById(id).map(currentPost -> {
         	if (post.getContent() != null && !post.getContent().isBlank()) {
                 currentPost.setContent(post.getContent());
@@ -45,11 +45,10 @@ public class PostService {
             if (post.getTitle() != null && !post.getTitle().isBlank()) {
                 currentPost.setTitle(post.getTitle());
             }
-            postRepo.save(currentPost);
-            return true;
+            return postRepo.save(currentPost);
         }).orElseGet(() -> {
             System.out.println("Cannot find post with id: " + id);
-            return false;
+            return null;
         });
     }
     

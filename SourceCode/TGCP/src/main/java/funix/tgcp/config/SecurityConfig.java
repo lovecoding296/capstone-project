@@ -33,11 +33,17 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers("/admin/**").hasRole("ADMIN")
-            	.requestMatchers(HttpMethod.PUT, "/api/users/*/enable").hasRole("ADMIN")
-            	.requestMatchers(HttpMethod.PUT, "/api/users/*/disable").hasRole("ADMIN")
+    
                 .requestMatchers("/users/bookings/**").authenticated()
             	.requestMatchers("/guides/bookings/**").authenticated()
-            	.requestMatchers("/dashboard/**").authenticated()
+            	.requestMatchers("/dashboard/**").authenticated()    
+            	
+            	.requestMatchers("/posts/new").authenticated()
+            	.requestMatchers("/posts/*/edit").authenticated()
+            	
+            	.requestMatchers(HttpMethod.PUT, "/api/users/*/enable").hasRole("ADMIN")
+            	.requestMatchers(HttpMethod.PUT, "/api/users/*/disable").hasRole("ADMIN")
+            	
             	.requestMatchers("/api/notifications/**").authenticated()
             	.requestMatchers("/api/chat/**").authenticated()
             	.requestMatchers("/api/bookings/**").authenticated()

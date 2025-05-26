@@ -471,7 +471,71 @@ async function fetchServices(page = 1) {
 	}
 }
 
+/* manage all posts */
 
+let allPostsPage = {
+	currentPage: 1,
+	itemsPerPage: 10
+}
+
+function changeAllPostsPage(direction) {
+	if (direction === 'prev') {
+		allPostsPage.currentPage -= 1;
+	} else if (direction === 'next') {
+		allPostsPage.currentPage += 1;
+	}
+
+	fetchAllPosts(allPostsPage.currentPage);
+}
+
+async function fetchAllPosts(page = 1) {
+	allPostsPage.currentPage = page;
+
+	const title = document.getElementById('title').value;
+	const category = document.getElementById('category').value;
+
+
+	let url = '/api/admin/posts?';
+	if (title) url += `title=${encodeURIComponent(title)}&`;
+	if (category) url += `category=${encodeURIComponent(category)}&`;
+	url += `page=${allPostsPage.currentPage - 1}&`;
+	url += `size=${allPostsPage.itemsPerPage}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		const data = await response.json();
+		const posts = data.content;
+		const tableBody = document.getElementById('postsTableBody');
+		tableBody.innerHTML = '';
+
+		posts.forEach(post => {
+			const categoryName = categoryDisplayNames[post.category] || post.category;
+			const row = document.createElement('tr');
+			row.innerHTML = `
+                <td>${post.title}</td>
+                <td>${categoryName}</td>
+                <td>${post.author.fullName}</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" href="/posts/${post.id}">View</a>
+                    <a class="btn btn-sm btn-success" href="/posts/${post.id}/edit">Edit</a>
+                    <button class="btn btn-sm btn-danger" onclick="deletePost(${post.id}, true)">Delete</button>
+                </td>
+            `;
+			tableBody.appendChild(row);
+		});
+
+		updatePaginationButtons(data.number + 1, data.totalElements, data.size);
+
+	} catch (error) {
+		console.error('Unable to load post list:', error);
+		const tableBody = document.getElementById('postsTableBody');
+		tableBody.innerHTML = `<tr><td colspan="4">Unable to load post list.</td></tr>`;
+	}
+}
 
 /* manage posts */
 
@@ -552,7 +616,7 @@ async function fetchPosts(page = 1) {
 }
 
 
-async function deletePost(id) {
+async function deletePost(id, isAdmin = false) {
 	if (confirm("Are you sure you want to delete this post?")) {
 		try {
 			const response = await fetch(`/api/posts/${id}/delete`, {
@@ -568,8 +632,11 @@ async function deletePost(id) {
 			}
 
 			alert("Post deleted successfully.");
-			fetchPosts(postsPage.currentPage);
-
+			if(isAdmin) {
+				fetchAllPosts(allPostsPage.currentPage);
+			} else {
+				fetchPosts(postsPage.currentPage);
+			}	
 		} catch (error) {
 			console.error("Error deleting post:", error);
 			alert("Failed to delete post.");

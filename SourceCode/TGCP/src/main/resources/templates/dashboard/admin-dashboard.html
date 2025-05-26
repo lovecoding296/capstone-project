@@ -148,6 +148,9 @@
 						<li th:if="${session.loggedInUser != null && session.loggedInUser.isAdmin()}" class="nav-item"><a class="panel-link nav-link" href="#manage-reports"
 								onclick="navigate(event,'manage-reports')">Manage reports</a>
 						</li>
+						<li th:if="${session.loggedInUser != null && session.loggedInUser.isAdmin()}" class="nav-item"><a class="panel-link nav-link" href="#manage-posts"
+								onclick="navigate(event,'manage-posts')">Manage posts</a>
+						</li>
 					</ul>
 				</div>
 			</nav>
@@ -217,7 +220,7 @@
 
 
 					function loadPage(page) {
-						fetch(`/pages/dashboard/${page}.html`)
+						fetch(`/pages/dashboard/admin/${page}.html`)
 							.then(response => {
 								if (!response.ok) throw new Error("Page not found");
 								return response.text();
@@ -253,7 +256,9 @@
 										fetchUsers();
 										break;				
 										
-									
+									case "manage-posts":
+										fetchAllPosts();
+										break;
 									
 								    default:
 								        console.log("No action found for page:", page);

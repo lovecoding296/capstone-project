@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import funix.tgcp.config.CustomUserDetails;
 import funix.tgcp.user.User;
 import funix.tgcp.user.UserService;
 import jakarta.validation.Valid;
@@ -50,100 +53,104 @@ public class PostController {
 		return "post/post-list";
 	}
 
-	// Lấy bài viết theo current user ID
-	@GetMapping("/author/{id}")
-	public String getPostByuserId(@PathVariable Long id, Model model) {
-		List<Post> posts = postService.findByAuthorId(id);
-		model.addAttribute("posts", posts);
-		return "post/post-list"; // Trả về trang danh sách bài viết
-	}
-
 	// Lấy bài viết theo ID
 	@GetMapping("/{id}")
-	public String getPostById(@PathVariable Long id, Model model) {
+	public String getPostById(@PathVariable Long id, 
+			Model model, 
+			RedirectAttributes redirectAttributes) {
 		Optional<Post> post = postService.findById(id);
 		if (post.isPresent()) {
 			model.addAttribute("categories", PostCategory.values());
 			model.addAttribute("post", post.get());
 			return "post/post-details"; // Trả về trang chi tiết bài viết
 		}
-		return "redirect:/posts"; // Nếu không tìm thấy, chuyển hướng về trang danh sách
+		redirectAttributes.addFlashAttribute("errorMessage", "Page not found!");
+		return "redirect:/error";		
 	}
 
 	// Tạo mới bài viết
 	@GetMapping("/new")
-	public String showCreateForm(Model model, HttpSession session) {
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login"; // Chuyển hướng nếu chưa đăng nhập
-		}
+	public String showCreateForm(Model model) {		
 
 		model.addAttribute("categories", PostCategory.values());
 		model.addAttribute("post", new Post());
-		// model.addAttribute("users", userService.findAll());
-		return "post/post-form"; // Trả về trang tạo bài viết mới
+		return "post/post-form";
 	}
 
 	@PostMapping("/new")
-	public String createPost(@Valid @ModelAttribute Post post, BindingResult result, Model model, HttpSession session) {
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login"; // Kiểm tra đăng nhập
-		}
+	public String createPost(@Valid @ModelAttribute Post post, 
+			BindingResult result, 
+			Model model, 
+			@AuthenticationPrincipal CustomUserDetails auth) {		
 
 		if (result.hasErrors()) {
-			model.addAttribute("users", userService.findAll());
+			model.addAttribute("categories", PostCategory.values());
 			return "post/post-form";
 		}
-		post.setAuthor(loggedInUser);
+		post.setAuthor(auth.getUser());
 		postService.save(post);
-		return "redirect:/posts"; // Chuyển hướng sau khi lưu
+		return "redirect:/posts";
 	}
 
 	// Chỉnh sửa bài viết
 	@GetMapping("/{id}/edit")
-	public String showEditForm(@PathVariable Long id, Model model, HttpSession session) {
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login"; // Kiểm tra đăng nhập
-		}
+	public String showEditForm(@PathVariable Long id,
+	                           Model model, 
+	                           @AuthenticationPrincipal CustomUserDetails auth,
+	                           RedirectAttributes redirectAttributes) {
 
-		Optional<Post> post = postService.findById(id);
-		if (post.isPresent()) {
-			model.addAttribute("categories", PostCategory.values());
-			model.addAttribute("post", post.get());
-			model.addAttribute("users", userService.findAll());
-			return "post/post-form";
-		}
-		return "redirect:/posts";
+	    Optional<Post> existingPostOptional = postService.findById(id);
+	    
+	    if (existingPostOptional.isEmpty()) {
+	        redirectAttributes.addFlashAttribute("errorMessage", "Page not found!");
+	        return "redirect:/error"; 
+	    }
+
+	    Post existingPost = existingPostOptional.get();
+	    
+	    if (!auth.isAdmin() && !auth.getUser().equals(existingPost.getAuthor())) {
+	        redirectAttributes.addFlashAttribute("errorMessage", "You do not have permission to access this page!");
+	        return "redirect:/error"; 
+	    }
+
+	    model.addAttribute("categories", PostCategory.values());
+	    model.addAttribute("post", existingPost);
+	    return "post/post-form";
 	}
+
 
 	@PostMapping("/{id}/edit")
-	public String updatePost(@PathVariable Long id, @Valid @ModelAttribute Post post, BindingResult result, Model model,
-			HttpSession session) {
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login"; // Kiểm tra đăng nhập
-		}
+	public String updatePost(@PathVariable Long id, 
+	                         @Valid @ModelAttribute(name = "post") Post submittedPost,			
+	                         BindingResult result, 
+	                         Model model,
+	                         @AuthenticationPrincipal CustomUserDetails auth,
+	                         RedirectAttributes redirectAttributes) {
 
-		if (result.hasErrors()) {
-			model.addAttribute("users", userService.findAll());
-			return "post/post-form";
-		}
+	    Optional<Post> existingPostOptional = postService.findById(id);
+	    
+	    if (existingPostOptional.isEmpty()) {
+	        redirectAttributes.addFlashAttribute("errorMessage", "Page not found!");
+	        return "redirect:/error";
+	    }
 
-		postService.update(id, post);
-		return "redirect:/posts";
+	    Post existingPost = existingPostOptional.get();
+	    
+	    if (!auth.isAdmin() && !existingPost.getAuthor().equals(auth.getUser())) {
+	        redirectAttributes.addFlashAttribute("errorMessage", "You do not have permission to access this page!");
+	        return "redirect:/error";
+	    }
+
+	    if (result.hasErrors()) {
+	        model.addAttribute("categories", PostCategory.values());
+	        model.addAttribute("post", submittedPost);
+	        return "post/post-form";
+	    }
+
+	    Post updatedPost = postService.update(id, submittedPost);
+	    model.addAttribute("categories", PostCategory.values());
+	    model.addAttribute("post", updatedPost);
+	    return "post/post-details";	
 	}
 
-	// Xóa bài viết theo ID
-	@GetMapping("/{id}/delete")
-	public String deletePost(@PathVariable Long id, HttpSession session) {
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		if (loggedInUser == null) {
-			return "redirect:/login"; // Kiểm tra đăng nhập
-		}
-
-		postService.deleteById(id);
-		return "redirect:/posts";
-	}
 }

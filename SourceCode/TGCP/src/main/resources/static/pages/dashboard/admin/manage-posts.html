@@ -2,6 +2,7 @@
 	<h2>Manage posts</h2>
 	<form id="filterForm" class="d-flex flex-wrap align-items-center gap-2">
 	    <input type="text" id="title" name="title" class="form-control" placeholder="Enter title" style="max-width: 200px;">
+	    <input type="text" id="author" name="author" class="form-control" placeholder="Enter author" style="max-width: 200px;">
 	    
 	    <select id="category" name="category" class="form-select" style="max-width: 220px;">
 	        <option value="">Category: All</option>
@@ -15,7 +16,7 @@
 	        <option value="TRAVEL_DIARY">Travel Diary</option>
 	    </select>
 
-	    <button type="button" onclick="fetchPosts()" class="btn btn-primary">Filter</button>
+	    <button type="button" onclick="fetchAllPosts()" class="btn btn-primary">Filter</button>
 	</form>
 
 	<br>
@@ -39,8 +40,8 @@
 
 	<div id="pagination" class="justify-content-center mt-4" style="display: none;">
 		<button id="prev-btn" class="btn btn-primary justify-content-center btn-pagination"
-			onclick="changePostsPage('prev')">Previous</button>
+			onclick="changeAllPostsPage('prev')">Previous</button>
 		<button id="next-btn" class="btn btn-primary justify-content-center btn-pagination"
-			onclick="changePostsPage('next')">Next</button>
+			onclick="changeAllPostsPage('next')">Next</button>
 	</div>
 </div>

@@ -148,6 +148,8 @@ public class BookingService {
         booking.setReason(reason);
         booking.setCanceledAt(LocalDateTime.now());
         bookingRepo.save(booking);
+        
+        dayOffRepo.deleteByBookingId(bookingId);
 
         notifiService.sendNotification(
                 booking.getGuide(),

@@ -307,7 +307,7 @@
 			</div>
 		</div>
 
-
+		<button th:if="${booking.status.name() != 'CONFIRMED'  && booking.status.name() != 'COMPLETED'}" class="btn disabled disabled-btn">Add a new payment<br>(Waiting for guide confirmation)</button>
 		<button th:if="${booking.status.name() == 'CONFIRMED'  || booking.status.name() == 'COMPLETED'}" onclick="openNewPaymentPopup()" class="btn btn-success">Add a new payment</button>
 		<br><br>
 		<div class="row">
