@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import funix.tgcp.config.CustomUserDetails;
+import funix.tgcp.user.Role;
+import funix.tgcp.user.User;
 import funix.tgcp.util.LogHelper;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class GuideRequestRestController {
@@ -118,19 +121,24 @@ public class GuideRequestRestController {
 		return guideRequestService.getAllGuideRequests();
 	}
 
-	@PutMapping("/api/admin/guide-requests/{id}/approve")
-	public ResponseEntity<String> approveGuide(@PathVariable Long id) {
-		boolean success = guideRequestService.approveGuide(id);
-		return success ? ResponseEntity.ok("Đã phê duyệt hướng dẫn viên!")
-				: ResponseEntity.badRequest().body("Không tìm thấy yêu cầu!");
-	}
+    @PutMapping("/api/admin/guide-requests/{id}/approve")
+    public ResponseEntity<String> approveGuide(@PathVariable Long id) {
+        boolean success = guideRequestService.approveGuide(id);        
+        if (success) {            
+            return ResponseEntity.ok("Guide approved successfully!");
+        } else {
+            return ResponseEntity.badRequest().body("An error occurred, please try again later.");
+        }
+    }
 
-	@PutMapping("/api/admin/guide-requests/{id}/reject")
-	public ResponseEntity<String> rejectGuide(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
-		boolean success = guideRequestService.rejectGuide(id, requestBody.get("reason"));
-		return success ? ResponseEntity.ok("Đã từ chối yêu cầu!")
-				: ResponseEntity.badRequest().body("Không tìm thấy yêu cầu!");
-	}
+    @PutMapping("/api/admin/guide-requests/{id}/reject")
+    public ResponseEntity<String> rejectGuide(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+        boolean success = guideRequestService.rejectGuide(id, requestBody.get("reason"));
+        return success 
+            ? ResponseEntity.ok("Guide request rejected successfully!") 
+            : ResponseEntity.badRequest().body("An error occurred, please try again later.");
+    }
+
    
 
 }

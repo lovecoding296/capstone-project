@@ -2,6 +2,7 @@ package funix.tgcp.home;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +70,18 @@ public class HomeController {
 	}
 
 	@GetMapping("/dashboard")
-	public String dashboard() {
-		return "/dashboard/dashboard";
+	public String dashboard(HttpSession session) {
+	    User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+	    if (loggedInUser != null) {
+	        userService.findById(loggedInUser.getId()).ifPresent(user -> {
+	            session.setAttribute("loggedInUser", user);
+	        });
+	    }
+	    
+	    return "/dashboard/dashboard";
 	}
+
 
 	@GetMapping("/admin/dashboard")
 	public String adminDashboard() {

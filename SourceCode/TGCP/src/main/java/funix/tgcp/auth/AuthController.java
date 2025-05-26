@@ -85,7 +85,7 @@ public class AuthController {
 	public String verifyEmail(@RequestParam String token, Model model) {
 		try {
 			userRequestService.verifyEmail(token);
-			model.addAttribute("successMessage", "Email verified successfully! Please wait for the administrator to approve your account.");
+			model.addAttribute("successMessage", "Email verified successfully!");
 		} catch (EmailVerificationException e) {
 			e.printStackTrace();
 			model.addAttribute("error", "Invalid verification token or the token has expired.");

@@ -19,15 +19,13 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
-		String errorMessage = "Sai tên đăng nhập hoặc mật khẩu!."; // Lỗi mặc định
+		String errorMessage = "Incorrect username or password."; // Lỗi mặc định
 
 		if (exception instanceof BadCredentialsException) {
-			errorMessage = "Sai tên đăng nhập hoặc mật khẩu.";
+			errorMessage = "Incorrect username or password.";
 		} else if (exception instanceof DisabledException) {
-			errorMessage = "Tài khoản của bạn chưa được xác minh. Vui lòng kiểm tra email của bạn.";
+			errorMessage = "Your account has been locked.";
 
-		} else if (exception instanceof LockedException) {
-			errorMessage = "Tài khoản của bạn đang chờ quản trị viên phê duyệt."; // Chỉ GUIDE,AGENCY mới bị chặn KYC
 		}
 
 		response.sendRedirect("/login?error=" + URLEncoder.encode(errorMessage, "UTF-8"));

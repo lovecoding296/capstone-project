@@ -286,15 +286,25 @@ async function submitEditService() {
 	const type = document.getElementById("editServiceType").value;
 	const groupSizeCategory = document.getElementById("editGroupSizeCategory").value;
 	const city = document.getElementById("editCity").value;
-	const price = document.getElementById("editPrice").value;
+	const pricePerDay = document.getElementById("editPrice").value;
 	const language = document.getElementById("editLanguage").value;
+	const paymentOption = document.getElementById("editPaymentOption").value;
 
-	if (!type || !groupSizeCategory || !city || !price || !language) {
+	if (!type || !groupSizeCategory || !city || !pricePerDay || !language) {
 		alert("Please fill out all fields.");
 		return;
 	}
 
-	const serviceData = { id, type, groupSizeCategory, city, language, price };
+	const serviceData = { 
+		id, 
+		type, 
+		groupSizeCategory, 
+		city, 
+		language, 		
+		pricePerDay,
+		paymentOption
+	};
+		
 	console.log("Service Data:", serviceData);
 
 	try {
@@ -331,10 +341,11 @@ async function submitService() {
 	const type = document.getElementById("serviceType").value;
 	const groupSizeCategory = document.getElementById("groupSizeCategory").value;
 	const city = document.getElementById("city").value;
-	const price = document.getElementById("price").value;
+	const pricePerDay = document.getElementById("price").value;
 	const language = document.getElementById("language").value;
+	const paymentOption = document.getElementById("paymentOption").value;
 
-	if (!type || !groupSizeCategory || !city || !price || !language) {
+	if (!type || !groupSizeCategory || !city || !pricePerDay || !language) {
 		alert("Please fill out all fields.");
 		return;
 	}
@@ -344,7 +355,8 @@ async function submitService() {
 		groupSizeCategory,
 		city,
 		language,
-		price
+		pricePerDay,
+		paymentOption
 	};
 
 	console.log("Service Data:", serviceData); 

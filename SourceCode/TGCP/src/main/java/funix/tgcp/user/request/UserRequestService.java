@@ -65,7 +65,7 @@ public class UserRequestService {
         	user.setPassword(userRequest.getPassword());
         	user.setCccdUrl(userRequest.getCccdUrl());
         	user.setEmail(userRequest.getEmail());
-        	user.setAvatarUrl("/uploads/default-cccd.jpg");
+        	user.setAvatarUrl("/uploads/default-avatar.jpg");
         	user.setFullName(userRequest.getFullName());        	
         	
             userRequestRepo.delete(userRequest);            

@@ -64,11 +64,13 @@ public class GuideServiceService {
             throw new RuntimeException("Service already exists with the same parameters.");
         }
 
+        logger.info("update guide service: price " + guideServiceDetails.getPricePerDay());
         guideService.setType(guideServiceDetails.getType());
         guideService.setGroupSizeCategory(guideServiceDetails.getGroupSizeCategory());
         guideService.setLanguage(guideServiceDetails.getLanguage());
         guideService.setPricePerDay(guideServiceDetails.getPricePerDay());
         guideService.setCity(guideServiceDetails.getCity());
+        guideService.setPaymentOption(guideServiceDetails.getPaymentOption());
                 
         return guideServiceRepo.save(guideService);
     }
